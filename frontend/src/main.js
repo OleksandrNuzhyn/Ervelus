@@ -1,14 +1,30 @@
-import './assets/main.css'
-
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import { useAuthStore } from './stores/auth'
 
 const app = createApp(App)
+const pinia = createPinia()
 
-app.use(createPinia())
-app.use(router)
+app.use(pinia)
 
-app.mount('#app')
+async function initializeApp() {
+  const authStore = useAuthStore();
+  
+  // Чекаємо на першу перевірку статусу
+  await authStore.checkAuth();
+  
+  app.use(router);
+
+  if (authStore.isAuthenticated && router.currentRoute.value.path === '/') {
+    // Якщо користувач залогінений і знаходиться на головній сторінці,
+    // відправляємо його на дашборд.
+    router.push('/dashboard');
+  }
+  
+  app.mount('#app');
+}
+
+initializeApp();

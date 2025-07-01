@@ -14,7 +14,6 @@ const routes = [
 
   // Захищені сторінки
   { path: '/dashboard', name: 'dashboard', component: () => import('@/views/DashboardPage.vue'), meta: { requiresAuth: true } },
-  { path: '/settings', name: 'settings', component: () => import('@/views/SettingsPage.vue'), meta: { requiresAuth: true } },
 
   // Головна сторінка
   { path: '/', name: 'home', component: () => import('@/views/HomePage.vue') }
