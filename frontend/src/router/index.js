@@ -13,7 +13,7 @@ const routes = [
   { path: '/password-reset/confirm/:uid/:token', name: 'password-reset-confirm', component: () => import('@/views/ConfirmPasswordResetPage.vue'), props: true },
 
   // Захищені сторінки
-  { path: '/dashboard', name: 'dashboard', component: () => import('@/views/DashboardPage.vue'), meta: { requiresAuth: true } },
+  // { path: '/dashboard', name: 'dashboard', component: () => import('@/views/DashboardPage.vue'), meta: { requiresAuth: true } },
 
   // Головна сторінка
   { path: '/', name: 'home', component: () => import('@/views/HomePage.vue') }
