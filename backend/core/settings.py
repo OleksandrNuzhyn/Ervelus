@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+
+    'users',
 ]
 
 SITE_ID = 1
@@ -122,6 +124,14 @@ DEFAULT_FROM_EMAIL = 'localserver@example.com'
 
 DATABASES = {
     'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres-ervelus-test',
+        'USER': 'ervelus-test',
+        'PASSWORD': 'Trueelse23',
+        'HOST': '34.63.175.254',
+        'PORT': '5432',
+    },
+    'async': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres-ervelus-test',
         'USER': 'ervelus-test',
