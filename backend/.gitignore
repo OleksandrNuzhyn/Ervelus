@@ -1,5 +1,4 @@
 .venv/
-.env
 
 # База даних SQLite
 db.sqlite3

@@ -1,8 +1,9 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-m+f%+&=dax*8^9%%uq_-k7z*1e5a)hm=+4k($js%f@2wqid$67'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = True
 
@@ -28,6 +29,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
 
+    'anymail',
+
     'users',
 ]
 
@@ -46,8 +49,8 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
-ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = "http://127.0.0.1:5173/dashboard"
-PASSWORD_RESET_REDIRECT_URL = "http://127.0.0.1:5173/dashboard"
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = os.getenv("ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL")
+PASSWORD_RESET_REDIRECT_URL = os.getenv("PASSWORD_RESET_REDIRECT_URL")
 
 
 
@@ -87,6 +90,8 @@ ASGI_APPLICATION = 'core.asgi.application'
 
 REST_AUTH = {
     'TOKEN_MODEL': None,
+    'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer',
+    'LOGIN_SERIALIZER': 'users.serializers.CustomLoginSerializer',
 }
 
 REST_FRAMEWORK = {
@@ -109,7 +114,7 @@ SESSION_COOKIE_AGE = 1209600
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173",
+    os.getenv("CSRF_TRUSTED_ORIGINS"),
 ]
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SECURE = False
@@ -117,8 +122,12 @@ CSRF_COOKIE_SAMESITE = 'Lax'
 
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'localserver@example.com'
+ANYMAIL = {
+    "MAILGUN_API_KEY": os.getenv("MAILGUN_API_KEY"),
+    "MAILGUN_SENDER_DOMAIN": os.getenv("MAILGUN_SENDER_DOMAIN"),
+}
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 
 
 
@@ -128,7 +137,7 @@ DATABASES = {
         'NAME': 'postgres-ervelus-test',
         'USER': 'ervelus-test',
         'PASSWORD': 'Trueelse23',
-        'HOST': '34.63.175.254',
+        'HOST': '34.118.30.161',
         'PORT': '5432',
     },
     'async': {
@@ -136,7 +145,7 @@ DATABASES = {
         'NAME': 'postgres-ervelus-test',
         'USER': 'ervelus-test',
         'PASSWORD': 'Trueelse23',
-        'HOST': '34.63.175.254',
+        'HOST': '34.118.30.161',
         'PORT': '5432',
     }
 }
