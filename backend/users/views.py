@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.shortcuts import redirect
 from allauth.account.views import ConfirmEmailView
+from dj_rest_auth.views import PasswordResetConfirmView
 
 
 class ConfirmEmailRedirectView(ConfirmEmailView):
@@ -13,5 +14,16 @@ class ConfirmEmailRedirectView(ConfirmEmailView):
         redirect_url = getattr(
             settings,
             "ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL",
+        )
+        return redirect(redirect_url)
+
+
+class PasswordResetRedirectView(PasswordResetConfirmView):
+    def post(self, request, *args, **kwargs):
+        super().post(request, *args, **kwargs)
+
+        redirect_url = getattr(
+            settings,
+            "PASSWORD_RESET_REDIRECT_URL",
         )
         return redirect(redirect_url)
