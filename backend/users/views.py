@@ -2,6 +2,12 @@ from django.conf import settings
 from django.shortcuts import redirect
 from allauth.account.views import ConfirmEmailView
 from dj_rest_auth.views import PasswordResetConfirmView
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from dj_rest_auth.registration.views import SocialLoginView
+
+
+class GoogleLogin(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter
 
 
 class ConfirmEmailRedirectView(ConfirmEmailView):
