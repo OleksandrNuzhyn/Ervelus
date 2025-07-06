@@ -16,8 +16,8 @@ function getCookie(name) {
 }
 
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api', 
-  withCredentials: true
+  baseURL: '/api',
+  withCredentials: true,
 });
 
 api.interceptors.request.use(
