@@ -1,5 +1,8 @@
+from dotenv import load_dotenv # Delete
 import os
 from pathlib import Path
+
+load_dotenv() # Delete
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
