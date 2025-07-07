@@ -20,11 +20,7 @@
         Link sent! Check your inbox.
       </div>
 
-      <div v-if="sent && canResend" class="p-3 rounded bg-blue-600 text-sm text-white text-center">
-        Didn't get the email? You can send it again.
-      </div>
-
-      <button type="submit" :disabled="isLoading || (sent && !canResend)" class="w-full py-3 font-bold text-white transition duration-300 bg-gradient-to-r from-orange-500 to-orange-700 rounded-md hover:from-orange-600 hover:to-orange-800 disabled:opacity-60 disabled:cursor-not-allowed">
+      <button type="submit" :disabled="isLoading || sent" class="w-full py-3 font-bold text-white transition duration-300 bg-gradient-to-r from-orange-500 to-orange-700 rounded-md hover:from-orange-600 hover:to-orange-800 disabled:opacity-60 disabled:cursor-not-allowed">
         <span v-if="isLoading">Sending…</span>
         <span v-else>Send reset link</span>
       </button>
@@ -33,7 +29,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '@/services/api';
 import isEmail from 'validator/lib/isEmail';
@@ -42,9 +38,12 @@ const email = ref('');
 const isLoading = ref(false);
 const error = ref('');
 const sent = ref(false);
-const canResend = ref(false);
-let timerId;
 const router = useRouter();
+
+watch(email, () => {
+  sent.value = false;
+  error.value = '';
+});
 
 async function handleSubmit() {
   error.value = '';
@@ -56,11 +55,6 @@ async function handleSubmit() {
   try {
     await api.post('api/auth/password/reset/', { email: email.value });
     sent.value = true;
-    canResend.value = false;
-    clearTimeout(timerId);
-    timerId = setTimeout(() => {
-      canResend.value = true;
-    }, 210000);
   } 
   catch (err) {
     error.value = 'Something went wrong.';
@@ -70,16 +64,15 @@ async function handleSubmit() {
   }
 }
 // 
-//прибрати тут таймер
-//надсилання імейлу через час лише на реєстраційній сторінці, тут не треба
+// \/ прибрати тут таймер
+// надсилання імейлу через час лише на реєстраційній сторінці, тут не треба
 // таймер для api/auth/registration/resend-email/ 4хвилини (в реєстрації) 
-//коли вводиш нову пошту для ресету щою це могло бути + інші можливі варіанти UI
-//форматування крдів(назва змінних , переноси, коментарі)
-// logout 
+//коли вводиш нову пошту для ресету щою це могло бути + інші можливі варіанти UI  !((Django) не знає, за якою URL-адресою знаходиться сторінка підтвердження скидання пароля на вашому фронтенді.)
+//форматування кодів(назва змінних , переноси, коментарі)
+//logout 
 //google sign in 
 //створення сторінок password(2), dashboard, settings
-import { onUnmounted } from 'vue';
-onUnmounted(() => clearTimeout(timerId));
+//(By continuing, you agree to DaVinci’s Terms of Use. Read our Privacy Policy
 </script>
 
-<style scoped></style> 
+<style scoped></style>

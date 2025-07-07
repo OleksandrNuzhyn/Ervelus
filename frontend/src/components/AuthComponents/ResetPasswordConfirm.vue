@@ -70,13 +70,13 @@
     } 
     catch (error) {
       if (error.response && error.response.data) {
-        const d = error.response.data;
-        if (d.new_password2) {
-          errors.value.password2 = Array.isArray(d.new_password2)
-            ? d.new_password2[0]
-            : d.new_password2;
+        const d_err = error.response.data;
+        if (d_err.new_password2) {
+          errors.value.password2 = Array.isArray(d_err.new_password2)
+            ? d_err.new_password2[0]
+            : d_err.new_password2;
         } 
-        else if (d.detail) {
+        else if (d_err.detail) {
           errors.value.api = 'The enchanted link is faded. Seek a new one';
         } 
         else {

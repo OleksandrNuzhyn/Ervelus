@@ -6,8 +6,9 @@ const routes = [
   { path: '/register', name: 'register', component: () => import('@/views/RegisterPage.vue') },
   //{ path: '/dashboard', name: 'dashboard', component: () => import('@/views/DashboardPage.vue'), meta: { requiresAuth: true } },
   //{ path: '/', name: 'home', component: () => import('@/views/HomePage.vue') }
-  { path: '/forgot-password', name: 'forgot-password', component: () => import('@/components/AuthComponents/ForgotPasswordForm.vue') },
-  { path: '/reset-password-confirm/:uid/:token', name: 'reset-password-confirm', component: () => import('@/components/AuthComponents/ResetPasswordConfirm.vue') },
+  { path: '/forgot-password', name: 'forgot-password', component: () => import('@/views/ForgotPasswordPage.vue') },
+  { path: '/reset-password-confirm/:uid/:token', name: 'reset-password-confirm', component: () => import('@/views/ResetPasswordConfirmPage.vue') },
+  { path: '/logout', name: 'logout', component: () => import('@/views/LogoutPage.vue'), meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({
@@ -15,8 +16,12 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const authStore = useAuthStore();
+
+  if (!authStore.user) {
+    await authStore.checkAuth();
+  }
   
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     return { name: 'login', query: { redirect: to.fullPath } };
