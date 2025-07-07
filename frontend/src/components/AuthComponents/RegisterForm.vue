@@ -1,6 +1,7 @@
 <template>
   <div class="flex items-center justify-center min-h-screen bg-gray-900 font-serif">
     <form
+      v-if="!registrationComplete"
       @submit.prevent="handleSubmit"
       class="w-full max-w-md p-8 space-y-6 bg-gradient-to-b from-purple-965 via-purple-950 to-indigo-980 rounded-xl shadow-2xl text-gray-300"
       novalidate
@@ -69,11 +70,35 @@
         </button>
       </div>
     </form>
+
+    <div
+      v-else
+      class="w-full max-w-md p-8 space-y-6 bg-gradient-to-b from-purple-965 via-purple-950 to-indigo-980 rounded-xl shadow-2xl text-white text-center"
+    >
+      <h2 class="text-2xl font-bold">Confirm your Email</h2>
+      <p class="text-gray-400">
+        We've sent a confirmation link to <strong>{{ email }}</strong>. Please check your inbox and spam folder.
+      </p>
+      
+      <p v-if="canResend" class="text-green-400 text-sm">
+        Didn't get the email? You can try sending it again.
+      </p>
+
+      <button
+        @click="handleResendEmail"
+        :disabled="!canResend || isLoading"
+        class="w-full py-3 font-bold text-white transition duration-300 bg-gradient-to-r from-orange-500 to-orange-700 rounded-md hover:from-orange-600 hover:to-orange-800 disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        <span v-if="isLoading">Sending...</span>
+        <span v-else>Resend Confirmation Email</span>
+      </button>
+       <p v-if="errors.api" class="mt-2 text-sm text-red-400">{{ errors.api }}</p>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '@/services/api';
 import isEmail from 'validator/lib/isEmail';
@@ -88,8 +113,44 @@ const errors = ref({
   password2: '',
   api: '',
 });
+const registrationComplete = ref(false);
+const canResend = ref(false);
+let timerId = null;
 
 const router = useRouter();
+
+function startResendTimer() {
+  canResend.value = false;
+  
+  if (timerId) {
+    clearTimeout(timerId);
+  }
+
+  timerId = setTimeout(() => {
+    canResend.value = true;
+    timerId = null;
+  }, 240000);
+}
+
+async function handleResendEmail() {
+  if (!canResend.value) return;
+  isLoading.value = true;
+  errors.value.api = '';
+  try {
+    await api.post('api/auth/registration/resend-email/', { email: email.value });
+    startResendTimer();
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.detail) {
+      errors.value.api = error.response.data.detail;
+    } 
+    else {
+      errors.value.api = 'An error occurred while resending the email.';
+    }
+  } 
+  finally {
+    isLoading.value = false;
+  }
+}
 
 function validateForm() {
   errors.value = { email: '', password1: '', password2: '', api: '' };
@@ -134,7 +195,8 @@ async function handleSubmit() {
       password1: password1.value,
       password2: password2.value,
     });
-    router.push({ path: '/login', query: { confirm: 'sent' } });
+    registrationComplete.value = true;
+    startResendTimer();
   }
   catch (error) {
     if (error.response) {
@@ -165,6 +227,13 @@ async function handleSubmit() {
     isLoading.value = false;
   }
 }
+
+onUnmounted(() => {
+  if (timerId) {
+    clearTimeout(timerId);
+  }
+});
+
 </script>
 
 <style scoped>
