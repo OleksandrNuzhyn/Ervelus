@@ -123,7 +123,7 @@
     isLoading.value = true;
   
     try {
-      await api.post('/auth/login/', {
+      await api.post('api/auth/login/', {
         email: email.value,
         password: password.value,
       });

@@ -54,20 +54,30 @@ async function handleSubmit() {
   }
   isLoading.value = true;
   try {
-    await api.post('/auth/password/reset/', { email: email.value });
+    await api.post('api/auth/password/reset/', { email: email.value });
     sent.value = true;
     canResend.value = false;
     clearTimeout(timerId);
     timerId = setTimeout(() => {
       canResend.value = true;
-    }, 30000);
-  } catch (err) {
+    }, 210000);
+  } 
+  catch (err) {
     error.value = 'Something went wrong.';
-  } finally {
+  } 
+  finally {
     isLoading.value = false;
   }
 }
-
+// 
+//прибрати тут таймер
+//надсилання імейлу через час лише на реєстраційній сторінці, тут не треба
+// таймер для api/auth/registration/resend-email/ 4хвилини (в реєстрації) 
+//коли вводиш нову пошту для ресету щою це могло бути + інші можливі варіанти UI
+//форматування крдів(назва змінних , переноси, коментарі)
+// logout 
+//google sign in 
+//створення сторінок password(2), dashboard, settings
 import { onUnmounted } from 'vue';
 onUnmounted(() => clearTimeout(timerId));
 </script>
