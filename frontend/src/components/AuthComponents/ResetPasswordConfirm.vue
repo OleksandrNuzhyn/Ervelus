@@ -60,34 +60,39 @@
     if (!validateForm()) return;
     isLoading.value = true;
     try {
-      await api.post('/auth/password/reset/confirm/', {
+      await api.post('/api/auth/password/reset/confirm/', {
         uid,
         token,
         new_password1: password1.value,
         new_password2: password2.value,
       });
-      router.push({ path: '/login', query: { reset: 'done' } });
-    } catch (error) {
+      router.push({ path: '/login', query: { reset: 'done' } }); 
+    } 
+    catch (error) {
       if (error.response && error.response.data) {
         const d = error.response.data;
         if (d.new_password2) {
           errors.value.password2 = Array.isArray(d.new_password2)
             ? d.new_password2[0]
             : d.new_password2;
-        } else if (d.detail) {
+        } 
+        else if (d.detail) {
           errors.value.api = 'The enchanted link is faded. Seek a new one';
-        } else {
+        } 
+        else {
           errors.value.api = 'Server error.';
         }
-      } else {
+      } 
+      else {
         errors.value.api = 'Network error.';
       }
-    } finally {
+    } 
+    finally {
       isLoading.value = false;
     }
   }
   </script>
-  
+
   <style scoped>
 
   </style> 
