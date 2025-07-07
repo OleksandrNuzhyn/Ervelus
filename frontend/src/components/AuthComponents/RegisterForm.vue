@@ -129,7 +129,7 @@ async function handleSubmit() {
   if (!validateForm()) return;
   isLoading.value = true;
   try {
-    await api.post('/auth/registration/', {
+    await api.post('api/auth/registration/', {
       email: email.value,
       password1: password1.value,
       password2: password2.value,
