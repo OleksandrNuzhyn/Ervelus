@@ -16,6 +16,7 @@ function getCookie(name) {
 }
 
 const api = axios.create({
+  baseURL: '/api', // Вказуємо базовий шлях для всіх запитів
   withCredentials: true,
 });
 

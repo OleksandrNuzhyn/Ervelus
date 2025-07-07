@@ -99,7 +99,8 @@
     if (!email.value) {
       errors.value.email = 'The email field cannot be empty.';
       isValid = false;
-    } else if (!isEmail(email.value)) {
+    } 
+    else if (!isEmail(email.value)) {
       errors.value.email = 'Incorrect email format.';
       isValid = false;
     }
@@ -107,7 +108,8 @@
     if (!password.value) {
       errors.value.password = 'Please enter your password.';
       isValid = false;
-    } else if (password.value.length < 8) {
+    } 
+    else if (password.value.length < 8) {
       errors.value.password = 'Your password must contain no fewer than 8 characters.';
       isValid = false;
     }

@@ -14,7 +14,8 @@ export const useAuthStore = defineStore('auth', {
     async checkAuth() {
       this.loading = true;
       try {
-        const { data } = await api.get('/auth/user/');
+        const { data } = await api.get('api/auth/user/');
+        console.log('User data from backend:', data);
         this.user = data;
       } 
       catch (error) {
