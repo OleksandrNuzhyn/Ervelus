@@ -139,7 +139,8 @@ async function handleResendEmail() {
   try {
     await api.post('api/auth/registration/resend-email/', { email: email.value });
     startResendTimer();
-  } catch (error) {
+  } 
+  catch (error) {
     if (error.response && error.response.data && error.response.data.detail) {
       errors.value.api = error.response.data.detail;
     } 
@@ -213,6 +214,9 @@ async function handleSubmit() {
             break;
           case 409:
             errors.value.api = 'A soul with that name is already wandering the Ervelus.';
+            break;
+          case 500:
+            errors.value.api = 'Internal Server Error. Please try again later.';
             break;
           default:
             errors.value.api = 'Error ' + status + '. Try once more.';
