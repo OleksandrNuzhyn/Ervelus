@@ -91,8 +91,4 @@
       isLoading.value = false;
     }
   }
-  </script>
-
-  <style scoped>
-
-  </style> 
+  </script> 

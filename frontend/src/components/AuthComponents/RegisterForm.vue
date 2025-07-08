@@ -235,12 +235,3 @@ onUnmounted(() => {
 });
 
 </script>
-
-<style scoped>
-
-@import url('https://fonts.googleapis.com/css2?family=Alegreya:wght@400;700&display=swap');
-.font-alegreya {
-    font-family: 'Alegreya', serif;
-}
-
-</style>
