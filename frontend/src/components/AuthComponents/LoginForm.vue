@@ -53,6 +53,14 @@
             <span v-else>Log in</span>
           </button>
         </div>
+        
+        <div class="flex items-center">
+          <hr class="flex-grow border-gray-600"/>
+          <span class="mx-4 text-xs text-gray-400">OR</span>
+          <hr class="flex-grow border-gray-600"/>
+        </div>
+
+        <div id="google-signin-button" class="flex justify-center"></div>
   
         <div class="text-right">
           <router-link to="/forgot-password" class="text-xs text-gray-400 hover:text-gray-200">Lost the keyword?</router-link>
@@ -62,62 +70,101 @@
     </div>
   </template>
   
-  <script setup>
-  import { ref } from 'vue';
-  import isEmail from 'validator/lib/isEmail';
-  import { useAuthStore } from '@/stores/auth';
-  import { useRouter } from 'vue-router';
-  import api from '@/services/api';
-  
-  const email = ref('');
-  const password = ref('');
-  const isLoading = ref(false);
-  const errors = ref({
-    email: '',
-    password: '',
-    api: ''
-  });
-  
-  const authStore = useAuthStore();
-  const router = useRouter();
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue';
+import isEmail from 'validator/lib/isEmail';
+import { useAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router';
+import api from '@/services/api';
 
-  function validateForm() {
-    errors.value = { email: '', password: '', api: '' };
-  
-    let isValid = true;
-    if (!email.value) {
-      errors.value.email = 'The email field cannot be empty.';
-      isValid = false;
-    } 
-    else if (!isEmail(email.value)) {
-      errors.value.email = 'Incorrect email format.';
-      isValid = false;
-    }
-    
-    if (!password.value) {
-      errors.value.password = 'Please enter your password.';
-      isValid = false;
-    } 
-    else if (password.value.length < 8) {
-      errors.value.password = 'Your password must contain no fewer than 8 characters.';
-      isValid = false;
-    }
-  
-    return isValid;
+const email = ref('');
+const password = ref('');
+const isLoading = ref(false);
+const errors = ref({
+  email: '',
+  password: '',
+  api: ''
+});
+
+const authStore = useAuthStore();
+const router = useRouter();
+
+async function handleGoogleSignIn(response) {
+  isLoading.value = true;
+  errors.value.api = '';
+  try {
+    await api.post('/api/auth/google/', {
+      token: response.credential
+    });
+    await authStore.checkAuth();
+    router.push('/dashboard');
+  } catch (error) {
+    console.error('Full error from:', error);
+    errors.value.api = error.response?.data?.detail || 'An error occurred during Google Sign-In.';
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+onMounted(() => {
+  if (typeof google !== 'undefined') {
+    window.handleGoogleSignIn = handleGoogleSignIn;
+
+    google.accounts.id.initialize({
+      client_id: '843713679678-0uev2hp893rnt24bm6rujisimkfocqbv.apps.googleusercontent.com',
+      callback: handleGoogleSignIn
+    });
+
+    google.accounts.id.renderButton(
+      document.getElementById('google-signin-button'),
+      { theme: "outline", size: "large", type: 'standard', text: 'signin_with', logo_alignment: 'center' }
+    );
+  }
+});
+
+onUnmounted(() => {
+  if (window.handleGoogleSignIn) {
+    delete window.handleGoogleSignIn;
+  }
+});
+
+function validateForm() {
+  errors.value = { email: '', password: '', api: '' };
+
+  let isValid = true;
+  if (!email.value) {
+    errors.value.email = 'The email field cannot be empty.';
+    isValid = false;
+  } 
+  else if (!isEmail(email.value)) {
+    errors.value.email = 'Incorrect email format.';
+    isValid = false;
   }
   
-  async function handleSubmit() {
-    if (!validateForm()) {
-      return;
-    }
-    
-    isLoading.value = true;
+  if (!password.value) {
+    errors.value.password = 'Please enter your password.';
+    isValid = false;
+  } 
+  else if (password.value.length < 8) {
+    errors.value.password = 'Your password must contain no fewer than 8 characters.';
+    isValid = false;
+  }
+
+  return isValid;
+}
+
+async function handleSubmit() {
+  if (!validateForm()) {
+    return;
+  }
   
-    try {
-      await api.post('api/auth/login/', {
-        email: email.value,
-        password: password.value,
-      });
+  isLoading.value = true;
+
+  try {
+    await api.post('api/auth/login/', {
+      email: email.value,
+      password: password.value,
+    });
 
       await authStore.checkAuth();
 
