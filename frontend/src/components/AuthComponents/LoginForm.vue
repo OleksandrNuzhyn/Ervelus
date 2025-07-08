@@ -5,12 +5,6 @@
         @submit.prevent="handleSubmit" 
         class="w-full max-w-md p-8 space-y-6 bg-gradient-to-b from-purple-965 via-purple-900 to-indigo-900 rounded-xl shadow-2xl text-gray-300"
       >
-        <div v-if="showConfirmBanner" class="mb-4 p-3 rounded bg-green-600 text-white text-sm">
-          We have sent a confirmation email. Please check your email.
-        </div>
-        <p v-if="resetSent" class="mb-4 p-3 rounded bg-green-600 text-white text-sm">Reset link has been sent. Check your e-mail.</p>
-        <p v-if="resetDone" class="mb-4 p-3 rounded bg-green-600 text-white text-sm">Password changed successfully. You shall pass.</p>
-
         <div class="text-center">
           <h2 class="text-3xl font-bold text white">Entrance to the Ervelus</h2>
           <p class="mt-2 text-gray-400">Inscribe your name to proceed</p>
@@ -69,10 +63,10 @@
   </template>
   
   <script setup>
-  import { ref, computed } from 'vue';
+  import { ref } from 'vue';
   import isEmail from 'validator/lib/isEmail';
   import { useAuthStore } from '@/stores/auth';
-  import { useRouter, useRoute } from 'vue-router';
+  import { useRouter } from 'vue-router';
   import api from '@/services/api';
   
   const email = ref('');
@@ -86,12 +80,7 @@
   
   const authStore = useAuthStore();
   const router = useRouter();
-  const route = useRoute();
 
-  const showConfirmBanner = computed(() => route.query.confirm === 'sent');
-  const resetSent = computed(() => route.query.reset === 'sent');
-  const resetDone = computed(() => route.query.reset === 'done');
-  
   function validateForm() {
     errors.value = { email: '', password: '', api: '' };
   
@@ -183,12 +172,3 @@
   }
 
   </script>
-
-  <style scoped>
-
-  @import url('https://fonts.googleapis.com/css2?family=Alegreya:wght@400;700&display=swap');
-  .font-alegreya {
-    font-family: 'Alegreya', serif;
-  }
-  
-  </style>

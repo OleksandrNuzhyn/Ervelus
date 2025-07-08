@@ -63,16 +63,4 @@ async function handleSubmit() {
     isLoading.value = false;
   }
 }
-// 
-// \/ прибрати тут таймер
-// надсилання імейлу через час лише на реєстраційній сторінці, тут не треба
-// таймер для api/auth/registration/resend-email/ 4хвилини (в реєстрації) 
-//коли вводиш нову пошту для ресету щою це могло бути + інші можливі варіанти UI  !((Django) не знає, за якою URL-адресою знаходиться сторінка підтвердження скидання пароля на вашому фронтенді.)
-//форматування кодів(назва змінних , переноси, коментарі)
-//logout 
-//google sign in 
-//створення сторінок password(2), dashboard, settings
-//(By continuing, you agree to DaVinci’s Terms of Use. Read our Privacy Policy
 </script>
-
-<style scoped></style>

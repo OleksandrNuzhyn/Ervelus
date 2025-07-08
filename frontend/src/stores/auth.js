@@ -15,7 +15,6 @@ export const useAuthStore = defineStore('auth', {
       this.loading = true;
       try {
         const { data } = await api.get('api/auth/user/');
-        console.log('User data from backend:', data);
         this.user = data;
       } 
       catch (error) {
