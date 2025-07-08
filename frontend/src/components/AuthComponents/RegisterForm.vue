@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center justify-center min-h-screen bg-gray-900 font-serif">
     <form
-      v-if="!registrationComplete"
+      v-if="!waitingEmailForm"
       @submit.prevent="handleSubmit"
       class="w-full max-w-md p-8 space-y-6 bg-gradient-to-b from-purple-965 via-purple-950 to-indigo-980 rounded-xl shadow-2xl text-gray-300"
       novalidate
@@ -113,7 +113,7 @@ const errors = ref({
   password2: '',
   api: '',
 });
-const registrationComplete = ref(false);
+const waitingEmailForm = ref(false);
 const canResend = ref(false);
 let timerId = null;
 
@@ -195,7 +195,7 @@ async function handleSubmit() {
       password1: password1.value,
       password2: password2.value,
     });
-    registrationComplete.value = true;
+    waitingEmailForm.value = true;
     startResendTimer();
   }
   catch (error) {
