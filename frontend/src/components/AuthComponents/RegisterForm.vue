@@ -200,30 +200,42 @@ async function handleSubmit() {
     startResendTimer();
   }
   catch (error) {
+    errors.value = { email: '', password1: '', password2: '', api: '' };
+
     if (error.response) {
       const { status, data = {} } = error.response;
 
-      if (data.email) errors.value.email = Array.isArray(data.email) ? data.email[0] : data.email;
-      if (data.password1) errors.value.password1 = Array.isArray(data.password1) ? data.password1[0] : data.password1;
-      if (data.non_field_errors) errors.value.api = data.non_field_errors[0];
-      else if (data.detail) errors.value.api = data.detail;
-      else {
-        switch (status) {
-          case 400:
-            errors.value.api = 'Invalid data. Please check fields.';
-            break;
-          case 409:
-            errors.value.api = 'A soul with that name is already wandering the Ervelus.';
-            break;
-          case 500:
-            errors.value.api = 'Internal Server Error. Please try again later.';
-            break;
-          default:
-            errors.value.api = 'Error ' + status + '. Try once more.';
-        }
+      switch (status) {
+        case 400:
+          if (data.email) {
+            errors.value.email = Array.isArray(data.email) ? data.email[0] : data.email;
+          }
+          if (data.password1) {
+            errors.value.password1 = Array.isArray(data.password1) ? data.password1[0] : data.password1;
+          }
+          if (data.password2) {
+            errors.value.password2 = Array.isArray(data.password2) ? data.password2[0] : data.password2;
+          }
+          if (data.non_field_errors) {
+            errors.value.api = Array.isArray(data.non_field_errors) ? data.non_field_errors[0] : data.non_field_errors;
+          }
+          if (!errors.value.email && !errors.value.password1 && !errors.value.password2 && !errors.value.api) {
+            errors.value.api = 'Invalid data provided. Please check your input.';
+          }
+          break;
+        
+        case 409:
+          errors.value.api ='A soul with this name is already wandering the Ervelus.';
+          break;
+
+        case 500:
+          errors.value.api ='Internal Server Error.';
+          break;
+
+        default:
+          errors.value.api = `An unexpected error occurred (Status: ${status}). Please try again.`;
       }
-    } 
-    else {
+    } else {
       errors.value.api = 'Unable to connect to the server. Please check your magic connection.';
     }
   } 
