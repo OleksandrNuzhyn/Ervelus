@@ -46,7 +46,7 @@
         <div>
           <button 
             type="submit"
-            :disabled="isLoading"
+            :disabled="isLoading || isGoogleLoading"
             class="w-full py-3 font-bold text-white transition duration-300 bg-gradient-to-r from-orange-500 to-orange-700 rounded-md hover:from-orange-600 hover:to-orange-800 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <span v-if="isLoading">Uncovering the truth...</span>
@@ -60,7 +60,9 @@
           <hr class="flex-grow border-gray-600"/>
         </div>
 
-        <div id="google-signin-button" class="flex justify-center"></div>
+        <div class="flex justify-center">
+          <GoogleLogin :callback="handleGoogleLoginSuccess" />
+        </div>
   
         <div class="text-right">
           <router-link to="/forgot-password" class="text-xs text-gray-400 hover:text-gray-200">Lost the keyword?</router-link>
@@ -68,10 +70,11 @@
   
       </form>
     </div>
-  </template>
+</template>
   
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref } from 'vue';
+import { GoogleLogin } from 'vue3-google-login';
 import isEmail from 'validator/lib/isEmail';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
@@ -85,48 +88,27 @@ const errors = ref({
   password: '',
   api: ''
 });
+const isGoogleLoading = ref(false);
 
 const authStore = useAuthStore();
 const router = useRouter();
 
-async function handleGoogleSignIn(response) {
-  isLoading.value = true;
+const handleGoogleLoginSuccess = async (response) => {
+  isGoogleLoading.value = true;
   errors.value.api = '';
   try {
-    await api.post('/api/auth/google/', {
+    await api.post('api/auth/google/', {
       token: response.credential
     });
     await authStore.checkAuth();
     router.push('/dashboard');
   } catch (error) {
-    console.error('Full error from:', error);
+    console.error('Error during Google Sign-In:', error);
     errors.value.api = error.response?.data?.detail || 'An error occurred during Google Sign-In.';
   } finally {
-    isLoading.value = false;
+    isGoogleLoading.value = false;
   }
-}
-
-onMounted(() => {
-  if (typeof google !== 'undefined') {
-    window.handleGoogleSignIn = handleGoogleSignIn;
-
-    google.accounts.id.initialize({
-      client_id: '843713679678-0uev2hp893rnt24bm6rujisimkfocqbv.apps.googleusercontent.com',
-      callback: handleGoogleSignIn
-    });
-
-    google.accounts.id.renderButton(
-      document.getElementById('google-signin-button'),
-      { theme: "outline", size: "large", type: 'standard', text: 'signin_with', logo_alignment: 'center' }
-    );
-  }
-});
-
-onUnmounted(() => {
-  if (window.handleGoogleSignIn) {
-    delete window.handleGoogleSignIn;
-  }
-});
+};
 
 function validateForm() {
   errors.value = { email: '', password: '', api: '' };
@@ -166,7 +148,7 @@ async function handleSubmit() {
       password: password.value,
     });
 
-      await authStore.checkAuth();
+    await authStore.checkAuth();
 
       router.push('/dashboard');
 
