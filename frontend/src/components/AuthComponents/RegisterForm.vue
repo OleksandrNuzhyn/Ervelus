@@ -141,11 +141,27 @@ async function handleResendEmail() {
     startResendTimer();
   } 
   catch (error) {
-    if (error.response && error.response.data && error.response.data.detail) {
-      errors.value.api = error.response.data.detail;
-    } 
-    else {
-      errors.value.api = 'An error occurred while resending the email.';
+    if (error.response) {
+      const { status, data = {} } = error.response;
+      switch (status) {
+        case 400:
+          if (data.email) {
+            errors.value.api = data.email[0];
+          } else if (data.detail) {
+            errors.value.api = data.detail[0];
+          } else {
+            errors.value.api = 'Invalid request. Please check your email address.';
+          }
+          break;
+        case 500:
+          errors.value.api = data.detail || 'Server Error Occured.';
+          break;
+        default:
+          console.error(`Unexpected error on resend: ${status}`, error.response);
+          errors.value.api = 'An unexpected error occurred while resending the email.';
+      }
+    } else {
+      errors.value.api = 'Unable to connect to the server. Please check your network connection.';
     }
   } 
   finally {

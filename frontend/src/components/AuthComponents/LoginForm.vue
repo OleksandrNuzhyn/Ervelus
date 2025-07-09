@@ -154,45 +154,29 @@ async function handleSubmit() {
 
     } 
     catch (error) {
+      errors.value = { email: '', password: '', api: '' };
       if (error.response) {
         const { status, data = {} } = error.response;
 
-        if (data.email) {
-          errors.value.email = Array.isArray(data.email) ? data.email[0] : data.email;
+        switch (status) {
+          case 400:
+            if (data.non_field_errors && data.non_field_errors.length > 0) {
+              errors.value.api = data.non_field_errors[0];
+            } else {
+              errors.value.api = 'Incorrect email or password. Please try again.';
+            }
+            break;
+
+          case 500:
+            errors.value.api = data.detail || 'Server Error Occured.';
+            break;
+            
+          default:
+            console.error(`Unexpected error status: ${status}`, error.response);
+            errors.value.api = 'An unexpected error occurred. Please try again.';
         }
-        if (data.password) {
-          errors.value.password = Array.isArray(data.password) ? data.password[0] : data.password;
-        }
-        if (data.detail) {
-          errors.value.api = data.detail;
-        } 
-        else if (Array.isArray(data.non_field_errors)) {
-          errors.value.api = data.non_field_errors[0];
-        } 
-        else {
-          switch (status) {
-            case 400:
-              errors.value.api = 'Incorrect email or password.';
-              break;
-            case 401:
-              errors.value.api = 'Not authorized. Check your credentials.';
-              break;
-            case 403:
-              errors.value.api = 'Access denied. Not enough access rights.';
-              break;
-            case 404:
-              errors.value.api = 'What you seek is lost';
-              break;
-            case 500:
-              errors.value.api = 'Internal server error. Seek again later.';
-              break;
-            default:
-              errors.value.api = 'An error occurred. Try once more';
-          }
-        }
-      } 
-      else {
-        errors.value.api = 'Unable to connect to the server. Please check your magic connection.';
+      } else {
+        errors.value.api = 'Unable to connect to the server. Please check your network connection.';
       }
     }
      finally {

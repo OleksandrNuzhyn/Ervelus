@@ -69,22 +69,41 @@
       router.push({ path: '/login', query: { reset: 'done' } }); 
     } 
     catch (error) {
-      if (error.response && error.response.data) {
-        const d_err = error.response.data;
-        if (d_err.new_password2) {
-          errors.value.password2 = Array.isArray(d_err.new_password2)
-            ? d_err.new_password2[0]
-            : d_err.new_password2;
-        } 
-        else if (d_err.detail) {
-          errors.value.api = 'The enchanted link is faded. Seek a new one';
-        } 
-        else {
-          errors.value.api = 'Server error.';
+      errors.value = { password1: '', password2: '', api: '' };
+
+      if (error.response) {
+        const { status, data = {} } = error.response;
+
+        switch (status) {
+          case 400:
+            if (data.new_password1) {
+              errors.value.password1 = Array.isArray(data.new_password1) ? data.new_password1[0] : data.new_password1;
+            }
+            if (data.new_password2) {
+              errors.value.password2 = Array.isArray(data.new_password2) ? data.new_password2[0] : data.new_password2;
+            }
+            if (data.token) {
+              errors.value.api = Array.isArray(data.token) ? data.token[0] : data.token;
+            } 
+            else if (data.non_field_errors) {
+              errors.value.api = Array.isArray(data.non_field_errors) ? data.non_field_errors[0] : data.non_field_errors;
+            } 
+            else if (data.detail) {
+               errors.value.api = data.detail;
+            }
+            break;
+          case 500:
+            errors.value.api = data.detail || 'Server Error Occured.';
+            
+            break;
+
+          default:
+            console.error(`Unexpected error status: ${status}`, error.response);
+            errors.value.api = 'An unexpected error occurred.';
         }
       } 
       else {
-        errors.value.api = 'Network error.';
+        errors.value.api = 'Unable to connect to the server. Please check your magic connection.';
       }
     } 
     finally {

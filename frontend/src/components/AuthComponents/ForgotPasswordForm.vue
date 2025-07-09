@@ -57,7 +57,19 @@ async function handleSubmit() {
     sent.value = true;
   } 
   catch (err) {
-    error.value = 'Something went wrong.';
+    if (err.response) {
+      const { status, data = {} } = err.response;
+      switch (status) {
+        case 500:
+          error.value = data.detail || 'A server error occurred.';
+          break;
+        default:
+          console.error(`Unexpected error status: ${status}`, err.response);
+          error.value = 'An unexpected error occurred.';
+      }
+    } else {
+      error.value = 'Unable to connect to the server. Please check your magic connection.';
+    }
   } 
   finally {
     isLoading.value = false;
