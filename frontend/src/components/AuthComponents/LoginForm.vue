@@ -46,22 +46,12 @@
         <div>
           <button 
             type="submit"
-            :disabled="isLoading || isGoogleLoading"
+            :disabled="isLoading"
             class="w-full py-3 font-bold text-white transition duration-300 bg-gradient-to-r from-orange-500 to-orange-700 rounded-md hover:from-orange-600 hover:to-orange-800 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <span v-if="isLoading">Uncovering the truth...</span>
             <span v-else>Log in</span>
           </button>
-        </div>
-        
-        <div class="flex items-center">
-          <hr class="flex-grow border-gray-600"/>
-          <span class="mx-4 text-xs text-gray-400">OR</span>
-          <hr class="flex-grow border-gray-600"/>
-        </div>
-
-        <div class="flex justify-center">
-          <GoogleLogin :callback="handleGoogleLoginSuccess" />
         </div>
   
         <div class="text-right">
@@ -74,7 +64,6 @@
   
 <script setup>
 import { ref } from 'vue';
-import { GoogleLogin } from 'vue3-google-login';
 import isEmail from 'validator/lib/isEmail';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
@@ -88,27 +77,9 @@ const errors = ref({
   password: '',
   api: ''
 });
-const isGoogleLoading = ref(false);
 
 const authStore = useAuthStore();
 const router = useRouter();
-
-const handleGoogleLoginSuccess = async (response) => {
-  isGoogleLoading.value = true;
-  errors.value.api = '';
-  try {
-    await api.post('api/auth/google/', {
-      token: response.credential
-    });
-    await authStore.checkAuth();
-    router.push('/dashboard');
-  } catch (error) {
-    console.error('Error during Google Sign-In:', error);
-    errors.value.api = error.response?.data?.detail || 'An error occurred during Google Sign-In.';
-  } finally {
-    isGoogleLoading.value = false;
-  }
-};
 
 function validateForm() {
   errors.value = { email: '', password: '', api: '' };
