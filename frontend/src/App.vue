@@ -5,5 +5,17 @@
 </template>
 
   <script setup>
-  import { RouterView } from 'vue-router'
+  import { onMounted } from 'vue';
+  import { RouterView } from 'vue-router';
+  import { useAuthStore } from '@/stores/auth';
+
+  onMounted(async () => {
+    const authStore = useAuthStore();
+    try {
+      await authStore.checkAuth();
+    } 
+    catch (error) {
+      console.error("Error during initial auth check in App.vue:", error);
+    }
+  });
   </script>

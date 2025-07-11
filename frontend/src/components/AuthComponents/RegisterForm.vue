@@ -69,6 +69,9 @@
           <span v-else>Confirm</span>
         </button>
       </div>
+      <div class="text-center mt-2">
+        <router-link to="/login" class="text-xs text-gray-400 hover:text-gray-200">Already have an account? Log in</router-link>
+      </div>
     </form>
 
     <div

@@ -34,17 +34,20 @@ async function handleLogout() {
   catch (err) {
     if (err.response) {
       const { status, data = {} } = err.response;
-      if (status === 401) {// як можна вийти без аутентифікації?
+      if (status === 401) {
         console.warn('Logout failed: User was not authenticated on the server.');
         authStore.$reset();
         router.push({ name: 'login' });
-      } else if (status === 500) {
+      } 
+      else if (status === 500) {
         error.value = data.detail || 'Server error, could not log out. Please try again.';
-      } else {
+      } 
+      else {
         console.error(`Unexpected error on logout: ${status}`, err.response);
         error.value = 'An unexpected error occurred during logout.';
       }
-    } else {
+    } 
+    else {
       error.value = 'Network error. Please check your connection and try again.';
     }
   } 

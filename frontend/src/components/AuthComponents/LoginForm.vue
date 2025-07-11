@@ -57,6 +57,10 @@
         <div class="text-right">
           <router-link to="/forgot-password" class="text-xs text-gray-400 hover:text-gray-200">Lost the keyword?</router-link>
         </div>
+        <div class="text-right mt-2">
+          <span class="text-xs text-gray-400">Don't have an account? </span>
+          <router-link to="/register" class="text-xs text-orange-400 hover:text-orange-200">Register here</router-link>
+        </div>
   
       </form>
     </div>
@@ -121,7 +125,7 @@ async function handleSubmit() {
 
     await authStore.checkAuth();
 
-      router.push('/dashboard');
+    router.push('/dashboard');
 
     } 
     catch (error) {

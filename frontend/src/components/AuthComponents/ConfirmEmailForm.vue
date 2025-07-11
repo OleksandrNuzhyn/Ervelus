@@ -50,14 +50,14 @@ onMounted(async () => {
   success.value = false;
 
   try {
-    await api.post('api/auth/registration/verify-email/', { key: token });
+    await api.post('/api/auth/registration/verify-email/', { key: token });
     success.value = true;
     
     await authStore.checkAuth();
     
     setTimeout(() => {
       router.push('/dashboard');
-    }, 1000);
+    }, 2000);
 
   } catch (err) {
     if (err.response && err.response.data && err.response.data.detail) {
