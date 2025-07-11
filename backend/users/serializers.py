@@ -3,6 +3,9 @@ from dj_rest_auth.serializers import LoginSerializer
 from rest_framework import serializers
 from allauth.account.models import EmailAddress
 from allauth.account.utils import send_email_confirmation
+from django.db import transaction
+from .models import UserProfile
+
 
 class CustomRegisterSerializer(RegisterSerializer):
     username = None
@@ -19,5 +22,11 @@ class CustomRegisterSerializer(RegisterSerializer):
         
         return email
 
+    @transaction.atomic
+    def save(self, request):
+        user = super().save(request)
+        UserProfile.objects.create(user=user)
+        return user
+
 class CustomLoginSerializer(LoginSerializer):
-    username = None 
+    username = None
