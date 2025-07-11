@@ -146,7 +146,7 @@ async function handleResendEmail() {
       switch (status) {
         case 400:
           if (data.email) {
-            errors.value.api = data.email[0];
+            errors.value.api = Array.isArray(data.email) ? data.email[0] : data.email;
           } else if (data.detail) {
             errors.value.api = data.detail[0];
           } else {
