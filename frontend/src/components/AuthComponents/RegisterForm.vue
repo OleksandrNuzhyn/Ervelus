@@ -8,11 +8,11 @@
     >
       <div class="text-center">
         <h2 class="text-3xl font-bold text-white">Join the Ervelus</h2>
-        <p class="mt-2 text-gray-400">Create an account</p>
+        <p class="mt-2 text-gray-300">Create an account</p>
       </div>
 
       <div>
-        <label for="reg-email" class="block text-sm font-semibold text-gray-400">Email</label>
+        <label for="reg-email" class="block text-sm font-semibold text-gray-200">Email</label>
         <input
           id="reg-email"
           type="email"
@@ -22,38 +22,44 @@
           minlength="5"
           maxlength="254"
           inputmode="email"
-          class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+          class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
         />
         <p v-if="errors.email" class="mt-1 text-sm text-red-400">{{ errors.email }}</p>
       </div>
 
       <div>
-        <label for="reg-pass1" class="block text-sm font-semibold text-gray-400">Password</label>
-        <input
-          id="reg-pass1"
-          type="password"
-          v-model="password1"
-          placeholder="••••••••"
-          required
-          minlength="8"
-          autocomplete="new-password"
-          class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-        />
+        <label for="reg-pass1" class="block text-sm font-semibold text-gray-200">Password</label>
+        <div class="relative">
+          <input
+            id="reg-pass1"
+            :type="password1FieldType"
+            v-model="password1"
+            placeholder="••••••••"
+            required
+            minlength="8"
+            autocomplete="new-password"
+            class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 pr-12"
+          />
+          <img :src="password1Icon" @click="togglePassword1Visibility" class="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-8 cursor-pointer" alt="Toggle password visibility" />
+        </div>
         <p v-if="errors.password1" class="mt-1 text-sm text-red-400">{{ errors.password1 }}</p>
       </div>
 
       <div>
-        <label for="reg-pass2" class="block text-sm font-semibold text-gray-400">Confirm Password</label>
-        <input
-          id="reg-pass2"
-          type="password"
-          v-model="password2"
-          placeholder="••••••••"
-          required
-          minlength="8"
-          autocomplete="new-password"
-          class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-        />
+        <label for="reg-pass2" class="block text-sm font-semibold text-gray-200">Confirm Password</label>
+        <div class="relative">
+          <input
+            id="reg-pass2"
+            :type="password2FieldType"
+            v-model="password2"
+            placeholder="••••••••"
+            required
+            minlength="8"
+            autocomplete="new-password"
+            class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 pr-12"
+          />
+          <img :src="password2Icon" @click="togglePassword2Visibility" class="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-8 cursor-pointer" alt="Toggle password visibility" />
+        </div>
         <p v-if="errors.password2" class="mt-1 text-sm text-red-400">{{ errors.password2 }}</p>
       </div>
 
@@ -69,6 +75,31 @@
           <span v-else>Confirm</span>
         </button>
       </div>
+
+      <div class="relative flex items-center py-2">
+        <div class="flex-grow border-t border-gray-600"></div>
+        <span class="flex-shrink mx-4 text-gray-400">Or</span>
+        <div class="flex-grow border-t border-gray-600"></div>
+      </div>
+
+      <div>
+        <button
+          type="button"
+          @click="googleLogin"
+          :disabled="!isReady || isGoogleLoading"
+          class="w-full py-3 font-bold text-white transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-sky-500/40 backdrop-blur-md border border-white/20 shadow-lg hover:bg-sky-500/15 flex items-center justify-center gap-2"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M47.532 24.552C47.532 22.92 47.388 21.288 47.076 19.728H24.48V28.944H37.476C36.9 31.932 35.244 34.524 32.844 36.132V42.012H40.728C45.024 38.016 47.532 31.86 47.532 24.552Z" fill="#4285F4"/>
+            <path d="M24.48 48.0001C31.068 48.0001 36.636 45.8281 40.728 42.0121L32.844 36.1321C30.588 37.6921 27.756 38.6281 24.48 38.6281C18.156 38.6281 12.792 34.3321 11.016 28.5961H3.012V34.6681C7.032 42.6601 15.192 48.0001 24.48 48.0001Z" fill="#34A853"/>
+            <path d="M11.016 28.596C10.536 27.108 10.272 25.548 10.272 23.988C10.272 22.428 10.536 20.868 11.016 19.38L3.012 13.308C1.128 17.1 0 21.396 0 23.988C0 26.58 1.128 30.876 3.012 34.668L11.016 28.596Z" fill="#FBBC05"/>
+            <path d="M24.48 9.36C28.116 9.36 31.32 10.608 33.72 12.876L40.944 5.652C36.636 1.956 31.068 0 24.48 0C15.192 0 7.032 5.34 3.012 13.308L11.016 19.38C12.792 13.644 18.156 9.36 24.48 9.36Z" fill="#EA4335"/>
+          </svg>
+          <span v-if="isGoogleLoading">Please wait...</span>
+          <span v-else>Sign up with Google</span>
+        </button>
+      </div>
+
       <div class="text-center mt-2">
         <router-link to="/login" class="text-xs text-gray-400 hover:text-gray-200">Already have an account? Log in</router-link>
       </div>
@@ -101,15 +132,22 @@
 </template>
 
 <script setup>
-import { ref, onUnmounted } from 'vue';
+import { ref, onUnmounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useTokenClient } from "vue3-google-signin";
+import { useAuthStore } from '@/stores/auth';
 import api from '@/services/api';
 import isEmail from 'validator/lib/isEmail';
+import eye_of_sauron from '@/assets/eye_of_sauron.svg';
+import eye_of_sauron_looking from '@/assets/eye_of_sauron_looking.svg';
 
 const email = ref('');
 const password1 = ref('');
 const password2 = ref('');
 const isLoading = ref(false);
+const isGoogleLoading = ref(false);
+const showPassword1 = ref(false);
+const showPassword2 = ref(false);
 const errors = ref({
   email: '',
   password1: '',
@@ -121,6 +159,48 @@ const canResend = ref(false);
 let timerId = null;
 
 const router = useRouter();
+const authStore = useAuthStore();
+
+const password1FieldType = computed(() => showPassword1.value ? 'text' : 'password');
+const password1Icon = computed(() => showPassword1.value ? eye_of_sauron_looking : eye_of_sauron);
+
+const password2FieldType = computed(() => showPassword2.value ? 'text' : 'password');
+const password2Icon = computed(() => showPassword2.value ? eye_of_sauron_looking : eye_of_sauron);
+
+function togglePassword1Visibility() {
+  showPassword1.value = !showPassword1.value;
+}
+
+function togglePassword2Visibility() {
+  showPassword2.value = !showPassword2.value;
+}
+
+const { isReady, login: googleLogin } = useTokenClient({
+  scope: 'email',
+  onSuccess: handleGoogleSuccess,
+  onError: handleGoogleError,
+});
+
+async function handleGoogleSuccess(response) {
+  isGoogleLoading.value = true;
+  errors.value.api = '';
+  const accessToken = response.access_token;
+  try {
+    await api.post('api/auth/google/', { access_token: accessToken });
+    await authStore.checkAuth();
+    router.push('/dashboard');
+  } catch (error) {
+    console.error('Google sign-up failed', error);
+    errors.value.api = error.response?.data?.detail || 'Google sign-up failed.';
+  } finally {
+    isGoogleLoading.value = false;
+  }
+}
+
+function handleGoogleError() {
+  console.error('Google sign-up failed');
+  errors.value.api = 'Google sign-up process failed. Please try again.';
+}
 
 function startResendTimer() {
   canResend.value = false;
@@ -205,7 +285,7 @@ function validateForm() {
 
   return isValid;
 }
-
+//where is CheckAuth?
 async function handleSubmit() {
   if (!validateForm()) return;
   isLoading.value = true;
@@ -278,9 +358,12 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.75) !important;
+  background-color: rgba(10, 10, 10, 0.3) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 2rem;
-  font-family: 'serif';
-  color: #d1d5db;
+  font-family: 'Manrope', sans-serif;
+  color: #e5e7eb;
 }
 </style>

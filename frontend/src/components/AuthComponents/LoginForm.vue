@@ -54,6 +54,24 @@
           </button>
         </div>
   
+        <div class="relative flex items-center py-2">
+            <div class="flex-grow border-t border-gray-600"></div>
+            <span class="flex-shrink mx-4 text-gray-400">Or</span>
+            <div class="flex-grow border-t border-gray-600"></div>
+        </div>
+
+        <div>
+            <button
+                type="button"
+                @click="login"
+                :disabled="!isReady || isGoogleLoading"
+                class="w-full py-3 font-bold text-white transition duration-300 bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+                <span v-if="isGoogleLoading">Please wait...</span>
+                <span v-else>Sign in with Google</span>
+            </button>
+        </div>
+
         <div class="text-right">
           <router-link to="/forgot-password" class="text-xs text-gray-400 hover:text-gray-200">Lost the keyword?</router-link>
         </div>
@@ -68,6 +86,7 @@
   
 <script setup>
 import { ref } from 'vue';
+import { useTokenClient } from "vue3-google-signin";
 import isEmail from 'validator/lib/isEmail';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
@@ -76,6 +95,7 @@ import api from '@/services/api';
 const email = ref('');
 const password = ref('');
 const isLoading = ref(false);
+const isGoogleLoading = ref(false);
 const errors = ref({
   email: '',
   password: '',
@@ -84,6 +104,33 @@ const errors = ref({
 
 const authStore = useAuthStore();
 const router = useRouter();
+
+const { isReady, login } = useTokenClient({
+  scope: 'email',
+  onSuccess: handleLoginSuccess,
+  onError: handleLoginError,
+});
+
+async function handleLoginSuccess(response) {
+  isGoogleLoading.value = true;
+  errors.value.api = '';
+  const accessToken = response.access_token;
+  try {
+    await api.post('api/auth/google/', { access_token: accessToken });
+    await authStore.checkAuth();
+    router.push('/dashboard');
+  } catch (error) {
+    console.error('Google login failed', error);
+    errors.value.api = error.response?.data?.detail || 'Google sign-in failed.';
+  } finally {
+    isGoogleLoading.value = false;
+  }
+}
+
+function handleLoginError() {
+  console.error('Login failed');
+  errors.value.api = 'Google sign-in failed.';
+}
 
 function validateForm() {
   errors.value = { email: '', password: '', api: '' };
