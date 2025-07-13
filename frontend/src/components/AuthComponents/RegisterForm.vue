@@ -1,9 +1,9 @@
 <template>
-  <div class="flex items-center justify-center min-h-screen bg-gray-900 font-serif">
+  <div class="form-container">
     <form
       v-if="!waitingEmailForm"
       @submit.prevent="handleSubmit"
-      class="w-full max-w-md p-8 space-y-6 bg-gradient-to-b from-purple-965 via-purple-950 to-indigo-980 rounded-xl shadow-2xl text-gray-300"
+      class="space-y-6"
       novalidate
     >
       <div class="text-center">
@@ -63,7 +63,7 @@
         <button
           type="submit"
           :disabled="isLoading"
-          class="w-full py-3 font-bold text-white transition duration-300 bg-gradient-to-r from-orange-500 to-orange-700 rounded-md hover:from-orange-600 hover:to-orange-800 disabled:opacity-60 disabled:cursor-not-allowed"
+          class="w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-white/60 backdrop-blur-md border border-white/20 shadow-lg hover:bg-white/20"
         >
           <span v-if="isLoading">Creating…</span>
           <span v-else>Confirm</span>
@@ -76,7 +76,7 @@
 
     <div
       v-else
-      class="w-full max-w-md p-8 space-y-6 bg-gradient-to-b from-purple-965 via-purple-950 to-indigo-980 rounded-xl shadow-2xl text-white text-center"
+      class="space-y-6 text-center"
     >
       <h2 class="text-2xl font-bold">Confirm your Email</h2>
       <p class="text-gray-400">
@@ -90,7 +90,7 @@
       <button
         @click="handleResendEmail"
         :disabled="!canResend || isLoading"
-        class="w-full py-3 font-bold text-white transition duration-300 bg-gradient-to-r from-orange-500 to-orange-700 rounded-md hover:from-orange-600 hover:to-orange-800 disabled:opacity-60 disabled:cursor-not-allowed"
+        class="w-full py-3 font-bold text-white transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-white/10 backdrop-blur-md border border-white/20 shadow-lg hover:bg-white/20"
       >
         <span v-if="isLoading">Sending...</span>
         <span v-else>Resend Confirmation Email</span>
@@ -270,3 +270,17 @@ onUnmounted(() => {
 });
 
 </script>
+
+<style scoped>
+.form-container {
+  height: 100%;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.75) !important;
+  padding: 2rem;
+  font-family: 'serif';
+  color: #d1d5db;
+}
+</style>
