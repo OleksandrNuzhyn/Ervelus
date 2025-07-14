@@ -21,7 +21,7 @@
             minlength="5"
             maxlength="254"
             inputmode="email"
-            class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+            class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
           <p v-if="errors.email" class="mt-1 text-sm text-red-400">{{ errors.email }}</p>
         </div>
@@ -36,9 +36,9 @@
               required
               minlength="8"
               autocomplete="current-password"
-              class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 pr-12"
+              class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 pr-12"
             />
-            <img :src="passwordIcon" @click="togglePasswordVisibility" class="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-8 cursor-pointer" alt="Toggle password visibility" />
+            <img :src="passwordIcon" @click="togglePasswordVisibility" class="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-16 ursor-pointer transition-all duration-300" :class="showPassword ? 'opacity-100 glowing-eye' : 'opacity-40'" alt="Toggle password visibility" />
           </div>
           <p v-if="errors.password" class="mt-1 text-sm text-red-400">{{ errors.password }}</p>
         </div>
@@ -98,8 +98,8 @@ import isEmail from 'validator/lib/isEmail';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import api from '@/services/api';
-import eye_of_sauron from '@/assets/eye_of_sauron.svg';
-import eye_of_sauron_looking from '@/assets/eye_of_sauron_looking.svg';
+import eye_of_sauron from '@/assets/geralt_closed.svg';
+import eye_of_sauron_looking from '@/assets/geralt_looking.svg';
 
 const email = ref('');
 const password = ref('');
@@ -227,16 +227,32 @@ async function handleSubmit() {
 <style scoped>
 .form-container {
   height: 100%;
-  width: 90%;
+  width: 67%;
+  margin-left: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   background-color: rgba(10, 10, 10, 0.3) !important;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 0 100px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   padding: 2rem;
   font-family: 'Manrope', sans-serif;
   color: #e5e7eb;
+  mask-image: radial-gradient(ellipse at center, black 50%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 65%, transparent 100%);
+}
+
+.glowing-eye {
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 12px rgba(77, 188, 255, 0.5));
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-text-fill-color: #e5e7eb !important;
+    -webkit-box-shadow: 0 0 0px 1000px #374151 inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+    font-family: 'Manrope', sans-serif;
 }
 </style>

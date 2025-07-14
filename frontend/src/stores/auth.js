@@ -5,6 +5,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
     loading: false,
+    authChecked: false,
   }),
 
   getters: {
@@ -22,6 +23,7 @@ export const useAuthStore = defineStore('auth', {
       }
       finally {
         this.loading = false;
+        this.authChecked = true;
       }
     },
   },

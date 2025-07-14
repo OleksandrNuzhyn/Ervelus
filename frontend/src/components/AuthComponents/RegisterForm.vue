@@ -37,9 +37,9 @@
             required
             minlength="8"
             autocomplete="new-password"
-            class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 pr-12"
+            class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 pr-14"
           />
-          <img :src="password1Icon" @click="togglePassword1Visibility" class="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-8 cursor-pointer" alt="Toggle password visibility" />
+          <img :src="password1Icon" @click="togglePassword1Visibility" class="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-16 cursor-pointer transition-all duration-300" :class="showPassword1 ? 'opacity-100 glowing-eye' : 'opacity-40'" alt="Toggle password visibility" />
         </div>
         <p v-if="errors.password1" class="mt-1 text-sm text-red-400">{{ errors.password1 }}</p>
       </div>
@@ -54,9 +54,9 @@
             required
             minlength="8"
             autocomplete="new-password"
-            class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 pr-12"
+            class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 pr-14"
           />
-          <img :src="password2Icon" @click="togglePassword2Visibility" class="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-8 cursor-pointer" alt="Toggle password visibility" />
+          <img :src="password2Icon" @click="togglePassword2Visibility" class="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-16 cursor-pointer transition-all duration-300" :class="showPassword2 ? 'opacity-100 glowing-eye' : 'opacity-40'" alt="Toggle password visibility" />
         </div>
         <p v-if="errors.password2" class="mt-1 text-sm text-red-400">{{ errors.password2 }}</p>
       </div>
@@ -136,8 +136,8 @@ import { useTokenClient } from "vue3-google-signin";
 import { useAuthStore } from '@/stores/auth';
 import api from '@/services/api';
 import isEmail from 'validator/lib/isEmail';
-import eye_of_sauron from '@/assets/eye_of_sauron.svg';
-import eye_of_sauron_looking from '@/assets/eye_of_sauron_looking.svg';
+import eye_of_sauron from '@/assets/geralt_closed.svg';
+import eye_of_sauron_looking from '@/assets/geralt_looking.svg';
 
 const email = ref('');
 const password1 = ref('');
@@ -352,16 +352,27 @@ onUnmounted(() => {
 <style scoped>
 .form-container {
   height: 100%;
-  width: 90%;
+  width: 67%;
+  margin-left: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   background-color: rgba(10, 10, 10, 0.3) !important;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 0 100px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   padding: 2rem;
   font-family: 'Manrope', sans-serif;
   color: #e5e7eb;
+  mask-image: radial-gradient(ellipse at center, black 50%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 65%, transparent 100%);
+}
+
+.password-toggle-icon {
+  opacity: 0.6;
+  transition: opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
+}
+
+.glowing-eye {
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 12px rgba(77, 188, 255, 0.5));
 }
 </style>

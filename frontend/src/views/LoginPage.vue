@@ -14,7 +14,7 @@ import LoginForm from '@/components/AuthComponents/LoginForm.vue';
 
 <style scoped>
 .background-container {
-  background-image: url('@/assets/register.png');
+  background-image: url('@/assets/register.jpg');
   background-size: cover;
   background-position: center;
   min-height: 100vh;
