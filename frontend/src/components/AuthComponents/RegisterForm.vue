@@ -34,7 +34,6 @@
             id="reg-pass1"
             :type="password1FieldType"
             v-model="password1"
-            placeholder="••••••••"
             required
             minlength="8"
             autocomplete="new-password"
@@ -52,7 +51,6 @@
             id="reg-pass2"
             :type="password2FieldType"
             v-model="password2"
-            placeholder="••••••••"
             required
             minlength="8"
             autocomplete="new-password"
@@ -361,7 +359,7 @@ onUnmounted(() => {
   background-color: rgba(10, 10, 10, 0.3) !important;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 100px rgba(0, 0, 0, 0.5);
   padding: 2rem;
   font-family: 'Manrope', sans-serif;
   color: #e5e7eb;
