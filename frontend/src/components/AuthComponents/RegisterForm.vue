@@ -39,7 +39,7 @@
             autocomplete="new-password"
             class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 pr-14"
           />
-          <img :src="password1Icon" @click="togglePassword1Visibility" class="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-16 cursor-pointer transition-all duration-300" :class="showPassword1 ? 'opacity-100 glowing-eye' : 'opacity-40'" alt="Toggle password visibility" />
+          <img :src="password1Icon" @click="togglePassword1Visibility" draggable="false" class="select-none absolute right-1 top-1/2 -translate-y-1/2 mt-1 h-10 w-16 cursor-pointer transition-all duration-300" :class="showPassword1 ? 'opacity-100 glowing-eye' : 'opacity-35'" alt="Toggle password visibility" />
         </div>
         <p v-if="errors.password1" class="mt-1 text-sm text-red-400">{{ errors.password1 }}</p>
       </div>
@@ -56,18 +56,36 @@
             autocomplete="new-password"
             class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 pr-14"
           />
-          <img :src="password2Icon" @click="togglePassword2Visibility" class="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-16 cursor-pointer transition-all duration-300" :class="showPassword2 ? 'opacity-100 glowing-eye' : 'opacity-40'" alt="Toggle password visibility" />
+          <img :src="password2Icon" @click="togglePassword2Visibility" draggable="false" class="select-none absolute right-1 top-1/2 -translate-y-1/2 mt-1 h-10 w-16 cursor-pointer transition-all duration-300" :class="showPassword2 ? 'opacity-100 glowing-eye' : 'opacity-35'" alt="Toggle password visibility" />
         </div>
         <p v-if="errors.password2" class="mt-1 text-sm text-red-400">{{ errors.password2 }}</p>
       </div>
 
       <p v-if="errors.api" class="text-center text-red-400">{{ errors.api }}</p>
 
+      <div class="space-y-4">
+        <div class="flex items-center">
+          <input
+            id="terms-checkbox"
+            type="checkbox"
+            v-model="agreedToTerms"
+            class="h-4 w-4 rounded border-gray-300 text-sky-500 focus:ring-sky-500"
+          />
+          <label for="terms-checkbox" class="ml-3 block text-sm text-gray-300">
+            I agree to the
+            <router-link to="/terms-of-service" target="_blank" class="font-medium text-sky-500 hover:text-sky-300">Terms of Service</router-link>
+            and
+            <router-link to="/privacy-policy" target="_blank" class="font-medium text-sky-500 hover:text-sky-300">Privacy Policy</router-link>.
+          </label>
+        </div>
+        <p v-if="errors.terms" class="mt-1 text-sm text-red-400">{{ errors.terms }}</p>
+      </div>
+
       <div>
         <button
           type="submit"
-          :disabled="isLoading"
-          class="w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-white/60 backdrop-blur-md border border-white/20 shadow-lg hover:bg-white/20"
+          :disabled="isLoading || !agreedToTerms"
+          class="w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md disabled:opacity-40 disabled:cursor-not-allowed bg-white/60 backdrop-blur-md border border-white/20 shadow-lg hover:bg-white/20"
         >
           <span v-if="isLoading">Creating…</span>
           <span v-else>Confirm</span>
@@ -84,8 +102,8 @@
         <button
           type="button"
           @click="googleLogin"
-          :disabled="!isReady || isGoogleLoading"
-          class="w-full py-3 font-bold text-white transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-sky-500/40 backdrop-blur-md border border-white/20 shadow-lg hover:bg-sky-500/15 flex items-center justify-center gap-2"
+          :disabled="!isReady || isGoogleLoading || !agreedToTerms"
+          class="w-full py-3 font-bold text-white transition duration-300 rounded-md disabled:opacity-45 disabled:cursor-not-allowed bg-sky-500/40 backdrop-blur-md border border-white/20 shadow-lg hover:bg-sky-500/15 flex items-center justify-center gap-2"
         >
           <svg class="w-5 h-5" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M47.532 24.552C47.532 22.92 47.388 21.288 47.076 19.728H24.48V28.944H37.476C36.9 31.932 35.244 34.524 32.844 36.132V42.012H40.728C45.024 38.016 47.532 31.86 47.532 24.552Z" fill="#4285F4"/>
@@ -99,7 +117,8 @@
       </div>
 
       <div class="text-center mt-2">
-        <router-link to="/login" class="text-xs text-gray-400 hover:text-gray-200">Already have an account? Log in</router-link>
+        <span class="text-sm text-gray-400">Already have an account? </span>
+        <router-link to="/login" draggable="false" class="text-sm text-orange-400 hover:text-orange-200">Log in</router-link>
       </div>
     </form>
 
@@ -146,11 +165,13 @@ const isLoading = ref(false);
 const isGoogleLoading = ref(false);
 const showPassword1 = ref(false);
 const showPassword2 = ref(false);
+const agreedToTerms = ref(false);
 const errors = ref({
   email: '',
   password1: '',
   password2: '',
   api: '',
+  terms: '',
 });
 const waitingEmailForm = ref(false);
 const canResend = ref(false);
@@ -180,6 +201,10 @@ const { isReady, login: googleLogin } = useTokenClient({
 });
 
 async function handleGoogleSuccess(response) {
+  if (!agreedToTerms.value) {
+    errors.value.terms = 'You shall not pass without accepting the terms of service.';
+    return;
+  }
   isGoogleLoading.value = true;
   errors.value.api = '';
   const accessToken = response.access_token;
@@ -251,8 +276,13 @@ async function handleResendEmail() {
 }
 
 function validateForm() {
-  errors.value = { email: '', password1: '', password2: '', api: '' };
+  errors.value = { email: '', password1: '', password2: '', api: '', terms: '' };
   let isValid = true;
+
+  if (!agreedToTerms.value) {
+    errors.value.terms = 'You shall not pass without accepting the terms of service..';
+    isValid = false;
+  }
 
   if (!email.value) {
     errors.value.email = 'Email is required.';
@@ -283,7 +313,7 @@ function validateForm() {
 
   return isValid;
 }
-//where is CheckAuth?
+
 async function handleSubmit() {
   if (!validateForm()) return;
   isLoading.value = true;
@@ -297,7 +327,7 @@ async function handleSubmit() {
     startResendTimer();
   }
   catch (error) {
-    errors.value = { email: '', password1: '', password2: '', api: '' };
+    errors.value = { email: '', password1: '', password2: '', api: '', terms: '' };
 
     if (error.response) {
       const { status, data = {} } = error.response;
@@ -374,5 +404,13 @@ onUnmounted(() => {
 
 .glowing-eye {
   filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 12px rgba(77, 188, 255, 0.5));
+  animation: shake-subtle 1.7s ease-in-out infinite;
+}
+@keyframes shake-subtle {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-1.3px, -1.3px); }
+    40% { transform: translate(1.7px, 0.8px); }
+    60% { transform: translate(-1px, 1.5px); }
+    80% { transform: translate(1.7px, -1.3px); }
 }
 </style>

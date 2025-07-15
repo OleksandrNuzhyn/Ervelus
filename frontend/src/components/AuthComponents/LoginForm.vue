@@ -38,7 +38,7 @@
               autocomplete="current-password"
               class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 pr-12"
             />
-            <img :src="passwordIcon" @click="togglePasswordVisibility" class="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-16 ursor-pointer transition-all duration-300" :class="showPassword ? 'opacity-100 glowing-eye' : 'opacity-40'" alt="Toggle password visibility" />
+            <img :src="passwordIcon" @click="togglePasswordVisibility" draggable="false" class="select-none absolute right-1 top-1/2 -translate-y-1/2 mt-1 h-10 w-16 cursor-pointer transition-all duration-300" :class="showPassword ? 'opacity-100 glowing-eye' : 'opacity-35'" alt="Toggle password visibility" />
           </div>
           <p v-if="errors.password" class="mt-1 text-sm text-red-400">{{ errors.password }}</p>
         </div>
@@ -81,11 +81,11 @@
         </div>
 
         <div class="text-right">
-          <router-link to="/forgot-password" class="text-xs text-gray-400 hover:text-gray-200">Lost the keyword?</router-link>
+          <router-link to="/forgot-password" draggable="false" class="text-sm text-gray-400 hover:text-gray-200">Lost the keyword?</router-link>
         </div>
-        <div class="text-right mt-2">
-          <span class="text-xs text-gray-400">Don't have an account? </span>
-          <router-link to="/register" class="text-xs text-orange-400 hover:text-orange-200">Register here</router-link>
+        <div class="text-center mt-2">
+          <span class="text-sm text-gray-400">Don't have an account? </span>
+          <router-link to="/register" draggable="false" class="text-sm text-orange-400 hover:text-orange-200">Register here</router-link>
         </div>
       </form>
     </div>
@@ -244,6 +244,15 @@ async function handleSubmit() {
 
 .glowing-eye {
   filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 12px rgba(77, 188, 255, 0.5));
+  animation: shake-subtle 1.7s ease-in-out infinite;
+}
+
+@keyframes shake-subtle {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-1.3px, -1.3px); }
+    40% { transform: translate(1.7px, 0.8px); }
+    60% { transform: translate(-1px, 1.5px); }
+    80% { transform: translate(1.7px, -1.3px); }
 }
 
 input:-webkit-autofill,
