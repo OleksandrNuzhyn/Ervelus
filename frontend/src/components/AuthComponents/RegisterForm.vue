@@ -212,16 +212,16 @@ async function handleGoogleSuccess(response) {
     await api.post('api/auth/google/', { access_token: accessToken });
     await authStore.checkAuth();
     router.push('/dashboard');
-  } catch (error) {
-    console.error('Google sign-up failed', error);
+  } 
+  catch (error) {
     errors.value.api = error.response?.data?.detail || 'Google sign-up failed.';
-  } finally {
+  } 
+  finally {
     isGoogleLoading.value = false;
   }
 }
 
 function handleGoogleError() {
-  console.error('Google sign-up failed');
   errors.value.api = 'Google sign-up process failed. Please try again.';
 }
 
@@ -253,9 +253,11 @@ async function handleResendEmail() {
         case 400:
           if (data.email) {
             errors.value.api = Array.isArray(data.email) ? data.email[0] : data.email;
-          } else if (data.detail) {
+          } 
+          else if (data.detail) {
             errors.value.api = data.detail[0];
-          } else {
+          } 
+          else {
             errors.value.api = 'Invalid request. Please check your email address.';
           }
           break;
@@ -263,10 +265,10 @@ async function handleResendEmail() {
           errors.value.api = data.detail || 'Server Error Occured.';
           break;
         default:
-          console.error(`Unexpected error on resend: ${status}`, error.response);
           errors.value.api = 'An unexpected error occurred while resending the email.';
       }
-    } else {
+    } 
+    else {
       errors.value.api = 'Unable to connect to the server. Please check your network connection.';
     }
   } 
@@ -362,7 +364,8 @@ async function handleSubmit() {
         default:
           errors.value.api = `An unexpected error occurred (Status: ${status}). Please try again.`;
       }
-    } else {
+    } 
+    else {
       errors.value.api = 'Unable to connect to the server. Please check your magic connection.';
     }
   } 

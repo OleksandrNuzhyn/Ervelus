@@ -98,7 +98,6 @@
             break;
 
           default:
-            console.error(`Unexpected error status: ${status}`, error.response);
             errors.value.api = 'An unexpected error occurred.';
         }
       } 

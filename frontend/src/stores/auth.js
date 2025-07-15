@@ -4,7 +4,6 @@ import api from '@/services/api';
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
-    loading: false,
     authChecked: false,
   }),
 
@@ -13,7 +12,6 @@ export const useAuthStore = defineStore('auth', {
   },
   actions: {
     async checkAuth() {
-      this.loading = true;
       try {
         const { data } = await api.get('api/auth/user/');
         this.user = data;
@@ -22,7 +20,6 @@ export const useAuthStore = defineStore('auth', {
         this.user = null;
       }
       finally {
-        this.loading = false;
         this.authChecked = true;
       }
     },

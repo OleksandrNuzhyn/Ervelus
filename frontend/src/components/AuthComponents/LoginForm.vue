@@ -136,16 +136,16 @@ async function handleLoginSuccess(response) {
     await api.post('api/auth/google/', { access_token: accessToken });
     await authStore.checkAuth();
     router.push('/dashboard');
-  } catch (error) {
-    console.error('Google login failed', error);
+  } 
+  catch (error) {
     errors.value.api = error.response?.data?.detail || 'Google sign-in failed.';
-  } finally {
+  } 
+  finally {
     isGoogleLoading.value = false;
   }
 }
 
 function handleLoginError() {
-  console.error('Login failed');
   errors.value.api = 'Google sign-in failed.';
 }
 
@@ -201,7 +201,8 @@ async function handleSubmit() {
           case 400:
             if (data.non_field_errors && data.non_field_errors.length > 0) {
               errors.value.api = data.non_field_errors[0];
-            } else {
+            } 
+            else {
               errors.value.api = 'Incorrect email or password. Please try again.';
             }
             break;
@@ -211,14 +212,14 @@ async function handleSubmit() {
             break;
             
           default:
-            console.error(`Unexpected error status: ${status}`, error.response);
             errors.value.api = 'An unexpected error occurred. Please try again.';
         }
-      } else {
+      } 
+      else {
         errors.value.api = 'Unable to connect to the server. Please check your network connection.';
       }
     }
-     finally {
+    finally {
       isLoading.value = false;
     }
   }
