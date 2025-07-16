@@ -54,7 +54,9 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
-FRONTEND_URL = os.getenv("FRONTEND_URL")
+ACCOUNT_EMAIL_CONFIRMATION_COOLDOWN = 25
+
+
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -65,12 +67,13 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': [
             'email',
         ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        },
-        'OAUTH_PKCE_ENABLED': True,
     }
 }
+
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT	= True
 
 
 
@@ -106,6 +109,8 @@ TEMPLATES = [
 ]
 
 ASGI_APPLICATION = 'core.asgi.application'
+
+FRONTEND_URL = os.getenv("FRONTEND_URL")
 
 
 
@@ -190,9 +195,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'uk'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Kyiv'
 
 USE_I18N = True
 
@@ -201,3 +206,5 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CURRENT_TERMS_VERSION = os.getenv("CURRENT_TERMS_VERSION")
