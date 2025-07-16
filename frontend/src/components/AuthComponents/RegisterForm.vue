@@ -235,7 +235,7 @@ function startResendTimer() {
   timerId = setTimeout(() => {
     canResend.value = true;
     timerId = null;
-  }, 240000);
+  }, 30000);
 }
 
 async function handleResendEmail() {

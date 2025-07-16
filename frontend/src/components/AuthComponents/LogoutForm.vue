@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="authStore.isAuthenticated">
     <button
       @click="handleLogout"
       :disabled="isLoading"

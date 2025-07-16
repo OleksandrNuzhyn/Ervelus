@@ -20,6 +20,8 @@ const api = axios.create({
   withCredentials: true,
 });
 
+let isRedirecting = false;
+
 api.interceptors.request.use(
   (config) => {
     const csrfToken = getCookie('csrftoken'); 
@@ -38,14 +40,18 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
-
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+    if (error.response && error.response.status === 401 && !isRedirecting) {
+      isRedirecting = true;
       const authStore = useAuthStore();
       authStore.$reset();
-      const router = (await import('@/router')).default;
-      router.push({ name: 'login' });
+
+      try {
+        const router = (await import('@/router')).default;
+        await router.push({ name: 'login' });
+      } 
+      finally {
+        isRedirecting = false;
+      }
       return Promise.resolve();
     }
 
