@@ -21,7 +21,7 @@
             minlength="5"
             maxlength="254"
             inputmode="email"
-            class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+            class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
           <p v-if="errors.email" class="mt-1 text-sm text-red-400">{{ errors.email }}</p>
         </div>
@@ -36,9 +36,9 @@
               required
               minlength="8"
               autocomplete="current-password"
-              class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 pr-12"
+              class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 pr-12"
             />
-            <img :src="passwordIcon" @click="togglePasswordVisibility" class="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-8 cursor-pointer" alt="Toggle password visibility" />
+            <img :src="passwordIcon" @click="togglePasswordVisibility" draggable="false" class="select-none absolute right-1 top-1/2 -translate-y-1/2 mt-1 h-10 w-16 cursor-pointer transition-all duration-300" :class="showPassword ? 'opacity-100 glowing-eye' : 'opacity-35'" alt="Toggle password visibility" />
           </div>
           <p v-if="errors.password" class="mt-1 text-sm text-red-400">{{ errors.password }}</p>
         </div>
@@ -81,11 +81,11 @@
         </div>
 
         <div class="text-right">
-          <router-link to="/forgot-password" class="text-xs text-gray-400 hover:text-gray-200">Lost the keyword?</router-link>
+          <router-link to="/forgot-password" draggable="false" class="text-sm text-gray-400 hover:text-gray-200">Lost the keyword?</router-link>
         </div>
-        <div class="text-right mt-2">
-          <span class="text-xs text-gray-400">Don't have an account? </span>
-          <router-link to="/register" class="text-xs text-orange-400 hover:text-orange-200">Register here</router-link>
+        <div class="text-center mt-2">
+          <span class="text-sm text-gray-400">Don't have an account? </span>
+          <router-link to="/register" draggable="false" class="text-sm text-orange-400 hover:text-orange-200">Register here</router-link>
         </div>
       </form>
     </div>
@@ -98,8 +98,8 @@ import isEmail from 'validator/lib/isEmail';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import api from '@/services/api';
-import eye_of_sauron from '@/assets/eye_of_sauron.svg';
-import eye_of_sauron_looking from '@/assets/eye_of_sauron_looking.svg';
+import eye_of_sauron from '@/assets/geralt_closed.svg';
+import eye_of_sauron_looking from '@/assets/geralt_looking.svg';
 
 const email = ref('');
 const password = ref('');
@@ -136,16 +136,16 @@ async function handleLoginSuccess(response) {
     await api.post('api/auth/google/', { access_token: accessToken });
     await authStore.checkAuth();
     router.push('/dashboard');
-  } catch (error) {
-    console.error('Google login failed', error);
+  } 
+  catch (error) {
     errors.value.api = error.response?.data?.detail || 'Google sign-in failed.';
-  } finally {
+  } 
+  finally {
     isGoogleLoading.value = false;
   }
 }
 
 function handleLoginError() {
-  console.error('Login failed');
   errors.value.api = 'Google sign-in failed.';
 }
 
@@ -201,7 +201,8 @@ async function handleSubmit() {
           case 400:
             if (data.non_field_errors && data.non_field_errors.length > 0) {
               errors.value.api = data.non_field_errors[0];
-            } else {
+            } 
+            else {
               errors.value.api = 'Incorrect email or password. Please try again.';
             }
             break;
@@ -211,14 +212,14 @@ async function handleSubmit() {
             break;
             
           default:
-            console.error(`Unexpected error status: ${status}`, error.response);
             errors.value.api = 'An unexpected error occurred. Please try again.';
         }
-      } else {
+      } 
+      else {
         errors.value.api = 'Unable to connect to the server. Please check your network connection.';
       }
     }
-     finally {
+    finally {
       isLoading.value = false;
     }
   }
@@ -227,16 +228,41 @@ async function handleSubmit() {
 <style scoped>
 .form-container {
   height: 100%;
-  width: 90%;
+  width: 67%;
+  margin-left: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   background-color: rgba(10, 10, 10, 0.3) !important;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 0 100px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   padding: 2rem;
   font-family: 'Manrope', sans-serif;
   color: #e5e7eb;
+  mask-image: radial-gradient(ellipse at center, black 50%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 65%, transparent 100%);
+}
+
+.glowing-eye {
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 12px rgba(77, 188, 255, 0.5));
+  animation: shake-subtle 1.7s ease-in-out infinite;
+}
+
+@keyframes shake-subtle {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-1.3px, -1.3px); }
+    40% { transform: translate(1.7px, 0.8px); }
+    60% { transform: translate(-1px, 1.5px); }
+    80% { transform: translate(1.7px, -1.3px); }
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-text-fill-color: #e5e7eb !important;
+    -webkit-box-shadow: 0 0 0px 1000px #374151 inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+    font-family: 'Manrope', sans-serif;
 }
 </style>

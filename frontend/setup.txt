@@ -1,1 +1,2 @@
 uvicorn core.asgi:application --reload
+.venv\scripts\activate

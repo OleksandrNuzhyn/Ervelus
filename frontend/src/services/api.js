@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useAuthStore } from '@/stores/auth';
 
 function getCookie(name) {
   let cookieValue = null;
@@ -30,6 +31,21 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response && error.response.status === 401) {
+      const authStore = useAuthStore();
+      authStore.$reset();
+      const router = (await import('@/router')).default;
+      await router.push({ name: 'login' });
+      return Promise.resolve();
+    }
+
     return Promise.reject(error);
   }
 );

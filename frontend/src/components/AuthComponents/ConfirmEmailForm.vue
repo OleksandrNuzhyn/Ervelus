@@ -6,7 +6,7 @@
       <p class="mt-2 text-gray-400">Please wait while we verify your email address.</p>
     </div>
 
-    <div v-if="loading" class="text-center py-4">
+    <div v-if="isLoading" class="text-center py-4">
       <p class="text-lg text-orange-400 animate-pulse">Verifying you...</p>
     </div>
 
@@ -33,7 +33,7 @@ const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 
-const loading = ref(false);
+const isLoading = ref(false);
 const success = ref(false);
 const error = ref(null);
 
@@ -45,7 +45,7 @@ onMounted(async () => {
     return;
   }
 
-  loading.value = true;
+  isLoading.value = true;
   error.value = null;
   success.value = false;
 
@@ -59,15 +59,17 @@ onMounted(async () => {
       router.push('/dashboard');
     }, 2000);
 
-  } catch (err) {
+  } 
+  catch (err) {
     if (err.response && err.response.data && err.response.data.detail) {
         error.value = err.response.data.detail;
-    } else {
+    } 
+    else {
         error.value = 'The token is invalid or has expired. Please try again.';
     }
-    console.error('Email confirmation failed:', err);
-  } finally {
-    loading.value = false;
+  } 
+  finally {
+    isLoading.value = false;
   }
 });
 </script>

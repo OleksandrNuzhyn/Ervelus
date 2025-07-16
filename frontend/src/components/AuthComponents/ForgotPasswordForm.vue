@@ -64,10 +64,10 @@ async function handleSubmit() {
           error.value = data.detail || 'A server error occurred.';
           break;
         default:
-          console.error(`Unexpected error status: ${status}`, err.response);
           error.value = 'An unexpected error occurred.';
       }
-    } else {
+    } 
+    else {
       error.value = 'Unable to connect to the server. Please check your magic connection.';
     }
   } 

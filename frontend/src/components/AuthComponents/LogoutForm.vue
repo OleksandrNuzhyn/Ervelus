@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="authStore.isAuthenticated">
     <button
       @click="handleLogout"
       :disabled="isLoading"
@@ -29,21 +29,15 @@ async function handleLogout() {
   try {
     await api.post('api/auth/logout/');
     authStore.$reset();
-    router.push({ name: 'login' });
+    await router.push({ name: 'login' });
   } 
   catch (err) {
     if (err.response) {
       const { status, data = {} } = err.response;
-      if (status === 401) {
-        console.warn('Logout failed: User was not authenticated on the server.');
-        authStore.$reset();
-        router.push({ name: 'login' });
-      } 
-      else if (status === 500) {
+      if (status === 500) {
         error.value = data.detail || 'Server error, could not log out. Please try again.';
       } 
       else {
-        console.error(`Unexpected error on logout: ${status}`, err.response);
         error.value = 'An unexpected error occurred during logout.';
       }
     } 
