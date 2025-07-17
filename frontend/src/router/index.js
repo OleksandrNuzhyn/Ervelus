@@ -7,7 +7,7 @@ const routes = [
   { path: '/forgot-password', name: 'forgot-password', component: () => import('@/views/ForgotPasswordPage.vue') },
   { path: '/reset-password-confirm/:uid/:token', name: 'reset-password-confirm', component: () => import('@/views/ResetPasswordConfirmPage.vue') },
   { path: '/dashboard', name: 'dashboard', component: () => import('@/views/DashboardPage.vue'), meta: { requiresAuth: true } },
-  {path: '/verify-email/:token', name: 'verify-email', component: () => import('@/views/ConfirmEmailPage.vue') },
+  { path: '/verify-email/:token', name: 'verify-email', component: () => import('@/views/ConfirmEmailPage.vue') },
   { path: '/', name: 'home-root', component: () => import('@/views/HomePage.vue') },
   { path: '/terms-of-service', name: 'terms-of-service', component: () => import('@/views/TermsOfServicePage.vue') },
   { path: '/privacy-policy', name: 'privacy-policy', component: () => import('@/views/PrivacyPolicyPage.vue') },
@@ -26,7 +26,7 @@ router.beforeEach(async (to, from) => {
   }
 
   if (authStore.isAuthenticated && to.meta.guest) {
-    return { path: from.fullPath };
+    return { name: 'dashboard' };
   }  
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {

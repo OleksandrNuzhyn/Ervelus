@@ -28,5 +28,6 @@ class CustomRegisterSerializer(RegisterSerializer):
         UserProfile.objects.create(user=user)
         return user
 
+
 class CustomLoginSerializer(LoginSerializer):
     username = None
