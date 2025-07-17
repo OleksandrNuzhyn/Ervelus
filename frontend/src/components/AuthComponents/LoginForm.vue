@@ -133,7 +133,7 @@ async function handleLoginSuccess(response) {
   errors.value.api = '';
   const accessToken = response.access_token;
   try {
-    await api.post('api/auth/google/', { access_token: accessToken });
+    await api.post('/api/auth/google/', { access_token: accessToken });
     await authStore.checkAuth();
     router.push('/dashboard');
   } 
@@ -182,7 +182,7 @@ async function handleSubmit() {
   isLoading.value = true;
 
   try {
-    await api.post('api/auth/login/', {
+    await api.post('/api/auth/login/', {
       email: email.value,
       password: password.value,
     });
@@ -264,5 +264,11 @@ input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0px 1000px #374151 inset !important;
     transition: background-color 5000s ease-in-out 0s;
     font-family: 'Manrope', sans-serif;
+}
+
+input[type="password"]::-ms-reveal {
+  display: none;
+  width: 0;
+  height: 0;
 }
 </style>

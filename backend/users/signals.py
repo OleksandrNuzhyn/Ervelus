@@ -1,6 +1,9 @@
 from django.dispatch import receiver
 from allauth.socialaccount.signals import pre_social_login
+from allauth.account.signals import email_confirmed
 from allauth.account.models import EmailAddress
+from django.contrib.auth import login
+
 
 @receiver(pre_social_login)
 def handle_social_login_verification(sender, request, sociallogin, **kwargs):
@@ -19,5 +22,11 @@ def handle_social_login_verification(sender, request, sociallogin, **kwargs):
                 user=user,
                 email=user.email,
                 verified=True,
-                primary=True
-            ) 
+                primary=True,
+            )
+
+
+@receiver(email_confirmed)
+def auto_login_on_email_confirmation(request, email_address, **kwargs):
+    user = email_address.user
+    login(request, user, backend='allauth.account.auth_backends.AuthenticationBackend')
