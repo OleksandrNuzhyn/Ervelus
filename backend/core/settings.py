@@ -54,7 +54,7 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_RATE_LIMITS = {
-    'confirm_email': "25",
+    'confirm_email': '1/25s',
 }
 
 
