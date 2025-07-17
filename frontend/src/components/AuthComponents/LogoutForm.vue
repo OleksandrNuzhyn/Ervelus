@@ -27,7 +27,7 @@ async function handleLogout() {
   isLoading.value = true;
   error.value = '';
   try {
-    await api.post('api/auth/logout/');
+    await api.post('/api/auth/logout/');
     authStore.$reset();
     await router.push({ name: 'login' });
   } 

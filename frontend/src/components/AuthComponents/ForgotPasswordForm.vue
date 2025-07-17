@@ -53,7 +53,7 @@ async function handleSubmit() {
   }
   isLoading.value = true;
   try {
-    await api.post('api/auth/password/reset/', { email: email.value });
+    await api.post('/api/auth/password/reset/', { email: email.value });
     sent.value = true;
   } 
   catch (err) {

@@ -13,7 +13,7 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async checkAuth() {
       try {
-        const { data } = await api.get('api/auth/user/');
+        const { data } = await api.get('/api/auth/user/');
         this.user = data;
       } 
       catch (error) {

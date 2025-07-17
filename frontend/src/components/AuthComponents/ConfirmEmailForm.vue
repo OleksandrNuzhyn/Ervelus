@@ -7,7 +7,7 @@
     </div>
 
     <div v-if="isLoading" class="text-center py-4">
-      <p class="text-lg text-orange-400 animate-pulse">Verifying you...</p>
+      <p class="text-lg text-green-400 animate-pulse">Verifying you...</p>
     </div>
 
     <div v-if="error" class="p-4 bg-red-900 border border-red-700 rounded-md text-center">
