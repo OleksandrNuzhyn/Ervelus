@@ -1,6 +1,8 @@
 <template>
-  <div class="background-container min-h-screen flex items-center justify-center">
-    <ForgotPasswordForm />
+  <div class="background-container flex items-center justify-center">
+    <div class="w-full max-w-sm">
+      <ForgotPasswordForm />
+    </div>
   </div>
 </template>
 
@@ -10,9 +12,8 @@ import ForgotPasswordForm from '@/components/AuthComponents/ForgotPasswordForm.v
 
 <style scoped>
 .background-container {
-  background-color: #111827;
-  background-image: url('@/assets/light_leak.png');
-  background-repeat: no-repeat;
+  background-image: url('@/assets/light_leak.webp');
+  min-height: 100vh;
   background-position: center;
   background-size: cover;
 }

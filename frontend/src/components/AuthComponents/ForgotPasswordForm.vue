@@ -1,34 +1,33 @@
 <template>
   <div class="form-container">
-      <form @submit.prevent="handleSubmit" class="space-y-6" novalidate>
+      <form @submit.prevent="handleSubmit" class="space-y-5" novalidate>
         <div class="text-center">
           <h2 class="text-2xl font-bold text-white">Forgot Password</h2>
           <p class="text-gray-400 text-m mt-2">Enter email, and we will grant you mercy</p>
         </div>
 
         <div>
-          <label for="fp-email" class="block text-sm font-semibold text-gray-200">Email</label>
+          <label for="fp-email" class="block text-sm font-semibold text-gray-200 m-0">Email</label>
           <input id="fp-email" type="email" v-model="email" placeholder="lostsoul@example.com"
-          class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400" 
+          class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
           required />
-        <p v-if="error" class="mt-1 text-sm text-red-400">{{ error }}</p>
-      </div>
+          <p v-if="error" class="mt-1 text-sm text-red-400">{{ error }}</p>
+        </div>
 
-      <div v-if="sent" class="p-3 rounded bg-green-700 text-sm text-white text-center">
-        Link sent! Check your inbox.
-      </div>
+        <div v-if="sent" class="-mt-3 text-sm text-green-600 text-left p-1">
+          Link sent! Check your inbox.
+        </div>
 
-        <button type="submit" :disabled="isLoading || sent" class="w-full py-3 font-bold text-white transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-white/10 backdrop-blur-md border border-white/20 shadow-lg hover:bg-white/20">
+        <button type="submit" :disabled="isLoading || sent" class="w-full py-3 font-bold text-white transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-white/10 backdrop-blur-md border border-white/1 shadow-lg hover:bg-white/20">
         <span v-if="isLoading">Sending…</span>
         <span v-else>Send reset link</span>
-      </button>
+        </button>
       </form>
   </div>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
 import api from '@/services/api';
 import isEmail from 'validator/lib/isEmail';
 
@@ -36,7 +35,6 @@ const email = ref('');
 const isLoading = ref(false);
 const error = ref('');
 const sent = ref(false);
-const router = useRouter();
 
 watch(email, () => {
   sent.value = false;
@@ -80,7 +78,7 @@ async function handleSubmit() {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color: rgba(10, 10, 10, 0.3) !important;
+  background-color: rgba(10, 10, 10, 0.1) !important;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   padding: 2rem;

@@ -1,18 +1,19 @@
 <template>
-  <div class="background-container min-h-screen flex items-center justify-center">
-    <ResetPasswordConfirm />
+  <div class="background-container flex items-center justify-center">
+    <div class="w-full max-w-sm">
+      <ResetPasswordConfirm />
+    </div>
   </div>
 </template>
 
 <script setup>
-import ResetPasswordConfirm from '@/components/AuthComponents/ResetPasswordConfirm.vue';
+import ResetPasswordConfirm from '@/components/AuthComponents/ResetPasswordConfirmForm.vue';
 </script>
 
 <style scoped>
 .background-container {
-  background-color: #111827;
-  background-image: url('@/assets/light_leak.png');
-  background-repeat: no-repeat;
+  background-image: url('@/assets/light_leak.webp');
+  min-height: 100vh;
   background-position: center;
   background-size: cover;
 }

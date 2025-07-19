@@ -1,5 +1,5 @@
 <template>
-    <div class="form-container w-full">
+    <div class="form-container">
       <form 
         @submit.prevent="handleSubmit" 
         class="space-y-6"
@@ -228,7 +228,6 @@ async function handleSubmit() {
 <style scoped>
 .form-container {
   height: 100%;
-  width: 100%;
   margin-left: auto;
   display: flex;
   flex-direction: column;

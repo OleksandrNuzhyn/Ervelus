@@ -1,26 +1,19 @@
 <template>
-  <div class="form-container w-full max-w-md space-y-6 text-gray-300">
-      
-      <div class="text-center">
-        <h2 class="text-2xl font-bold text-white">Email Confirmation</h2>
-        <p class="mt-2 text-gray-300">Please wait while we verify your email address</p>
-      </div>
-
-      <div v-if="isLoading" class="text-center py-4">
-        <p class="text-m text-gray-300 animate-pulse">Verifying you...</p>
-      </div>
-
-      <div v-if="error" class="p-4 bg-red-900 border border-red-700 rounded-md text-center">
-        <p class="font-bold text-red-300">Verification Failed</p>
-        <p class="text-red-400">{{ error }}</p>
-      </div>
-
-      <div v-if="success" class="text-center space-y-1">
-        <p class="font-bold text-green-300">Greetings Traveller!</p>
-        <p class="text-gray-300">Your email has been confirmed. Redirecting to the dashboard...</p>
-      </div>
-
+  <div class="form-container space-y-6 text-gray-300">
+    <div v-if="isLoading" class="text-center py-4">
+      <p class="text-m text-gray-300 animate-pulse">Verifying you...</p>
     </div>
+
+    <div v-if="error" class="text-center">
+      <p class="font-bold text-red-500">Verification Failed</p>
+      <p class="text-gray-300">{{ error }}</p>
+    </div>
+
+    <div v-if="success" class="text-center space-y-1">
+      <p class="font-bold text-green-300">Greetings Traveller!</p>
+      <p class="text-gray-300">Your email has been confirmed. Redirecting to the dashboard...</p>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -51,6 +44,7 @@ onMounted(async () => {
 
   try {
     await api.post('/api/auth/registration/verify-email/', { key: token });
+    isLoading.value = false;
     success.value = true;
     
     await authStore.checkAuth();
