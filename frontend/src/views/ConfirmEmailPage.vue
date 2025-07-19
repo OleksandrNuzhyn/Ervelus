@@ -1,8 +1,11 @@
 <template>
-  <div class="background-container min-h-screen flex items-center justify-center">
-    <ConfirmEmailForm />
+  <div class="background-container flex items-center justify-center">
+    <div class="w-full max-w-md">
+      <ConfirmEmailForm />
+    </div>
   </div>
 </template>
+
 
 <script setup>
 import ConfirmEmailForm from '@/components/AuthComponents/ConfirmEmailForm.vue';
@@ -10,9 +13,8 @@ import ConfirmEmailForm from '@/components/AuthComponents/ConfirmEmailForm.vue';
 
 <style scoped>
 .background-container {
-  background-color: #111827;
-  background-image: url('@/assets/light_leak.png');
-  background-repeat: no-repeat;
+  background-image: url('@/assets/light_leak.webp');
+  min-height: 100vh;
   background-position: center;
   background-size: cover;
 }

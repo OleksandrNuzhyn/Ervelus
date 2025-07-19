@@ -1,5 +1,5 @@
 <template>
-  <div :class="['form-container w-full', waitingEmailForm ? 'no-mask' : '']">
+  <div :class="['form-container', waitingEmailForm ? 'no-mask' : '']">
     <form
       v-if="!waitingEmailForm"
       @submit.prevent="handleSubmit"
@@ -387,7 +387,6 @@ onUnmounted(() => {
 <style scoped>
 .form-container {
   height: 100%;
-  width: 100%;
   margin-left: auto;
   display: flex;
   flex-direction: column;
