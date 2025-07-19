@@ -11,6 +11,7 @@ const routes = [
   { path: '/', name: 'home-root', component: () => import('@/views/HomePage.vue') },
   { path: '/terms-of-service', name: 'terms-of-service', component: () => import('@/views/TermsOfServicePage.vue') },
   { path: '/privacy-policy', name: 'privacy-policy', component: () => import('@/views/PrivacyPolicyPage.vue') },
+  { path: '/pricing', name: 'pricing', component: () => import('@/views/PricingPage.vue') },
 ];
 
 const router = createRouter({
