@@ -1,5 +1,5 @@
 <template>
-  <div class="form-container">
+  <div :class="['form-container w-full', waitingEmailForm ? 'no-mask' : '']">
     <form
       v-if="!waitingEmailForm"
       @submit.prevent="handleSubmit"
@@ -387,7 +387,7 @@ onUnmounted(() => {
 <style scoped>
 .form-container {
   height: 100%;
-  width: 67%;
+  width: 100%;
   margin-left: auto;
   display: flex;
   flex-direction: column;
@@ -433,5 +433,13 @@ input[type="password"]::-ms-reveal {
   display: none;
   width: 0;
   height: 0;
+}
+</style>
+<style scoped>
+@media (max-width: 768px) {
+  .no-mask {
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+  }
 }
 </style>

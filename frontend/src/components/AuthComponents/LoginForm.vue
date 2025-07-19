@@ -1,5 +1,5 @@
 <template>
-    <div class="form-container">
+    <div class="form-container w-full">
       <form 
         @submit.prevent="handleSubmit" 
         class="space-y-6"
@@ -228,7 +228,7 @@ async function handleSubmit() {
 <style scoped>
 .form-container {
   height: 100%;
-  width: 67%;
+  width: 100%;
   margin-left: auto;
   display: flex;
   flex-direction: column;
@@ -249,21 +249,21 @@ async function handleSubmit() {
 }
 
 @keyframes shake-subtle {
-    0%, 100% { transform: translate(0, 0); }
-    20% { transform: translate(-1.3px, -1.3px); }
-    40% { transform: translate(1.7px, 0.8px); }
-    60% { transform: translate(-1px, 1.5px); }
-    80% { transform: translate(1.7px, -1.3px); }
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-1.3px, -1.3px); }
+  40% { transform: translate(1.7px, 0.8px); }
+  60% { transform: translate(-1px, 1.5px); }
+  80% { transform: translate(1.7px, -1.3px); }
 }
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-    -webkit-text-fill-color: #e5e7eb !important;
-    -webkit-box-shadow: 0 0 0px 1000px #374151 inset !important;
-    transition: background-color 5000s ease-in-out 0s;
-    font-family: 'Manrope', sans-serif;
+  -webkit-text-fill-color: #e5e7eb !important;
+  -webkit-box-shadow: 0 0 0px 1000px #374151 inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+  font-family: 'Manrope', sans-serif;
 }
 
 input[type="password"]::-ms-reveal {
