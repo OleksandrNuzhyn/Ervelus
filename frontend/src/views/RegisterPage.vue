@@ -1,7 +1,7 @@
 <template>
   <div class="background-container">
     <div class="min-h-screen flex items-stretch justify-end">
-      <div class="w-[40%]">
+      <div class="w-full md:w-[32rem]">
         <RegisterForm />
       </div>
     </div>
@@ -16,7 +16,6 @@ import RegisterForm from '@/components/AuthComponents/RegisterForm.vue';
 .background-container {
   background-image: url('@/assets/register.jpg');
   background-size: cover;
-  background-position: center;
-  min-height: 100vh;
+  background-position: left center;
 }
 </style>
