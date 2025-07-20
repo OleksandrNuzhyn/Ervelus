@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'anymail',
 
     'users',
+    'products',
 ]
 
 SITE_ID = 1
