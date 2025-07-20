@@ -166,7 +166,7 @@ DATABASES = {
         'NAME': 'postgres-ervelus-test',
         'USER': 'ervelus-test',
         'PASSWORD': 'Trueelse23',
-        'HOST': '34.118.30.161',
+        'HOST': '34.118.74.91',
         'PORT': '5432',
     },
     'async': {
@@ -174,7 +174,7 @@ DATABASES = {
         'NAME': 'postgres-ervelus-test',
         'USER': 'ervelus-test',
         'PASSWORD': 'Trueelse23',
-        'HOST': '34.118.30.161',
+        'HOST': '34.118.74.91',
         'PORT': '5432',
     }
 }
