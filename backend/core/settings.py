@@ -37,6 +37,7 @@ INSTALLED_APPS = [
 
     'users',
     'products',
+    'subscriptions',
 ]
 
 SITE_ID = 1
@@ -157,6 +158,10 @@ ANYMAIL = {
 }
 EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
+
+
+
+PADDLE_API_KEY = os.getenv("PADDLE_API_KEY")
 
 
 
