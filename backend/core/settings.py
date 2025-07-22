@@ -10,7 +10,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = True # False
 
-ALLOWED_HOSTS = [] # Set up for production
+ALLOWED_HOSTS = ['api.ervelus.com'] # Set up for production
 
 
 
@@ -162,6 +162,7 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 
 
 PADDLE_API_KEY = os.getenv("PADDLE_API_KEY")
+PADDLE_WEBHOOK_SECRET_KEY = os.getenv("PADDLE_WEBHOOK_SECRET_KEY")
 
 
 

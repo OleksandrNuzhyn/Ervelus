@@ -6,6 +6,8 @@ from users.views import GoogleLogin, get_csrf_token
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+    path('webhooks/', include('subscriptions.urls')),
 
     path('api/get-csrf-token/', get_csrf_token, name='get-csrf-token'),
     
