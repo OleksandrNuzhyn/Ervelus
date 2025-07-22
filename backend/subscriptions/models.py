@@ -5,8 +5,9 @@ from django.conf import settings
 class UserSubscription(models.Model):
     class SubscriptionStatus(models.TextChoices):
         ACTIVE = 'active'
-        PAUSED = 'paused'
+        INACTIVE = 'inactive'
         CANCELED = 'canceled'
+        ABANDONED = 'abandoned'
 
     class Meta:
         verbose_name = 'User Subscription'
