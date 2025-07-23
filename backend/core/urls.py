@@ -7,7 +7,7 @@ from users.views import GoogleLogin, get_csrf_token
 urlpatterns = [
     path('admin/', admin.site.urls),
     
-    path('webhooks/', include('subscriptions.urls')),
+    path('webhooks/', include('subscriptions.urls_webhooks')),
 
     path('api/get-csrf-token/', get_csrf_token, name='get-csrf-token'),
     
@@ -15,4 +15,6 @@ urlpatterns = [
     path('api/auth/google/', GoogleLogin.as_view(), name='google_login'),
     path('api/auth/', include('dj_rest_auth.urls')),
     path('api/auth/registration/', include('dj_rest_auth.registration.urls')),
+
+    path('api/subscriptions/', include('subscriptions.urls_api')),
 ]
