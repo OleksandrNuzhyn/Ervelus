@@ -1,43 +1,40 @@
 <template>
-  <div class="w-full max-w-6xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-    <div class="text-center mb-7">
-      <h1 class="text-4xl font-bold text-white md:text-5xl">
-        Pricing Plans
+  <div class="w-full max-w-screen-2xl mx-auto px-8 pt-14 pb-16">
+    <div class="text-center mb-9">
+      <h1 class="text-4xl font-bold text-gray-500 md:text-5xl medieval">
+        Contracts
       </h1>
-      <p class="mt-4 text-xl text-gray-400 md:text-2xl">
-        Choose the plan that's right for you.
-      </p>
     </div>
 
-    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+    <div class="grid grid-cols-1 gap-7 md:grid-cols-3 transform relative translate-x-6 translate-y-8 md:translate-y-34">
       <div 
         v-for="plan in plans" 
         :key="plan.name" 
-        class="flex flex-col rounded-lg shadow-lg bg-white/5 backdrop-blur-md border border-white/1"
+        class="plan-card relative flex flex-col transform w-[410px] h-[620px]"
       >
-        <div class="px-6 py-8">
-          <h2 class="text-2xl font text-center text-white">{{ plan.name }}</h2>
-          <p class="mt-2 text-md text-center text-gray-400">{{ plan.description }}</p>
+        <div class="px-6 py-3">
+          <h2 class="text-3xl font text-center text-black medieval">{{ plan.name }}</h2>
+          <p class="mt-2 text-md text-center text-black">{{ plan.description }}</p>
           <div class="mt-6 text-center">
-            <span class="text-5xl font-bold text-white">{{ plan.price }}</span>
-            <span class="text-base font-medium text-gray-400">/month</span>
+            <span class="text-5xl font-bold text-black">{{ plan.price }}</span>
+            <span class="text-base font-medium text-black">/month</span>
           </div>
         </div>
         
-        <div class="flex-1 flex flex-col justify-between px-6 pt-6 pb-8">
-          <ul class="space-y-4">
+        <div class="flex-1 flex flex-col px-12 pt-12 relative">
+          <ul class="space-y-8 flex-1">
             <li v-for="feature in plan.features" :key="feature" class="flex items-start">
               <div class="flex-shrink-0">
                 <svg class="h-6 w-6 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <p class="ml-3 text-base text-gray-300">{{ feature }}</p>
+              <p class="ml-3 text-lg text-black medieval">{{ feature }}</p>
             </li>
           </ul>
-          <div class="mt-8">
-            <button class="w-full py-3 font-bold text-white text-xl transition duration-300 rounded-md bg-white/10 backdrop-blur-md border border-white/5 shadow-md hover:bg-white/20">
-              Buy
+          <div class="absolute inset-x-0 bottom-2 flex justify-center">
+            <button @click="buy(plan)" class="inline-flex justify-center p-0 transform hover:scale-103 transition focus:outline-none select-none">
+              <img src="@/assets/button.webp" alt="Buy plan"/>
             </button>
           </div>
         </div>
@@ -51,17 +48,17 @@ import { ref } from 'vue';
 
 const plans = ref([
   {
-    name: 'Basic',
+    name: 'Amateur',
     description: 'For individuals starting out.',
     price: '$6',
     features: [
       '10 projects',
       '5 GB of storage',
-      'just buy pls'
+      'just buy pls',
     ]
   },
   {
-    name: 'Premium',
+    name: 'Journeyman',
     description: 'For small teams and professionals.',
     price: '$29',
     features: [
@@ -72,7 +69,7 @@ const plans = ref([
     ]
   },
   {
-    name: 'Enterprise',
+    name: 'Master',
     description: 'For large organizations.',
     price: '$99',
     features: [
@@ -80,9 +77,35 @@ const plans = ref([
       'Custom analytics',
       '24/7 dedicated support',
       'SSO integration',
-      'Custom branding',
-      'Custom domains'
+      'and more'
     ]
   }
 ]);
+
+function buy(plan){
+  console.log('Purchase',plan.name);
+}
 </script>
+
+<style scoped>
+
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+.medieval{font-family:'MedievalSharp',cursive;}
+
+.plan-card {
+  position: relative;
+  isolation: isolate;
+}
+
+.plan-card::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image:url('@/assets/paper.webp');
+  background-size:100% 100%;
+  background-position:center;
+  background-repeat:no-repeat;
+  z-index:-1;
+}
+
+</style>
