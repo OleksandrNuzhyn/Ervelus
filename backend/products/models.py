@@ -23,10 +23,12 @@ class SubscriptionPlan(models.Model):
         verbose_name = 'Subscription Plan'
         verbose_name_plural = 'Subscription Plans'
 
-    name = models.CharField(max_length=25, unique=True)
-    unlocked_styles = models.ManyToManyField(Style)
+    name = models.CharField(max_length=50, unique=True)
+    description = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=8, decimal_places=2)
-    paddle_plan_id = models.CharField(max_length=6, unique=True)
+    paddle_price_id = models.CharField(max_length=255, unique=True)
+    features = models.JSONField(default=list)
+    unlocked_styles = models.ManyToManyField(Style)
     generations_count = models.IntegerField()
     is_active = models.BooleanField(default=True)
     total_price_usage = models.DecimalField(max_digits=8, decimal_places=2)
