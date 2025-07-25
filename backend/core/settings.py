@@ -10,7 +10,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = True # False
 
-ALLOWED_HOSTS = [] # Set up for production
+ALLOWED_HOSTS = ['backend.ervelus.com'] # Set up for production
 
 
 
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
 
     'users',
     'products',
+    'subscriptions',
 ]
 
 SITE_ID = 1
@@ -160,16 +161,18 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 
 
 
+PADDLE_API_KEY = os.getenv("PADDLE_API_KEY")
+PADDLE_WEBHOOK_SECRET_KEY = os.getenv("PADDLE_WEBHOOK_SECRET_KEY")
+
+
+
+GCP_PROJECT_ID = os.getenv("GCP_PROJECT_ID")
+GCP_PUBSUB_PADDLE_EVENTS_TOPIC_ID = os.getenv("GCP_PUBSUB_PADDLE_EVENTS_TOPIC_ID")
+
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres-ervelus-test',
-        'USER': 'ervelus-test',
-        'PASSWORD': 'Trueelse23',
-        'HOST': '34.118.74.91',
-        'PORT': '5432',
-    },
-    'async': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres-ervelus-test',
         'USER': 'ervelus-test',
