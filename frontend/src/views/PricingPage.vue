@@ -1,11 +1,15 @@
 <template>
-  <div class="background-container">
+  <HeaderComponent />
+  <div class="background-container pt-16 md:pt-20">
     <PricingComponent />
   </div>
+  <FooterComponent />
 </template>
 
 <script setup>
 import PricingComponent from '@/components/PricingComponent.vue';
+import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue';
+import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue';
 </script>
 
 <style scoped>

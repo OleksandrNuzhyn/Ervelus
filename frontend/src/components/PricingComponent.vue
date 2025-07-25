@@ -1,16 +1,16 @@
 <template>
-  <div class="w-full max-w-screen-2xl mx-auto px-8 pt-14 pb-16">
+  <div class="w-full max-w-screen-2xl mx-auto px-1 md:px-8 pt-5 pb-16">
     <div class="text-center mb-9">
       <h1 class="text-4xl font-bold text-gray-500 md:text-5xl medieval">
         Contracts
       </h1>
     </div>
 
-    <div class="grid grid-cols-1 gap-7 md:grid-cols-3 transform relative translate-x-6 translate-y-8 md:translate-y-34">
+    <div class="grid grid-cols-1 gap-7 xl:grid-cols-3 justify-items-center mt-8 md:mt-12">
       <div 
         v-for="plan in plans" 
         :key="plan.name" 
-        class="plan-card relative flex flex-col transform w-[410px] h-[620px]"
+        class="plan-card relative flex flex-col w-full md:max-w-md h-[700px]"
       >
         <div class="px-6 py-3">
           <h2 class="text-3xl font text-center text-black medieval">{{ plan.name }}</h2>
@@ -33,9 +33,10 @@
             </li>
           </ul>
           <div class="absolute inset-x-0 bottom-2 flex justify-center">
-            <button @click="buy(plan)" class="inline-flex justify-center p-0 transform hover:scale-103 transition focus:outline-none select-none">
+            <button v-if="isAuth" @click="buy(plan)" class="inline-flex justify-center p-0 transform hover:scale-103 transition focus:outline-none select-none">
               <img src="@/assets/button.webp" alt="Buy plan"/>
             </button>
+            <div v-else class="text-sm text-gray-500">Login to purchase</div>
           </div>
         </div>
       </div>
@@ -45,12 +46,18 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useAuthStore } from '@/stores/auth.js';
+import { computed } from 'vue';
+
+const auth = useAuthStore();
+const isAuth = computed(() => auth.isAuthenticated);
 
 const plans = ref([
   {
     name: 'Amateur',
     description: 'For individuals starting out.',
     price: '$6',
+    priceId: 'pri_01k0sqayfc077m9kww2b80qcty',
     features: [
       '10 projects',
       '5 GB of storage',
@@ -61,6 +68,7 @@ const plans = ref([
     name: 'Journeyman',
     description: 'For small teams and professionals.',
     price: '$29',
+    priceId: 'pri_01k0sqayfc077m9kww2b80qcty',
     features: [
       'Unlimited projects',
       '50 GB of storage',
@@ -72,6 +80,7 @@ const plans = ref([
     name: 'Master',
     description: 'For large organizations.',
     price: '$99',
+    priceId: 'pri_01k0sqayfc077m9kww2b80qcty',
     features: [
       'Unlimited projects & storage',
       'Custom analytics',
@@ -83,7 +92,13 @@ const plans = ref([
 ]);
 
 function buy(plan){
-  console.log('Purchase',plan.name);
+  window.Paddle.Checkout.open({
+    items: [
+      { priceId: plan.priceId, quantity: 1 }
+    ],
+    theme: 'dark',
+    displayMode: 'overlay'
+  });
 }
 </script>
 
@@ -106,6 +121,13 @@ function buy(plan){
   background-position:center;
   background-repeat:no-repeat;
   z-index:-1;
+}
+
+@media (max-width: 767px) {
+  .plan-card {
+    width: 28rem !important;
+    max-width: 100%;
+  }
 }
 
 </style>
