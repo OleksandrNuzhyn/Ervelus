@@ -179,14 +179,6 @@ DATABASES = {
         'PASSWORD': 'Trueelse23',
         'HOST': '34.118.74.91',
         'PORT': '5432',
-    },
-    'async': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres-ervelus-test',
-        'USER': 'ervelus-test',
-        'PASSWORD': 'Trueelse23',
-        'HOST': '34.118.74.91',
-        'PORT': '5432',
     }
 }
 
