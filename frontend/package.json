@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@paddle/paddle-js": "^1.4.2",
     "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.10.0",
     "pinia": "^3.0.3",
