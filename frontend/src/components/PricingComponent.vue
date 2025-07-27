@@ -6,7 +6,7 @@
       </h1>
     </div>
 
-    <div class="grid grid-cols-1 gap-7 xl:grid-cols-2 justify-items-center mt-8 md:mt-12">
+    <div :class="['grid grid-cols-1 gap-7 justify-items-center mt-8 md:mt-12', grid_col_num]">
       <div 
         v-for="plan in plans" 
         :key="plan.name" 
@@ -45,13 +45,13 @@
     </div>
   </div>
 
-<div v-if="showLoginModal" @click.self="showLoginModal = false" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm transition-opacity duration-300">
-    <div class="bg-gray-900/80 border border-gray-700 rounded-lg p-8 w-full max-w-sm mx-4 text-center shadow-2xl">
+<div v-if="showLoginModal" @click.self="showLoginModal = false" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[7px]">
+    <div class="w-full max-w-sm p-8 mx-4 text-center border shadow-2xl rounded-2xl backdrop-blur-[14px] bg-[rgba(10,10,10,0.3)] border-[rgba(255,255,255,0.15)]">
         <h2 class="text-2xl font-bold text-white mb-4 medieval">Authentication Required</h2>
         <p class="text-gray-300 mb-8">Please log in to purchase a subscription plan.</p>
         <router-link 
             to="/login" 
-            class="w-full inline-block px-6 py-3 rounded-lg bg-gray-700/90 text-white font-semibold hover:bg-gray-600/90 border border-gray-600 transition-all duration-200"
+            class="block w-full px-6 py-3 font-bold text-white transition duration-300 rounded-md bg-white/10 backdrop-blur-md border border-white/10 shadow-lg hover:bg-white/20"
         >
             Login
         </router-link>
@@ -60,14 +60,19 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useAuthStore } from '@/stores/auth.js';
-import { onMounted } from 'vue';
 import api from '@/services/api';
 
 const auth = useAuthStore();
 const plans = ref([]);
 const showLoginModal = ref(false);
+
+const grid_col_num = computed(() => {
+  if (plans.value.length >= 3) return 'xl:grid-cols-3';
+  if (plans.value.length === 2) return 'xl:grid-cols-2';
+  return '';
+});
 
 onMounted(async () => {
     const response = await api.get('/api/products/subscription-plans/');
