@@ -3,13 +3,19 @@ import './assets/base.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import GoogleSignInPlugin from 'vue3-google-signin'
+import { initializePaddle } from '@paddle/paddle-js';
 
 import App from './App.vue'
 import router from './router'
 import api from './services/api'
 
 async function initializeApp() {
-  await api.get('/api/get-csrf-token/');
+  await api.get('/api/auth/csrf-token/');
+
+  const paddle = await initializePaddle({
+    token: 'test_d1b7d123c2e298499433b486045',
+    environment: 'sandbox' 
+  });
 
   const app = createApp(App)
   const pinia = createPinia()
@@ -17,7 +23,7 @@ async function initializeApp() {
   app.use(pinia)
   app.use(router)
   app.use(GoogleSignInPlugin, {
-    clientId: '843713679678-0uev2hp893rnt24bm6rujisimkfocqbv.apps.googleusercontent.com'
+    clientId: '533652113906-hnenie5h5ge7fou1ctvno0l0f748ginl.apps.googleusercontent.com'
   });
   
   app.mount('#app')

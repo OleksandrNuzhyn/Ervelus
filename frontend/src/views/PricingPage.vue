@@ -1,0 +1,22 @@
+<template>
+  <HeaderComponent />
+  <div class="background-container pt-16 md:pt-20">
+    <PricingComponent />
+  </div>
+  <FooterComponent />
+</template>
+
+<script setup>
+import PricingComponent from '@/components/PricingComponent.vue';
+import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue';
+import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue';
+</script>
+
+<style scoped>
+.background-container {
+  background-image: url('@/assets/wall.webp');
+  background-size: cover;
+  background-position: top center;
+  min-height: max(100vh, calc(100vw * 23 / 48));
+}
+</style>
