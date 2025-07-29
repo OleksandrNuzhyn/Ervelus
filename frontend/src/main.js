@@ -14,7 +14,13 @@ async function initializeApp() {
 
   const paddle = await initializePaddle({
     token: 'test_d1b7d123c2e298499433b486045',
-    environment: 'sandbox' 
+    environment: 'sandbox',
+    checkout: {
+      settings: {
+        theme: 'dark',
+        displayMode: 'overlay',
+      }
+    },
   });
 
   const app = createApp(App)
