@@ -1,24 +1,26 @@
 from django.conf import settings
-from django.http import HttpRequest, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
+from adrf.decorators import api_view
+from rest_framework.decorators import permission_classes, authentication_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 from google.cloud import pubsub_v1
 from paddle_billing.Notifications import Secret, Verifier
 
-@csrf_exempt
-async def paddle_webhook_handler(request: HttpRequest) -> HttpResponse:
-    if request.method != 'POST':
-        return HttpResponse(status=405)
-
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
+async def paddle_webhook_handler(request):
     try:
         Verifier().verify(request, Secret(settings.PADDLE_WEBHOOK_SECRET_KEY))
     except Exception:
-        return HttpResponse(status=400)
+        return Response(status=400)
 
     try:
         publisher = pubsub_v1.PublisherClient()
         topic_path = publisher.topic_path(settings.GCP_PROJECT_ID, settings.GCP_PUBSUB_PADDLE_EVENTS_TOPIC_ID)
-        publisher.publish(topic_path, request.body)
+        future = publisher.publish(topic_path, request.body)
+        future.result()
     except Exception:
-        return HttpResponse(status=500)
+        return Response(status=500)
 
-    return HttpResponse(status=200)
+    return Response(status=200)
