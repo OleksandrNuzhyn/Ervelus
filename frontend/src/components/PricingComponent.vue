@@ -107,8 +107,12 @@ function buy(plan){
     items: [
       { priceId: plan.priceId, quantity: 1 }
     ],
-    theme: 'dark',
-    displayMode: 'overlay'
+    customer: {
+      email: auth.user.email
+    },
+    customData: {
+      user_id: auth.user.pk
+    }
   });
 }
 </script>

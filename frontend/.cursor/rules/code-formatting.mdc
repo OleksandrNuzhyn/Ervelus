@@ -1,0 +1,8 @@
+---
+alwaysApply: true
+---
+Always place the else(or another key-word) on a new line for better readability like this:
+ if () {
+    } 
+    else {
+    } 
