@@ -23,7 +23,9 @@ grpc-google-iam-v1==0.14.2
 grpcio==1.73.1
 grpcio-status==1.73.1
 h11==0.16.0
+httpcore==1.0.9
 httptools==0.6.4
+httpx==0.28.1
 idna==3.10
 importlib_metadata==8.7.0
 oauthlib==3.3.1
