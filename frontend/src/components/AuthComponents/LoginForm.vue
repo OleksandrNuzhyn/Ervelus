@@ -98,8 +98,8 @@ import isEmail from 'validator/lib/isEmail';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import api from '@/services/api';
-import eye_of_sauron from '@/assets/geralt_closed.svg';
-import eye_of_sauron_looking from '@/assets/geralt_looking.svg';
+import eye_of_sauron from '@/assets/svg/geralt_closed.svg';
+import eye_of_sauron_looking from '@/assets/svg/geralt_looking.svg';
 
 const email = ref('');
 const password = ref('');

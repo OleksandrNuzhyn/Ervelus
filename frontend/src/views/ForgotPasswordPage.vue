@@ -12,7 +12,7 @@ import ForgotPasswordForm from '@/components/AuthComponents/ForgotPasswordForm.v
 
 <style scoped>
 .background-container {
-  background-image: url('@/assets/light_leak.webp');
+  background-image: url('@/assets/background_assets/light_leak.webp');
   min-height: 100vh;
   background-position: center;
   background-size: cover;

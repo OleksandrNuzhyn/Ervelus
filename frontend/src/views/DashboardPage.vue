@@ -17,7 +17,7 @@ import WebPortalComponent from '@/components/WebPortalComponent.vue';
 
 <style scoped>
 .dashboard-background {
-  background-image: url('@/assets/test.png');
+  background-image: url('@/assets/background_assets/test.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
