@@ -6,6 +6,8 @@ load_dotenv() # Delete
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+SERVICE_NAME = os.getenv("SERVICE_NAME")
+
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = True # False
@@ -38,6 +40,7 @@ INSTALLED_APPS = [
     'users',
     'products',
     'subscriptions',
+    'generations'
 ]
 
 SITE_ID = 1
@@ -168,6 +171,8 @@ PADDLE_WEBHOOK_SECRET_KEY = os.getenv("PADDLE_WEBHOOK_SECRET_KEY")
 
 GCP_PROJECT_ID = os.getenv("GCP_PROJECT_ID")
 GCP_PUBSUB_PADDLE_EVENTS_TOPIC_ID = os.getenv("GCP_PUBSUB_PADDLE_EVENTS_TOPIC_ID")
+GCP_PUBSUB_GENERATION_EVENTS_TOPIC_ID = os.getenv("GCP_PUBSUB_GENERATION_EVENTS_TOPIC_ID")
+GCP_STORAGE_BUCKET_NAME = os.getenv("GCP_STORAGE_BUCKET_NAME")
 
 
 
