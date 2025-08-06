@@ -56,7 +56,7 @@ class GenerationRequestCreateSerializer(serializers.ModelSerializer):
         return data
 
 
-class GenerationRequestOutputSerializer(serializers.ModelSerializer):
+class GenerationRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = GenerationRequest
         fields = (
@@ -65,6 +65,8 @@ class GenerationRequestOutputSerializer(serializers.ModelSerializer):
             'input_img_url',
             'output_img_url',
             'status',
+            'error_message',
+            'error_api_message',
             'created_at',
             'updated_at'
         )

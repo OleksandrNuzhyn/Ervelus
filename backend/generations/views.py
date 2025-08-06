@@ -3,25 +3,23 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .models import GenerationRequest
-from .serializers import GenerationRequestCreateSerializer, GenerationRequestOutputSerializer
+from .serializers import GenerationRequestCreateSerializer, GenerationRequestSerializer
 from google.pubsub_v1.services.publisher.async_client import PublisherAsyncClient
 from asgiref.sync import sync_to_async
 from . import services
 from django.conf import settings
+from rest_framework.decorators import action
 
 publisher = PublisherAsyncClient()
 
 
-class GenerationRequestViewSet(viewsets.ModelViewSet):
+class GenerationRequestViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
     
-    def get_queryset(self):
-        return GenerationRequest.objects.filter(user=self.request.user)
-
     def get_serializer_class(self):
         if self.action == 'create':
             return GenerationRequestCreateSerializer
-        return GenerationRequestOutputSerializer
+        return GenerationRequestSerializer
 
     async def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -51,7 +49,7 @@ class GenerationRequestViewSet(viewsets.ModelViewSet):
         except Exception:
             return Response({"error": "Failed to publish generation task"}, status=500)
 
-        serializer = GenerationRequestOutputSerializer(generation_request)
+        serializer = GenerationRequestSerializer(generation_request)
         return Response(serializer.data, status=202)
 
     def list(self, request, *args, **kwargs):
@@ -68,3 +66,13 @@ class GenerationRequestViewSet(viewsets.ModelViewSet):
         
     def destroy(self, request, *args, **kwargs):
         return Response(status=405)
+
+    @action(detail=False, methods=['get'])
+    async def latest(self, request, *args, **kwargs):
+        latest_user_generation_request = await GenerationRequest.objects.filter(user=request.user).order_by('-created_at').afirst()
+
+        if not latest_user_generation_request:
+            return Response(None, status=200)
+        
+        serializer = self.get_serializer(latest_user_generation_request)
+        return Response(serializer.data, status=200)
