@@ -17,7 +17,7 @@ async def pubsub_push_handler(request):
         return Response(status=400)
 
     try:
-        await services.process_generation_from_event(generation_request_id, resolution)
+        await services.handle_generation_process(generation_request_id, resolution)
     except Exception:
         return Response(status=500)
 
