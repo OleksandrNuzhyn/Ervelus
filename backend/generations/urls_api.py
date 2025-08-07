@@ -1,4 +1,4 @@
-from rest_framework.routers import DefaultRouter
+from adrf.routers import DefaultRouter
 from .views import GenerationRequestViewSet
 
 router = DefaultRouter()

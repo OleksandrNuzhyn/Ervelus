@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from adrf import serializers
 from subscriptions.models import UserSubscription
 from .models import GenerationRequest
 
@@ -16,7 +16,7 @@ class GenerationRequestCreateSerializer(serializers.ModelSerializer):
         model = GenerationRequest
         fields = ('input_image', 'resolution', 'chosen_style')
 
-    def validate_input_image(self, value):
+    async def validate_input_image(self, value):
         allowed_content_types = ['image/jpeg', 'image/png', 'image/webp']
         if value.content_type not in allowed_content_types:
             raise serializers.ValidationError("Invalid image format. Allowed formats are: JPG, PNG, WebP")
@@ -27,30 +27,26 @@ class GenerationRequestCreateSerializer(serializers.ModelSerializer):
         
         return value
 
-    def validate(self, data):
+    async def validate(self, data):
         user = self.context['request'].user
         chosen_style = data['chosen_style']
 
-        active_user_subscriptions = user.subscriptions.filter(
-            status=UserSubscription.SubscriptionStatus.ACTIVE
-        ).select_related('plan').prefetch_related('plan__unlocked_styles')
+        active_user_subscriptions = [
+            sub async for sub in user.subscriptions.filter(
+                status=UserSubscription.SubscriptionStatus.ACTIVE
+            ).select_related('plan').prefetch_related('plan__unlocked_styles')
+        ]
 
-        if not active_user_subscriptions.exists():
+        if not active_user_subscriptions:
             raise serializers.ValidationError("You don't have an active subscription")
 
-        total_credits = sum(subscription.generations_count for subscription in active_user_subscriptions)
+        total_credits = sum(sub.generations_count for sub in active_user_subscriptions)
         if total_credits == 0:
             raise serializers.ValidationError("All credits on active subscriptions have been used")
 
-        best_subscription = None
-        max_price = 0
+        best_user_subscription = max(active_user_subscriptions, key=lambda sub: sub.plan.price)
 
-        for subscription in active_user_subscriptions:
-            if subscription.plan.price > max_price:
-                max_price = subscription.plan.price
-                best_subscription = subscription
-        
-        if chosen_style not in best_subscription.plan.unlocked_styles.all():
+        if chosen_style not in best_user_subscription.plan.unlocked_styles.all():
             raise serializers.ValidationError(f"The style '{chosen_style.name}' isn't available in your best subscription plan")
 
         return data

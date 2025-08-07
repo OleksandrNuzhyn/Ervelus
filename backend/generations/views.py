@@ -1,29 +1,23 @@
 import json
-from rest_framework import viewsets
+from adrf import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
 from .models import GenerationRequest
+from . import services
 from .serializers import GenerationRequestCreateSerializer, GenerationRequestSerializer
 from google.pubsub_v1.services.publisher.async_client import PublisherAsyncClient
-from asgiref.sync import sync_to_async
-from . import services
 from django.conf import settings
-from rest_framework.decorators import action
 
 publisher = PublisherAsyncClient()
 
 
 class GenerationRequestViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
-    
-    def get_serializer_class(self):
-        if self.action == 'create':
-            return GenerationRequestCreateSerializer
-        return GenerationRequestSerializer
 
     async def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        await sync_to_async(serializer.is_valid)(raise_exception=True)
+        serializer = GenerationRequestCreateSerializer(data=request.data)
+        await serializer.is_valid(raise_exception=True)
 
         input_image_file = serializer.validated_data['input_image']
         
@@ -74,5 +68,5 @@ class GenerationRequestViewSet(viewsets.ViewSet):
         if not latest_user_generation_request:
             return Response(None, status=200)
         
-        serializer = self.get_serializer(latest_user_generation_request)
+        serializer = GenerationRequestSerializer(latest_user_generation_request)
         return Response(serializer.data, status=200)
