@@ -2,23 +2,37 @@
   <div class="relative">
     <div
       ref="scrollContainer"
-      class="bg-transparent backdrop-blur-[14px] bg-[rgba(10,10,10,0.3)] rounded-xl p-3 shadow-lg overflow-x-auto no-scrollbar"
+      class="bg-gray backdrop-blur-[14px] bg-[rgba(31,41,55,0.5)] rounded-full p-3 shadow-lg overflow-x-auto no-scrollbar"
     >
-      <div class="flex items-center space-x-6 whitespace-nowrap flex-nowrap px-2">
+      <div class="flex items-center space-x-4 md:space-x-6 whitespace-nowrap flex-nowrap px-2">
         <button
           v-for="category in categories"
           :key="category.id"
           @click="selectCategory(category.id)"
           :class="[
-            'w-60 py-2 rounded-md text-md font-semibold transition-colors flex-shrink-0',
+            'w-30 md:w-60 py-2 rounded-md text-sm md:text-md font-semibold transition-colors flex-shrink-0',
             selectedCategoryId === category.id
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600',
+              ? 'bg-transparent text-white'
+              : 'bg-transparent text-gray-400 hover:text-white',
           ]"
         >
           {{ category.name }}
         </button>
       </div>
+    </div>
+    <div
+      v-if="showLeftArrow"
+      class="absolute top-0 left-0 h-full w-16 flex items-center justify-start pointer-events-none bg-gradient-to-r from-[rgba(10,10,10,0.8)] to-transparent pl-4"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-8 w-8 text-white"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
     </div>
     <div
       v-if="showArrow"
@@ -50,7 +64,7 @@
 
 
 <script setup>
-import { onMounted, ref, watch, nextTick, defineProps, defineEmits } from 'vue';
+import { onMounted, ref, watch, nextTick} from 'vue';
 
 const props = defineProps({
   categories: {
@@ -71,6 +85,7 @@ const selectCategory = (categoryId) => {
 
 const scrollContainer = ref(null);
 const showArrow = ref(false);
+const showLeftArrow = ref(false);
 
 const checkScroll = () => {
   const el = scrollContainer.value;
@@ -78,6 +93,7 @@ const checkScroll = () => {
     const isScrollable = el.scrollWidth > el.clientWidth;
     const isScrolledToEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
     showArrow.value = isScrollable && !isScrolledToEnd;
+    showLeftArrow.value = isScrollable && el.scrollLeft > 0;
   }
 };
 

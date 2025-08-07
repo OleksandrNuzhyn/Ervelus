@@ -1,7 +1,7 @@
 <template>
   <HeaderComponent />
   <div class="background-container min-h-screen text-white flex justify-center items-start pt-15">
-    <main class="w-full mx-auto px-35">
+    <main class="w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-35">
       <GenerationComponent />
     </main>
   </div>

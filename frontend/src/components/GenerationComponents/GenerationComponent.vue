@@ -1,6 +1,6 @@
   <template>
     <div class="relative">
-      <div class="sticky top-6 z-50 w-full px-3">
+      <div class="w-full">
         <div class="relative">
           <CategoryStrip :categories="mockCategories" :selected-category-id="selectedCategoryId" @category-selected="handleCategorySelect"/>
           <StylePanel
