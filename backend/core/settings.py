@@ -12,7 +12,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = True # False
 
-ALLOWED_HOSTS = ['backend.ervelus.com'] # Set up for production
+ALLOWED_HOSTS = ['backend.ervelus.com', '127.0.0.1'] # Set up for production
 
 
 
@@ -24,6 +24,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'debug_toolbar',
 
     'rest_framework',
 
@@ -87,6 +89,7 @@ SOCIALACCOUNT_ADAPTER = 'users.adapters.CustomSocialAccountAdapter'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -213,6 +216,10 @@ TIME_ZONE = 'Europe/Kyiv'
 USE_I18N = True
 
 USE_TZ = True
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 
 STATIC_URL = 'static/'
 

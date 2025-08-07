@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from debug_toolbar.toolbar import debug_toolbar_urls
 
 
 urlpatterns = []
@@ -16,7 +17,7 @@ if settings.DEBUG:
         path('api/subscriptions/', include('subscriptions.urls_api')),
         path('api/products/', include('products.urls')),
         path('api/generations/', include('generations.urls_api')),
-    ]
+    ] + debug_toolbar_urls()
 else:
     if settings.SERVICE_NAME == 'web_service':
         urlpatterns += [
