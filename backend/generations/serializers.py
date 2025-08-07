@@ -40,7 +40,7 @@ class GenerationRequestCreateSerializer(serializers.ModelSerializer):
 
         total_credits = sum(subscription.generations_count for subscription in active_user_subscriptions)
         if total_credits == 0:
-            raise serializers.ValidationError("You have no generation credits left across all your active subscriptions")
+            raise serializers.ValidationError("All credits on active subscriptions have been used")
 
         best_subscription = None
         max_price = 0
