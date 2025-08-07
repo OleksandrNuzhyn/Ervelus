@@ -1,9 +1,10 @@
-from adrf import serializers
+from adrf.serializers import ModelSerializer
+from rest_framework import serializers
 from subscriptions.models import UserSubscription
 from .models import GenerationRequest
 
 
-class GenerationRequestCreateSerializer(serializers.ModelSerializer):
+class GenerationRequestCreateSerializer(ModelSerializer):
     RESOLUTION_CHOICES = [
         ('1536x1024', '1536x1024'),
         ('1024x1536', '1024x1536'),
@@ -52,7 +53,7 @@ class GenerationRequestCreateSerializer(serializers.ModelSerializer):
         return data
 
 
-class GenerationRequestSerializer(serializers.ModelSerializer):
+class GenerationRequestSerializer(ModelSerializer):
     class Meta:
         model = GenerationRequest
         fields = (
