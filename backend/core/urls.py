@@ -10,7 +10,7 @@ urlpatterns = [
     path('webhooks/subscriptions/', include('subscriptions.urls_webhooks')),
 
     path('api/auth/', include('users.urls')),
-    path('api/subscriptions/', include('subscriptions.urls')),
+    path('api/subscriptions/', include('subscriptions.urls_api')),
     path('api/products/', include('products.urls')),
     path('api/generations/', include('generations.urls'))
 ]
