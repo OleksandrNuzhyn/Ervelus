@@ -1,10 +1,9 @@
-from adrf.serializers import ModelSerializer
 from rest_framework import serializers
 from subscriptions.models import UserSubscription
 from .models import GenerationRequest
 
 
-class GenerationRequestCreateSerializer(ModelSerializer):
+class GenerationRequestCreateSerializer(serializers.ModelSerializer):
     RESOLUTION_CHOICES = [
         ('1536x1024', '1536x1024'),
         ('1024x1536', '1024x1536'),
@@ -17,7 +16,7 @@ class GenerationRequestCreateSerializer(ModelSerializer):
         model = GenerationRequest
         fields = ('input_image', 'resolution', 'chosen_style')
 
-    async def validate_input_image(self, value):
+    def validate_input_image(self, value):
         allowed_content_types = ['image/jpeg', 'image/png', 'image/webp']
         if value.content_type not in allowed_content_types:
             raise serializers.ValidationError("Invalid image format. Allowed formats are: JPG, PNG, WebP")
@@ -28,15 +27,15 @@ class GenerationRequestCreateSerializer(ModelSerializer):
         
         return value
 
-    async def validate(self, data):
+    def validate(self, data):
         user = self.context['request'].user
         chosen_style = data['chosen_style']
 
-        active_user_subscriptions = [
-            sub async for sub in user.subscriptions.filter(
+        active_user_subscriptions = list(
+            user.subscriptions.filter(
                 status=UserSubscription.SubscriptionStatus.ACTIVE
             ).select_related('plan').prefetch_related('plan__unlocked_styles')
-        ]
+        )
 
         if not active_user_subscriptions:
             raise serializers.ValidationError("You don't have an active subscription")
@@ -53,7 +52,7 @@ class GenerationRequestCreateSerializer(ModelSerializer):
         return data
 
 
-class GenerationRequestSerializer(ModelSerializer):
+class GenerationRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = GenerationRequest
         fields = (

@@ -1,4 +1,3 @@
-from asgiref.sync import sync_to_async
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.utils.dateparse import parse_datetime
@@ -7,7 +6,6 @@ from subscriptions.models import UserSubscription
 
 User = get_user_model()
 
-@sync_to_async()
 def handle_subscription_activated(data):
     try:
         user_id = data.get('custom_data').get('user_id')

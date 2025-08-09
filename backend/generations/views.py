@@ -1,33 +1,32 @@
 import json
-from adrf import viewsets
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from .models import GenerationRequest
 from . import services
 from .serializers import GenerationRequestCreateSerializer, GenerationRequestSerializer
-from google.pubsub_v1.services.publisher.async_client import PublisherAsyncClient
+from google.cloud import pubsub_v1
 from django.conf import settings
 
-publisher = PublisherAsyncClient()
+publisher = pubsub_v1.PublisherClient()
 
 
 class GenerationRequestViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
-    async def create(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         serializer = GenerationRequestCreateSerializer(data=request.data)
-        await serializer.is_valid(raise_exception=True)
+        serializer.is_valid(raise_exception=True)
 
         input_image_file = serializer.validated_data['input_image']
         
-        input_image_url = await services.upload_image_to_gcs(
-            image_file=input_image_file, 
-            user_id=request.user.id, 
-            image_source='input'
+        input_image_url = services.upload_input_image_to_gcs(
+            image_file=input_image_file,
+            user_id=request.user.id,
         )
         
-        generation_request = await GenerationRequest.objects.acreate(
+        generation_request = GenerationRequest.objects.create(
             user=request.user,
             chosen_style=serializer.validated_data['chosen_style'],
             input_img_url=input_image_url,
@@ -39,7 +38,8 @@ class GenerationRequestViewSet(viewsets.ViewSet):
                 'generation_request_id': generation_request.id,
                 'resolution': serializer.validated_data['resolution']
             }
-            await publisher.publish(topic_path, json.dumps(event_data).encode('utf-8'))
+            future = publisher.publish(topic_path, json.dumps(event_data).encode('utf-8'))
+            future.result()
         except Exception:
             return Response({"error": "Failed to publish generation task"}, status=500)
 
@@ -62,8 +62,8 @@ class GenerationRequestViewSet(viewsets.ViewSet):
         return Response(status=405)
 
     @action(detail=False, methods=['get'])
-    async def latest(self, request, *args, **kwargs):
-        latest_user_generation_request = await GenerationRequest.objects.filter(user=request.user).order_by('-created_at').afirst()
+    def latest(self, request, *args, **kwargs):
+        latest_user_generation_request = GenerationRequest.objects.filter(user=request.user).order_by('-created_at').first()
 
         if not latest_user_generation_request:
             return Response(None, status=200)

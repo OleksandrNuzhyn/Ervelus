@@ -8,7 +8,8 @@ from django.db import transaction
 from .models import GenerationRequest
 from subscriptions.models import UserSubscription
 from tenacity import retry, wait_random_exponential, retry_if_exception
-from gcloud.aio.storage import Storage
+from gcloud.aio.storage import Storage as GCSAsyncStorage
+from google.cloud import storage as gcs_sync_storage
 from asgiref.sync import sync_to_async
 from openai import (
     AsyncOpenAI,
@@ -22,33 +23,38 @@ from openai import (
 
 timeout = httpx.Timeout(90.0, connect=5.0)
 openai_client = AsyncOpenAI(timeout=timeout, max_retries=0)
+gcs_sync_storage_client = gcs_sync_storage.Client()
 
 @sync_to_async
-def b64decode(data):
+def decode_base64(data):
     return base64.b64decode(data)
 
-@sync_to_async
-def read_file_content(file):
-    return file.read()
-
-async def upload_image_to_gcs(image_file, user_id, image_source):
-    if image_source == 'input':
-        content_type = image_file.content_type
-        extension = content_type.split('/')[-1]
-        if extension == 'jpeg':
-            extension = 'jpg'
-
-        image_bytes = await read_file_content(image_file)
-    elif image_source == 'output':
-        content_type = 'image/jpeg'
+def upload_input_image_to_gcs(image_file, user_id):
+    content_type = image_file.content_type
+    extension = content_type.split('/')[-1]
+    
+    if extension == 'jpeg':
         extension = 'jpg'
-        image_bytes = image_file
 
     bucket_name = settings.GCP_STORAGE_BUCKET_NAME
-    blob_name = f"users/{user_id}/images/{uuid.uuid4()}.{extension}"
+    blob_name = f"users/{user_id}/images/inputs/{uuid.uuid4()}.{extension}"
+    
+    bucket = gcs_sync_storage_client.bucket(bucket_name)
+    blob = bucket.blob(blob_name)
+    
+    blob.upload_from_file(image_file, content_type=content_type)
 
-    async with Storage() as gcs_client:
-        await gcs_client.upload(bucket_name, blob_name, image_bytes, content_type=content_type)
+    return blob.public_url
+
+async def upload_output_image_to_gcs(image_bytes, user_id):
+    content_type = 'image/jpeg'
+    extension = 'jpg'
+
+    bucket_name = settings.GCP_STORAGE_BUCKET_NAME
+    blob_name = f"users/{user_id}/images/outputs/{uuid.uuid4()}.{extension}"
+
+    async with GCSAsyncStorage() as gcs_async_storage_client:
+        await gcs_async_storage_client.upload(bucket_name, blob_name, image_bytes, content_type=content_type)
 
     return f"https://storage.googleapis.com/{bucket_name}/{blob_name}"
 
@@ -59,19 +65,18 @@ async def handle_generation_process(generation_request_id, resolution):
         bucket_name = settings.GCP_STORAGE_BUCKET_NAME
         blob_name = urlparse(generation_request.input_img_url).path.lstrip(f'/{bucket_name}/')
         
-        async with Storage() as gcs_client:
-            input_image_file = await gcs_client.download(bucket_name, blob_name)
+        async with GCSAsyncStorage() as gcs_async_storage_client:
+            input_image_file = await gcs_async_storage_client.download(bucket_name, blob_name)
 
-        output_image_file = await generate_output_image(
+        output_image_bytes = await generate_output_image(
             prompt=generation_request.chosen_style.prompt_template,
             input_image_file=input_image_file,
             resolution=resolution
         )
         
-        output_image_url = await upload_image_to_gcs(
-            image_file=output_image_file,
-            user_id=generation_request.user.id,
-            image_source='output'
+        output_image_url = await upload_output_image_to_gcs(
+            image_bytes=output_image_bytes,
+            user_id=generation_request.user.id
         )
 
         await processing_successful_generation(generation_request, output_image_url)
@@ -108,7 +113,10 @@ async def generate_output_image(prompt, input_image_file, resolution):
         stream=False,
         n=1
     )
-    return await b64decode(result.data[0].b64_json)
+
+    decoded_bytes = await decode_base64(result.data[0].b64_json)
+
+    return decoded_bytes
 
 @sync_to_async
 def processing_successful_generation(generation_request, output_image_url):

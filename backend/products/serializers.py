@@ -1,15 +1,14 @@
-from adrf.serializers import ModelSerializer
 from rest_framework import serializers
 from .models import Style, Genre
 
 
-class GenreSerializer(ModelSerializer):
+class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = ['name']
 
 
-class StyleSerializer(ModelSerializer):
+class StyleSerializer(serializers.ModelSerializer):
     genre = GenreSerializer()
     is_available = serializers.BooleanField(read_only=True)
 
