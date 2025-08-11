@@ -1,8 +1,8 @@
-from dotenv import load_dotenv # Delete
+from dotenv import load_dotenv # TODO: Remove
 import os
 from pathlib import Path
 
-load_dotenv() # Delete
+load_dotenv() # TODO: Remove
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -10,9 +10,9 @@ SERVICE_NAME = os.getenv("SERVICE_NAME")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = True # False
+DEBUG = True # TODO: False
 
-ALLOWED_HOSTS = ['backend.ervelus.com', '127.0.0.1'] # Set up for production
+ALLOWED_HOSTS = ['backend.ervelus.com', '127.0.0.1'] # TODO: Set up for production
 
 
 
@@ -121,6 +121,7 @@ TEMPLATES = [
 
 ASGI_APPLICATION = 'core.asgi.application'
 
+BACKEND_URL = os.getenv("BACKEND_URL")
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 
 
@@ -144,7 +145,7 @@ REST_FRAMEWORK = {
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = False # True
+SESSION_COOKIE_SECURE = False # TODO: True
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_AGE = 3888000
 
@@ -154,7 +155,7 @@ CSRF_TRUSTED_ORIGINS = [
     os.getenv("CSRF_TRUSTED_ORIGINS"),
 ]
 CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SECURE = False # True
+CSRF_COOKIE_SECURE = False # TODO: True
 CSRF_COOKIE_SAMESITE = 'Lax'
 
 
@@ -174,8 +175,9 @@ PADDLE_WEBHOOK_SECRET_KEY = os.getenv("PADDLE_WEBHOOK_SECRET_KEY")
 
 
 GCP_PROJECT_ID = os.getenv("GCP_PROJECT_ID")
-GCP_PUBSUB_PADDLE_EVENTS_TOPIC_ID = os.getenv("GCP_PUBSUB_PADDLE_EVENTS_TOPIC_ID")
-GCP_PUBSUB_GENERATION_EVENTS_TOPIC_ID = os.getenv("GCP_PUBSUB_GENERATION_EVENTS_TOPIC_ID")
+GCP_TASKS_LOCATION = os.getenv("GCP_TASKS_LOCATION")
+GCP_TASKS_PADDLE_EVENTS_QUEUE_ID = os.getenv("GCP_TASKS_PADDLE_EVENTS_QUEUE_ID")
+GCP_TASKS_GENERATION_EVENTS_QUEUE_ID = os.getenv("GCP_TASKS_GENERATION_EVENTS_QUEUE_ID")
 GCP_STORAGE_BUCKET_NAME = os.getenv("GCP_STORAGE_BUCKET_NAME")
 
 
@@ -218,7 +220,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-INTERNAL_IPS = [
+INTERNAL_IPS = [ # TODO: Remove
     "127.0.0.1",
 ]
 

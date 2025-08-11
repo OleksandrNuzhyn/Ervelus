@@ -1,13 +1,14 @@
 import base64
 import uuid
 from urllib.parse import urlparse
+from datetime import timedelta
 import io
 import httpx
 from django.conf import settings
 from django.db import transaction
 from .models import GenerationRequest
 from subscriptions.models import UserSubscription
-from tenacity import retry, wait_random_exponential, retry_if_exception
+from tenacity import retry, wait_random_exponential, retry_if_exception, stop_after_attempt
 from gcloud.aio.storage import Storage as GCSAsyncStorage
 from google.cloud import storage as gcs_sync_storage
 from asgiref.sync import sync_to_async
@@ -45,6 +46,20 @@ def upload_input_image_to_gcs(image_file, user_id):
     blob.upload_from_file(image_file, content_type=content_type)
 
     return blob.public_url
+
+def generate_signed_gcs_url(gcs_img_url, expires_in_seconds):
+    parsed_url = urlparse(gcs_img_url)
+    path = parsed_url.path.lstrip('/')
+    bucket_name, blob_name = path.split('/', 1)
+
+    bucket = gcs_sync_storage_client.bucket(bucket_name)
+    blob = bucket.blob(blob_name)
+
+    return blob.generate_signed_url(
+        expiration=timedelta(seconds=expires_in_seconds),
+        version='v4',
+        method='GET'
+    )
 
 async def upload_output_image_to_gcs(image_bytes, user_id):
     content_type = 'image/jpeg'
@@ -98,7 +113,11 @@ def is_retryable_error(exception):
         UnprocessableEntityError
     ))
 
-@retry(wait=wait_random_exponential(min=5, max=60), retry=retry_if_exception(is_retryable_error))
+@retry(
+    wait=wait_random_exponential(min=1, max=30), 
+    stop=stop_after_attempt(6),
+    retry=retry_if_exception(is_retryable_error)
+)
 async def generate_output_image(prompt, input_image_file, resolution):
     result = await openai_client.images.edit(
         model="gpt-image-1",

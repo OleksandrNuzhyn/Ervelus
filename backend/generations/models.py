@@ -8,6 +8,10 @@ class GenerationRequest(models.Model):
         PROCESSING = 'processing'
         COMPLETED = 'completed'
         FAILED = 'failed'
+    
+    class Meta:
+        verbose_name = 'Generation Request'
+        verbose_name_plural = 'Generation Requests'
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='generation_requests')
     chosen_style = models.ForeignKey('products.Style', on_delete=models.PROTECT, related_name='generation_requests')

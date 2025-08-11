@@ -6,10 +6,12 @@ from rest_framework.decorators import action
 from .models import GenerationRequest
 from . import services
 from .serializers import GenerationRequestCreateSerializer, GenerationRequestSerializer
-from google.cloud import pubsub_v1
+from google.cloud import tasks_v2
+from google.cloud.tasks_v2.types import HttpMethod
+from google.protobuf import duration_pb2
 from django.conf import settings
 
-publisher = pubsub_v1.PublisherClient()
+tasks_client = tasks_v2.CloudTasksClient()
 
 
 class GenerationRequestViewSet(viewsets.ViewSet):
@@ -33,13 +35,30 @@ class GenerationRequestViewSet(viewsets.ViewSet):
         )
         
         try:
-            topic_path = publisher.topic_path(settings.GCP_PROJECT_ID, settings.GCP_PUBSUB_GENERATION_EVENTS_TOPIC_ID)
+            queue_path = tasks_client.queue_path(
+                settings.GCP_PROJECT_ID,
+                settings.GCP_TASKS_LOCATION,
+                settings.GCP_TASKS_GENERATIONS_EVENTS_QUEUE_ID,
+            )
+
+            target_url = f"{settings.BACKEND_URL.rstrip('/')}/webhooks/generations/tasks/"
+            
             event_data = {
                 'generation_request_id': generation_request.id,
                 'resolution': serializer.validated_data['resolution']
             }
-            future = publisher.publish(topic_path, json.dumps(event_data).encode('utf-8'))
-            future.result()
+
+            task = {
+                'http_request': {
+                    'url': target_url,
+                    'http_method': HttpMethod.POST,
+                    'headers': {'Content-Type': 'application/json'},
+                    'body': json.dumps(event_data),
+                },
+                'dispatch_deadline': duration_pb2.Duration(seconds=350)
+            }
+
+            tasks_client.create_task(request={'parent': queue_path, 'task': task})
         except Exception:
             return Response({"error": "Failed to publish generation task"}, status=500)
 
