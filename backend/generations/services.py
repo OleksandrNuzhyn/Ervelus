@@ -77,15 +77,19 @@ async def handle_generation_process(generation_request_id, resolution):
     try:
         generation_request = await GenerationRequest.objects.select_related('user', 'chosen_style').aget(id=generation_request_id)
 
-        bucket_name = settings.GCP_STORAGE_BUCKET_NAME
-        blob_name = urlparse(generation_request.input_img_url).path.lstrip(f'/{bucket_name}/')
+        parsed_url = urlparse(generation_request.input_img_url)
+        path = parsed_url.path.lstrip('/')
+        bucket_name, blob_name = path.split('/', 1)
         
         async with GCSAsyncStorage() as gcs_async_storage_client:
+            metadata = await gcs_async_storage_client.download_metadata(bucket_name, blob_name)
+            input_image_content_type = metadata.get('contentType')
             input_image_file = await gcs_async_storage_client.download(bucket_name, blob_name)
 
         output_image_bytes = await generate_output_image(
             prompt=generation_request.chosen_style.prompt_template,
             input_image_file=input_image_file,
+            input_image_content_type=input_image_content_type,
             resolution=resolution
         )
         
@@ -98,11 +102,11 @@ async def handle_generation_process(generation_request_id, resolution):
     except BadRequestError as e:
         generation_request.status = GenerationRequest.GenerationStatus.FAILED
         generation_request.error_api_message = str(e)
-        await generation_request.asave(update_fields=['status', 'error_api_message'])
+        await generation_request.asave(update_fields=['status', 'error_api_message', 'updated_at'])
     except Exception as e:
         generation_request.status = GenerationRequest.GenerationStatus.FAILED
         generation_request.error_message = str(e)
-        await generation_request.asave(update_fields=['status', 'error_message'])
+        await generation_request.asave(update_fields=['status', 'error_message', 'updated_at'])
 
 def is_retryable_error(exception):
     return isinstance(exception, (
@@ -118,10 +122,10 @@ def is_retryable_error(exception):
     stop=stop_after_attempt(6),
     retry=retry_if_exception(is_retryable_error)
 )
-async def generate_output_image(prompt, input_image_file, resolution):
+async def generate_output_image(prompt, input_image_file, input_image_content_type, resolution):
     result = await openai_client.images.edit(
         model="gpt-image-1",
-        image=io.BytesIO(input_image_file),
+        image=('input_image', io.BytesIO(input_image_file), input_image_content_type),
         prompt=prompt,
         background="opaque",
         input_fidelity="low",
@@ -153,4 +157,4 @@ def processing_successful_generation(generation_request, output_image_url):
 
         generation_request.output_img_url = output_image_url
         generation_request.status = GenerationRequest.GenerationStatus.COMPLETED
-        generation_request.save(update_fields=['output_img_url', 'status'])
+        generation_request.save(update_fields=['output_img_url', 'status', 'updated_at'])

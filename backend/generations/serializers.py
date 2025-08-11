@@ -41,7 +41,7 @@ class GenerationRequestCreateSerializer(serializers.ModelSerializer):
         if not active_user_subscriptions:
             raise serializers.ValidationError("You don't have an active subscription")
 
-        total_credits = sum(sub.generations_count for sub in active_user_subscriptions)
+        total_credits = sum(sub.remaining_credits for sub in active_user_subscriptions)
         if total_credits == 0:
             raise serializers.ValidationError("All credits on active subscriptions have been used")
 

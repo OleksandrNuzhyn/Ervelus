@@ -18,7 +18,7 @@ class GenerationRequestViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
-        serializer = GenerationRequestCreateSerializer(data=request.data)
+        serializer = GenerationRequestCreateSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
 
         input_image_file = serializer.validated_data['input_image']
@@ -38,7 +38,7 @@ class GenerationRequestViewSet(viewsets.ViewSet):
             queue_path = tasks_client.queue_path(
                 settings.GCP_PROJECT_ID,
                 settings.GCP_TASKS_LOCATION,
-                settings.GCP_TASKS_GENERATIONS_EVENTS_QUEUE_ID,
+                settings.GCP_TASKS_GENERATION_EVENTS_QUEUE_ID,
             )
 
             target_url = f"{settings.BACKEND_URL.rstrip('/')}/webhooks/generations/tasks/"
@@ -53,7 +53,7 @@ class GenerationRequestViewSet(viewsets.ViewSet):
                     'url': target_url,
                     'http_method': HttpMethod.POST,
                     'headers': {'Content-Type': 'application/json'},
-                    'body': json.dumps(event_data),
+                    'body': json.dumps(event_data).encode('utf-8')
                 },
                 'dispatch_deadline': duration_pb2.Duration(seconds=350)
             }
