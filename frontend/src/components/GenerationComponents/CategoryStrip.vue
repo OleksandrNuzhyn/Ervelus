@@ -72,8 +72,9 @@ const props = defineProps({
     required: true,
   },
   selectedCategoryId: {
-    type: String,
-    required: true,
+    type: [String, Number],
+    required: false,
+    default: null,
   },
 });
 

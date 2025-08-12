@@ -1,62 +1,77 @@
-  <template>
-    <div class="relative">
-      <div class="w-full">
-        <div class="relative">
-          <CategoryStrip :categories="mockCategories" :selected-category-id="selectedCategoryId" @category-selected="handleCategorySelect"/>
-          <StylePanel
-            v-if="isStylePanelOpen"
-            class="absolute top-full mt-2 w-full z-20"
-            :styles="filteredStyles"
-            :selected-style-id="selectedStyleId"
-            @style-selected="handleStyleSelect"
-            @close="handleClosePanel"
-          />
-        </div>
+<template>
+  <div class="relative">
+    <div class="w-full">
+      <div class="relative">
+        <CategoryStrip :categories="genres" :selected-category-id="selectedGenreId" @category-selected="handleGenreSelect"/>
+        <StylePanel
+          v-if="isStylePanelOpen"
+          class="absolute top-full mt-2 w-full z-20"
+          :styles="filteredStyles"
+          :selected-style-id="selectedStyleId"
+          @style-selected="handleStyleSelect"
+          @close="handleClosePanel"
+        />
       </div>
-      <ImageWorkspace v-if="!isStylePanelOpen" :selected-style-name="selectedStyleName" />
     </div>
-  </template>
-  
-  
+    <ImageWorkspace v-show="!isStylePanelOpen" :selected-style-name="selectedStyleName" :selected-style-id="selectedStyleId" />
+  </div>
+</template>
+
+
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import CategoryStrip from './CategoryStrip.vue';
 import StylePanel from './StylePanel.vue';
 import ImageWorkspace from './ImageWorkspace.vue';
+import api from '@/services/api';
 
-const mockCategories = [
-  { id: 'anime', name: 'Аніме' },
-  { id: 'photo', name: 'Фотореалізм' },
-  { id: 'fantasy', name: 'Фентезі' },
-  { id: 'cyberpunk', name: 'Кіберпанк' },
-  { id: 'sci-fi', name: 'Наукова фантастика' },
-  { id: 'abstract', name: 'Абстракція' },
-  { id: 'realistic', name: 'Реалістичне' },
-];
+const genres = ref([]);
+const styles = ref([]);
 
-const mockStyles = [
-  { id: 'anime_1', name: '80-ті', previewUrl: 'https://picsum.photos/seed/anime1/200', categoryId: 'anime', isPro: false },
-  { id: 'anime_2', name: 'Ghibli', previewUrl: 'https://picsum.photos/seed/anime2/200', categoryId: 'anime', isPro: true },
-  { id: 'photo_1', name: 'Портрет', previewUrl: 'https://picsum.photos/seed/photo1/200', categoryId: 'photo', isPro: false },
-  { id: 'fantasy_1', name: 'Ельфійський ліс', previewUrl: 'https://picsum.photos/seed/fantasy1/200', categoryId: 'fantasy', isPro: false },
-  { id: 'cyberpunk_1', name: 'Нео-Токіо', previewUrl: 'https://picsum.photos/seed/cyberpunk1/200', categoryId: 'cyberpunk', isPro: true },
-];
-
-const selectedCategoryId = ref('anime');
+const selectedGenreId = ref(null);
 const selectedStyleId = ref(null);
 const isStylePanelOpen = ref(false);
 
-const filteredStyles = computed(() => mockStyles.filter(s=>s.categoryId===selectedCategoryId.value));
+onMounted(async () => {
+  try {
+    const stylesResponse = await api.get('/api/products/styles/');
+    styles.value = stylesResponse.data;
+
+    if (styles.value.length > 0) {
+      const genreMap = new Map();
+      styles.value.forEach(style => {
+        if (style.genre && style.genre.name && !genreMap.has(style.genre.name)) {
+          genreMap.set(style.genre.name, { id: style.genre.name, name: style.genre.name });
+        }
+      });
+      genres.value = Array.from(genreMap.values());
+
+      if (genres.value.length > 0) {
+        selectedGenreId.value = genres.value[0].id;
+        isStylePanelOpen.value = true; // open style panel by default
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load style data:', error);
+  }
+});
+
+const filteredStyles = computed(() => {
+  if (!selectedGenreId.value) {
+    return [];
+  }
+  return styles.value.filter(s => s.genre && s.genre.name === selectedGenreId.value);
+});
 
 const selectedStyleName = computed(() => {
-  const sel = mockStyles.find((s) => s.id === selectedStyleId.value);
+  const sel = styles.value.find((s) => s.id === selectedStyleId.value);
   return sel ? sel.name : null;
 });
 
-const handleCategorySelect=(categoryId)=>{
-  selectedCategoryId.value=categoryId;
-  selectedStyleId.value=null;
-  isStylePanelOpen.value=true;
+const handleGenreSelect=(genreId)=>{
+  selectedGenreId.value = genreId;
+  selectedStyleId.value = null;
+  isStylePanelOpen.value = true;
 };
 const handleStyleSelect=(styleId)=>{
   selectedStyleId.value=styleId;
