@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "sapient-forest-465020-d9",
+  "private_key_id": "c48f56e4e76d3e21b5d41a51a49dfb911e0e8876",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQD5p6iVf7yUcZLu\ny4GNTVLC/5prWYCiAVEPQ21Lo7elC4w1iW/h4dbfGq+S4uWT0Vl2LBTPw8zrd9gu\n4x/j2XWBdS1Cv9mJKNC3SBada+kdaQKsmrCFuqaDZ9gl5HMh4c66PFVc3Ozpr/yf\nsh6QaKjUksmAn6vMDDrdUrxbC0JRVnw2qSRp6DbGwMRXLgBWzK1oegnoBB/abeSE\nATfm/qLG4+VhDq02/3OMXPfnqsvIR4fEMIA8YyBXhxJuapEar26PFvo1Ucngt9N1\nCp7MBBtN31haAVNL8GzUrWLoDi+56TIkjL161lvfzkYq7bDZ5ZntYskv7zysBZwK\nKraInV1NAgMBAAECgf8K+JMv/q0K2PLcC5Vl4EAC0bi3fvdoJyaoxQ3IhSlM13UR\n5ThFdOc8Zq/QhKgSFuEXkFhZyQD4WAvoA5MjMCs5xSx4AnZM0L5bT4+u208jO7oi\nW6nmNo2auLWG9MMaehHbnUsjCZJfspwnaGxvbCn/LXQtctbZ4K+1ii080wHXER+r\n84fCXNbmt9Md79OP2ZRoZYK7bXhQ5jgDw8xXvtmGVbvYDSeLKZK/jN+DzSfUDnmh\nbceHLHMfOe95UValrZTgXzBamWn2FmlcihhfyS9U/D4aS36xqbMKpt9XGPxnHKI8\nVjc4zTGRRJbThCVdmQKIFxMTpk3oKZTD4sQwaXECgYEA/rGY5XSoA/+6LBMOKDfx\nysTIzASzOf8XoeDFt9V+zeff+Nh2oSaNkRL0JcYzkndoAiZoyXjW1OAYzjRDOiOZ\nrdCyaNPL3T6ozdrVBCgeA5NEDPPAr3v7fsxz4pXYR/ybncp4zDR2YlRs+iM8D1oy\nzgfFOVCs8ZtQbiRscLbr6dECgYEA+u9yDKgKwK72E3zAbA9284fJ2j++E4NKFxVh\n5AUgbgKjBOiBU9u5LnaZQm0js4TvXzmQ35FqqyPH+2eXsskyrm/PK4h6JCTetx4r\nNjTTrqWqqhtxnmBHACJdl0HTdfP3ak9fAQG3Oxp6LXFinn/Xw0QM7MkXfPq1c8+9\njhHnXr0CgYEApKcrsSs5c1xffx7SiC2iovOU3FAtjdDb9krZh379+x9sK/PEvWmv\nG5qlO8ZmkMmg88Lg+16jg/tcDfK7g1qAf13r+NjzcpSPjIVsMMO+o5EQ7U6nwsrk\nS5ThVhqJOACWmevLLDi+T9NEoHEm4sXtEkTzu5nsNEW0OYBSmoum+AECgYBk5UgX\nPK3uIatB1KRODr3GV6/auEyF7gEpXOiaVVFfymGfxJjTjgJcY0VmRxnWwbm5sRzG\nN+MK4v0y4clGEs31A3HqUBrEU6rVOCUpy33duDDx6sz5YD7MGAVHnykWQT0XGsjZ\nT8ZL1m6PvQppLoAjvEXyIzz1fJze7wWJjTtZhQKBgQDIpNCzKvnrBbRJcnfg1f4z\nq/E1FQ3PqdkiBNK2uoYxZ0Kg+gL5lwxyEMGiPsXlFP8BwJ4n39RvW55+m+3wGEZq\nVONBfOq2PRbl7SDvHPexiSCSkBnEuPgk/pKLO3hNi1zAxVECTrc+tQd7vkTvvBuN\nr7Q83DgjelmVNZE401QCOA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "signed-url@sapient-forest-465020-d9.iam.gserviceaccount.com",
+  "client_id": "101234103766211564169",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/signed-url%40sapient-forest-465020-d9.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
