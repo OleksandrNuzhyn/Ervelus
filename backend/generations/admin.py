@@ -3,6 +3,7 @@ from django.utils import timezone
 from .models import GenerationRequest
 
 
+@admin.register(GenerationRequest)
 class GenerationRequestAdmin(admin.ModelAdmin):
     list_display = (
         'id',
@@ -11,6 +12,7 @@ class GenerationRequestAdmin(admin.ModelAdmin):
         'created_at_formatted',
         'updated_at_formatted',
     )
+    list_select_related = ('user',)
     readonly_fields = (
         'created_at_formatted',
         'updated_at_formatted',
@@ -24,6 +26,3 @@ class GenerationRequestAdmin(admin.ModelAdmin):
     @admin.display(ordering='updated_at', description='updated at')
     def updated_at_formatted(self, obj):
         return timezone.localtime(obj.updated_at).strftime('%Y-%m-%d %H:%M:%S')
-
-
-admin.site.register(GenerationRequest, GenerationRequestAdmin)
