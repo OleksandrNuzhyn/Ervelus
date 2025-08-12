@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from django.conf import settings
 from django.utils import timezone
 
@@ -12,12 +13,20 @@ class UserSubscription(models.Model):
     class Meta:
         verbose_name = 'User Subscription'
         verbose_name_plural = 'User Subscriptions'
+        indexes = [
+            models.Index(fields=['user', 'status'], name='user_status_idx'),
+            models.Index(
+                fields=['user', 'end_time'],
+                name='user_active_credits_end_idx',
+                condition=Q(status='active', remaining_credits__gt=0),
+            )
+        ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='subscriptions')
     plan = models.ForeignKey('products.SubscriptionPlan', on_delete=models.PROTECT, related_name='user_subscriptions')
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    status = models.CharField(max_length=20, choices=SubscriptionStatus.choices, default=SubscriptionStatus.ACTIVE)
+    status = models.CharField(max_length=20, choices=SubscriptionStatus.choices, default=SubscriptionStatus.ACTIVE, db_index=True)
     cancels_at = models.DateTimeField(null=True, blank=True)
     paddle_subscription_id = models.CharField(max_length=255, unique=True)
     remaining_credits = models.IntegerField()

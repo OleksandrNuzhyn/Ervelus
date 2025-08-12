@@ -53,6 +53,35 @@ class GenerationRequestCreateSerializer(serializers.ModelSerializer):
         return data
 
 
+class GenerationRequestListSerializer(serializers.ModelSerializer):
+    input_img_signed_url = serializers.SerializerMethodField()
+    output_img_signed_url = serializers.SerializerMethodField()
+
+    def get_input_img_signed_url(self, obj):
+        try:
+            if not obj.input_img_url:
+                return None
+            return services.generate_signed_gcs_url(obj.input_img_url, expires_in_seconds=300)
+        except Exception:
+            return None
+
+    def get_output_img_signed_url(self, obj):
+        try:
+            if not obj.output_img_url:
+                return None
+            return services.generate_signed_gcs_url(obj.output_img_url, expires_in_seconds=300)
+        except Exception:
+            return None
+
+    class Meta:
+        model = GenerationRequest
+        fields = (
+            'id',
+            'input_img_signed_url',
+            'output_img_signed_url'
+        )
+
+
 class GenerationRequestSerializer(serializers.ModelSerializer):
     input_img_signed_url = serializers.SerializerMethodField()
     output_img_signed_url = serializers.SerializerMethodField()
@@ -82,7 +111,5 @@ class GenerationRequestSerializer(serializers.ModelSerializer):
             'output_img_signed_url',
             'status',
             'error_message',
-            'error_api_message',
-            'created_at',
-            'updated_at'
+            'error_api_message'
         )

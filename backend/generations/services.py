@@ -150,7 +150,11 @@ def processing_successful_generation(generation_request, output_image_url):
         ).order_by('end_time').first()
         
         if not subscription_for_debiting_credit:
-            raise Exception("No active subscription with credits found to debit")
+            generation_request.output_img_url = output_image_url
+            generation_request.status = GenerationRequest.GenerationStatus.COMPLETED
+            generation_request.error_message = "Credit was not debited: no active subscription with credits at processing time"
+            generation_request.save(update_fields=['output_img_url', 'status', 'error_message', 'updated_at'])
+            return
 
         subscription_for_debiting_credit.remaining_credits -= 1
         subscription_for_debiting_credit.save(update_fields=['remaining_credits'])

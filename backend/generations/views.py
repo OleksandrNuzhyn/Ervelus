@@ -5,7 +5,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from .models import GenerationRequest
 from . import services
-from .serializers import GenerationRequestCreateSerializer, GenerationRequestSerializer
+from .serializers import (
+    GenerationRequestCreateSerializer,
+    GenerationRequestListSerializer,
+    GenerationRequestSerializer
+)
+from .pagination import CustomPaginationClass
 from google.cloud import tasks_v2
 from google.cloud.tasks_v2.types import HttpMethod
 from google.protobuf import duration_pb2
@@ -66,7 +71,19 @@ class GenerationRequestViewSet(viewsets.ViewSet):
         return Response(serializer.data, status=202)
 
     def list(self, request, *args, **kwargs):
-        return Response(status=405)
+        queryset = (
+            GenerationRequest.objects.filter(
+                user=request.user,
+                status__in=[GenerationRequest.GenerationStatus.PROCESSING, GenerationRequest.GenerationStatus.COMPLETED]
+            ).order_by('-created_at')
+        )
+
+        paginator = CustomPaginationClass()
+        page = paginator.paginate_queryset(queryset, request, view=self)
+        
+        serializer = GenerationRequestListSerializer(page, many=True)
+        paginated_response = paginator.get_paginated_response(serializer.data)
+        return Response(paginated_response.data, status=200)
 
     def retrieve(self, request, *args, **kwargs):
         return Response(status=405)

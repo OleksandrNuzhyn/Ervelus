@@ -9,7 +9,7 @@ from subscriptions.models import UserSubscription
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def subscription_plan_list(request):
-    plans = SubscriptionPlan.objects.values(
+    plans = SubscriptionPlan.objects.order_by('price').values(
         'name', 
         'description',
         'price',
