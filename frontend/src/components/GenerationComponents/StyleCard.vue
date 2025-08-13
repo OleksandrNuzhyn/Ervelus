@@ -13,7 +13,9 @@ const props = defineProps({
 const emit = defineEmits(['select-style']);
 
 const selectStyle = () => {
-  emit('select-style', props.styleData.id);
+  if (props.styleData.is_available !== false) {
+    emit('select-style', props.styleData.id);
+  }
 };
 
 const getSpriteClass = () => {
@@ -37,33 +39,27 @@ const getSpriteClass = () => {
   >
     <!-- Заокруглений квадрат -->
     <div 
-      class="w-32 h-32 rounded-2xl mx-auto transition-all duration-200 flex items-center justify-center"
+      class="w-32 h-32 rounded-2xl mx-auto transition-all duration-200 flex items-center justify-center relative"
       :class="[
-        isSelected ? 'ring-4 ring-blue-500 ring-opacity-80' : 'hover:ring-2 hover:ring-gray-500 hover:ring-opacity-50',
-        getSpriteClass() || 'bg-gray-700'
+        isSelected ? 'ring-4 ring-blue-500 ring-opacity-80' : 'hover:ring-2 hover:ring-gray-800 hover:ring-opacity-30',
+        getSpriteClass() || 'bg-transparent'
       ]"
     >
-      <!-- Плейсхолдер з першою літерою назви (тільки якщо немає CSS класу спрайту) -->
-      <span 
-        v-if="!getSpriteClass()"
-        class="text-gray-300 text-2xl font-bold"
-      >
-        {{ styleData.name?.charAt(0) || '?' }}
-      </span>
+
+      <div 
+        v-if="styleData.is_available === false"
+        class="absolute inset-0 flex items-center justify-center rounded-2xl">
+        <div class="absolute inset-0 h-full w-full rounded-2xl bg-black opacity-50"></div>
+        <svg class="w-8 h-8 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+        </svg>
+      </div>
     </div>
     
-    <!-- Назва стилю -->
     <div class="mt-3 text-center">
       <span class="text-white text-sm font-semibold">{{ styleData.name }}</span>
     </div>
     
-    <!-- PRO мітка -->
-    <div
-      v-if="styleData.isPro"
-      class="absolute top-0 right-2 bg-yellow-500 text-gray-900 text-xs font-bold px-2 py-1 rounded-full"
-    >
-      PRO
-    </div>
   </div>
 </template>
 
@@ -88,6 +84,13 @@ const getSpriteClass = () => {
   width: 128px; 
   height: 128px;
   background: url('@/assets/style_sprites/sprite_test.png') -143px -5px;
+  background-repeat: no-repeat;
+}
+
+.bg-ukraine {
+  width: 128px; 
+  height: 128px;
+  background: url('@/assets/style_sprites/sprite_test.png') -5px -5px;
   background-repeat: no-repeat;
 }
 
