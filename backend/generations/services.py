@@ -5,7 +5,7 @@ from datetime import timedelta
 import io
 import httpx
 from django.conf import settings
-from django.db import transaction
+from django.db import transaction, close_old_connections
 from .models import GenerationRequest
 from subscriptions.models import UserSubscription
 from tenacity import retry, wait_random_exponential, retry_if_exception, stop_after_attempt
@@ -76,6 +76,7 @@ async def upload_output_image_to_gcs(image_bytes, user_id):
 async def handle_generation_process(generation_request_id, resolution):
     try:
         generation_request = await GenerationRequest.objects.select_related('user', 'chosen_style').aget(id=generation_request_id)
+        close_old_connections()
 
         parsed_url = urlparse(generation_request.input_img_url)
         path = parsed_url.path.lstrip('/')
