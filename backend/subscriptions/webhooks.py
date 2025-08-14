@@ -57,8 +57,14 @@ def tasks_handler(request):
     try:
         event_type = event.get('event_type')
 
-        if event_type == 'subscription.activated':
-            services.handle_subscription_activated(event['data'])
+        if event_type == 'transaction.completed':
+            services.handle_transaction_completed(event['data'])
+        elif event_type == 'transaction.past_due':
+            services.handle_transaction_past_due(event['data'])
+        elif event_type == 'subscription.updated':
+            services.handle_subscription_updated(event['data'])
+        elif event_type == 'subscription.canceled':
+            services.handle_subscription_canceled(event['data'])
     except Exception:
         return Response(status=500)
     

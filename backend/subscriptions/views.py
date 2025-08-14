@@ -16,7 +16,7 @@ def customer_portal_session_create(request):
             raise Exception()
 
         paddle_customer_id = profile.paddle_customer_id
-        url = f"https://sandbox-api.paddle.com/customers/{paddle_customer_id}/portal-sessions"
+        url = f"{settings.PADDLE_API_BASE_URL.rstrip('/')}/customers/{paddle_customer_id}/portal-sessions"
         headers = {
             "Authorization": f"Bearer {settings.PADDLE_API_KEY}",
             "Content-Type": "application/json",
