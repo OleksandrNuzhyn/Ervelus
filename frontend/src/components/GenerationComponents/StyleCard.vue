@@ -39,9 +39,9 @@ const getSpriteClass = () => {
   >
     <!-- Заокруглений квадрат -->
     <div 
-      class="w-32 h-32 rounded-2xl mx-auto transition-all duration-200 flex items-center justify-center relative"
+      class="w-45 h-45 rounded-2xl mx-auto transition-all duration-200 flex items-center justify-center relative"
       :class="[
-        isSelected ? 'ring-4 ring-blue-500 ring-opacity-80' : 'hover:ring-2 hover:ring-gray-800 hover:ring-opacity-30',
+        isSelected ? 'ring-3 ring-gray-400' : 'hover:ring-2 hover:ring-gray-800 hover:ring-opacity-30',
         getSpriteClass() || 'bg-transparent'
       ]"
     >
@@ -67,30 +67,30 @@ const getSpriteClass = () => {
 /* CSS класи для спрайтів */
 
 .bg-dark_fantasy_1 {
-  width: 128px; 
-  height: 128px;
-  background: url('@/assets/style_sprites/sprite_test.png') -5px -5px;
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/sprite_test.png') -10px -10px;
   background-repeat: no-repeat;
 }
 
 .bg-temich {
-  width: 128px; 
-  height: 128px;
-  background: url('@/assets/style_sprites/sprite_test.png') -143px -5px;
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/sprite_test.png') -210px -10px;
   background-repeat: no-repeat;
 }
 
 .bg-celestial {
-  width: 128px; 
-  height: 128px;
-  background: url('@/assets/style_sprites/sprite_test.png') -143px -5px;
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/sprite_test.png') -210px -10px;
   background-repeat: no-repeat;
 }
 
 .bg-ukraine {
-  width: 128px; 
-  height: 128px;
-  background: url('@/assets/style_sprites/sprite_test.png') -5px -5px;
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/sprite_test.png') -10px -10px;
   background-repeat: no-repeat;
 }
 

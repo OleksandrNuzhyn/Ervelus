@@ -14,7 +14,7 @@ import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue
 
 <style scoped>
 .background-container {
-  background-image: url('@/assets/background_assets/stars.webp');
+  background-image: url('@/assets/background_assets/sky_star.png');
   background-size: cover;
   background-position: top center;
   min-height: max(100vh, calc(100vw * 23 / 48));

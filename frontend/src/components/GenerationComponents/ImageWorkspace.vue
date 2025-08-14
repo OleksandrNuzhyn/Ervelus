@@ -15,25 +15,27 @@
           </div>
           <div v-else class="relative w-full h-full">
             <img :src="inputImageUrl" alt="Input" class="w-full h-full object-contain rounded-lg" />
-            <button @click="inputImageUrl = null" class="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white font-bold p-2 rounded-full text-xs">
-              X
+            <button @click="inputImageUrl = null" class="absolute top-2 right-2 bg-transparent text-gray-400 hover:text-white p-2 transition-colors">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
             </button>
           </div>
         </div>
         <div
           v-if="selectedStyleName"
-          class="w-full bg-gray-700 text-white rounded-xl py-3 md:py-4 mt-5 text-center text-base md:text-lg font-medium"
+          class="w-full bg-gray-800 text-white rounded-xl py-3 md:py-4 mt-5 text-center text-base md:text-lg font-medium"
         >
           {{ selectedStyleName }}
         </div>
       </div>
 
       <div class="flex flex-col w-full">
-        <div class="flex flex-col items-center justify-center bg-gray backdrop-blur-[14px] bg-[rgba(31,41,55,0.3)] rounded-lg p-4 h-[400px] md:h-[660px]">
+        <div class="flex flex-col items-center justify-center bg-transparent backdrop-blur-[14px] bg-[rgba(31,41,55,0.3)] rounded-lg p-4 h-[400px] md:h-[660px]">
           <div v-if="isLoading" class="flex flex-col items-center justify-center">
             <svg class="animate-spin -ml-1 mr-3 h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938л3-2.647z"></path>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938л3-2.647з"></path>
             </svg>
             <p class="mt-2 text-lg">Generating...</p>
           </div>
@@ -46,24 +48,32 @@
         </div>
         <div class="mt-5 flex flex-col sm:flex-row justify-between items-center gap-5">
           <div class="flex justify-center w-full sm:w-auto space-x-3 text-white">
-            <button @click="selectedAspectRatio = '1:1'" :class="[ 'px-4 py-2 sm:px-8 sm:py-3 md:px-12 md:py-4 rounded-lg border transition-colors flex-grow sm:flex-grow-0', selectedAspectRatio === '1:1' ? 'bg-blue-600 border-blue-600' : 'bg-gray-700 border-gray-600 hover:bg-gray-600' ]">
+            <button @click="selectedAspectRatio = '1:1'" :class="[ 'px-4 py-2 sm:px-8 sm:py-3 md:px-12 md:py-4 rounded-lg border transition-colors flex-grow sm:flex-grow-0', selectedAspectRatio === '1:1' ? 'bg-gray-600 border-gray-400' : 'bg-gray-800 border-gray-600 hover:bg-gray-600' ]">
               1:1
             </button>
-            <button @click="selectedAspectRatio = '2:3'" :class="[ 'px-4 py-2 sm:px-8 sm:py-3 md:px-12 md:py-4 rounded-lg border transition-colors flex-grow sm:flex-grow-0', selectedAspectRatio === '2:3' ? 'bg-blue-600 border-blue-600' : 'bg-gray-700 border-gray-600 hover:bg-gray-600' ]">
+            <button @click="selectedAspectRatio = '2:3'" :class="[ 'px-4 py-2 sm:px-8 sm:py-3 md:px-12 md:py-4 rounded-lg border transition-colors flex-grow sm:flex-grow-0', selectedAspectRatio === '2:3' ? 'bg-gray-600 border-gray-400' : 'bg-gray-800 border-gray-600 hover:bg-gray-600' ]">
               2:3
             </button>
-            <button @click="selectedAspectRatio = '3:2'" :class="[ 'px-4 py-2 sm:px-8 sm:py-3 md:px-12 md:py-4 rounded-lg border transition-colors flex-grow sm:flex-grow-0', selectedAspectRatio === '3:2' ? 'bg-blue-600 border-blue-600' : 'bg-gray-700 border-gray-600 hover:bg-gray-600' ]">
+            <button @click="selectedAspectRatio = '3:2'" :class="[ 'px-4 py-2 sm:px-8 sm:py-3 md:px-12 md:py-4 rounded-lg border transition-colors flex-grow sm:flex-grow-0', selectedAspectRatio === '3:2' ? 'bg-gray-600 border-gray-400' : 'bg-gray-800 border-gray-600 hover:bg-gray-600' ]">
               3:2
             </button>
           </div>
           <button
             @click="handleGenerate"
-            :disabled="!inputImageUrl || isLoading || !selectedStyleId"
-            class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-3 md:py-4 px-8 rounded-lg transition-colors text-lg md:text-xl disabled:bg-gray-500 disabled:cursor-not-allowed"
+            :disabled="isLoading"
+            class="w-full sm:w-auto bg-gradient-to-r from-purple-800 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold py-3 md:py-4 px-8 rounded-lg transition-colors text-lg md:text-xl disabled:bg-gray-500 disabled:cursor-not-allowed"
           >
             {{ isLoading ? 'Generating...' : 'Generate' }}
           </button>
         </div>
+      </div>
+    </div>
+
+    <div v-if="showMissingInfoModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0" @click="showMissingInfoModal = false"></div>
+      <div class="relative bg-gray-800/90 text-white rounded-2xl px-6 py-5 text-center max-w-sm w-full">
+        <p class="text-lg md:text-xl font-medium">Choose your picture and destiny<br> from the list on top</p>
+        <button @click="showMissingInfoModal = false" class="mt-4 px-4 py-2 bg-gray-600 rounded-lg hover:bg-gray-700 transition-colors">Got it!</button>
       </div>
     </div>
   </div>
@@ -93,6 +103,7 @@ const isLoading = ref(false);
 const fileInput = ref(null);
 const selectedAspectRatio = ref('1:1');
 const error = ref(null);
+const showMissingInfoModal = ref(false);
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
@@ -138,14 +149,16 @@ const startPolling = () => {
         error.value = latest.error || 'Generation failed on the backend.';
         isLoading.value = false;
         stopPolling();
-      } else if (latest?.status === 'completed' && latest.output_img_signed_url) {
+      } 
+      else if (latest?.status === 'completed' && latest.output_img_signed_url) {
         outputImageUrl.value = latest.output_img_signed_url;
         if (latest.input_img_signed_url && !inputImageUrl.value) {
             inputImageUrl.value = latest.input_img_signed_url;
         }
         isLoading.value = false;
         stopPolling();
-      } else if (latest?.status === 'processing') {
+      } 
+      else if (latest?.status === 'processing') {
         // єбашим гойз
       }
     } catch (err) {
@@ -193,7 +206,7 @@ const resolutionMap = {
 
 const handleGenerate = async () => {
   if (!inputImageFile.value || !props.selectedStyleId) {
-    error.value = 'Please upload an image and select a style.';
+    showMissingInfoModal.value = true;
     return;
   }
   isLoading.value = true;

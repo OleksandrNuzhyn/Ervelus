@@ -47,8 +47,8 @@ onMounted(async () => {
       genres.value = Array.from(genreMap.values());
 
       if (genres.value.length > 0) {
-        selectedGenreId.value = genres.value[0].id;
-        isStylePanelOpen.value = true; // open style panel by default
+        //selectedGenreId.value = genres.value[0].id;
+        //isStylePanelOpen.value = true;
       }
     }
   } catch (error) {
@@ -70,7 +70,6 @@ const selectedStyleName = computed(() => {
 
 const handleGenreSelect=(genreId)=>{
   selectedGenreId.value = genreId;
-  selectedStyleId.value = null;
   isStylePanelOpen.value = true;
 };
 const handleStyleSelect=(styleId)=>{
@@ -79,6 +78,7 @@ const handleStyleSelect=(styleId)=>{
 };
 const handleClosePanel=()=>{
   isStylePanelOpen.value=false;
+  selectedGenreId.value=null;
 };
 
 </script>
