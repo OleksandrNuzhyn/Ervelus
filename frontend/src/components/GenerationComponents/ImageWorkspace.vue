@@ -71,7 +71,12 @@
 
     <div v-if="showMissingInfoModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div class="absolute inset-0" @click="showMissingInfoModal = false"></div>
-      <div class="relative bg-gray-800/90 text-white rounded-2xl px-6 py-5 text-center max-w-sm w-full">
+      <div class="relative bg-gray-800/90 backdrop-blur-[14px] border border-gray-700 shadow-xl shadow-gray-600/50 text-white rounded-2xl px-6 py-5 text-center max-w-sm w-full">
+        <svg class="absolute top-5 left-3 w-7 h-7 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="9" stroke-width="2"></circle>
+          <path d="M12 7v6" stroke-linecap="round" stroke-width="2"></path>
+          <circle cx="12" cy="17" r="1.25" fill="currentColor" stroke="none"></circle>
+        </svg>
         <p class="text-lg md:text-xl font-medium">Choose your picture and destiny<br> from the list on top</p>
         <button @click="showMissingInfoModal = false" class="mt-4 px-4 py-2 bg-gray-600 rounded-lg hover:bg-gray-700 transition-colors">Got it!</button>
       </div>
