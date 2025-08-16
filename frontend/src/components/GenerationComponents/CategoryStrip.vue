@@ -51,16 +51,6 @@
   </div>
 </template>
 
-<style scoped>
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-</style> 
 
 
 <script setup>
@@ -123,3 +113,14 @@ onMounted(() => {
   );
 });
 </script>
+
+<style scoped>
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+</style> 

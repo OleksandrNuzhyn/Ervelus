@@ -49,6 +49,7 @@ onMounted(async () => {
       if (genres.value.length > 0) {
         //selectedGenreId.value = genres.value[0].id;
         //isStylePanelOpen.value = true;
+        //future: open most popular styles at begining
       }
     }
   } catch (error) {

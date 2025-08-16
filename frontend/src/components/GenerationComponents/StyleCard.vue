@@ -37,7 +37,6 @@ const getSpriteClass = () => {
     @click="selectStyle"
     class="relative cursor-pointer transition-all duration-200 ease-in-out transform hover:scale-105"
   >
-    <!-- Заокруглений квадрат -->
     <div 
       class="w-45 h-45 rounded-2xl mx-auto transition-all duration-200 flex items-center justify-center relative"
       :class="[
@@ -64,7 +63,6 @@ const getSpriteClass = () => {
 </template>
 
 <style scoped>
-/* CSS класи для спрайтів */
 
 .bg-dark_fantasy_1 {
   width: 180px; 
