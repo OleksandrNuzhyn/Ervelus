@@ -12,7 +12,6 @@ class Style(models.Model):
     name = models.CharField(max_length=50, unique=True)
     genre = models.ForeignKey(Genre, on_delete=models.PROTECT, related_name='styles')
     prompt_template = models.TextField()
-    preview_image_url = models.URLField()
 
     def __str__(self):
         return self.name
