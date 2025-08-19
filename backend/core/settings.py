@@ -1,6 +1,7 @@
 from dotenv import load_dotenv # TODO: Remove
 import os
 from pathlib import Path
+import logging.config
 
 load_dotenv() # TODO: Remove
 
@@ -210,6 +211,55 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+
+if DEBUG:
+    active_handlers = ["file"]
+else:
+    active_handlers = ["console"]
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "[{levelname}] [{asctime}] [{name}:{funcName}] {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": BASE_DIR / "debug.log",
+            "formatter": "verbose",
+        },
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+        "null": {
+            "class": "logging.NullHandler",
+        }
+    },
+    "loggers": {
+        "django.request": {
+            "handlers": active_handlers,
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "paddle_billing": {
+            "handlers": ["null"],
+            "propagate": False,
+        }
+    },
+    "root": {
+        "handlers": active_handlers,
+        "level": "INFO",
+    }
+}
+
+logging.config.dictConfig(LOGGING)
 
 
 
