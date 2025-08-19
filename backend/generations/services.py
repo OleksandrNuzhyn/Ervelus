@@ -1,4 +1,5 @@
 import base64
+import logging
 import uuid
 from urllib.parse import urlparse
 from datetime import timedelta
@@ -22,6 +23,7 @@ from openai import (
     UnprocessableEntityError,
 )
 
+logger = logging.getLogger(__name__)
 timeout = httpx.Timeout(90.0, connect=5.0)
 openai_client = AsyncOpenAI(timeout=timeout, max_retries=0)
 gcs_sync_storage_client = gcs_sync_storage.Client()
@@ -93,18 +95,23 @@ async def handle_generation_process(generation_request_id, resolution):
             input_image_content_type=input_image_content_type,
             resolution=resolution
         )
+        logger.info(f"Successfully generated image from OpenAI API. generation_request_id='{generation_request_id}'")
         
         output_image_url = await upload_output_image_to_gcs(
             image_bytes=output_image_bytes,
             user_id=generation_request.user.id
         )
+        logger.info(f"Successfully uploaded output image to GCS. generation_request_id='{generation_request_id}'")
 
         await processing_successful_generation(generation_request, output_image_url)
+        logger.info(f"Successfully processed generation. generation_request_id='{generation_request.id}'")
     except BadRequestError as e:
+        logger.warning(f"BadRequestError during generation. generation_request_id='{generation_request_id}', error='{e}'")
         generation_request.status = GenerationRequest.GenerationStatus.FAILED
         generation_request.error_api_message = str(e)
         await generation_request.asave(update_fields=['status', 'error_api_message', 'updated_at'])
     except Exception as e:
+        logger.error(f"Unhandled exception during generation. generation_request_id='{generation_request_id}', error='{e}'", exc_info=True)
         generation_request.status = GenerationRequest.GenerationStatus.FAILED
         generation_request.error_message = str(e)
         await generation_request.asave(update_fields=['status', 'error_message', 'updated_at'])
@@ -155,6 +162,7 @@ def processing_successful_generation(generation_request, output_image_url):
             generation_request.status = GenerationRequest.GenerationStatus.COMPLETED
             generation_request.error_message = "Credit was not debited: no active subscription with credits at processing time"
             generation_request.save(update_fields=['output_img_url', 'status', 'error_message', 'updated_at'])
+            logger.warning(f"Credit not debited, no active subscription found. generation_request_id='{generation_request.id}'")
             return
 
         subscription_for_debiting_credit.remaining_credits -= 1
