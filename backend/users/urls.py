@@ -6,6 +6,7 @@ from dj_rest_auth.views import PasswordResetConfirmView
 
 urlpatterns = [
     path('csrf-token/', views.csrf_token, name='csrf-token'),
+    path('delete-account/', views.delete_account, name='delete-account'),
     path('password/reset/confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('google/', GoogleLogin.as_view(), name='google_login'),
     path('', include('dj_rest_auth.urls')),
