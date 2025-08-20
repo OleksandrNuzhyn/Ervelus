@@ -63,6 +63,24 @@ def generate_signed_gcs_url(gcs_img_url, expires_in_seconds):
         method='GET'
     )
 
+def delete_generation_request_images_from_gcs(generation_request):
+    urls_to_delete = [
+        generation_request.input_img_url,
+        generation_request.output_img_url
+    ]
+    bucket_name = settings.GCP_STORAGE_BUCKET_NAME
+    bucket = gcs_sync_storage_client.bucket(bucket_name)
+
+    for url in urls_to_delete:
+        if not url:
+            continue
+        
+        path = urlparse(url).path.lstrip('/')
+        _, blob_name = path.split('/', 1)
+        
+        blob = bucket.blob(blob_name)
+        blob.delete()
+
 async def upload_output_image_to_gcs(image_bytes, user_id):
     content_type = 'image/jpeg'
     extension = 'jpg'
