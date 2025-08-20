@@ -104,7 +104,7 @@ async def handle_generation_process(generation_request_id, resolution):
         logger.info(f"Successfully uploaded output image to GCS. generation_request_id='{generation_request_id}'")
 
         await processing_successful_generation(generation_request, output_image_url)
-        logger.info(f"Successfully processed generation. generation_request_id='{generation_request.id}'")
+        logger.info(f"Successfully processed generation. generation_request_id='{generation_request_id}'")
     except BadRequestError as e:
         logger.warning(f"BadRequestError during generation. generation_request_id='{generation_request_id}', error='{e}'")
         generation_request.status = GenerationRequest.GenerationStatus.FAILED
