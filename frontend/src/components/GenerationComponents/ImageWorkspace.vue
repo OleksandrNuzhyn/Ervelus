@@ -21,7 +21,7 @@
         </div>
         <div
           v-if="selectedStyleName"
-          class="w-full bg-gray-800 text-white rounded-xl py-3 md:py-4 mt-5 text-center text-base md:text-lg font-medium"
+          class="w-full bg-gradient-to-br from-slate-900/60 via-slate-950/80 to-slate-900/40 text-white rounded-xl py-3 md:py-4 mt-5 text-center text-xl md:text-2xl font-bold"
         >
           {{ selectedStyleName }}
         </div>
@@ -30,11 +30,8 @@
       <div class="flex flex-col w-full">
         <div class="flex flex-col items-center justify-center bg-transparent backdrop-blur-[14px] bg-[rgba(31,41,55,0.3)] rounded-lg p-4 h-[400px] md:h-[660px]">
           <div v-if="isLoading" class="flex flex-col items-center justify-center">
-            <svg class="animate-spin -ml-1 mr-3 h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938л3-2.647з"></path>
-            </svg>
-            <p class="mt-2 text-lg">Generating...</p>
+            <img src="@/assets/svg/staff_logo.svg" alt="Loading" class="wave-animation animation-pulse h-45 w-45 pointer-events-none select-none" />
+            <p class="text-gray-400 text-lg">Generating...</p>
           </div>
           <div v-else-if="outputImageUrl" class="w-full h-full">
             <img :src="outputImageUrl" alt="Output" class="w-full h-full object-contain rounded-lg" />
@@ -302,6 +299,19 @@ const onFileSelected = (event) => {
 </script>
 
 <style scoped>
+@keyframes wave {
+  0%, 100% { transform: rotate(35deg)}
+  25% { transform: rotate(50deg)}
+  75% { transform: rotate(40deg)}
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.wave-animation {
+  animation: wave 1.6s ease-in-out infinite;
+}
+
 @media (max-width: 380px) { 
   .modal-text {
     font-size: 1rem;
