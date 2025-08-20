@@ -96,7 +96,7 @@ class GenerationRequestViewSet(viewsets.ViewSet):
     def partial_update(self, request, *args, **kwargs):
         return Response(status=405)
         
-    def destroy(self, request, pk):
+    def destroy(self, request, pk=None):
         try:
             generation_request = GenerationRequest.objects.get(pk=pk, user=request.user)
         except GenerationRequest.DoesNotExist:

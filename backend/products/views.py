@@ -42,6 +42,6 @@ def available_style_list(request):
     ).select_related('genre').all()
 
     styles_list = list(styles_queryset)
-
     serializer = StyleSerializer(styles_list, many=True)
+
     return Response(serializer.data, status=200)

@@ -35,3 +35,11 @@ class CustomRegisterSerializer(RegisterSerializer):
 
 class CustomLoginSerializer(LoginSerializer):
     username = None
+
+
+class UserCreditsSerializer(serializers.ModelSerializer):
+    total_credits = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = UserProfile
+        fields = ['total_credits']

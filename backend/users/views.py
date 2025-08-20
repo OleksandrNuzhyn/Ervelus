@@ -9,6 +9,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from generations.models import GenerationRequest
 from . import services
+from .serializers import UserCreditsSerializer
+from .models import UserProfile
 
 logger = logging.getLogger(__name__)
 
@@ -24,9 +26,17 @@ class GoogleLogin(SocialLoginView):
 def csrf_token(request):
     return Response(status=204)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_credit_balance(request):
+    user_profile = UserProfile.objects.annotate_total_credits().get(user=request.user)
+    serializer = UserCreditsSerializer(user_profile)
+    
+    return Response(serializer.data, status=200)
+
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
-def delete_account(request):
+def account_delete(request):
     user = request.user
     user_id = user.id
     email_hash = hashlib.sha256(user.email.encode('utf-8')).hexdigest()
