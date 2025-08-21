@@ -63,6 +63,24 @@ def generate_signed_gcs_url(gcs_img_url, expires_in_seconds):
         method='GET'
     )
 
+def delete_generation_request_images_from_gcs(generation_request):
+    urls_to_delete = [
+        generation_request.input_img_url,
+        generation_request.output_img_url
+    ]
+    bucket_name = settings.GCP_STORAGE_BUCKET_NAME
+    bucket = gcs_sync_storage_client.bucket(bucket_name)
+
+    for url in urls_to_delete:
+        if not url:
+            continue
+        
+        path = urlparse(url).path.lstrip('/')
+        _, blob_name = path.split('/', 1)
+        
+        blob = bucket.blob(blob_name)
+        blob.delete()
+
 async def upload_output_image_to_gcs(image_bytes, user_id):
     content_type = 'image/jpeg'
     extension = 'jpg'
@@ -104,16 +122,19 @@ async def handle_generation_process(generation_request_id, resolution):
         logger.info(f"Successfully uploaded output image to GCS. generation_request_id='{generation_request_id}'")
 
         await processing_successful_generation(generation_request, output_image_url)
-        logger.info(f"Successfully processed generation. generation_request_id='{generation_request.id}'")
+        logger.info(f"Successfully processed generation. generation_request_id='{generation_request_id}'")
     except BadRequestError as e:
         logger.warning(f"BadRequestError during generation. generation_request_id='{generation_request_id}', error='{e}'")
+        await sync_to_async(delete_generation_request_images_from_gcs)(generation_request)
+
+        generation_request.input_img_url = None
         generation_request.status = GenerationRequest.GenerationStatus.FAILED
-        generation_request.error_api_message = str(e)
-        await generation_request.asave(update_fields=['status', 'error_api_message', 'updated_at'])
+        generation_request.error_api_message = "Your request was rejected by the safety system"
+        await generation_request.asave(update_fields=['status', 'error_api_message', 'input_img_url', 'updated_at'])
     except Exception as e:
         logger.error(f"Unhandled exception during generation. generation_request_id='{generation_request_id}', error='{e}'", exc_info=True)
         generation_request.status = GenerationRequest.GenerationStatus.FAILED
-        generation_request.error_message = str(e)
+        generation_request.error_message = "Sorry, something went wrong. Please try again later"
         await generation_request.asave(update_fields=['status', 'error_message', 'updated_at'])
 
 def is_retryable_error(exception):

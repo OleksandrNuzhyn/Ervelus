@@ -1,4 +1,5 @@
 import json
+import logging
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -17,6 +18,7 @@ from google.protobuf import duration_pb2
 from django.conf import settings
 
 tasks_client = tasks_v2.CloudTasksClient()
+logger = logging.getLogger(__name__)
 
 
 class GenerationRequestViewSet(viewsets.ViewSet):
@@ -25,6 +27,10 @@ class GenerationRequestViewSet(viewsets.ViewSet):
     def create(self, request, *args, **kwargs):
         serializer = GenerationRequestCreateSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
+
+        latest_request = GenerationRequest.objects.filter(user=request.user).order_by('-created_at').first()
+        if latest_request and latest_request.status == GenerationRequest.GenerationStatus.PROCESSING:
+            return Response({"detail": "You already have a generation in progress. Please wait for it to complete"}, status=400)
 
         input_image_file = serializer.validated_data['input_image']
         
@@ -39,33 +45,30 @@ class GenerationRequestViewSet(viewsets.ViewSet):
             input_img_url=input_image_url,
         )
         
-        try:
-            queue_path = tasks_client.queue_path(
-                settings.GCP_PROJECT_ID,
-                settings.GCP_TASKS_LOCATION,
-                settings.GCP_TASKS_GENERATION_EVENTS_QUEUE_ID,
-            )
+        queue_path = tasks_client.queue_path(
+            settings.GCP_PROJECT_ID,
+            settings.GCP_TASKS_LOCATION,
+            settings.GCP_TASKS_GENERATION_EVENTS_QUEUE_ID,
+        )
 
-            target_url = f"{settings.BACKEND_URL.rstrip('/')}/webhooks/generations/tasks/"
-            
-            event_data = {
-                'generation_request_id': generation_request.id,
-                'resolution': serializer.validated_data['resolution']
-            }
+        target_url = f"{settings.BACKEND_URL.rstrip('/')}/webhooks/generations/tasks/"
+        
+        event_data = {
+            'generation_request_id': generation_request.id,
+            'resolution': serializer.validated_data['resolution']
+        }
 
-            task = {
-                'http_request': {
-                    'url': target_url,
-                    'http_method': HttpMethod.POST,
-                    'headers': {'Content-Type': 'application/json'},
-                    'body': json.dumps(event_data).encode('utf-8')
-                },
-                'dispatch_deadline': duration_pb2.Duration(seconds=350)
-            }
+        task = {
+            'http_request': {
+                'url': target_url,
+                'http_method': HttpMethod.POST,
+                'headers': {'Content-Type': 'application/json'},
+                'body': json.dumps(event_data).encode('utf-8')
+            },
+            'dispatch_deadline': duration_pb2.Duration(seconds=350)
+        }
 
-            tasks_client.create_task(request={'parent': queue_path, 'task': task})
-        except Exception:
-            return Response({"error": "Failed to publish generation task"}, status=500)
+        tasks_client.create_task(request={'parent': queue_path, 'task': task})
 
         serializer = GenerationRequestSerializer(generation_request)
         return Response(serializer.data, status=202)
@@ -74,7 +77,8 @@ class GenerationRequestViewSet(viewsets.ViewSet):
         queryset = (
             GenerationRequest.objects.filter(
                 user=request.user,
-                status__in=[GenerationRequest.GenerationStatus.PROCESSING, GenerationRequest.GenerationStatus.COMPLETED]
+                status__in=[GenerationRequest.GenerationStatus.PROCESSING, GenerationRequest.GenerationStatus.COMPLETED],
+                is_hidden=False
             ).order_by('-created_at')
         )
 
@@ -85,8 +89,17 @@ class GenerationRequestViewSet(viewsets.ViewSet):
         paginated_response = paginator.get_paginated_response(serializer.data)
         return Response(paginated_response.data, status=200)
 
-    def retrieve(self, request, *args, **kwargs):
-        return Response(status=405)
+    def retrieve(self, request, pk=None):
+        try:
+            generation_request = GenerationRequest.objects.get(pk=pk, user=request.user)
+        except GenerationRequest.DoesNotExist:
+            return Response(status=404)
+
+        if generation_request.is_hidden:
+            return Response({"detail": "This generation is currently unavailable"}, status=404)
+
+        serializer = GenerationRequestSerializer(generation_request)
+        return Response(serializer.data, status=200)
 
     def update(self, request, *args, **kwargs):
         return Response(status=405)
@@ -94,15 +107,36 @@ class GenerationRequestViewSet(viewsets.ViewSet):
     def partial_update(self, request, *args, **kwargs):
         return Response(status=405)
         
-    def destroy(self, request, *args, **kwargs):
-        return Response(status=405)
+    def destroy(self, request, pk=None):
+        try:
+            generation_request = GenerationRequest.objects.get(pk=pk, user=request.user)
+        except GenerationRequest.DoesNotExist:
+            return Response(status=404)
+
+        generation_request_id = generation_request.id
+        user_id = request.user.id
+
+        try:
+            services.delete_generation_request_images_from_gcs(generation_request)
+            logger.info(f"Successfully deleted GCS images for generation_request_id='{generation_request_id}', user_id='{user_id}'")
+            
+            generation_request.delete()
+            logger.info(f"Successfully deleted generation_request record. generation_request_id='{generation_request_id}', user_id='{user_id}'")
+            
+            return Response(status=204)
+        except Exception as e:
+            logger.error(f"Failed to delete generation_request. generation_request_id='{generation_request_id}', user_id='{user_id}', error='{e}'", exc_info=True)
+            return Response(status=500)
 
     @action(detail=False, methods=['get'])
     def latest(self, request, *args, **kwargs):
         latest_user_generation_request = GenerationRequest.objects.filter(user=request.user).order_by('-created_at').first()
 
         if not latest_user_generation_request:
-            return Response(None, status=200)
+            return Response(None, status=204)
+        
+        if latest_user_generation_request.is_hidden:
+            return Response({"detail": "This generation is currently unavailable"}, status=404)
         
         serializer = GenerationRequestSerializer(latest_user_generation_request)
         return Response(serializer.data, status=200)
