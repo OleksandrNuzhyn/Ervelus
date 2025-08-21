@@ -251,6 +251,11 @@ LOGGING = {
         "paddle_billing": {
             "handlers": ["null"],
             "propagate": False,
+        },
+        "httpx": {
+            "handlers": active_handlers,
+            "level": "ERROR",
+            "propagate": False,
         }
     },
     "root": {

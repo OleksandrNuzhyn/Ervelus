@@ -125,13 +125,16 @@ async def handle_generation_process(generation_request_id, resolution):
         logger.info(f"Successfully processed generation. generation_request_id='{generation_request_id}'")
     except BadRequestError as e:
         logger.warning(f"BadRequestError during generation. generation_request_id='{generation_request_id}', error='{e}'")
+        await sync_to_async(delete_generation_request_images_from_gcs)(generation_request)
+
+        generation_request.input_img_url = None
         generation_request.status = GenerationRequest.GenerationStatus.FAILED
-        generation_request.error_api_message = str(e)
-        await generation_request.asave(update_fields=['status', 'error_api_message', 'updated_at'])
+        generation_request.error_api_message = "Your request was rejected by the safety system"
+        await generation_request.asave(update_fields=['status', 'error_api_message', 'input_img_url', 'updated_at'])
     except Exception as e:
         logger.error(f"Unhandled exception during generation. generation_request_id='{generation_request_id}', error='{e}'", exc_info=True)
         generation_request.status = GenerationRequest.GenerationStatus.FAILED
-        generation_request.error_message = str(e)
+        generation_request.error_message = "Sorry, something went wrong. Please try again later"
         await generation_request.asave(update_fields=['status', 'error_message', 'updated_at'])
 
 def is_retryable_error(exception):
