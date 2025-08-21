@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import customer_portal_session_create
+from . import views
 
 
 urlpatterns = [
-    path('customer-portal/', customer_portal_session_create, name='customer-portal-create'),
+    path('user-subscriptions/', views.user_subscription_list, name='user-subscription-list')
 ]

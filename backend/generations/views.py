@@ -45,33 +45,30 @@ class GenerationRequestViewSet(viewsets.ViewSet):
             input_img_url=input_image_url,
         )
         
-        try:
-            queue_path = tasks_client.queue_path(
-                settings.GCP_PROJECT_ID,
-                settings.GCP_TASKS_LOCATION,
-                settings.GCP_TASKS_GENERATION_EVENTS_QUEUE_ID,
-            )
+        queue_path = tasks_client.queue_path(
+            settings.GCP_PROJECT_ID,
+            settings.GCP_TASKS_LOCATION,
+            settings.GCP_TASKS_GENERATION_EVENTS_QUEUE_ID,
+        )
 
-            target_url = f"{settings.BACKEND_URL.rstrip('/')}/webhooks/generations/tasks/"
-            
-            event_data = {
-                'generation_request_id': generation_request.id,
-                'resolution': serializer.validated_data['resolution']
-            }
+        target_url = f"{settings.BACKEND_URL.rstrip('/')}/webhooks/generations/tasks/"
+        
+        event_data = {
+            'generation_request_id': generation_request.id,
+            'resolution': serializer.validated_data['resolution']
+        }
 
-            task = {
-                'http_request': {
-                    'url': target_url,
-                    'http_method': HttpMethod.POST,
-                    'headers': {'Content-Type': 'application/json'},
-                    'body': json.dumps(event_data).encode('utf-8')
-                },
-                'dispatch_deadline': duration_pb2.Duration(seconds=350)
-            }
+        task = {
+            'http_request': {
+                'url': target_url,
+                'http_method': HttpMethod.POST,
+                'headers': {'Content-Type': 'application/json'},
+                'body': json.dumps(event_data).encode('utf-8')
+            },
+            'dispatch_deadline': duration_pb2.Duration(seconds=350)
+        }
 
-            tasks_client.create_task(request={'parent': queue_path, 'task': task})
-        except Exception:
-            return Response({"error": "Failed to publish generation task"}, status=500)
+        tasks_client.create_task(request={'parent': queue_path, 'task': task})
 
         serializer = GenerationRequestSerializer(generation_request)
         return Response(serializer.data, status=202)
@@ -136,7 +133,7 @@ class GenerationRequestViewSet(viewsets.ViewSet):
         latest_user_generation_request = GenerationRequest.objects.filter(user=request.user).order_by('-created_at').first()
 
         if not latest_user_generation_request:
-            return Response(None, status=200)
+            return Response(None, status=204)
         
         if latest_user_generation_request.is_hidden:
             return Response({"detail": "This generation is currently unavailable"}, status=404)
