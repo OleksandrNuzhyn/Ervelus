@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'debug_toolbar',
+    'solo',
 
     'rest_framework',
 
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
 
     'anymail',
 
+    'core',
     'users',
     'products',
     'subscriptions',
