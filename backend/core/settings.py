@@ -225,20 +225,25 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "verbose": {
-            "format": "[{levelname}] [{asctime}] [{name}:{funcName}] {message}",
-            "style": "{",
+        "json_formatter": {
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+            "format": "{levelname} {name} {funcName} {message}",
+            "style": "{"
         },
+        "verbose": {
+            "format": "[{levelname}] [{name}:{funcName}] {message}",
+            "style": "{"
+        }
     },
     "handlers": {
         "file": {
             "class": "logging.FileHandler",
             "filename": BASE_DIR / "debug.log",
-            "formatter": "verbose",
+            "formatter": "json_formatter",
         },
         "console": {
             "class": "logging.StreamHandler",
-            "formatter": "verbose",
+            "formatter": "json_formatter",
         },
         "null": {
             "class": "logging.NullHandler",
