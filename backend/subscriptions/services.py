@@ -2,12 +2,14 @@ import datetime
 import logging
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from django.db.models import F
 from django.utils.dateparse import parse_datetime
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from products.models import SubscriptionPlan
 from subscriptions.models import UserSubscription
+from core.models import ApplicationConfig
 import requests
 
 User = get_user_model()
@@ -49,6 +51,9 @@ def create_new_subscription(data):
             paddle_price_id = data['items'][0]['price']['id']
             plan = SubscriptionPlan.objects.get(paddle_price_id=paddle_price_id)
 
+            if not plan.is_active:
+                logger.warning(f"Attempted to create a subscription for an INACTIVE plan. user_id='{user_id}', plan_id='{plan.id}', paddle_subscription_id='{paddle_subscription_id}'")
+
             UserSubscription.objects.create(
                 user=user,
                 plan=plan,
@@ -58,6 +63,11 @@ def create_new_subscription(data):
                 paddle_subscription_id=paddle_subscription_id,
                 remaining_credits=plan.generations_count
             )
+            
+            config = ApplicationConfig.objects.select_for_update().get_solo()
+            config.reserved_for_spend = F('reserved_for_spend') + plan.product_price
+            config.save(update_fields=['reserved_for_spend'])
+            
             logger.info(f"Successfully created new subscription. user_id='{user_id}', paddle_subscription_id='{paddle_subscription_id}'")
     except Exception as e:
         logger.error(f"Failed to create new subscription. user_id='{user_id}', paddle_subscription_id='{paddle_subscription_id}', error='{e}'", exc_info=True)
@@ -129,11 +139,12 @@ def handle_transaction_past_due(data):
     paddle_subscription_id = data.get('subscription_id')
     
     try:
-        user_subscription = UserSubscription.objects.get(paddle_subscription_id=paddle_subscription_id)
-        user_subscription.status = UserSubscription.SubscriptionStatus.PAST_DUE
-        user_subscription.end_time = parse_datetime(data.get('billing_period').get('ends_at'))
-        user_subscription.save(update_fields=['status', 'end_time'])
-        logger.info(f"Successfully set status to PAST_DUE. paddle_subscription_id='{paddle_subscription_id}'")
+        with transaction.atomic():
+            user_subscription = UserSubscription.objects.select_for_update().get(paddle_subscription_id=paddle_subscription_id)
+            user_subscription.status = UserSubscription.SubscriptionStatus.PAST_DUE
+            user_subscription.end_time = parse_datetime(data.get('billing_period').get('ends_at'))
+            user_subscription.save(update_fields=['status', 'end_time'])
+            logger.info(f"Successfully set status to PAST_DUE. paddle_subscription_id='{paddle_subscription_id}'")
     except UserSubscription.DoesNotExist:
         logger.error(f"Subscription not found for past_due handling. paddle_subscription_id='{paddle_subscription_id}'")
         raise Exception()
@@ -147,30 +158,31 @@ def handle_subscription_updated(data):
     scheduled_change = data.get('scheduled_change')
 
     try:
-        user_subscription = UserSubscription.objects.get(paddle_subscription_id=paddle_subscription_id)
+        with transaction.atomic():
+            user_subscription = UserSubscription.objects.select_for_update().get(paddle_subscription_id=paddle_subscription_id)
 
-        if status == 'active' and not scheduled_change:
-            if user_subscription.cancels_at is not None:
-                user_subscription.cancels_at = None
+            if status == 'active' and not scheduled_change:
+                if user_subscription.cancels_at is not None:
+                    user_subscription.cancels_at = None
+                    user_subscription.save(update_fields=['cancels_at'])
+                    logger.info(f"Successfully reactivated subscription by removing cancels_at. paddle_subscription_id='{paddle_subscription_id}'")
+                else:
+                    logger.info(f"Skipping update for active subscription. paddle_subscription_id='{paddle_subscription_id}'")
+                    return
+            elif status == 'active' and scheduled_change and scheduled_change.get('action') == 'cancel':
+                user_subscription.cancels_at = parse_datetime(scheduled_change.get('effective_at'))
                 user_subscription.save(update_fields=['cancels_at'])
-                logger.info(f"Successfully reactivated subscription by removing cancels_at. paddle_subscription_id='{paddle_subscription_id}'")
-            else:
-                logger.info(f"Skipping update for active subscription. paddle_subscription_id='{paddle_subscription_id}'")
+                logger.info(f"Successfully scheduled cancellation. paddle_subscription_id='{paddle_subscription_id}'")
                 return
-        elif status == 'active' and scheduled_change and scheduled_change.get('action') == 'cancel':
-            user_subscription.cancels_at = parse_datetime(scheduled_change.get('effective_at'))
-            user_subscription.save(update_fields=['cancels_at'])
-            logger.info(f"Successfully scheduled cancellation. paddle_subscription_id='{paddle_subscription_id}'")
-            return
-        elif status == 'past_due':
-            logger.info(f"Skipping update, status is past_due (handled by another event). paddle_subscription_id='{paddle_subscription_id}'")
-            return
-        elif status == 'canceled':
-            logger.info(f"Skipping update, status is canceled (handled by another event). paddle_subscription_id='{paddle_subscription_id}'")
-            return    
-        else:
-            logger.warning(f"Unhandled subscription.updated scenario. paddle_subscription_id='{paddle_subscription_id}', status='{status}', scheduled_change='{scheduled_change}'")
-            raise Exception()
+            elif status == 'past_due':
+                logger.info(f"Skipping update, status is past_due (handled by another event). paddle_subscription_id='{paddle_subscription_id}'")
+                return
+            elif status == 'canceled':
+                logger.info(f"Skipping update, status is canceled (handled by another event). paddle_subscription_id='{paddle_subscription_id}'")
+                return    
+            else:
+                logger.warning(f"Unhandled subscription.updated scenario. paddle_subscription_id='{paddle_subscription_id}', status='{status}', scheduled_change='{scheduled_change}'")
+                raise Exception()
     except UserSubscription.DoesNotExist:
         logger.error(f"Subscription not found for update handling. paddle_subscription_id='{paddle_subscription_id}'")
         raise Exception()
@@ -182,11 +194,17 @@ def handle_subscription_canceled(data):
     paddle_subscription_id = data.get('id')
     
     try:
-        user_subscription = UserSubscription.objects.get(paddle_subscription_id=paddle_subscription_id)
-        user_subscription.status = UserSubscription.SubscriptionStatus.CANCELED
-        user_subscription.cancels_at = None
-        user_subscription.save(update_fields=['status', 'cancels_at'])
-        logger.info(f"Successfully CANCELED subscription. paddle_subscription_id='{paddle_subscription_id}'")
+        with transaction.atomic():
+            user_subscription = UserSubscription.objects.select_related('plan').select_for_update().get(paddle_subscription_id=paddle_subscription_id)
+            user_subscription.status = UserSubscription.SubscriptionStatus.CANCELED
+            user_subscription.cancels_at = None
+            user_subscription.save(update_fields=['status', 'cancels_at'])
+
+            config = ApplicationConfig.objects.select_for_update().get_solo()
+            config.reserved_for_spend = F('reserved_for_spend') - user_subscription.plan.product_price
+            config.save(update_fields=['reserved_for_spend'])
+
+            logger.info(f"Successfully CANCELED subscription. paddle_subscription_id='{paddle_subscription_id}'")
     except UserSubscription.DoesNotExist:
         logger.error(f"Subscription not found for cancellation. paddle_subscription_id='{paddle_subscription_id}'")
         raise Exception()

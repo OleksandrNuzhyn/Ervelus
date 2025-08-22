@@ -3,4 +3,6 @@ from solo.admin import SingletonModelAdmin
 from .models import ApplicationConfig
 
 
-admin.site.register(ApplicationConfig, SingletonModelAdmin)
+@admin.register(ApplicationConfig)
+class ApplicationConfigAdmin(SingletonModelAdmin):
+    readonly_fields = ('reserved_for_spend',)

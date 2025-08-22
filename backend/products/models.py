@@ -30,7 +30,7 @@ class SubscriptionPlan(models.Model):
     unlocked_styles = models.ManyToManyField(Style)
     generations_count = models.IntegerField()
     is_active = models.BooleanField(default=True)
-    total_price_usage = models.DecimalField(max_digits=8, decimal_places=2)
+    product_price = models.DecimalField(max_digits=8, decimal_places=2)
 
     def __str__(self):
         return self.name
