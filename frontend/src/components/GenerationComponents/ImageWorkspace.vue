@@ -1,8 +1,8 @@
 <template>
-  <div class="mt-4 md:mt-8 p-2 md:p-4">
+  <div class="mt-2 p-3">
     <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 items-start">
       <div class="flex flex-col items-center w-full">
-        <div class="bg-transparent backdrop-blur-[14px] rounded-lg p-4 h-[400px] md:h-[660px] w-full flex flex-col items-center justify-center">
+        <div class="bg-black/30 backdrop-blur-[7px] shadow-[0_0_5px_rgba(0,0,0)] rounded-lg p-4 h-[400px] md:h-[660px] w-full flex flex-col items-center justify-center">
           <div v-if="!inputImageUrl" @click="triggerFileInput" class="cursor-pointer w-full h-full flex flex-col items-center justify-center">
             <svg class="w-16 h-16 md:w-24 md:h-24 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
@@ -12,7 +12,7 @@
           </div>
           <div v-else class="relative w-full h-full">
             <img :src="inputImageUrl" alt="Input" class="w-full h-full object-contain rounded-lg" />
-            <button @click="inputImageUrl = null" class="absolute top-2 right-2 bg-transparent text-gray-400 hover:text-white p-2 transition-colors">
+            <button @click="inputImageUrl = null; outputImageUrl = null" class="absolute top-1 right-1 bg-gray-800/80 hover:bg-gray-700/90 text-gray-300 hover:text-white p-1.5 transition-colors rounded border border-gray-600/50 hover:border-gray-500">
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -21,16 +21,16 @@
         </div>
         <div
           v-if="selectedStyleName"
-          class="w-full bg-gradient-to-br from-slate-900/60 via-slate-950/80 to-slate-900/40 text-white rounded-xl py-3 md:py-4 mt-5 text-center text-xl md:text-2xl font-bold"
-        >
+            class="w-full bg-black/30 backdrop-blur-[7px] shadow-[0_0_5px_rgba(0,0,0)] rounded-xl py-3 lg:py-6 mt-5 text-center text-xl md:text-2xl font-bold"
+          >
           {{ selectedStyleName }}
         </div>
       </div>
 
       <div class="flex flex-col w-full">
-        <div class="flex flex-col items-center justify-center bg-transparent backdrop-blur-[14px] rounded-lg p-4 h-[400px] md:h-[660px]">
+        <div class="flex flex-col items-center justify-center bg-black/30 backdrop-blur-[7px] shadow-[0_0_5px_rgba(0,0,0)] rounded-lg p-4 h-[400px] md:h-[660px]">
           <div v-if="isLoading" class="flex flex-col items-center justify-center">
-            <img src="@/assets/svg/staff_logo.svg" alt="Loading" class="wave-animation animation-pulse h-45 w-45 pointer-events-none select-none" />
+            <img src="@/assets/svg/staff_logo.svg" class="wave-animation animation-pulse h-45 w-45 pointer-events-none select-none" />
             <p class="text-gray-400 text-lg">Generating...</p>
           </div>
           <div v-else-if="outputImageUrl" class="w-full h-full">
@@ -40,38 +40,64 @@
             <p>The result of the generation will appear here</p>
           </div>
         </div>
-        <div class="mt-5 mb-2 flex flex-col sm:flex-row justify-between items-center gap-5">
-          <div class="flex justify-center w-full md:pl-5 xl:pl-10 2xl:pl-15 sm:w-auto gap-15 text-white">
-            <button @click="selectedAspectRatio = '1:1'" :aria-label="'Aspect ' + '1:1'" :class="[ 'relative w-12 h-12 sm:w-12 sm:h-12 md:w-16 md:h-16 transition-all duration-200 group', selectedAspectRatio === '1:1' ? 'scale-105' : 'hover:scale-100' ]">
-              <span class="absolute -inset-1 rounded-md border-2 pointer-events-none transform rotate-45 transition-opacity duration-200 group-hover:opacity-100 border-emerald-400/70 opacity-0" :class="[ selectedAspectRatio === '1:1' ? 'opacity-100' : '' ]"></span>
-              <span class="absolute inset-0 rounded-md bg-gradient-to-br from-emerald-1000 via-emerald-900 to-emerald-300 border border-emerald-950 shadow-lg shadow-emerald-900/70 transform rotate-45"></span>
-              <span class="absolute inset-[3px] rounded-[6px] bg-emerald-400/10 transform rotate-45"></span>
+        <div class="mt-7 mb-2 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-8 sm:gap-5 md:gap-6 lg:gap-10">
+          <div class="flex justify-center w-full md:pl-5 xl:pl-10 2xl:pl-15 sm:w-auto gap-15 text-white flex-shrink-0">
+            <button @click="selectedAspectRatio = '1:1'" :aria-label="'Aspect ' + '1:1'" :class="[ 'relative w-12 h-12 sm:w-12 sm:h-12 md:w-14 md:h-14 transition-all duration-200 group', selectedAspectRatio === '1:1' ? 'scale-103' : 'hover:scale-100' ]">
+              <span class="absolute -inset-1 rounded-md border-2 pointer-events-none transform rotate-45 transition-opacity duration-200 group-hover:opacity-100 border-[#03346E] opacity-0" :class="[ selectedAspectRatio === '1:1' ? 'opacity-100' : '' ]"></span>
+              <span class="absolute inset-0 rounded-md bg-gradient-to-br from-[#021526] via-[#03346E] to-[#6EACDA]/80 shadow-md shadow-[#021526]/50 transform rotate-45"></span>
+              <span class="absolute inset-[3px] rounded-[6px] bg-[#6EACDA]/10 transform rotate-45"></span>
               <span class="relative z-10 transform rotate-0 text-xs sm:text-sm md:text-base font-semibold pointer-events-none select-none">1:1</span>
             </button>
-            <button @click="selectedAspectRatio = '2:3'" :aria-label="'Aspect ' + '2:3'" :class="[ 'relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 transition-all duration-200 group', selectedAspectRatio === '2:3' ? 'scale-105' : 'hover:scale-100' ]">
-              <span class="absolute -inset-1 rounded-md border-2 pointer-events-none transform rotate-45 transition-opacity duration-200 group-hover:opacity-100 border-orange-400/70 opacity-0" :class="[ selectedAspectRatio === '2:3' ? 'opacity-100' : '' ]"></span>
-              <span class="absolute inset-0 rounded-md bg-gradient-to-br from-orange-1000 via-orange-900 to-orange-300 border border-orange-950 shadow-lg shadow-orange-900/70 transform rotate-45"></span>
-              <span class="absolute inset-[3px] rounded-[6px] bg-orange-400/10 transform rotate-45"></span>
+            <button @click="selectedAspectRatio = '2:3'" :aria-label="'Aspect ' + '2:3'" :class="[ 'relative w-12 h-12 sm:w-12 sm:h-12 md:w-14 md:h-14 transition-all duration-200 group', selectedAspectRatio === '2:3' ? 'scale-103' : 'hover:scale-100' ]">
+              <span class="absolute -inset-1 rounded-md border-2 pointer-events-none transform rotate-45 transition-opacity duration-200 group-hover:opacity-100 border-[#2E236C] opacity-0" :class="[ selectedAspectRatio === '2:3' ? 'opacity-100' : '' ]"></span>
+              <span class="absolute inset-0 rounded-md bg-gradient-to-br from-[#17153B] via-[#2E236C] to-[#D4ADFC]/80 shadow-md shadow-[#17153B]/50 transform rotate-45"></span>
+              <span class="absolute inset-[3px] rounded-[6px] bg-[#C8ACD6]/10 transform rotate-45"></span>
               <span class="relative z-10 transform rotate-0 text-xs sm:text-sm md:text-base font-semibold pointer-events-none select-none">2:3</span>
             </button>
-            <button @click="selectedAspectRatio = '3:2'" :aria-label="'Aspect ' + '3:2'" :class="[ 'relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 transition-all duration-200 group', selectedAspectRatio === '3:2' ? 'scale-105' : 'hover:scale-100' ]">
-              <span class="absolute -inset-1 rounded-md border-2 pointer-events-none transform rotate-45 transition-opacity duration-200 group-hover:opacity-100 border-rose-400/70 opacity-0" :class="[ selectedAspectRatio === '3:2' ? 'opacity-100' : '' ]"></span>
-              <span class="absolute inset-0 rounded-md bg-gradient-to-br from-rose-1000 via-rose-900 to-rose-400 border border-rose-950 shadow-lg shadow-rose-900/70 transform rotate-45"></span>
-              <span class="absolute inset-[3px] rounded-[6px] bg-rose-400/10 transform rotate-45"></span>
+            <button @click="selectedAspectRatio = '3:2'" :aria-label="'Aspect ' + '3:2'" :class="[ 'relative w-12 h-12 sm:w-12 sm:h-12 md:w-14 md:h-14 transition-all duration-200 group', selectedAspectRatio === '3:2' ? 'scale-103' : 'hover:scale-100' ]">
+              <span class="absolute -inset-1 rounded-md border-2 pointer-events-none transform rotate-45 transition-opacity duration-200 group-hover:opacity-100 border-[#055052] opacity-0" :class="[ selectedAspectRatio === '3:2' ? 'opacity-100' : '' ]"></span>
+              <span class="absolute inset-0 rounded-md bg-gradient-to-br from-[#003638] via-[#055052] to-[#53B8BB]/90 shadow-md shadow-[#003638]/50 transform rotate-45"></span>
+              <span class="absolute inset-[3px] rounded-[6px] bg-[#9DB2BF]/10 transform rotate-45"></span>
               <span class="relative z-10 transform rotate-0 text-xs sm:text-sm md:text-base font-semibold pointer-events-none select-none">3:2</span>
             </button>
           </div>
-                    <button
+          <button 
             @click="handleGenerate"
             :disabled="isLoading"
-            class="group relative
-            px-8 py-4 font-serif text-lg font-bold text-slate-300
-            bg-gradient-to-br from-slate-800 via-slate-900 to-black
-            border-2 border-gray-900 rounded-lg
-            transition-all duration-1000
-            hover:shadow-[0_0_2px_#fff,inset_0_0_2px_#fff,0_0_10px_#dc2626,0_0_30px_#ef4444,0_0_50px_#f87171]"
+            :class="[
+              'relative px-4 py-4 sm:px-6 md:px-8 transition-all min-w-[100px] w-[140px] md:h-[65px] sm:w-[160px] md:w-[160px] lg:w-[180px] xl:w-[200px] duration-200 rounded-xl generate-button flex items-center justify-center',
+              isLoading ? 'scale-100' : 'group hover:scale-100'
+            ]"
           >
-            {{ isLoading ? 'Generating...' : 'Generate' }}
+            <span 
+              v-if="!isLoading"
+              :class="[
+                'absolute -inset-1 rounded-xl border-3 pointer-events-none transition-all duration-100',
+                'group-hover:opacity-100 opacity-90',
+                selectedAspectRatio === '1:1' ? 'border-[#03346E]' : 
+                selectedAspectRatio === '2:3' ? 'border-[#2E236C]' : 
+                'border-[#055052]'
+              ]"
+            ></span>
+            <span 
+              v-if="isLoading"
+              class="absolute -inset-0.5 rounded-xl pointer-events-none opacity-70 border-gradient-animated"
+              :style="{
+                '--start-color': selectedAspectRatio === '1:1' ? '#03346E' : 
+                                selectedAspectRatio === '2:3' ? '#2E236C' : '#055052'
+              }"
+            ></span>
+            <span 
+              class="absolute inset-0 rounded-xl bg-transparent backdrop-blur-[1px] shadow-lg"
+            ></span>
+            <span 
+              class="absolute inset-[1px] rounded-[5px] bg-gray-400/30"
+            ></span>
+            <span 
+              class="relative z-10 text-sm md:text-base text-center font-semibold pointer-events-none select-none text-white"
+            >
+              {{ isLoading ? 'Generating...' : 'Generate' }}
+            </span>
           </button>
         </div>
       </div>
@@ -249,7 +275,7 @@ const handleGenerate = async () => {
     formData.append('input_image', inputImageFile.value);
     formData.append('resolution', resolution);
 
-    await api.post('/api/generations/generation-requests/', formData, {
+    await api.post('/api/generations/generation-requests/create/', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     
@@ -312,11 +338,37 @@ const onFileSelected = (event) => {
   animation: wave 1.6s ease-in-out infinite;
 }
 
+.border-gradient-animated {
+  border: 2px solid #3A1078;
+  animation: borderGradient 3s ease-in-out infinite;
+}
+
+@keyframes borderGradient {
+  0%, 100% { 
+    border-color: #3A1078;
+  }
+  25% { 
+    border-color: #4E31AA;
+  }
+  50% { 
+    border-color: #3795BD;
+  }
+  75% { 
+    border-color: #4E31AA;
+  }
+}
+
 @media (max-width: 380px) { 
   .modal-text {
     font-size: 1rem;
     line-height: 1.4;
     word-break: break-word;
+  }
+}
+
+@media (min-width: 1800px) {
+  .generate-button {
+    margin-right: 120px;
   }
 }
 </style>

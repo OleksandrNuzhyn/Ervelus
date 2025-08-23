@@ -33,7 +33,6 @@ const selectedStyleId = ref(null);
 const isStylePanelOpen = ref(false);
 
 onMounted(async () => {
-  try {
     const stylesResponse = await api.get('/api/products/styles/');
     styles.value = stylesResponse.data;
 
@@ -45,16 +44,7 @@ onMounted(async () => {
         }
       });
       genres.value = Array.from(genreMap.values());
-
-      if (genres.value.length > 0) {
-        //selectedGenreId.value = genres.value[0].id;
-        //isStylePanelOpen.value = true;
-        //future: open most popular styles at begining
-      }
     }
-  } catch (error) {
-    console.error('Failed to load style data:', error);
-  }
 });
 
 const filteredStyles = computed(() => {

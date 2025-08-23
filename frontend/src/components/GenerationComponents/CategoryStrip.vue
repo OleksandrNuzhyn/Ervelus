@@ -2,7 +2,7 @@
   <div class="relative">
     <div
       ref="scrollContainer"
-      class="bg-gradient-to-br from-slate-900/60 via-slate-950/70 to-slate-900/60 rounded-full p-3 shadow-lg overflow-x-auto no-scrollbar"
+      class="bg-black/30 backdrop-blur-[7px] shadow-[0_0_5px_rgba(0,0,0)] rounded-xl p-3 overflow-x-auto no-scrollbar"
     >
       <div class="flex items-center space-x-4 md:space-x-6 whitespace-nowrap flex-nowrap px-2">
         <button

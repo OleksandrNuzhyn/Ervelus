@@ -1,9 +1,9 @@
   <template>
-    <div class="bg-transparent backdrop-blur-[14px] bg-[rgba(31,41,55,0.3)] rounded-xl shadow-lg p-4 h-[calc(100vh-10rem)] overflow-y-auto no-scrollbar">
+    <div class="bg-transparent backdrop-blur-[14px] rounded-xl shadow-lg p-4 h-[calc(100vh-10rem)] overflow-y-auto no-scrollbar">
         <div class="flex justify-between items-center mb-6 px-2">
           <h2 class="text-2xl font-bold text-white flex-grow text-center">Choose your destiny</h2>
           <button @click="handleClose" class="text-gray-400 hover:text-white bg-transparent p-2 transition-colors">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
