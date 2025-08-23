@@ -1,0 +1,13 @@
+{
+  "projects": {
+    "default": "sapient-forest-465020-d9"
+  },
+  "targets": {},
+  "etags": {
+    "sapient-forest-465020-d9": {
+      "extensionInstances": {
+        "storage-resize-images": "87df7b1eaa05afa2994694e9086d5d0917e85be95519f6840a8c98a06a5123ff"
+      }
+    }
+  }
+}

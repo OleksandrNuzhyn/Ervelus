@@ -35,7 +35,7 @@
           <div class="absolute inset-x-0 bottom-2 flex justify-center">
             <template v-if="plan.is_active">
                 <button @click="buy(plan)" class="inline-flex justify-center p-0 transform hover:scale-103 transition focus:outline-none select-none">
-                    <img src="@/assets/button.webp" alt="Buy plan"/>
+                    <img src="@/assets/pricing_assets/button.png" alt="Buy plan"/>
                 </button>
             </template>
             <div v-else class="text-sm text-gray-500 font-bold medieval">Currently Unavailable</div>
@@ -131,7 +131,7 @@ function buy(plan){
   content:'';
   position:absolute;
   inset:0;
-  background-image:url('@/assets/paper.webp');
+  background-image:url('@/assets/pricing_assets/paper.webp');
   background-size:100% 100%;
   background-position:center;
   background-repeat:no-repeat;
