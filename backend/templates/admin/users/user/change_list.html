@@ -3,8 +3,13 @@
 
 {% block object-tools-items %}
   <li>
-    <a href="{% url 'admin:sync_mailgun_list_view' %}" class="addlink">
+    <a href="{% url 'admin:sync-mailgun-list-view' %}" class="addlink">
       Sync Mailgun List
+    </a>
+  </li>
+  <li>
+    <a href="{% url 'admin:send-group-email-view' %}" class="addlink">
+      Send Group Email
     </a>
   </li>
   {{ block.super }}

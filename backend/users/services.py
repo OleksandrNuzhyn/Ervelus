@@ -2,8 +2,9 @@ import requests
 from django.conf import settings
 from generations.services import gcs_sync_storage_client
 from django.contrib.auth import get_user_model
-import json
+from django.template.loader import render_to_string
 import logging
+import json
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -83,11 +84,49 @@ def sync_users_with_mailgun_list():
                     response.raise_for_status()
                 except requests.exceptions.RequestException as e:
                     is_success = False
-                    logger.error(f"Failed to sync batch with Mailgun", extra={'error': e}, exc_info=True)
+                    logger.error(f"Failed to sync batch with Mailgun", extra={'error': str(e)}, exc_info=True)
                     return {"is_success": is_success, "message": "Failed to sync users with Mailgun"}
 
         logger.info(f"Mailgun sync completed successfully for {total_users} users")
         return {"is_success": is_success, "message": f"Mailgun sync completed successfully for {total_users} users"}
     except Exception as e:
-        logger.error(f"An unexpected error occurred during Mailgun sync", extra={'error': e}, exc_info=True)
+        logger.error(f"An unexpected error occurred during Mailgun sync", extra={'error': str(e)}, exc_info=True)
         return {"is_success": False, "message": "An unexpected error occurred during Mailgun sync"}
+
+def get_mailgun_template_list():
+    url = f"{settings.MAILGUN_API_BASE_URL.rstrip('/')}/v3/{settings.MAILGUN_SENDER_DOMAIN.rstrip('/')}/templates"
+    auth = ("api", settings.MAILGUN_API_KEY)
+    templates = []
+    
+    try:
+        response = requests.get(url, auth=auth)
+        response.raise_for_status()
+        data = response.json()
+        
+        for item in data.get('items', []):
+            templates.append((item['name'], item['name']))
+    except Exception as e:
+        logger.error("Failed to fetch templates from Mailgun", extra={'error': str(e)}, exc_info=True)
+        return []
+    
+    return templates
+
+def send_email(recipient, template_name):
+    try:
+        url = f"{settings.MAILGUN_API_BASE_URL.rstrip('/')}/v3/{settings.MAILGUN_SENDER_DOMAIN.rstrip('/')}/messages"
+        auth = ("api", settings.MAILGUN_API_KEY)
+        
+        data = {
+            "from": f"Ervelus Support <{settings.DEFAULT_FROM_EMAIL}>",
+            "to": recipient,
+            "template": template_name
+        }
+
+        response = requests.post(url, auth=auth, data=data)
+        response.raise_for_status()
+
+        logger.info(f"Successfully sent email template '{template_name}' to {recipient}")
+        return {"is_success": True, "message": f'Email with template "{template_name}" sent to {recipient}'}
+    except Exception as e:
+        logger.error("Failed to send email", extra={'error': str(e)}, exc_info=True)
+        return {"is_success": False, "message": "Failed to send email"}
