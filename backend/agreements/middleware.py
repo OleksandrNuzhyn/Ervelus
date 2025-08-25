@@ -11,12 +11,12 @@ class AgreementCheckMiddleware:
         if not request.user.is_authenticated or request.path.startswith('/admin/'):
             return self.get_response(request)
 
-        excluded_paths = [
-            reverse('agreements:pending-list'),
-            reverse('agreements:accept')
-        ]
-        if request.path in excluded_paths:
-            return self.get_response(request)
+        # excluded_paths = [
+        #     reverse('agreements:pending-list'),
+        #     reverse('agreements:accept')
+        # ]
+        # if request.path in excluded_paths:
+        #     return self.get_response(request)
 
         document_types = TermsVersion.DocumentType.values
         documents_latest_version = self.get_documents_latest_version(document_types)

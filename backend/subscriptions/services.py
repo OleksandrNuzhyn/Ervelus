@@ -62,7 +62,7 @@ def create_new_subscription(data):
                 remaining_credits=plan.generations_count
             )
             
-            config = ApplicationConfig.objects.select_for_update().get_solo()
+            config = ApplicationConfig.objects.get_solo()
             config.reserved_for_spend = F('reserved_for_spend') + plan.product_price
             config.save(update_fields=['reserved_for_spend'])
             
@@ -200,7 +200,7 @@ def handle_subscription_canceled(data):
             user_subscription.cancels_at = None
             user_subscription.save(update_fields=['status', 'cancels_at'])
 
-            config = ApplicationConfig.objects.select_for_update().get_solo()
+            config = ApplicationConfig.objects.get_solo()
             config.reserved_for_spend = F('reserved_for_spend') - user_subscription.plan.product_price
             config.save(update_fields=['reserved_for_spend'])
 

@@ -21,7 +21,7 @@ def subscription_eligibility_check(request):
     except SubscriptionPlan.DoesNotExist:
         return Response({'detail': 'Plan not found or is not active'}, status=404)
 
-    config = ApplicationConfig.get_solo()
+    config = ApplicationConfig.objects.get_solo()
 
     potential_spend = config.reserved_for_spend + plan.product_price
     if potential_spend >= config.hard_budget:
