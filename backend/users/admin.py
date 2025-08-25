@@ -6,7 +6,7 @@ from django.urls import path
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from . import services
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .forms import EmailForm
 from django.conf import settings
 
@@ -16,7 +16,7 @@ admin.site.unregister(User)
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'accepted_terms_version', 'total_credits')
+    list_display = ('id', 'user', 'total_credits')
     list_select_related = ('user',)
 
     def get_queryset(self, request):
@@ -75,7 +75,7 @@ class UserAdmin(BaseUserAdmin):
         return render(request, 'admin/users/user/send_email.html', context)
 
     def send_email_view(self, request, user_id):
-        user = User.objects.get(id=user_id)
+        user = get_object_or_404(User, id=user_id)
         form = EmailForm(request.POST or None)
         
         if request.method == 'POST' and form.is_valid():

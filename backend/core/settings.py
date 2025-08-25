@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'users',
     'products',
     'subscriptions',
-    'generations'
+    'generations',
+    'agreements'
 ]
 
 SITE_ID = 1
@@ -99,7 +100,8 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core.middleware.ThreadIDMiddleware',
+    'agreements.middleware.AgreementCheckMiddleware',
+    'core.middleware.ThreadIDMiddleware' # TODO: Remove
 ]
 
 
@@ -295,5 +297,3 @@ INTERNAL_IPS = [ # TODO: Remove
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-CURRENT_TERMS_VERSION = os.getenv("CURRENT_TERMS_VERSION")

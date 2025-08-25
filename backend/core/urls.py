@@ -20,6 +20,7 @@ if settings.DEBUG:
         path('api/subscriptions/', include('subscriptions.urls_api')),
         path('api/products/', include('products.urls')),
         path('api/generations/', include('generations.urls_api')),
+        path('api/agreements/', include('agreements.urls'))
     ] + debug_toolbar_urls()
 else:
     if settings.SERVICE_NAME == 'web_service':
@@ -32,7 +33,8 @@ else:
             path('api/core/app-config/', views.app_config_details, name='app-config-details'),
             path('api/subscriptions/', include('subscriptions.urls_api')),
             path('api/products/', include('products.urls')),
-            path('api/generations/', include('generations.urls_api'))
+            path('api/generations/', include('generations.urls_api')),
+            path('api/agreements/', include('agreements.urls'))
         ]
     elif settings.SERVICE_NAME == 'generations_worker':
         urlpatterns += [
