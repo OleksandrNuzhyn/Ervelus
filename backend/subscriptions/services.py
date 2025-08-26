@@ -33,6 +33,10 @@ def create_new_subscription(data):
     user_id = data.get('custom_data', {}).get('user_id')
     paddle_customer_id = data.get('customer_id')
     
+    if not user_id:
+        logger.error("User ID not found in custom_data, cannot create subscription", extra={'paddle_data': data})
+        return
+    
     try:
         if UserSubscription.objects.filter(paddle_subscription_id=paddle_subscription_id).exists():
             logger.error("Subscription already exists, skipping creation", extra={'paddle_data': data})
