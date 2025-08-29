@@ -1,8 +1,8 @@
 <template>
-  <div class="relative">
+  <div class="relative px-3">
     <div
       ref="scrollContainer"
-      class="bg-black/30 backdrop-blur-[7px] shadow-[0_0_5px_rgba(0,0,0)] rounded-xl p-3 overflow-x-auto no-scrollbar"
+      class="bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl p-2 md:p-3 overflow-x-auto no-scrollbar"
     >
       <div class="flex items-center space-x-4 md:space-x-6 whitespace-nowrap flex-nowrap px-2">
         <button
@@ -22,7 +22,7 @@
     </div>
     <div
       v-if="showLeftArrow"
-      class="absolute top-0 left-0 h-full w-16 flex items-center justify-start pointer-events-none bg-gradient-to-r from-[rgba(10,10,10,0.8)] to-transparent pl-4"
+      class="absolute top-0 left-0 h-full w-16 flex items-center justify-start pointer-events-none bg-gradient-to-r from-black/80 to-transparent pl-4"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -36,7 +36,7 @@
     </div>
     <div
       v-if="showArrow"
-      class="absolute top-0 right-0 h-full w-16 flex items-center justify-end pointer-events-none bg-gradient-to-l from-[rgba(10,10,10,0.8)] to-transparent pr-4"
+      class="absolute top-0 right-0 h-full w-16 flex items-center justify-end pointer-events-none bg-gradient-to-l from-black/80 to-transparent pr-4"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

@@ -9,11 +9,10 @@
           :styles="filteredStyles"
           :selected-style-id="selectedStyleId"
           @style-selected="handleStyleSelect"
-          @close="handleClosePanel"
-        />
+          @close="handleClosePanel" />
       </div>
     </div>
-    <ImageWorkspace v-show="!isStylePanelOpen" :selected-style-name="selectedStyleName" :selected-style-id="selectedStyleId" />
+    <ImageWorkspace v-show="!isStylePanelOpen" :selected-style-name="selectedStyleName" :selected-style-id="selectedStyleId" :on-open-style-panel="handleOpenStylePanel" />
   </div>
 </template>
 
@@ -70,6 +69,13 @@ const handleStyleSelect=(styleId)=>{
 const handleClosePanel=()=>{
   isStylePanelOpen.value=false;
   selectedGenreId.value=null;
+};
+
+const handleOpenStylePanel = () => {
+    if (!selectedGenreId.value) {
+      selectedGenreId.value = genres.value[0].id;
+    }
+    isStylePanelOpen.value = true;
 };
 
 </script>
