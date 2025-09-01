@@ -1,12 +1,33 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from django.conf import settings
-from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from users.models import UserProfile
 import requests
 from .models import UserSubscription
-from .serializers import UserSubscriptionListSerializer
+from .serializers import UserSubscriptionListSerializer, SubscriptionEligibilityCheckSerializer
+from products.models import SubscriptionPlan
+from core.models import ApplicationConfig
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def subscription_eligibility_check(request):
+    serializer = SubscriptionEligibilityCheckSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    plan_id = serializer.validated_data['plan_id']
+
+    try:
+        plan = SubscriptionPlan.objects.get(pk=plan_id, is_active=True)
+    except SubscriptionPlan.DoesNotExist:
+        return Response({'detail': 'Plan not found or is not active'}, status=404)
+
+    config = ApplicationConfig.get_solo()
+
+    potential_spend = config.reserved_for_spend + plan.product_price
+    if potential_spend >= config.hard_budget:
+        return Response({'detail': 'Purchase unavailable due to budget limits. We apologize for the inconvenience — improvements are underway'}, status=400)
+
+    return Response(None, status=204)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

@@ -16,3 +16,7 @@ class UserSubscriptionListSerializer(serializers.ModelSerializer):
             'status', 
             'remaining_credits'
         ]
+
+
+class SubscriptionEligibilityCheckSerializer(serializers.Serializer):
+    plan_id = serializers.IntegerField()

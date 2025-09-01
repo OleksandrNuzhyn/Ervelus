@@ -8,7 +8,9 @@ from google.cloud.tasks_v2.types import HttpMethod
 from google.protobuf import duration_pb2
 from . import services
 import json
+import logging
 
+logger = logging.getLogger(__name__)
 tasks_client = tasks_v2.CloudTasksClient()
 
 @api_view(['POST'])
@@ -49,12 +51,10 @@ def paddle_handler(request):
 @authentication_classes([])
 @permission_classes([AllowAny])
 def tasks_handler(request):
+    event = None
+    
     try:
         event = json.loads(request.body.decode('utf-8'))
-    except Exception:
-        return Response(status=400)
-
-    try:
         event_type = event.get('event_type')
 
         if event_type == 'transaction.completed':
@@ -65,7 +65,7 @@ def tasks_handler(request):
             services.handle_subscription_updated(event['data'])
         elif event_type == 'subscription.canceled':
             services.handle_subscription_canceled(event['data'])
-    except Exception:
-        return Response(status=500)
+    except Exception as e:
+        logger.error("Failed to process paddle event", extra={'event': event, 'error': str(e)}, exc_info=True)
     
     return Response(status=204)
