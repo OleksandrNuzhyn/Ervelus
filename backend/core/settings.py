@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'debug_toolbar',
+    'solo',
 
     'rest_framework',
 
@@ -40,10 +41,12 @@ INSTALLED_APPS = [
 
     'anymail',
 
+    'core',
     'users',
     'products',
     'subscriptions',
-    'generations'
+    'generations',
+    'agreements'
 ]
 
 SITE_ID = 1
@@ -97,7 +100,8 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core.middleware.ThreadIDMiddleware',
+    'agreements.middleware.AgreementCheckMiddleware',
+    'core.middleware.ThreadIDMiddleware' # TODO: Remove
 ]
 
 
@@ -165,6 +169,11 @@ ANYMAIL = {
     "MAILGUN_API_KEY": os.getenv("MAILGUN_API_KEY"),
     "MAILGUN_SENDER_DOMAIN": os.getenv("MAILGUN_SENDER_DOMAIN"),
 }
+MAILGUN_API_KEY = os.getenv("MAILGUN_API_KEY")
+MAILGUN_SENDER_DOMAIN = os.getenv("MAILGUN_SENDER_DOMAIN")
+MAILGUN_API_BASE_URL = os.getenv("MAILGUN_API_BASE_URL")
+MAILGUN_MAILING_LIST_ADDRESS = os.getenv("MAILGUN_MAILING_LIST_ADDRESS")
+
 EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 
@@ -223,20 +232,25 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "verbose": {
-            "format": "[{levelname}] [{asctime}] [{name}:{funcName}] {message}",
-            "style": "{",
+        "json_formatter": {
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+            "format": "{levelname} {name} {funcName} {message}",
+            "style": "{"
         },
+        "verbose": {
+            "format": "[{levelname}] [{name}:{funcName}] {message}",
+            "style": "{"
+        }
     },
     "handlers": {
         "file": {
             "class": "logging.FileHandler",
             "filename": BASE_DIR / "debug.log",
-            "formatter": "verbose",
+            "formatter": "json_formatter",
         },
         "console": {
             "class": "logging.StreamHandler",
-            "formatter": "verbose",
+            "formatter": "json_formatter",
         },
         "null": {
             "class": "logging.NullHandler",
@@ -283,5 +297,3 @@ INTERNAL_IPS = [ # TODO: Remove
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-CURRENT_TERMS_VERSION = os.getenv("CURRENT_TERMS_VERSION")

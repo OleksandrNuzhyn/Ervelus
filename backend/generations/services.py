@@ -126,6 +126,7 @@ async def handle_generation_process(generation_request_id, resolution):
     except BadRequestError as e:
         logger.warning(f"BadRequestError during generation. generation_request_id='{generation_request_id}', error='{e}'")
         await sync_to_async(delete_generation_request_images_from_gcs)(generation_request)
+        logger.info(f"Successfully deleted GCS images for generation_request_id='{generation_request_id}'")
 
         generation_request.input_img_url = None
         generation_request.status = GenerationRequest.GenerationStatus.FAILED
@@ -133,9 +134,13 @@ async def handle_generation_process(generation_request_id, resolution):
         await generation_request.asave(update_fields=['status', 'error_api_message', 'input_img_url', 'updated_at'])
     except Exception as e:
         logger.error(f"Unhandled exception during generation. generation_request_id='{generation_request_id}', error='{e}'", exc_info=True)
+        await sync_to_async(delete_generation_request_images_from_gcs)(generation_request)
+        logger.info(f"Successfully deleted GCS images for generation_request_id='{generation_request_id}'")
+
+        generation_request.input_img_url = None
         generation_request.status = GenerationRequest.GenerationStatus.FAILED
         generation_request.error_message = "Sorry, something went wrong. Please try again later"
-        await generation_request.asave(update_fields=['status', 'error_message', 'updated_at'])
+        await generation_request.asave(update_fields=['status', 'error_message', 'input_img_url', 'updated_at'])
 
 def is_retryable_error(exception):
     return isinstance(exception, (
