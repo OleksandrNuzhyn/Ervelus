@@ -48,5 +48,5 @@ async function handleLogout() {
   finally {
     isLoading.value = false;
   }
-}
+};
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="mt-2 p-3">
     <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 items-start">
-      <div class="flex flex-col items-center w-full">
+      <div class="z-9 flex flex-col items-center w-full">
         <div class="bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-lg p-4 h-[400px] md:h-[660px] w-full flex flex-col items-center justify-center">
           <div v-if="!inputImageUrl" @click="triggerFileInput" class="cursor-pointer w-full h-full flex flex-col items-center justify-center">
             <svg class="w-16 h-16 md:w-24 md:h-24 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -40,22 +40,22 @@
         <div class="mt-7 mb-2 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-8 sm:gap-5 md:gap-6 lg:gap-10">
           <div class="flex justify-center w-full md:pl-5 xl:pl-10 2xl:pl-15 sm:w-auto gap-15 text-white flex-shrink-0">
             <button @click="selectedAspectRatio = '1:1'" :aria-label="'Aspect ' + '1:1'" :class="[ 'relative w-12 h-12 sm:w-12 sm:h-12 md:w-14 md:h-14 transition-all duration-200 group', selectedAspectRatio === '1:1' ? 'scale-103' : 'hover:scale-100' ]">
-              <span class="absolute -inset-1 rounded-md border-3 pointer-events-none transform rotate-45 transition-opacity duration-200 group-hover:opacity-100 border-[#06418D] opacity-0" :class="[ selectedAspectRatio === '1:1' ? 'opacity-100' : '' ]"></span>
-              <span class="absolute inset-0 rounded-md bg-gradient-to-br from-[#021526] via-[#03346E] to-[#6EACDA]/80 shadow-md shadow-[#021526]/50 transform rotate-45"></span>
-              <span class="absolute inset-[3px] rounded-[6px] bg-[#6EACDA]/10 transform rotate-45"></span>
-              <span class="relative z-10 transform rotate-0 text-xs sm:text-sm md:text-base font-semibold pointer-events-none select-none">1:1</span>
+              <span class="absolute -inset-1 rounded-md border-3 pointer-events-none transform rotate-45 transition-opacity duration-200 group-hover:opacity-100 border-[#0e3b77] opacity-0" :class="[ selectedAspectRatio === '1:1' ? 'opacity-100' : '' ]"></span>
+              <span class="absolute inset-0 rounded-md bg-gradient-to-br from-[#032441] via-[#032247] to-[#0A273E]/80 shadow-md shadow-[#021526]/50 transform rotate-45"></span>
+              <span class="absolute inset-[2px] rounded-[6px] bg-[#6EACDA]/10 transform rotate-45"></span>
+              <span class="relative z-9 transform rotate-0 text-xs sm:text-sm md:text-base font-semibold pointer-events-none select-none">1:1</span>
             </button>
             <button @click="selectedAspectRatio = '2:3'" :aria-label="'Aspect ' + '2:3'" :class="[ 'relative w-12 h-12 sm:w-12 sm:h-12 md:w-14 md:h-14 transition-all duration-200 group', selectedAspectRatio === '2:3' ? 'scale-103' : 'hover:scale-100' ]">
-              <span class="absolute -inset-1 rounded-md border-3 pointer-events-none transform rotate-45 transition-opacity duration-200 group-hover:opacity-100 border-[#302479] opacity-0" :class="[ selectedAspectRatio === '2:3' ? 'opacity-100' : '' ]"></span>
-              <span class="absolute inset-0 rounded-md bg-gradient-to-br from-[#17153B] via-[#2E236C] to-[#D4ADFC]/80 shadow-md shadow-[#17153B]/50 transform rotate-45"></span>
-              <span class="absolute inset-[3px] rounded-[6px] bg-[#C8ACD6]/10 transform rotate-45"></span>
-              <span class="relative z-10 transform rotate-0 text-xs sm:text-sm md:text-base font-semibold pointer-events-none select-none">2:3</span>
+              <span class="absolute -inset-1 rounded-md border-3 pointer-events-none transform rotate-45 transition-opacity duration-200 group-hover:opacity-100 border-[#3A2E8D] opacity-0" :class="[ selectedAspectRatio === '2:3' ? 'opacity-100' : '' ]"></span>
+              <span class="absolute inset-0 rounded-md bg-gradient-to-br from-[#232057] via-[#221858] to-[#300E52]/80 shadow-md shadow-[#17153B]/50 transform rotate-45"></span>
+              <span class="absolute inset-[2px] rounded-[6px] bg-[#C8ACD6]/10 transform rotate-45"></span>
+              <span class="relative z-9 transform rotate-0 text-xs sm:text-sm md:text-base font-semibold pointer-events-none select-none">2:3</span>
             </button>
             <button @click="selectedAspectRatio = '3:2'" :aria-label="'Aspect ' + '3:2'" :class="[ 'relative w-12 h-12 sm:w-12 sm:h-12 md:w-14 md:h-14 transition-all duration-200 group', selectedAspectRatio === '3:2' ? 'scale-103' : 'hover:scale-100' ]">
               <span class="absolute -inset-1 rounded-md border-3 pointer-events-none transform rotate-45 transition-opacity duration-200 group-hover:opacity-100 border-[#045558] opacity-0" :class="[ selectedAspectRatio === '3:2' ? 'opacity-100' : '' ]"></span>
-              <span class="absolute inset-0 rounded-md bg-gradient-to-br from-[#003638] via-[#055052] to-[#5CCACE]/90 shadow-md shadow-[#003638]/50 transform rotate-45"></span>
-              <span class="absolute inset-[3px] rounded-[6px] bg-[#9DB2BF]/10 transform rotate-45"></span>
-              <span class="relative z-10 transform rotate-0 text-xs sm:text-sm md:text-base font-semibold pointer-events-none select-none">3:2</span>
+              <span class="absolute inset-0 rounded-md bg-gradient-to-br from-[#003638] via-[#044244] to-[#0D3E40]/90 shadow-md shadow-[#003638]/50 transform rotate-45"></span>
+              <span class="absolute inset-[2px] rounded-[6px] bg-[#9DB2BF]/10 transform rotate-45"></span>
+              <span class="relative z-9 transform rotate-0 text-xs sm:text-sm md:text-base font-semibold pointer-events-none select-none">3:2</span>
             </button>
           </div>
           <button 
@@ -71,8 +71,8 @@
               :class="[
                 'absolute -inset-1 rounded-xl border-3 pointer-events-none transition-all duration-100',
                 'group-hover:opacity-100 opacity-90',
-                selectedAspectRatio === '1:1' ? 'border-[#03346E]' : 
-                selectedAspectRatio === '2:3' ? 'border-[#2E236C]' : 
+                selectedAspectRatio === '1:1' ? 'border-[#022653]' : 
+                selectedAspectRatio === '2:3' ? 'border-[#261c64]' : 
                 'border-[#055052]'
               ]">
             </span>
@@ -80,8 +80,8 @@
               v-if="isLoading"
               class="absolute -inset-0.5 rounded-xl pointer-events-none opacity-70 border-gradient-animated"
               :style="{
-                '--start-color': selectedAspectRatio === '1:1' ? '#03346E' : 
-                                selectedAspectRatio === '2:3' ? '#2E236C' : '#055052'
+                '--start-color': selectedAspectRatio === '1:1' ? '#022653' : 
+                                selectedAspectRatio === '2:3' ? '#261c64' : '#055052'
               }">
             </span>
             <span 
@@ -90,12 +90,12 @@
             <span 
               class="absolute inset-[1px] rounded-lg"
               :style="{
-              background: selectedAspectRatio === '1:1' ? 'linear-gradient(to bottom right, #021526, #03346E, #6EACDA)' :
-              selectedAspectRatio === '2:3' ? 'linear-gradient(to bottom right, #17153B, #2E236C, #AD69F0)' :
-              'linear-gradient(to bottom right, #003638, #055052, #5CCACE)'}">
+              background: selectedAspectRatio === '1:1' ? 'linear-gradient(to bottom right, #032441, #032247, #0A273E)' :
+              selectedAspectRatio === '2:3' ? 'linear-gradient(to bottom right, #232057, #221858, #300E52)' :
+              'linear-gradient(to bottom right, #003638, #044244, #0D3E40)'}">
             </span>
             <span 
-              class="relative z-10 text-sm md:text-base text-center font-semibold pointer-events-none select-none text-white">
+              class="relative z-9 text-sm md:text-base text-center font-semibold pointer-events-none select-none text-white">
               {{ isLoading ? 'Generating...' : 'Generate' }}
             </span>
           </button>
@@ -322,7 +322,7 @@ const onFileSelected = (event) => {
     return;
   }
   else if (file.size > MAX_FILE_SIZE_BYTES) {
-    error.value = 'File size is too large! Maximum size is 10 MB.';
+    error.value = 'Maximum file size is 10 MB.';
     showErrorModal.value = true;
     return;
   }

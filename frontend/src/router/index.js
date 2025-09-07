@@ -13,6 +13,8 @@ const routes = [
   { path: '/privacy-policy', name: 'privacy-policy', component: () => import('@/views/PrivacyPolicyPage.vue') },
   { path: '/pricing', name: 'pricing', component: () => import('@/views/PricingPage.vue') },
   { path: '/generation', name: 'generation', component: () => import('@/views/GenerationPage.vue') },
+  { path: '/contact-us', name: 'contact-us', component: () => import('@/views/ContactUsPage.vue') },
+  { path: '/profile', name: 'profile', component: () => import('@/views/ProfilePage.vue'), meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({
