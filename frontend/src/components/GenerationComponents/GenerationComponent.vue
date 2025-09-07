@@ -1,4 +1,4 @@
-    <template>
+<template>
   <div class="relative">
     <div class="w-full">
       <div class="relative">
