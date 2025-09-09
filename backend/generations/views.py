@@ -84,13 +84,9 @@ class GenerationRequestViewSet(viewsets.ViewSet):
 
         paginator = CustomPaginationClass()
         page = paginator.paginate_queryset(queryset, request, view=self)
+        serializer = GenerationRequestListSerializer(page, many=True)
         
-        if page is not None:
-            serializer = GenerationRequestListSerializer(page, many=True)
-            return paginator.get_paginated_response(serializer.data)
-
-        serializer = GenerationRequestListSerializer(queryset, many=True)
-        return Response(serializer.data, status=204)
+        return paginator.get_paginated_response(serializer.data)
 
     def retrieve(self, request, pk=None):
         try:
