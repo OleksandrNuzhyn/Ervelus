@@ -3,6 +3,8 @@ from .models import TermsVersion
 
 
 class TermsVersionSerializer(serializers.ModelSerializer):
+    document_type = serializers.CharField(source='get_document_type_display')
+
     class Meta:
         model = TermsVersion
-        fields = ['document_type', 'version', 'content', 'published_at']
+        fields = ('id', 'document_type', 'version', 'content')
