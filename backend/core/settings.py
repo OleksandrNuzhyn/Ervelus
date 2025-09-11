@@ -100,7 +100,6 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'agreements.middleware.AgreementCheckMiddleware',
     'core.middleware.ThreadIDMiddleware' # TODO: Remove
 ]
 
