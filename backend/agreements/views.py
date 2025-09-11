@@ -31,16 +31,19 @@ def accept_user_document_version_client_side(request):
 
     return Response(status=201)
 
-
-
-
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def published_agreements_list_view(request):
+def latest_document_version_detail(request, document_type):
     document_types = TermsVersion.DocumentType.values
-    latest_versions_qs = TermsVersion.objects.filter(
-        document_type__in=document_types
-    ).order_by('document_type', '-published_at').distinct('document_type')
-    
-    serializer = TermsVersionSerializer(latest_versions_qs, many=True)
-    return Response(serializer.data)
+    if document_type not in document_types:
+        return Response({'detail': 'Not found'}, status=404)
+
+    latest_document_version = TermsVersion.objects.filter(
+        document_type=document_type
+    ).order_by('-version').first()
+
+    if latest_document_version is None:
+        return Response({'detail': 'This document has not been published yet'}, status=404)
+
+    serializer = TermsVersionSerializer(latest_document_version)
+    return Response(serializer.data, status=200)
