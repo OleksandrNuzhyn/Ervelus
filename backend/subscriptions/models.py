@@ -22,7 +22,7 @@ class UserSubscription(models.Model):
             )
         ]
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='subscriptions')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='subscriptions')
     plan = models.ForeignKey('products.SubscriptionPlan', on_delete=models.PROTECT, related_name='user_subscriptions')
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()

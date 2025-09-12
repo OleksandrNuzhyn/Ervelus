@@ -16,7 +16,7 @@ class GenerationRequest(models.Model):
             models.Index(fields=['user', 'status', 'is_hidden', '-created_at'], name='u_s_ih_ca_idx')
         ]
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='generation_requests')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='generation_requests')
     chosen_style = models.ForeignKey('products.Style', on_delete=models.PROTECT, related_name='generation_requests')
     input_img_url = models.TextField(validators=[URLValidator()], null=True)
     output_img_url = models.TextField(blank=True, null=True, validators=[URLValidator()])

@@ -25,7 +25,9 @@ django-allauth==0.61.1
 django-anymail==13.0
 django-auditlog==3.2.1
 django-debug-toolbar==6.0.0
+django-gdpr-assist==1.4.2
 django-solo==2.4.0
+django-yaa-settings==1.1.0
 djangorestframework==3.16.0
 frozenlist==1.7.0
 gcloud-aio-auth==5.4.2

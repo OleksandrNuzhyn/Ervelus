@@ -30,7 +30,7 @@ class UserProfile(models.Model):
         verbose_name = 'User Profile'
         verbose_name_plural = 'User Profiles'
 
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='profile')
     paddle_customer_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
 
     objects = UserProfileCreditManager()
