@@ -107,21 +107,21 @@ async def handle_generation_process(generation_request_id, resolution):
             input_image_content_type = metadata.get('contentType')
             input_image_file = await gcs_async_storage_client.download(bucket_name, blob_name)
 
-        output_image_bytes = await generate_output_image(
-            prompt=generation_request.chosen_style.prompt_template,
-            input_image_file=input_image_file,
-            input_image_content_type=input_image_content_type,
-            resolution=resolution
-        )
-        logger.info(f"Successfully generated image from OpenAI API. generation_request_id='{generation_request_id}'")
+        # output_image_bytes = await generate_output_image(
+        #     prompt=generation_request.chosen_style.prompt_template,
+        #     input_image_file=input_image_file,
+        #     input_image_content_type=input_image_content_type,
+        #     resolution=resolution
+        # )
+        # logger.info(f"Successfully generated image from OpenAI API. generation_request_id='{generation_request_id}'")
         
-        output_image_url = await upload_output_image_to_gcs(
-            image_bytes=output_image_bytes,
-            user_id=generation_request.user.id
-        )
-        logger.info(f"Successfully uploaded output image to GCS. generation_request_id='{generation_request_id}'")
+        # output_image_url = await upload_output_image_to_gcs(
+        #     image_bytes=output_image_bytes,
+        #     user_id=generation_request.user.id
+        # )
+        # logger.info(f"Successfully uploaded output image to GCS. generation_request_id='{generation_request_id}'")
 
-        await processing_successful_generation(generation_request, output_image_url)
+        await processing_successful_generation(generation_request, "https://storage.googleapis.com/sapient-forest-465020-d9.firebasestorage.app/users/8/images/outputs/b90d7d6c-4d24-4df9-98d6-e1333b11c7c3.jpg")
         logger.info(f"Successfully processed generation. generation_request_id='{generation_request_id}'")
     except BadRequestError as e:
         logger.warning(f"BadRequestError during generation. generation_request_id='{generation_request_id}', error='{e}'")

@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'debug_toolbar',
+    'gdpr_assist',
     'auditlog',
     'anymail',
     'solo',
@@ -64,8 +65,9 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "Greeting! "
 ACCOUNT_RATE_LIMITS = {
-    'confirm_email': '1/25s',
+    'confirm_email': '1/15s',
 }
 
 
@@ -168,6 +170,7 @@ CSRF_COOKIE_SAMESITE = 'Lax'
 ANYMAIL = {
     "MAILGUN_API_KEY": os.getenv("MAILGUN_API_KEY"),
     "MAILGUN_SENDER_DOMAIN": os.getenv("MAILGUN_SENDER_DOMAIN"),
+    "MAILGUN_API_URL": os.getenv("MAILGUN_API_BASE_URL")
 }
 MAILGUN_API_KEY = os.getenv("MAILGUN_API_KEY")
 MAILGUN_SENDER_DOMAIN = os.getenv("MAILGUN_SENDER_DOMAIN")
@@ -196,11 +199,11 @@ GCP_STORAGE_BUCKET_NAME = os.getenv("GCP_STORAGE_BUCKET_NAME")
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres-ervelus-test',
-        'USER': 'ervelus-test',
+        'NAME': 'postgres',
+        'USER': 'postgres',
         'PASSWORD': 'Trueelse23',
         'HOST': '34.118.74.91',
-        'PORT': '5432',
+        'PORT': '5432'
     }
 }
 
@@ -299,3 +302,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUDITLOG_INCLUDE_ALL_MODELS = True
+
+GDPR_LOG_ON_ANONYMISE = False

@@ -12,6 +12,9 @@ class CustomAccountAdapter(DefaultAccountAdapter):
     def get_email_confirmation_url(self, request, emailconfirmation):
         return f"{settings.FRONTEND_URL}/verify-email/{emailconfirmation.key}/"
 
+    def get_from_email(self):
+        return f"Ervelus Support <{settings.DEFAULT_FROM_EMAIL}>"
+
 
 class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
     @transaction.atomic

@@ -1,10 +1,11 @@
 from django.contrib import admin
 from django.utils import timezone
 from .models import GenerationRequest
+from core.admin_mixins import NoLogAdminMixin
 
 
 @admin.register(GenerationRequest)
-class GenerationRequestAdmin(admin.ModelAdmin):
+class GenerationRequestAdmin(NoLogAdminMixin, admin.ModelAdmin):
     list_display = (
         'id',
         'user',

@@ -67,7 +67,7 @@ def sync_users_with_mailgun_list():
             logger.info("No users found to sync with Mailgun")
             return {"is_success": True, "message": "No users found to sync with Mailgun"}
 
-        url = f"{settings.MAILGUN_API_BASE_URL.rstrip('/')}/v3/lists/{settings.MAILGUN_MAILING_LIST_ADDRESS.rstrip('/')}/members.json"
+        url = f"{settings.MAILGUN_API_BASE_URL.rstrip('/')}/lists/{settings.MAILGUN_MAILING_LIST_ADDRESS.rstrip('/')}/members.json"
         auth = ('api', settings.MAILGUN_API_KEY)
 
         for i in range(0, total_users, batch_size):
@@ -94,7 +94,7 @@ def sync_users_with_mailgun_list():
         return {"is_success": False, "message": "An unexpected error occurred during Mailgun sync"}
 
 def get_mailgun_template_list():
-    url = f"{settings.MAILGUN_API_BASE_URL.rstrip('/')}/v3/{settings.MAILGUN_SENDER_DOMAIN.rstrip('/')}/templates"
+    url = f"{settings.MAILGUN_API_BASE_URL.rstrip('/')}/{settings.MAILGUN_SENDER_DOMAIN.rstrip('/')}/templates"
     auth = ("api", settings.MAILGUN_API_KEY)
     templates = []
     
@@ -113,7 +113,7 @@ def get_mailgun_template_list():
 
 def send_email(recipient, template_name):
     try:
-        url = f"{settings.MAILGUN_API_BASE_URL.rstrip('/')}/v3/{settings.MAILGUN_SENDER_DOMAIN.rstrip('/')}/messages"
+        url = f"{settings.MAILGUN_API_BASE_URL.rstrip('/')}/{settings.MAILGUN_SENDER_DOMAIN.rstrip('/')}/messages"
         auth = ("api", settings.MAILGUN_API_KEY)
         
         data = {

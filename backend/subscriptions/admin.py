@@ -2,6 +2,7 @@ import requests
 from django.conf import settings
 from django.contrib import admin, messages
 from .models import UserSubscription
+from core.admin_mixins import NoLogAdminMixin
 
 @admin.action(description="Cancel selected subscriptions at the next billing period")
 def cancel_subscription_at_next_billing_period(modeladmin, request, queryset):
@@ -29,7 +30,7 @@ def cancel_subscription_at_next_billing_period(modeladmin, request, queryset):
 
 
 @admin.register(UserSubscription)
-class UserSubscriptionAdmin(admin.ModelAdmin):
+class UserSubscriptionAdmin(NoLogAdminMixin, admin.ModelAdmin):
     list_display = ("id", "user", "plan", "status", "remaining_credits", "end_time")
     list_select_related = ("user", "plan")
     list_filter = ("status", "end_time")

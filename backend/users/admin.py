@@ -9,13 +9,30 @@ from . import services
 from django.shortcuts import render, get_object_or_404
 from .forms import EmailForm
 from django.conf import settings
+from core.admin_mixins import NoLogAdminMixin
+from allauth.account.models import EmailAddress
+from allauth.socialaccount.models import SocialAccount
+from allauth.account.admin import EmailAddressAdmin
+from allauth.socialaccount.admin import SocialAccountAdmin
 
 User = get_user_model()
 admin.site.unregister(User)
+admin.site.unregister(EmailAddress)
+admin.site.unregister(SocialAccount)
+
+
+@admin.register(EmailAddress)
+class CustomEmailAddressAdmin(NoLogAdminMixin, EmailAddressAdmin):
+    pass
+
+
+@admin.register(SocialAccount)
+class CustomSocialAccountAdmin(NoLogAdminMixin, SocialAccountAdmin):
+    pass
 
 
 @admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
+class UserProfileAdmin(NoLogAdminMixin, admin.ModelAdmin):
     list_display = ('id', 'user', 'total_credits')
     list_select_related = ('user',)
 
@@ -29,7 +46,7 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 
 @admin.register(User)
-class UserAdmin(BaseUserAdmin):
+class UserAdmin(NoLogAdminMixin, BaseUserAdmin):
     change_list_template = "admin/users/user/change_list.html"
     change_form_template = "admin/users/user/change_form.html"
 

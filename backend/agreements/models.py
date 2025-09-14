@@ -28,6 +28,27 @@ class UserAgreement(models.Model):
         verbose_name_plural = 'User Agreements'
         unique_together = ('user', 'terms_version')
 
+    class PrivacyMeta:
+        fields = [
+            'ip_address',
+            'user_agent'
+        ]
+        search_fields = [
+            'user__email',
+        ]
+
+        def export(self, instance):
+            terms_version = instance.terms_version
+
+            return {
+                'terms_document_type': terms_version.get_document_type_display(),
+                'terms_version': terms_version.version,
+                'accepted_at': instance.accepted_at,
+                'ip_address': instance.ip_address,
+                'user_agent': instance.user_agent,
+                'context': instance.context
+            }
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='agreements')
     terms_version = models.ForeignKey(TermsVersion, on_delete=models.PROTECT, related_name='user_agreements')
     accepted_at = models.DateTimeField(auto_now_add=True)

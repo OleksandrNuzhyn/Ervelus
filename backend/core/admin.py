@@ -3,6 +3,7 @@ from solo.admin import SingletonModelAdmin
 from .models import ApplicationConfig
 from auditlog.models import LogEntry
 from auditlog.admin import LogEntryAdmin
+from core.admin_mixins import NoLogAdminMixin
 
 OriginalLogEntryAdmin = LogEntryAdmin
 admin.site.unregister(LogEntry)
@@ -11,7 +12,7 @@ LogEntry._meta.verbose_name = "Audit Record"
 LogEntry._meta.verbose_name_plural = "Audit Records"
 
 @admin.register(LogEntry)
-class CustomLogEntryAdmin(OriginalLogEntryAdmin):
+class CustomLogEntryAdmin(NoLogAdminMixin, OriginalLogEntryAdmin):
     readonly_fields = (
         'id',
         'object_pk',
