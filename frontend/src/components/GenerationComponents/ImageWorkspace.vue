@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-2 p-3">
+  <div class="mt-0 p-3">
     <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 items-start">
       <div class="z-9 flex flex-col items-center w-full">
         <div class="bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-lg p-4 h-[400px] md:h-[660px] w-full flex flex-col items-center justify-center">

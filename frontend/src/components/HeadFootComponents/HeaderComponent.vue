@@ -1,7 +1,7 @@
 <template>
-    <header class="fixed inset-x-0 top-0 z-10 bg-black/30 backdrop-blur-sm">
+    <header class="fixed inset-x-0 top-0 z-50 bg-black/30 backdrop-blur-sm">
       <div class="max-w-screen mx-auto px-4 sm:px-6 lg:px-12">
-        <div class="flex items-center justify-between h-16">
+        <div class="flex items-center justify-between h-19">
           <router-link to="/" class="text-2xl font-bold text-gray-100 medieval select-none">Ervelus</router-link>
           <nav class="hidden md:flex items-center gap-6 text-gray-200">
             <router-link to="/dashboard" class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 text-gray-100">Dashboard</router-link>
@@ -27,16 +27,16 @@
                 </svg>
               </button>
               <transition
-                enter-active-class="transition ease-out duration-100"
-                enter-from-class="transform opacity-0 scale-95"
-                enter-to-class="transform opacity-100 scale-100"
-                leave-active-class="transition ease-in duration-75"
-                leave-from-class="transform opacity-100 scale-100"
-                leave-to-class="transform opacity-0 scale-95">
-                <div v-if="isBarOpen" class="fixed right-0 top-19 h-[calc(100vh-4rem)] rounded-lg py-2 w-67 bg-[#202b32] z-20">
-                  <div class="px-4 py-4 text-sm text-gray-400 flex items-center gap-2">
-                    <img src="@/assets/svg/coin.svg" class="h-10 w-10" />
+                enter-active-class="transition ease-out duration-300"
+                enter-from-class="transform translate-x-full"
+                enter-to-class="transform translate-x-0"
+                leave-active-class="transition ease-in duration-200"
+                leave-from-class="transform translate-x-0"
+                leave-to-class="transform translate-x-full">
+                <div v-if="isBarOpen" class="fixed right-0 top-19 h-[calc(100vh-4rem)] rounded-lg py-2 w-67 bg-[#202b32] backdrop-blur-xl z-100 flex flex-col transform-gpu">
+                  <div class="px-4 py-4 text-sm text-gray-400 flex items-center justify-between">
                     <span>COINS: {{ credits }}</span>
+                    <img src="@/assets/svg/coin.svg" class="h-10 w-10" />
                   </div>
                   <router-link to="/profile" class="px-4 py-4 text-sm text-gray-400 hover:text-white flex items-center justify-between">
                     <span>Profile</span>
@@ -44,16 +44,19 @@
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
                   </router-link>
-                  <router-link to="/pricing" @click="isBarOpen = false" class=" px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2">
-                    Pricing
+                  <router-link to="/pricing" @click="isBarOpen = false" class="px-4 py-4 text-sm text-gray-400 hover:text-white flex items-center justify-between">
+                    <span>Pricing</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4" />
+                    </svg>
                   </router-link>
-                  <router-link to="/contact-us" @click="isBarOpen = false" class="px-4 py-4 text-sm text-gray-400 hover:text-white flex items-center justify-between">
+                  <router-link to="/contact-us" @click="isBarOpen = false" class="px-4 py-4 text-sm text-gray-400 hover:text-white flex items-center justify-between border-b border-gray-700">
                     <span>Contact us</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>
                   </router-link>
-                  <button @click="handleLogout" class="w-full text-left px-4 py-4 text-sm text-gray-400 hover:text-white flex items-center justify-between">
+                  <button @click="handleLogout" class="w-full text-left px-4 py-4 text-sm bg-black/20 text-gray-400 hover:text-white flex items-center justify-between mt-auto">
                     <span>Sign out</span>
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20V9.75a5 5 0 00-10 0V20M2 20h20"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 12h8m0 0l-3-3m3 3l-3 3"></path></svg>
                   </button>
@@ -82,29 +85,56 @@
         leave-to-class="transform opacity-0 -translate-y-4">
         <div v-if="isBurgerOpen" class="md:hidden bg-black/30 backdrop-blur-sm text-gray-200">
           <div class="px-4 py-4 flex flex-col gap-6">
-              <div class="px-4 py-4 text-sm text-gray-400 flex items-center gap-2">
-                <img src="@/assets/svg/coin.svg" class="h-10 w-10" />
+              <div class="py-3 text-sm text-gray-400 flex items-center gap-2">
+                <div class="w-10 flex justify-center">
+                  <img src="@/assets/svg/coin.svg" class="h-10 w-10" />
+                </div>
                 <span>COINS: {{ credits }}</span>
               </div>
-              <router-link to="/profile" class="hover:text-white flex items-center justify-between">
+              <router-link to="/dashboard" class="hover:text-gray-50 flex items-center gap-2">
+                <div class="w-10 flex justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                  </svg>
+                </div>
+                <span>Dashboard</span>
+              </router-link>
+              <router-link to="/gallery" class="hover:text-white flex items-center gap-2">
+                <div class="w-10 flex justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <span>Gallery</span>
+              </router-link>
+              <router-link to="/profile" class="hover:text-white flex items-center gap-2">
+                <div class="w-10 flex justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                  </svg>
+                </div>
                 <span>Profile</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                </svg>
               </router-link>
-              <router-link to="/dashboard" class="hover:text-gray-50">Dashboard</router-link>
               <router-link to="/pricing" class="hover:text-gray-50 flex items-center gap-2">
-                Pricing
+                <div class="w-10 flex justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4" />
+                  </svg>
+                </div>
+                <span>Pricing</span>
               </router-link>
-              <router-link to="/gallery" class="hover:text-white">Gallery</router-link>
-              <router-link to="/contact-us" @click="isBarOpen = false" class="hover:text-white flex items-center justify-between">
+              <router-link to="/contact-us" @click="isBarOpen = false" class="hover:text-white flex items-center gap-2">
+                <div class="w-10 flex justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                  </svg>
+                </div>
                 <span>Contact us</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                </svg>
               </router-link>
               <button @click="handleLogout" class="text-left hover:text-white flex items-center gap-2">
-                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20V9.75a5 5 0 00-10 0V20M2 20h20"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 12h8m0 0l-3-3m3 3l-3 3"></path></svg>
+                <div class="w-10 flex justify-center">
+                  <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20V9.75a5 5 0 00-10 0V20M2 20h20"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 12h8m0 0l-3-3m3 3l-3 3"></path></svg>
+                </div>
                 <span>Sign out</span>
               </button>
             </div>

@@ -1,11 +1,22 @@
 <template>
-    <div class="flex items-center justify-center h-screen bg-gray-900 text-white">
-      <div class="text-center">
-        <h1 class="text-4xl font-bold medieval">Contact Us</h1>
-        <p class="mt-4 text-lg">You can reach us via email at support@ervelus.com</p>
-      </div>
-    </div>
-  </template>
-  
-  <script setup>
-  </script> 
+  <HeaderComponent />
+  <div class="background-container flex items-center justify-center">
+    <ContactUsComponent />
+  </div>
+  <FooterComponent />
+</template>
+
+<script setup>
+import ContactUsComponent from '@/components/ContactUsComponent.vue';
+import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue';
+import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue';
+</script> 
+
+<style scoped>
+.background-container {
+  background-image: url('@/assets/pricing_assets/wall.webp');
+  background-size: cover;
+  background-position: top center;
+  min-height: max(100vh, calc(100vw * 23 / 48));
+}
+</style>

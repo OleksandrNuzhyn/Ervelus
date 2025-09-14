@@ -10,7 +10,7 @@ import router from './router'
 import api from './services/api'
 
 async function initializeApp() {
-  //await api.get('/api/auth/csrf-token/');
+  await api.get('/api/auth/csrf-token/');
 
   const paddle = await initializePaddle({
     token: 'test_d1b7d123c2e298499433b486045',

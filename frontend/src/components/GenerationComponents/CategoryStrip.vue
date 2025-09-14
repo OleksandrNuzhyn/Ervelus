@@ -2,7 +2,7 @@
   <div class="relative px-3">
     <div
       ref="scrollContainer"
-      class="bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl p-2 md:p-3 overflow-x-auto no-scrollbar"
+      class="mt-1 bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl p-2 md:p-3 overflow-x-auto no-scrollbar"
     >
       <div class="flex items-center space-x-4 md:space-x-6 whitespace-nowrap flex-nowrap px-2">
         <button
