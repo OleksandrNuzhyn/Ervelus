@@ -3,6 +3,7 @@ import logging
 import uuid
 from urllib.parse import urlparse
 from datetime import timedelta
+import os
 import io
 import httpx
 from django.conf import settings
@@ -63,6 +64,17 @@ def generate_signed_gcs_url(gcs_img_url, expires_in_seconds):
         method='GET'
     )
 
+def get_user_gcs_blob_names(user_id):
+    try:
+        bucket_name = settings.GCP_STORAGE_BUCKET_NAME
+        bucket = gcs_sync_storage_client.bucket(bucket_name)
+        prefix = f"users/{user_id}/"
+        blobs = bucket.list_blobs(prefix=prefix)
+        
+        return {blob.name for blob in blobs}
+    except Exception:
+        return set()
+
 def delete_generation_request_images_from_gcs(generation_request):
     urls_to_delete = [
         generation_request.input_img_url,
@@ -78,8 +90,13 @@ def delete_generation_request_images_from_gcs(generation_request):
         path = urlparse(url).path.lstrip('/')
         _, blob_name = path.split('/', 1)
         
-        blob = bucket.blob(blob_name)
-        blob.delete()
+        base_name, _ = os.path.splitext(blob_name)
+        thumbnail_blob_name = f"{base_name}_200x200.webp"
+
+        for name in [blob_name, thumbnail_blob_name]:
+            blob = bucket.blob(name)
+            if blob.exists():
+                blob.delete()
 
 async def upload_output_image_to_gcs(image_bytes, user_id):
     content_type = 'image/jpeg'
@@ -121,7 +138,7 @@ async def handle_generation_process(generation_request_id, resolution):
         # )
         # logger.info(f"Successfully uploaded output image to GCS. generation_request_id='{generation_request_id}'")
 
-        await processing_successful_generation(generation_request, "https://storage.googleapis.com/sapient-forest-465020-d9.firebasestorage.app/users/8/images/outputs/b90d7d6c-4d24-4df9-98d6-e1333b11c7c3.jpg")
+        await processing_successful_generation(generation_request, "https://storage.googleapis.com/sapient-forest-465020-d9.firebasestorage.app/image_2024-02-10_23-06-52.png")
         logger.info(f"Successfully processed generation. generation_request_id='{generation_request_id}'")
     except BadRequestError as e:
         logger.warning(f"BadRequestError during generation. generation_request_id='{generation_request_id}', error='{e}'")

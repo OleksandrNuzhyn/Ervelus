@@ -43,11 +43,11 @@ class LogEntryPrivacyMeta:
     def export(self, instance):
         return {
             'object_repr': instance.object_repr,
-            'action': instance.action,
+            'action': instance.get_action_display(),
             'changes': instance.changes_str,
             'timestamp': instance.timestamp,
             'remote_addr': instance.remote_addr,
-            'actor_email': instance.actor.email
+            'additional_data': instance.additional_data
         }
 
 

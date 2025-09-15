@@ -23,7 +23,7 @@ class UserSubscription(models.Model):
         ]
 
     class PrivacyMeta:
-        fields = []
+        can_anonymise = False
         search_fields = [
             'user__email',
         ]

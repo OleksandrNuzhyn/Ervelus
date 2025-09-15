@@ -82,9 +82,11 @@ class GenerationRequestViewSet(viewsets.ViewSet):
             ).order_by('-created_at')
         )
 
+        existing_blobs = services.get_user_gcs_blob_names(request.user.id)
+        
         paginator = CustomPaginationClass()
         page = paginator.paginate_queryset(queryset, request, view=self)
-        serializer = GenerationRequestListSerializer(page, many=True)
+        serializer = GenerationRequestListSerializer(page, many=True, context={'existing_blobs': existing_blobs})
         
         return paginator.get_paginated_response(serializer.data)
 
@@ -111,6 +113,9 @@ class GenerationRequestViewSet(viewsets.ViewSet):
             generation_request = GenerationRequest.objects.get(pk=pk, user=request.user)
         except GenerationRequest.DoesNotExist:
             return Response(status=404)
+
+        if generation_request.status == GenerationRequest.GenerationStatus.PROCESSING:
+            return Response({"detail": "You cannot delete a generation that is currently processing"}, status=400)
 
         generation_request_id = generation_request.id
         user_id = request.user.id
