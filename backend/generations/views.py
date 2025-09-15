@@ -2,8 +2,8 @@ import json
 import logging
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
+from agreements.permissions import HasAcceptedLatestAgreements
 from .models import GenerationRequest
 from . import services
 from .serializers import (
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class GenerationRequestViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [HasAcceptedLatestAgreements]
 
     def create(self, request, *args, **kwargs):
         serializer = GenerationRequestCreateSerializer(data=request.data, context={'request': request})

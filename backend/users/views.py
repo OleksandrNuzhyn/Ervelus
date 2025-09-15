@@ -5,8 +5,8 @@ from dj_rest_auth.registration.views import SocialLoginView
 from rest_framework.decorators import api_view, permission_classes
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from agreements.permissions import HasAcceptedLatestAgreements
 from rest_framework.response import Response
-from generations.models import GenerationRequest
 from .serializers import UserCreditsSerializer
 from .models import UserProfile
 from auditlog.models import LogEntry
@@ -25,7 +25,7 @@ def csrf_token(request):
     return Response(status=204)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([HasAcceptedLatestAgreements])
 def user_credit_balance(request):
     user_profile = UserProfile.objects.annotate_total_credits().get(user=request.user)
     serializer = UserCreditsSerializer(user_profile)
@@ -36,9 +36,6 @@ def user_credit_balance(request):
 @permission_classes([IsAuthenticated])
 def account_delete(request):
     user = request.user
-
-    if GenerationRequest.objects.filter(user=user, status=GenerationRequest.GenerationStatus.PROCESSING).exists():
-        return Response({"detail": "You have generations in progress. Please wait for them to complete before deleting your account"}, status=400)
     
     if hasattr(user, 'profile') and user.profile.paddle_customer_id:
         paddle_customer_id = user.profile.paddle_customer_id

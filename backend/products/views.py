@@ -1,10 +1,11 @@
 from rest_framework.response import Response
 from rest_framework.decorators import permission_classes, api_view
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from .models import SubscriptionPlan, Style
 from django.db.models import Exists, OuterRef, Subquery
 from .serializers import StyleSerializer
 from subscriptions.models import UserSubscription
+from agreements.permissions import HasAcceptedLatestAgreements
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -23,7 +24,7 @@ def subscription_plan_list(request):
     return Response(subscription_plan_list, status=200)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([HasAcceptedLatestAgreements])
 def available_style_list(request):
     user = request.user
 

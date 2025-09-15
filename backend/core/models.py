@@ -44,7 +44,7 @@ class LogEntryPrivacyMeta:
         return {
             'object_repr': instance.object_repr,
             'action': instance.get_action_display(),
-            'changes': instance.changes_str,
+            'changes': instance.changes,
             'timestamp': instance.timestamp,
             'remote_addr': instance.remote_addr,
             'additional_data': instance.additional_data

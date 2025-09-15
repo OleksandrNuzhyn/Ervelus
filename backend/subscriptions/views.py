@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view, permission_classes
 from django.conf import settings
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from users.models import UserProfile
 import requests
@@ -8,6 +8,7 @@ from .models import UserSubscription
 from .serializers import UserSubscriptionListSerializer, SubscriptionEligibilityCheckSerializer
 from products.models import SubscriptionPlan
 from core.models import ApplicationConfig
+from agreements.permissions import HasAcceptedLatestAgreements
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -30,7 +31,7 @@ def subscription_eligibility_check(request):
     return Response(None, status=204)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([HasAcceptedLatestAgreements])
 def user_subscription_list(request):
     user_subscriptions = UserSubscription.objects.select_related('plan').filter(user=request.user)
     serializer = UserSubscriptionListSerializer(user_subscriptions, many=True)

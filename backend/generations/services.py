@@ -131,7 +131,16 @@ async def handle_generation_process(generation_request_id, resolution):
         #     resolution=resolution
         # )
         # logger.info(f"Successfully generated image from OpenAI API. generation_request_id='{generation_request_id}'")
-        
+
+        generation_request_user_check = await GenerationRequest.objects.aget(id=generation_request_id)
+
+        if not generation_request_user_check.user:
+            logger.warning(f"Generation request refers to a deleted user before processing successful generation. generation_request_id='{generation_request_id}'")
+            generation_request.status = GenerationRequest.GenerationStatus.FAILED
+            generation_request.error_message = 'User deleted during processing, output image not saved'
+            await generation_request.asave(update_fields=['status', 'error_message', 'updated_at'])
+            return
+
         # output_image_url = await upload_output_image_to_gcs(
         #     image_bytes=output_image_bytes,
         #     user_id=generation_request.user.id
