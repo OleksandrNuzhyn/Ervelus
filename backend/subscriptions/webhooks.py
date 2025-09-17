@@ -52,6 +52,8 @@ def paddle_handler(request):
 @permission_classes([AllowAny])
 def tasks_handler(request):
     event = None
+    event_type = None
+    paddle_subscription_id = None
     
     try:
         event = json.loads(request.body.decode('utf-8'))
@@ -65,7 +67,17 @@ def tasks_handler(request):
             services.handle_subscription_updated(event['data'])
         elif event_type == 'subscription.canceled':
             services.handle_subscription_canceled(event['data'])
+        else:
+            logger.error(f"Unhandled event type", extra={'event_type': event_type})
     except Exception as e:
-        logger.error("Failed to process paddle event", extra={'event': event, 'error': str(e)}, exc_info=True)
+        if event and 'data' in event:
+            event_type = event.get('event_type')
+
+            if event_type in ['transaction.completed', 'transaction.past_due']:
+                paddle_subscription_id = event['data'].get('subscription_id')
+            elif event_type in ['subscription.updated', 'subscription.canceled']:
+                paddle_subscription_id = event['data'].get('id')
+
+        logger.error(f"Failed to process paddle event", extra={'event_type': event_type, 'paddle_subscription_id': paddle_subscription_id, 'error': str(e)}, exc_info=True)
     
     return Response(status=204)

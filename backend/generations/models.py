@@ -8,6 +8,8 @@ class GenerationRequest(models.Model):
         PROCESSING = 'processing'
         COMPLETED = 'completed'
         FAILED = 'failed'
+        STOPPED_BY_USER = 'stopped_by_user'
+        REJECTED_BY_SAFETY = 'rejected_by_safety'
     
     class Meta:
         verbose_name = 'Generation Request'

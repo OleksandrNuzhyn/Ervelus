@@ -6,6 +6,7 @@ from rest_framework.decorators import api_view, permission_classes
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from agreements.permissions import HasAcceptedLatestAgreements
+from generations.models import GenerationRequest
 from rest_framework.response import Response
 from .serializers import UserCreditsSerializer
 from .models import UserProfile
@@ -36,7 +37,10 @@ def user_credit_balance(request):
 @permission_classes([IsAuthenticated])
 def account_delete(request):
     user = request.user
-    
+
+    if GenerationRequest.objects.filter(user=user, status=GenerationRequest.GenerationStatus.PROCESSING).exists():
+        return Response({"detail": "You have generation requests still in progress. Please wait for them to complete or stop them before deleting your account"}, status=400)
+
     if hasattr(user, 'profile') and user.profile.paddle_customer_id:
         paddle_customer_id = user.profile.paddle_customer_id
         uncancelled_subscriptions = services.get_user_uncancelled_paddle_subscriptions(paddle_customer_id)
