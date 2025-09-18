@@ -17,12 +17,12 @@ class CustomRegisterSerializer(RegisterSerializer):
 
         if email_address:
             if email_address.verified:
-                raise serializers.ValidationError(("A user is already registered with this e-mail address."))
+                raise serializers.ValidationError(("A user is already registered with this email address"))
             else:
                 send_email_confirmation(self.context['request'], email_address.user)
-                raise serializers.ValidationError(("This e-mail address is already associated with an unverified account. We have sent a new confirmation e-mail to this address."))
+                raise serializers.ValidationError(("We have sent a new confirmation email to this address"))
         
-        return email
+        return email.lower()
 
     @transaction.atomic
     def save(self, request):

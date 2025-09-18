@@ -44,7 +44,7 @@ class UserPrivacyMeta:
         LogEntry.objects.log_create(
             instance=instance,
             action=LogEntry.Action.ACCESS,
-            changes=f'Personal data exported for user PK:{instance.pk}',
+            changes=f'Personal data successfully exported for user_id {instance.pk}',
             additional_data={"gdpr_export_process": True}
         )
         return {

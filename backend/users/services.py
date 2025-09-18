@@ -10,9 +10,11 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from django.db.models import Q
+import logging
 import json
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 def get_user_uncancelled_paddle_subscriptions(customer_id):
     url = f"{settings.PADDLE_API_BASE_URL.rstrip('/')}/subscriptions?customer_id={customer_id}&status=active,past_due"
@@ -23,8 +25,9 @@ def get_user_uncancelled_paddle_subscriptions(customer_id):
     
     response = requests.get(url, headers=headers)
     response.raise_for_status()
+    response_data = response.json()
     
-    return response.json().get('data', [])
+    return response_data.get('data', [])
 
 def create_customer_portal_session(customer_id):
     url = f"{settings.PADDLE_API_BASE_URL.rstrip('/')}/customers/{customer_id}/portal-sessions"
@@ -35,9 +38,11 @@ def create_customer_portal_session(customer_id):
 
     response = requests.post(url, headers=headers)
     response.raise_for_status()
-
     response_data = response.json()
-    return response_data['data']['urls']['general']['overview']
+    
+    return response_data.get('data', {}).get('urls', {}).get('general', {}).get('overview')
+
+
 
 def get_user_data_for_retention(user):
     user_data = {
@@ -98,66 +103,24 @@ def get_user_data_for_retention(user):
     return user_data
 
 def upload_user_data_for_retention_to_gcs(user, user_data_for_retention):
-    file_name = f"user_data_retention/{user.email}_{timezone.now().strftime('%Y%m%d%H%M%S')}.json"
+    file_name = f"user_data/{user.email}_{timezone.now().strftime('%Y%m%d%H%M%S')}.json"
     bucket_name = settings.GCP_STORAGE_BUCKET_NAME
     bucket = gcs_sync_storage_client.bucket(bucket_name)
     blob = bucket.blob(file_name)
 
     json_data = json.dumps(user_data_for_retention, cls=DjangoJSONEncoder, indent=4)
     blob.upload_from_string(json_data, content_type='application/json')
-    LogEntry.objects.log_create(
-        instance=user,
-        action=LogEntry.Action.ACCESS,
-        changes='User data retained to GCS for account deletion',
-        additional_data={"gdpr_deletion_process": True}
-    )
 
-def delete_user_images_from_gcs(user):
-    try:
-        bucket_name = settings.GCP_STORAGE_BUCKET_NAME
-        bucket = gcs_sync_storage_client.bucket(bucket_name)
 
-        prefix = f"users/{user.id}/"
-        blobs_to_delete = list(bucket.list_blobs(prefix=prefix))
 
-        if not blobs_to_delete:
-            LogEntry.objects.log_create(
-                instance=user,
-                action=LogEntry.Action.ACCESS,
-                changes='No user images to delete from GCS',
-                additional_data={"gdpr_deletion_process": True}
-            )
-            return
-        
-        for i in range(0, len(blobs_to_delete), 100):
-            with gcs_sync_storage_client.batch():
-                for blob in blobs_to_delete[i:i+100]:
-                    blob.delete()
-        
-        LogEntry.objects.log_create(
-            instance=user,
-            action=LogEntry.Action.ACCESS,
-            changes=f'Successfully deleted {len(blobs_to_delete)} user images from GCS',
-            additional_data={"gdpr_deletion_process": True}
-        )
-    except Exception as e:
-        LogEntry.objects.log_create(
-            instance=user,
-            action=LogEntry.Action.ACCESS,
-            changes=f'Failed to delete user images from GCS: {str(e)}',
-            additional_data={"gdpr_deletion_process": True}
-        )
+def remove_user_from_mailgun_list(user):
+    url = f"{settings.MAILGUN_API_BASE_URL.rstrip('/')}/lists/{settings.MAILGUN_MAILING_LIST_ADDRESS.rstrip('/')}/members/{user.email}"
+    auth = ('api', settings.MAILGUN_API_KEY)
+    
+    response = requests.delete(url, auth=auth)
+    response.raise_for_status()
 
 def archive_paddle_customer(user):
-    if not hasattr(user, 'profile') or not user.profile.paddle_customer_id:
-        LogEntry.objects.log_create(
-            instance=user,
-            action=LogEntry.Action.ACCESS,
-            changes='Skipped archiving user in Paddle: no customer ID found',
-            additional_data={"gdpr_deletion_process": True}
-        )
-        return
-
     customer_id = user.profile.paddle_customer_id
     url = f"{settings.PADDLE_API_BASE_URL.rstrip('/')}/customers/{customer_id}"
     headers = {
@@ -166,66 +129,37 @@ def archive_paddle_customer(user):
     }
     data = {"status": "archived"}
 
-    try:
-        response = requests.patch(url, headers=headers, json=data)
-        response.raise_for_status()
-        LogEntry.objects.log_create(
-            instance=user,
-            action=LogEntry.Action.ACCESS,
-            changes='Successfully archived user in Paddle',
-            additional_data={"gdpr_deletion_process": True}
-        )
-    except requests.exceptions.HTTPError as e:
-        LogEntry.objects.log_create(
-            instance=user,
-            action=LogEntry.Action.ACCESS,
-            changes=f'Failed to archive user in Paddle: HTTP {e.response.status_code}',
-            additional_data={"gdpr_deletion_process": True}
-        )
-    except requests.exceptions.RequestException as e:
-        LogEntry.objects.log_create(
-            instance=user,
-            action=LogEntry.Action.ACCESS,
-            changes=f'Failed to archive user in Paddle: {str(e)}',
-            additional_data={"gdpr_deletion_process": True}
-        )
+    response = requests.patch(url, headers=headers, json=data)
+    response.raise_for_status()
 
-def remove_user_from_mailgun_list(user):
-    try:
-        url = f"{settings.MAILGUN_API_BASE_URL.rstrip('/')}/v3/lists/{settings.MAILGUN_MAILING_LIST_ADDRESS.rstrip('/')}/members/{user.email}"
-        auth = ('api', settings.MAILGUN_API_KEY)
-        
-        response = requests.delete(url, auth=auth)
-        response.raise_for_status()
+def delete_user_images_from_gcs(user):
+    bucket_name = settings.GCP_STORAGE_BUCKET_NAME
+    bucket = gcs_sync_storage_client.bucket(bucket_name)
 
-        LogEntry.objects.log_create(
-            instance=user,
-            action=LogEntry.Action.ACCESS,
-            changes='Successfully removed user from Mailgun list',
-            additional_data={"gdpr_deletion_process": True}
-        )
-    except requests.exceptions.HTTPError as e:
-        if e.response.status_code == 404:
-            LogEntry.objects.log_create(
-                instance=user,
-                action=LogEntry.Action.ACCESS,
-                changes='User was not found in Mailgun list',
-                additional_data={"gdpr_deletion_process": True}
-            )
+    prefix = f"users/{user.id}/"
+    blobs_to_delete = list(bucket.list_blobs(prefix=prefix))
+
+    if not blobs_to_delete:
+        return {'deleted_original_count': 0, 'deleted_resized_count': 0}
+
+    original_count = 0
+    resized_count = 0
+
+    for blob in blobs_to_delete:
+        if '200x200' in blob.name:
+            resized_count += 1
         else:
-            LogEntry.objects.log_create(
-                instance=user,
-                action=LogEntry.Action.ACCESS,
-                changes=f'Failed to remove user from Mailgun list: HTTP {e.response.status_code}',
-                additional_data={"gdpr_deletion_process": True}
-            )
-    except requests.exceptions.RequestException as e:
-        LogEntry.objects.log_create(
-            instance=user,
-            action=LogEntry.Action.ACCESS,
-            changes=f'Failed to remove user from Mailgun list: {str(e)}',
-            additional_data={"gdpr_deletion_process": True}
-        )
+            original_count += 1
+    
+    for i in range(0, len(blobs_to_delete), 100):
+        with gcs_sync_storage_client.batch():
+            for blob in blobs_to_delete[i:i+100]:
+                blob.delete()
+    
+    return {
+        'deleted_original_count': original_count,
+        'deleted_resized_count': resized_count
+    }
 
 def delete_user_audit_records(user):
     log_entries_to_delete = Q(actor=user)
@@ -248,10 +182,9 @@ def delete_user_audit_records(user):
         ct = ContentType.objects.get_for_model(obj)
         log_entries_to_delete |= Q(content_type=ct, object_pk=str(obj.pk))
 
-    LogEntry.objects.filter(log_entries_to_delete) \
-        .exclude(additional_data__gdpr_deletion_process=True) \
-        .exclude(additional_data__gdpr_export_process=True) \
-        .delete()
+    LogEntry.objects.filter(log_entries_to_delete).exclude(additional_data__gdpr_deletion_process=True).exclude(additional_data__gdpr_export_process=True).delete()
+
+
 
 def sync_users_with_mailgun_list():
     try:
@@ -287,10 +220,11 @@ def sync_users_with_mailgun_list():
                     response.raise_for_status()
                 except requests.exceptions.RequestException as e:
                     is_success = False
+                    logger.error("Failed to sync users with Mailgun", extra={'error': str(e)}, exc_info=True)
                     return {"is_success": is_success, "message": "Failed to sync users with Mailgun"}
-
         return {"is_success": is_success, "message": f"Mailgun sync completed successfully for {total_users} users"}
     except Exception as e:
+        logger.error("Failed to sync users with Mailgun", extra={'error': str(e)}, exc_info=True)
         return {"is_success": False, "message": "An unexpected error occurred during Mailgun sync"}
 
 def get_mailgun_template_list():
@@ -306,24 +240,26 @@ def get_mailgun_template_list():
         for item in data.get('items', []):
             templates.append((item['name'], item['name']))
     except Exception as e:
+        logger.error("Failed to get Mailgun template list", extra={'error': str(e)}, exc_info=True)
         return []
     
     return templates
 
 def send_email(recipient, template_name):
+    url = f"{settings.MAILGUN_API_BASE_URL.rstrip('/')}/{settings.MAILGUN_SENDER_DOMAIN.rstrip('/')}/messages"
+    auth = ("api", settings.MAILGUN_API_KEY)
+    
+    data = {
+        "from": f"Ervelus Support <{settings.DEFAULT_FROM_EMAIL}>",
+        "to": recipient,
+        "template": template_name
+    }
+    
     try:
-        url = f"{settings.MAILGUN_API_BASE_URL.rstrip('/')}/{settings.MAILGUN_SENDER_DOMAIN.rstrip('/')}/messages"
-        auth = ("api", settings.MAILGUN_API_KEY)
-        
-        data = {
-            "from": f"Ervelus Support <{settings.DEFAULT_FROM_EMAIL}>",
-            "to": recipient,
-            "template": template_name
-        }
-
         response = requests.post(url, auth=auth, data=data)
         response.raise_for_status()
 
         return {"is_success": True, "message": f'Email with template "{template_name}" sent to {recipient}'}
     except Exception as e:
+        logger.error("Failed to send email", extra={'error': str(e)}, exc_info=True)
         return {"is_success": False, "message": "Failed to send email"}
