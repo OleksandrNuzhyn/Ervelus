@@ -26,10 +26,8 @@ def subscription_plan_list(request):
 @api_view(['GET'])
 @permission_classes([HasAcceptedLatestAgreements])
 def available_style_list(request):
-    user = request.user
-
     best_plan_id_subquery = UserSubscription.objects.filter(
-        user=user,
+        user=request.user,
         status=UserSubscription.SubscriptionStatus.ACTIVE
     ).order_by('-plan__price').values('plan_id')[:1]
 
