@@ -52,10 +52,7 @@ class GenerationRequestViewSet(viewsets.ViewSet):
         try:
             target_url = f"{settings.BACKEND_URL.rstrip('/')}/webhooks/generations/tasks/"
             
-            event_data = {
-                'generation_request_id': generation_request.id,
-                'resolution': serializer.validated_data['resolution']
-            }
+            event_data = {'generation_request_id': generation_request.id}
 
             queue_path = tasks_client.queue_path(
                 settings.GCP_PROJECT_ID,
@@ -70,7 +67,7 @@ class GenerationRequestViewSet(viewsets.ViewSet):
                     'headers': {'Content-Type': 'application/json'},
                     'body': json.dumps(event_data).encode('utf-8')
                 },
-                'dispatch_deadline': duration_pb2.Duration(seconds=350)
+                'dispatch_deadline': duration_pb2.Duration(seconds=360)
             }
 
             tasks_client.create_task(request={'parent': queue_path, 'task': task})

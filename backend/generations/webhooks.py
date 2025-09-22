@@ -13,17 +13,15 @@ logger = logging.getLogger(__name__)
 @permission_classes([AllowAny])
 async def tasks_handler(request):
     generation_request_id = None
-    resolution = None
 
     try:
         event_data = json.loads(request.body.decode('utf-8'))
         generation_request_id = event_data.get('generation_request_id')
-        resolution = event_data.get('resolution')
     except Exception as e:
         logger.error(f"Failed to parse generation event data", extra={'error': str(e)}, exc_info=True)
 
     try:
-        await services.handle_generation_process(generation_request_id, resolution)
+        await services.handle_generation_process(generation_request_id)
     except Exception as e:
         logger.error(f"Failed to handle generation process", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
 
