@@ -273,6 +273,11 @@ LOGGING = {
             "handlers": active_handlers,
             "level": "ERROR",
             "propagate": False,
+        },
+        "google_genai": {
+            "handlers": active_handlers,
+            "level": "WARNING",
+            "propagate": False
         }
     },
     "root": {

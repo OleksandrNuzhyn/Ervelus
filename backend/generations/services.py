@@ -14,6 +14,8 @@ from gcloud.aio.storage import Storage as GCSAsyncStorage
 from google.cloud import storage as gcs_sync_storage
 from asgiref.sync import sync_to_async
 from google import genai
+from google.genai import types
+from google.genai.types import HarmCategory, HarmBlockThreshold
 from google.genai import errors
 
 logger = logging.getLogger(__name__)
@@ -31,27 +33,52 @@ def is_retryable_error(error):
     return False
 
 @retry(wait=wait_random_exponential(min=5, max=60), stop=stop_after_attempt(7), retry=retry_if_exception(is_retryable_error))
-async def generate_output_image(genai_client, prompt, input_image_bytes):
+async def generate_output_image(prompt, input_image_bytes):
     image = Image.open(BytesIO(input_image_bytes))
+    genai_client = genai.Client()
 
-    response = await genai_client.aio.models.generate_content(
-        model="gemini-2.5-flash-image-preview",
-        contents = [prompt, image]
-    )
+    try:
+        response = await genai_client.aio.models.generate_content(
+            model="gemini-2.5-flash-image-preview",
+            contents = [prompt, image],
+            config=types.GenerateContentConfig(
+                safety_settings=[
+                    {
+                        "category": HarmCategory.HARM_CATEGORY_HARASSMENT,
+                        "threshold": HarmBlockThreshold.BLOCK_NONE
+                    },
+                    {
+                        "category": HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+                        "threshold": HarmBlockThreshold.BLOCK_NONE
+                    },
+                    {
+                        "category": HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+                        "threshold": HarmBlockThreshold.BLOCK_NONE
+                    },
+                    {
+                        "category": HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                        "threshold": HarmBlockThreshold.BLOCK_NONE
+                    }
+                ]
+            )
+        )
     
-    if not response.candidates[0].content:
-        raise ContentBlockedError()
+        if not response.candidates[0].content:
+            raise ContentBlockedError()
 
-    output_image_bytes = None
-    mime_type = None
+        output_image_bytes = None
+        mime_type = None
 
-    for part in response.candidates[0].content.parts:
-        if part.inline_data:
-            output_image_bytes = part.inline_data.data
-            mime_type = part.inline_data.mime_type
-            break
+        for part in response.candidates[0].content.parts:
+            if part.inline_data:
+                output_image_bytes = part.inline_data.data
+                mime_type = part.inline_data.mime_type
+                break
 
-    return output_image_bytes, mime_type
+        return output_image_bytes, mime_type
+    finally:
+        if genai_client._api_client._aiohttp_session:
+            await genai_client._api_client._aiohttp_session.close()
 
 
 
@@ -179,8 +206,6 @@ async def handle_generation_process(generation_request_id):
         await generation_request.asave(update_fields=['status', 'error_message', 'updated_at'])
         return
 
-    genai_client = genai.Client()
-
     try:
         try:
             await sync_to_async(generation_request.refresh_from_db)()
@@ -192,7 +217,10 @@ async def handle_generation_process(generation_request_id):
         
         close_old_connections()
         
-        output_image_bytes, mime_type = await generate_output_image(genai_client, prompt, input_image_bytes)
+        output_image_bytes, mime_type = await generate_output_image(prompt, input_image_bytes)
+
+        if not output_image_bytes or not mime_type:
+            raise ValueError("Generated image data is empty or mime type is missing")
     except ContentBlockedError:
         try:
             await sync_to_async(generation_request.refresh_from_db)()
