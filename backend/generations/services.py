@@ -1,5 +1,4 @@
 import os
-import uuid
 import logging
 from PIL import Image
 from urllib.parse import urlparse
@@ -7,6 +6,8 @@ from datetime import timedelta
 from io import BytesIO
 from django.conf import settings
 from django.db import transaction, close_old_connections
+from django.utils import timezone
+from django.utils.text import slugify
 from .models import GenerationRequest
 from subscriptions.models import UserSubscription
 from tenacity import retry, wait_random_exponential, retry_if_exception, stop_after_attempt
@@ -105,11 +106,13 @@ def delete_generation_request_images_from_gcs(generation_request):
             if blob.exists():
                 blob.delete()
 
-async def upload_output_image_to_gcs(image_bytes, mime_type, user_id):
+async def upload_output_image_to_gcs(image_bytes, mime_type, user_id, style_name):
     extension = mime_type.split('/')[-1]
+    slugified_style_name = slugify(style_name)
+    timestamp = timezone.now().strftime('%Y-%m-%d-%H-%M-%S')
 
     bucket_name = settings.GCP_STORAGE_BUCKET_NAME
-    blob_name = f"users/{user_id}/images/outputs/{uuid.uuid4()}.{extension}"
+    blob_name = f"users/{user_id}/images/outputs/{slugified_style_name}-{timestamp}.{extension}"
 
     async with GCSAsyncStorage() as gcs_async_storage_client:
         await gcs_async_storage_client.upload(bucket_name, blob_name, image_bytes, content_type=mime_type)
@@ -154,7 +157,13 @@ async def handle_generation_process(generation_request_id):
         return
         
     try:
-        if not generation_request.input_img_url or not generation_request.chosen_style or not generation_request.chosen_style.prompt_template or not generation_request.user:
+        if not all([
+            generation_request.input_img_url,
+            generation_request.chosen_style,
+            generation_request.chosen_style.prompt_template,
+            generation_request.chosen_style.name,
+            generation_request.user
+        ]):
             generation_request.status = GenerationRequest.GenerationStatus.FAILED
             generation_request.error_message = "Input data is missing"
             await generation_request.asave(update_fields=['status', 'error_message', 'updated_at'])
@@ -165,6 +174,7 @@ async def handle_generation_process(generation_request_id):
         return
     
     prompt = generation_request.chosen_style.prompt_template
+    style_name = generation_request.chosen_style.name
     input_image_url = generation_request.input_img_url
     user_id = generation_request.user.id
 
@@ -265,7 +275,12 @@ async def handle_generation_process(generation_request_id):
         if generation_request.status == GenerationRequest.GenerationStatus.STOPPED_BY_USER:
             return
 
-        output_image_url = await upload_output_image_to_gcs(image_bytes=output_image_bytes, mime_type=mime_type, user_id=user_id)
+        output_image_url = await upload_output_image_to_gcs(
+            image_bytes=output_image_bytes,
+            mime_type=mime_type,
+            user_id=user_id,
+            style_name=style_name
+        )
     except Exception as e:
         logger.error(f"Failed to upload output image to GCS", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
 
@@ -301,8 +316,9 @@ def upload_input_image_to_gcs(image_file, user_id):
     if extension == 'jpeg':
         extension = 'jpg'
 
+    timestamp = timezone.now().strftime('%Y-%m-%d-%H-%M-%S')
     bucket_name = settings.GCP_STORAGE_BUCKET_NAME
-    blob_name = f"users/{user_id}/images/inputs/{uuid.uuid4()}.{extension}"
+    blob_name = f"users/{user_id}/images/inputs/input-{timestamp}.{extension}"
     
     bucket = gcs_sync_storage_client.bucket(bucket_name)
     blob = bucket.blob(blob_name)
