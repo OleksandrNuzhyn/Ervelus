@@ -1,6 +1,6 @@
 import os
 import logging
-from PIL import Image
+from PIL import Image, ImageOps
 from urllib.parse import urlparse
 from datetime import timedelta
 from io import BytesIO
@@ -68,15 +68,13 @@ async def generate_output_image(prompt, input_image_bytes):
             raise ContentBlockedError()
 
         output_image_bytes = None
-        mime_type = None
-
+        
         for part in response.candidates[0].content.parts:
             if part.inline_data:
                 output_image_bytes = part.inline_data.data
-                mime_type = part.inline_data.mime_type
                 break
 
-        return output_image_bytes, mime_type
+        return output_image_bytes
     finally:
         if genai_client._api_client._aiohttp_session:
             await genai_client._api_client._aiohttp_session.close()
@@ -106,16 +104,17 @@ def delete_generation_request_images_from_gcs(generation_request):
             if blob.exists():
                 blob.delete()
 
-async def upload_output_image_to_gcs(image_bytes, mime_type, user_id, style_name):
-    extension = mime_type.split('/')[-1]
+async def upload_output_image_to_gcs(image_bytes, user_id, style_name):
+    prepared_image_bytes = await sync_to_async(prepare_image_for_upload)(image_bytes, quality=100)
+
     slugified_style_name = slugify(style_name)
     timestamp = timezone.now().strftime('%Y-%m-%d-%H-%M-%S')
 
     bucket_name = settings.GCP_STORAGE_BUCKET_NAME
-    blob_name = f"users/{user_id}/images/outputs/{slugified_style_name}-{timestamp}.{extension}"
+    blob_name = f"users/{user_id}/images/outputs/{slugified_style_name}-{timestamp}.jpg"
 
     async with GCSAsyncStorage() as gcs_async_storage_client:
-        await gcs_async_storage_client.upload(bucket_name, blob_name, image_bytes, content_type=mime_type)
+        await gcs_async_storage_client.upload(bucket_name, blob_name, prepared_image_bytes, content_type='image/jpeg')
 
     return f"https://storage.googleapis.com/{bucket_name}/{blob_name}"
 
@@ -227,10 +226,10 @@ async def handle_generation_process(generation_request_id):
         
         close_old_connections()
         
-        output_image_bytes, mime_type = await generate_output_image(prompt, input_image_bytes)
+        output_image_bytes = await generate_output_image(prompt, input_image_bytes)
 
-        if not output_image_bytes or not mime_type:
-            raise ValueError("Generated image data is empty or mime type is missing")
+        if not output_image_bytes:
+            raise ValueError("Generated image data is empty")
     except ContentBlockedError:
         try:
             await sync_to_async(generation_request.refresh_from_db)()
@@ -277,7 +276,6 @@ async def handle_generation_process(generation_request_id):
 
         output_image_url = await upload_output_image_to_gcs(
             image_bytes=output_image_bytes,
-            mime_type=mime_type,
             user_id=user_id,
             style_name=style_name
         )
@@ -309,21 +307,36 @@ async def handle_generation_process(generation_request_id):
 
 
 
-def upload_input_image_to_gcs(image_file, user_id):
-    content_type = image_file.content_type
-    extension = content_type.split('/')[-1]
+def prepare_image_for_upload(image_data, quality):
+    if isinstance(image_data, bytes):
+        image_file = BytesIO(image_data)
+    else:
+        image_file = image_data
+        image_file.seek(0)
+
+    image = Image.open(image_file)
+    transposed_image = ImageOps.exif_transpose(image)
+
+    if transposed_image.mode != "RGB":
+        transposed_image = transposed_image.convert("RGB")
+
+    buffer = BytesIO()
+    transposed_image.save(buffer, format='JPEG', quality=quality, optimize=True)
+    buffer.seek(0)
     
-    if extension == 'jpeg':
-        extension = 'jpg'
+    return buffer.getvalue()
+
+def upload_input_image_to_gcs(image_file, user_id):
+    prepared_image_bytes = prepare_image_for_upload(image_file, quality=75)
 
     timestamp = timezone.now().strftime('%Y-%m-%d-%H-%M-%S')
     bucket_name = settings.GCP_STORAGE_BUCKET_NAME
-    blob_name = f"users/{user_id}/images/inputs/input-{timestamp}.{extension}"
+    blob_name = f"users/{user_id}/images/inputs/input-{timestamp}.jpg"
     
     bucket = gcs_sync_storage_client.bucket(bucket_name)
     blob = bucket.blob(blob_name)
     
-    blob.upload_from_file(image_file, content_type=content_type)
+    blob.upload_from_string(prepared_image_bytes, content_type='image/jpeg')
 
     return blob.public_url
 
