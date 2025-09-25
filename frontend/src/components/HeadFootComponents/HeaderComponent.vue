@@ -33,7 +33,7 @@
                 leave-active-class="transition ease-in duration-200"
                 leave-from-class="transform translate-x-0"
                 leave-to-class="transform translate-x-full">
-                <div v-if="isBarOpen" class="fixed right-0 top-19 h-[calc(100vh-4rem)] rounded-lg py-2 w-67 bg-[#202b32] backdrop-blur-xl z-100 flex flex-col transform-gpu">
+                <div v-if="isBarOpen" class="fixed right-0 top-19 h-[calc(100vh-4rem)] py-2 w-67 bg-[#202b32]/30 backdrop-blur-xl z-100 flex flex-col transform-gpu">
                   <div class="px-4 py-4 text-sm text-gray-400 flex items-center justify-between">
                     <span>COINS: {{ credits }}</span>
                     <img src="@/assets/svg/coin.svg" class="h-10 w-10" />
@@ -46,8 +46,8 @@
                   </router-link>
                   <router-link to="/pricing" @click="isBarOpen = false" class="px-4 py-4 text-sm text-gray-400 hover:text-white flex items-center justify-between">
                     <span>Pricing</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   </router-link>
                   <router-link to="/contact-us" @click="isBarOpen = false" class="px-4 py-4 text-sm text-gray-400 hover:text-white flex items-center justify-between border-b border-gray-700">
@@ -56,10 +56,15 @@
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>
                   </router-link>
-                  <button @click="handleLogout" class="w-full text-left px-4 py-4 text-sm bg-black/20 text-gray-400 hover:text-white flex items-center justify-between mt-auto">
-                    <span>Sign out</span>
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20V9.75a5 5 0 00-10 0V20M2 20h20"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 12h8m0 0l-3-3m3 3l-3 3"></path></svg>
-                  </button>
+                  <div class="mt-auto">
+                    <div class="p-1 mb-2">
+                      <img src="@/assets/video/bonfire.gif" alt="Bonfire animation" class="w-full filter contrast-150" />
+                    </div>
+                    <button @click="handleLogout" class="w-full text-left px-4 py-4 text-sm bg-black/20 text-gray-400 hover:text-white flex items-center justify-between">
+                      <span>Sign out</span>
+                      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20V9.75a5 5 0 00-10 0V20M2 20h20"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 12h8m0 0l-3-3m3 3l-3 3"></path></svg>
+                    </button>
+                  </div>
                 </div>
               </transition>
             </div>
@@ -117,8 +122,8 @@
               </router-link>
               <router-link to="/pricing" class="hover:text-gray-50 flex items-center gap-2">
                 <div class="w-10 flex justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4" />
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
                 <span>Pricing</span>
@@ -141,66 +146,85 @@
           </div>
         </transition>
     </header>
+    <transition
+      enter-active-class="transition-opacity ease-in-out duration-300"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-opacity ease-in-out duration-200"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="isBarOpen || isBurgerOpen"
+        @click="closeSidebars"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40">
+      </div>
+    </transition>
   </template>
   
-  <script setup>
-  import { ref, watch, onMounted, onUnmounted } from 'vue';
-  import { useAuthStore } from '@/stores/auth';
-  import { useRouter } from 'vue-router';
-  import api from '@/services/api';
-  
-  const isBurgerOpen = ref(false);
-  const isBarOpen = ref(false);
-  const credits = ref(0);
-  const profileBar = ref(null);
+<script setup>
+import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router';
+import api from '@/services/api';
 
-  const authStore = useAuthStore();
-  const router = useRouter();
+const isBurgerOpen = ref(false);
+const isBarOpen = ref(false);
+const credits = ref(0);
+const profileBar = ref(null);
 
-  const handleClickOutside = (event) => {
-    if (profileBar.value && !profileBar.value.contains(event.target)) {
-      isBarOpen.value = false;
-    }
-  };
+const authStore = useAuthStore();
+const router = useRouter();
 
-  const fetchCredits = async () => {
-    if (!authStore.isAuthenticated) return;
-    try {
-      const response = await api.get('/api/auth/credit-balance/');
-      credits.value = response.data.total_credits;
-    } catch (error) {
-      credits.value = 0;
-    }
-  };
+const closeSidebars = () => {
+  isBarOpen.value = false;
+  isBurgerOpen.value = false;
+};
 
-  onMounted(() => {
-    if (authStore.isAuthenticated) {
-      fetchCredits();
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-  });
-  
-  onUnmounted(() => {
-    document.removeEventListener('mousedown', handleClickOutside);
-  });
-
-  watch(isBarOpen, (newValue) => {
-    if (newValue) {
-      fetchCredits();
-    }
-  });
-
-  watch(isBurgerOpen, (newValue) => {
-    if (newValue) {
-      fetchCredits();
-    }
-  });
-  
-  const handleLogout = async () => {
-    await api.post('/api/auth/logout/');
-    authStore.$reset();
-    await router.push({ name: 'login' });
+const handleClickOutside = (event) => {
+  if (profileBar.value && !profileBar.value.contains(event.target)) {
     isBarOpen.value = false;
-    isBurgerOpen.value = false;
-  };
-  </script> 
+  }
+};
+
+const fetchCredits = async () => {
+  if (!authStore.isAuthenticated) return;
+  try {
+    const response = await api.get('/api/auth/credit-balance/');
+    credits.value = response.data.total_credits;
+  } catch (error) {
+    credits.value = 0;
+  }
+};
+
+onMounted(() => {
+  if (authStore.isAuthenticated) {
+    fetchCredits();
+  }
+  document.addEventListener('mousedown', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('mousedown', handleClickOutside);
+});
+
+watch(isBarOpen, (newValue) => {
+  if (newValue) {
+    fetchCredits();
+  }
+});
+
+watch(isBurgerOpen, (newValue) => {
+  if (newValue) {
+    fetchCredits();
+  }
+});
+
+const handleLogout = async () => {
+  await api.post('/api/auth/logout/');
+  authStore.$reset();
+  await router.push({ name: 'login' });
+  isBarOpen.value = false;
+  isBurgerOpen.value = false;
+};
+</script> 

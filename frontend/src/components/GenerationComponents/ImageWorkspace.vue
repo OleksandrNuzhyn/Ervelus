@@ -19,7 +19,7 @@
             </button>
           </div>
         </div>
-        <div @click="onOpenStylePanel" class="w-full bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl py-3 lg:py-6 mt-5 text-center text-xl md:text-2xl font-bold cursor-pointer hover:bg-black/40 transition-all duration-200 border border-transparent hover:border-gray-600">
+        <div @click="onOpenStylePanel" class="w-full bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl py-3 lg:py-6 mt-7 lg:mt-10 text-center text-xl md:text-2xl font-bold cursor-pointer hover:bg-black/40 transition-all duration-200 border border-transparent hover:border-gray-600">
           {{ selectedStyleName || 'Choose style' }}
         </div>
       </div>
@@ -37,32 +37,12 @@
             <p>The result of the generation will appear here</p>
           </div>
         </div>
-        <div class="mt-7 mb-2 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-8 sm:gap-5 md:gap-6 lg:gap-10">
-          <div class="flex justify-center w-full md:pl-5 xl:pl-10 2xl:pl-15 sm:w-auto gap-15 text-white flex-shrink-0">
-            <button @click="selectedAspectRatio = '1:1'" :aria-label="'Aspect ' + '1:1'" :class="[ 'relative w-12 h-12 sm:w-12 sm:h-12 md:w-14 md:h-14 transition-all duration-200 group', selectedAspectRatio === '1:1' ? 'scale-103' : 'hover:scale-100' ]">
-              <span class="absolute -inset-1 rounded-md border-3 pointer-events-none transform rotate-45 transition-opacity duration-200 group-hover:opacity-100 border-[#0e3b77] opacity-0" :class="[ selectedAspectRatio === '1:1' ? 'opacity-100' : '' ]"></span>
-              <span class="absolute inset-0 rounded-md bg-gradient-to-br from-[#032441] via-[#032247] to-[#0A273E]/80 shadow-md shadow-[#021526]/50 transform rotate-45"></span>
-              <span class="absolute inset-[2px] rounded-[6px] bg-[#6EACDA]/10 transform rotate-45"></span>
-              <span class="relative z-9 transform rotate-0 text-xs sm:text-sm md:text-base font-semibold pointer-events-none select-none">1:1</span>
-            </button>
-            <button @click="selectedAspectRatio = '2:3'" :aria-label="'Aspect ' + '2:3'" :class="[ 'relative w-12 h-12 sm:w-12 sm:h-12 md:w-14 md:h-14 transition-all duration-200 group', selectedAspectRatio === '2:3' ? 'scale-103' : 'hover:scale-100' ]">
-              <span class="absolute -inset-1 rounded-md border-3 pointer-events-none transform rotate-45 transition-opacity duration-200 group-hover:opacity-100 border-[#3A2E8D] opacity-0" :class="[ selectedAspectRatio === '2:3' ? 'opacity-100' : '' ]"></span>
-              <span class="absolute inset-0 rounded-md bg-gradient-to-br from-[#232057] via-[#221858] to-[#300E52]/80 shadow-md shadow-[#17153B]/50 transform rotate-45"></span>
-              <span class="absolute inset-[2px] rounded-[6px] bg-[#C8ACD6]/10 transform rotate-45"></span>
-              <span class="relative z-9 transform rotate-0 text-xs sm:text-sm md:text-base font-semibold pointer-events-none select-none">2:3</span>
-            </button>
-            <button @click="selectedAspectRatio = '3:2'" :aria-label="'Aspect ' + '3:2'" :class="[ 'relative w-12 h-12 sm:w-12 sm:h-12 md:w-14 md:h-14 transition-all duration-200 group', selectedAspectRatio === '3:2' ? 'scale-103' : 'hover:scale-100' ]">
-              <span class="absolute -inset-1 rounded-md border-3 pointer-events-none transform rotate-45 transition-opacity duration-200 group-hover:opacity-100 border-[#045558] opacity-0" :class="[ selectedAspectRatio === '3:2' ? 'opacity-100' : '' ]"></span>
-              <span class="absolute inset-0 rounded-md bg-gradient-to-br from-[#003638] via-[#044244] to-[#0D3E40]/90 shadow-md shadow-[#003638]/50 transform rotate-45"></span>
-              <span class="absolute inset-[2px] rounded-[6px] bg-[#9DB2BF]/10 transform rotate-45"></span>
-              <span class="relative z-9 transform rotate-0 text-xs sm:text-sm md:text-base font-semibold pointer-events-none select-none">3:2</span>
-            </button>
-          </div>
+        <div class="mt-7 lg:mt-10 mb-2 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-8 sm:gap-5 md:gap-6 lg:gap-10">
           <button 
             @click="handleGenerate"
             :disabled="isLoading"
             :class="[
-              'relative px-4 py-4 sm:px-6 md:px-8 transition-all min-w-[100px] w-[140px] md:h-[65px] sm:w-[160px] md:w-[160px] lg:w-[180px] xl:w-[200px] duration-200 rounded-xl generate-button flex items-center justify-center',
+              'relative px-4 py-4 lg:py-7 sm:px-6 md:px-8 transition-all min-w-[100px] w-full duration-200 rounded-xl generate-button flex items-center justify-center',
               isLoading ? 'scale-100' : 'group hover:scale-100'
             ]"
           >
@@ -70,18 +50,15 @@
               v-if="!isLoading"
               :class="[
                 'absolute -inset-1 rounded-xl border-3 pointer-events-none transition-all duration-100',
-                'group-hover:opacity-100 opacity-90',
-                selectedAspectRatio === '1:1' ? 'border-[#022653]' : 
-                selectedAspectRatio === '2:3' ? 'border-[#261c64]' : 
-                'border-[#055052]'
+                'group-hover:opacity-100 opacity-75',
+                'border-[#022653]'
               ]">
             </span>
             <span 
               v-if="isLoading"
               class="absolute -inset-0.5 rounded-xl pointer-events-none opacity-70 border-gradient-animated"
               :style="{
-                '--start-color': selectedAspectRatio === '1:1' ? '#022653' : 
-                                selectedAspectRatio === '2:3' ? '#261c64' : '#055052'
+                '--start-color': '#022653'
               }">
             </span>
             <span 
@@ -90,9 +67,7 @@
             <span 
               class="absolute inset-[1px] rounded-lg"
               :style="{
-              background: selectedAspectRatio === '1:1' ? 'linear-gradient(to bottom right, #032441, #032247, #0A273E)' :
-              selectedAspectRatio === '2:3' ? 'linear-gradient(to bottom right, #232057, #221858, #300E52)' :
-              'linear-gradient(to bottom right, #003638, #044244, #0D3E40)'}">
+              background: 'linear-gradient(to bottom right, #032441, #032247, #0A273E)'}">
             </span>
             <span 
               class="relative z-9 text-sm md:text-base text-center font-semibold pointer-events-none select-none text-white">
@@ -162,7 +137,6 @@ const inputImageFile = ref(null);
 const outputImageUrl = ref(null);
 const isLoading = ref(false);
 const fileInput = ref(null);
-const selectedAspectRatio = ref('1:1');
 const error = ref(null);
 const showMissingInfoModal = ref(false);
 const showErrorModal = ref(false);
@@ -171,7 +145,7 @@ const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 const POLL_INTERVALS_MS = [
   10000, 10000, 10000, 10000, 10000, 10000,
-  15000, 20000, 30000, 45000, 60000, 70000 
+  15000, 20000, 30000, 45000, 60000, 70000
 ];
 let pollingTimeoutId = null;
 let pollAttempt = 0;
@@ -264,12 +238,6 @@ onUnmounted(() => {
   stopPolling();
 });
 
-const resolutionMap = {
-  '1:1': '1024x1024',
-  '2:3': '1024x1536',
-  '3:2': '1536x1024',
-};
-
 const handleGenerate = async () => {
   if (!inputImageFile.value || !props.selectedStyleId) {
     showMissingInfoModal.value = true;
@@ -281,11 +249,9 @@ const handleGenerate = async () => {
   showErrorModal.value = false;
 
   try {
-    const resolution = resolutionMap[selectedAspectRatio.value];
     const formData = new FormData();
     formData.append('chosen_style', props.selectedStyleId);
     formData.append('input_image', inputImageFile.value);
-    formData.append('resolution', resolution);
 
     await api.post('/api/generations/generation-requests/create/', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
@@ -378,9 +344,4 @@ const onFileSelected = (event) => {
   }
 }
 
-@media (min-width: 1800px) {
-  .generate-button {
-    margin-right: 120px;
-  }
-}
 </style>
