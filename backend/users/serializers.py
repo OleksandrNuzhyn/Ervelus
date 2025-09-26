@@ -67,3 +67,8 @@ class UserCreditsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['total_credits']
+
+    
+class SupportEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    text_body = serializers.CharField(max_length=5000)

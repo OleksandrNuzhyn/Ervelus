@@ -99,10 +99,14 @@ def delete_generation_request_images_from_gcs(generation_request):
         base_name, _ = os.path.splitext(blob_name)
         thumbnail_blob_name = f"{base_name}_200x200.webp"
 
-        for name in [blob_name, thumbnail_blob_name]:
-            blob = bucket.blob(name)
-            if blob.exists():
-                blob.delete()
+        original_blob = bucket.blob(blob_name)
+        thumbnail_blob = bucket.blob(thumbnail_blob_name)
+
+        if original_blob.exists() and thumbnail_blob.exists():
+            original_blob.delete()
+            thumbnail_blob.delete()
+        else:
+            logger.error(f"Missing original or thumbnail blob in deletion request", extra={'original_blob_name': blob_name, 'thumbnail_blob_name': thumbnail_blob_name})
 
 async def upload_output_image_to_gcs(image_bytes, user_id, style_name):
     prepared_image_bytes = await sync_to_async(prepare_image_for_upload)(image_bytes, quality=100)
@@ -133,7 +137,7 @@ def processing_successful_generation(generation_request, output_image_url):
             generation_request.status = GenerationRequest.GenerationStatus.COMPLETED
             generation_request.error_message = "Credit was not debited: no active subscription with credits at processing time"
             generation_request.save(update_fields=['output_img_url', 'status', 'error_message', 'updated_at'])
-            logger.error(f"Credit not debited, no active subscription found. generation_request_id='{generation_request.id}'")
+            logger.error(f"Credit not debited, no active subscription found", extra={'generation_request_id': generation_request.id})
             return
 
         subscription_for_debiting_credit.remaining_credits -= 1
@@ -146,9 +150,6 @@ def processing_successful_generation(generation_request, output_image_url):
 async def handle_generation_process(generation_request_id):
     try:
         generation_request = await GenerationRequest.objects.select_related('user', 'chosen_style').aget(id=generation_request_id)
-
-        if generation_request.status == GenerationRequest.GenerationStatus.STOPPED_BY_USER:
-            return
     except GenerationRequest.DoesNotExist:
         return
     except Exception as e:
@@ -215,17 +216,8 @@ async def handle_generation_process(generation_request_id):
         await generation_request.asave(update_fields=['status', 'error_message', 'updated_at'])
         return
 
-    try:
-        try:
-            await sync_to_async(generation_request.refresh_from_db)()
-        except GenerationRequest.DoesNotExist:
-            return
-
-        if generation_request.status == GenerationRequest.GenerationStatus.STOPPED_BY_USER:
-            return
-        
+    try:        
         close_old_connections()
-        
         output_image_bytes = await generate_output_image(prompt, input_image_bytes)
 
         if not output_image_bytes:
@@ -237,6 +229,7 @@ async def handle_generation_process(generation_request_id):
             return
 
         if generation_request.status == GenerationRequest.GenerationStatus.STOPPED_BY_USER:
+            logger.error(f"Generation request stopped by user with content blocked error", extra={'generation_request_id': generation_request_id})
             return
 
         try:

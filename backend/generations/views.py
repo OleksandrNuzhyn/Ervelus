@@ -4,6 +4,8 @@ from . import services
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from django.utils import timezone
+from datetime import timedelta
 from agreements.permissions import HasAcceptedLatestAgreements
 from .models import GenerationRequest
 from .serializers import GenerationRequestCreateSerializer, GenerationRequestListSerializer, GenerationRequestSerializer
@@ -157,6 +159,9 @@ class GenerationRequestViewSet(viewsets.ViewSet):
             generation_request = GenerationRequest.objects.get(pk=pk, user=request.user, status=GenerationRequest.GenerationStatus.PROCESSING)
         except GenerationRequest.DoesNotExist:
             return Response({"detail": "Generation in progress not found or already stopped"}, status=404)
+
+        if generation_request.created_at > timezone.now() - timedelta(seconds=30):
+            return Response({"detail": "Cannot stop a generation within the first 30 seconds"}, status=400)
 
         try:
             generation_request.status = GenerationRequest.GenerationStatus.STOPPED_BY_USER

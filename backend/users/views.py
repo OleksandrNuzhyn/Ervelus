@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from agreements.permissions import HasAcceptedLatestAgreements
 from generations.models import GenerationRequest
 from rest_framework.response import Response
-from .serializers import UserCreditsSerializer
+from .serializers import UserCreditsSerializer, SupportEmailSerializer
 from .models import UserProfile
 from auditlog.models import LogEntry
 from django.db import transaction
@@ -36,6 +36,23 @@ def user_credit_balance(request):
     serializer = UserCreditsSerializer(user_profile)
     
     return Response(serializer.data, status=200)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def send_support_email(request):
+    try:
+        serializer = SupportEmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        sender_email = serializer.validated_data['email']
+        text_body = serializer.validated_data['text_body']
+
+        services.send_support_email(sender_email, text_body)
+
+        return Response({"detail": "Support email successfully sent"}, status=200)
+    except Exception as e:
+        logger.error("Failed to send support email", extra={'error': str(e)}, exc_info=True)
+        return Response({"detail": "Failed to send email"}, status=400)
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])

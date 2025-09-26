@@ -202,7 +202,7 @@ class CustomTOTPDeviceAdmin(TOTPDeviceAdmin):
     list_display = ('id', 'user__email', 'name', 'confirmed', 'created_at_formatted', 'last_used_at_formatted')
     list_select_related = ('user',)
     search_fields = ('user__email', 'name')
-    readonly_fields = ('user', 'created_at_formatted', 'last_used_at_formatted', 'qrcode_link')
+    readonly_fields = ('created_at_formatted', 'last_used_at_formatted', 'qrcode_link')
     ordering = ('-id',)
 
     @admin.display(ordering='created_at', description='created at')
