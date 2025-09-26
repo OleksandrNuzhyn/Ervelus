@@ -44,8 +44,11 @@ class UserPrivacyMeta:
         LogEntry.objects.log_create(
             instance=instance,
             action=LogEntry.Action.ACCESS,
-            changes=f'Personal data successfully exported for user_id {instance.pk}',
-            additional_data={"gdpr_export_process": True}
+            changes={},
+            additional_data={
+                "gdpr_export_process": True,
+                "message": "Personal data successfully exported"
+            }
         )
         return {
             'last_login': instance.last_login,
@@ -104,7 +107,7 @@ class UserProfile(models.Model):
     objects = UserProfileCreditManager()
 
     def __str__(self):
-        return self.user.email
+        return f'Profile {self.user.email}'
 
 
 class EmailAddressPrivacyMeta:

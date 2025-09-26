@@ -55,9 +55,6 @@ class UserSubscription(models.Model):
     cancels_at = models.DateTimeField(null=True, blank=True)
     paddle_subscription_id = models.CharField(max_length=255, unique=True)
     remaining_credits = models.IntegerField()
-
-    def __str__(self):
-        return f'{self.user.email} - {self.plan.name}'
     
     @property
     def display_status(self):
@@ -79,3 +76,6 @@ class UserSubscription(models.Model):
             return "Canceled"
             
         return "Unknown"
+    
+    def __str__(self):
+        return f'{self.plan.name} - {self.user.email}'

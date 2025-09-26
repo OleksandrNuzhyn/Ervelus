@@ -1,4 +1,5 @@
 import requests
+from django.utils import timezone
 from django.conf import settings
 from django.contrib import admin, messages
 from .models import UserSubscription
@@ -31,8 +32,18 @@ def cancel_subscription_at_next_billing_period(modeladmin, request, queryset):
 
 @admin.register(UserSubscription)
 class UserSubscriptionAdmin(NoLogAdminMixin, admin.ModelAdmin):
-    list_display = ("id", "user", "plan", "status", "remaining_credits", "end_time")
+    list_display = ("id", "user__email", "plan__name", "status", "remaining_credits", "start_time_formatted", "end_time_formatted")
     list_select_related = ("user", "plan")
-    list_filter = ("status", "end_time")
-    search_fields = ("paddle_subscription_id",)
+    list_filter = ("plan__name", "status", 'start_time', 'end_time', 'cancels_at')
+    search_fields = ("user__email", "plan__name", "paddle_subscription_id")
+    ordering = ("-start_time",)
+    raw_id_fields = ("user", "plan")
     actions = [cancel_subscription_at_next_billing_period]
+
+    @admin.display(ordering='start_time', description='start time')
+    def start_time_formatted(self, obj):
+        return timezone.localtime(obj.start_time).strftime('%d.%m.%Y %H:%M:%S')
+
+    @admin.display(ordering='end_time', description='end time')
+    def end_time_formatted(self, obj):
+        return timezone.localtime(obj.end_time).strftime('%d.%m.%Y %H:%M:%S')

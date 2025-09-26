@@ -41,7 +41,7 @@ class GenerationRequest(models.Model):
                 'updated_at': instance.updated_at
             }
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='generation_requests')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='generation_requests')
     chosen_style = models.ForeignKey('products.Style', on_delete=models.PROTECT, related_name='generation_requests')
     input_img_url = models.TextField(validators=[URLValidator()], null=True, blank=True)
     output_img_url = models.TextField(validators=[URLValidator()], null=True, blank=True)
@@ -53,4 +53,4 @@ class GenerationRequest(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.user.email}"
+        return f"{self.chosen_style.name} - {self.user.email if self.user else 'No User'}"

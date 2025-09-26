@@ -57,4 +57,4 @@ class UserAgreement(models.Model):
     context = models.JSONField(default=dict)
 
     def __str__(self):
-        return f'{self.user} accepted {self.terms_version}'
+        return f'{self.terms_version} - {self.user.email}'

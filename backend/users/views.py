@@ -66,8 +66,11 @@ def account_delete(request):
     LogEntry.objects.log_create(
         instance=user,
         action=LogEntry.Action.ACCESS,
-        changes='User data anonymization process started',
-        additional_data={"gdpr_deletion_process": True}
+        changes={},
+        additional_data={
+            "gdpr_deletion_process": True,
+            "message": "User data anonymization process started"
+        }
     )
     
     try:
@@ -135,8 +138,11 @@ def account_delete(request):
     LogEntry.objects.log_create(
         instance=user,
         action=LogEntry.Action.UPDATE,
-        changes='User data anonymization process completed',
-        additional_data={"gdpr_deletion_process": True}
+        changes={},
+        additional_data={
+            "gdpr_deletion_process": True,
+            "message": "User data anonymization process completed"
+        }
     )
     
     return Response(status=204)
