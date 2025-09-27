@@ -39,11 +39,12 @@
         </div>
         <div class="mt-7 lg:mt-10 mb-2 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-8 sm:gap-5 md:gap-6 lg:gap-10">
           <button 
-            @click="handleGenerate"
-            :disabled="isLoading"
+            @click="handleButtonClick"
+            :disabled="isButtonDisabled"
             :class="[
               'relative px-4 py-4 lg:py-7 sm:px-6 md:px-8 transition-all min-w-[100px] w-full duration-200 rounded-xl generate-button flex items-center justify-center',
-              isLoading ? 'scale-100' : 'group hover:scale-100'
+              isLoading ? 'scale-100' : 'group hover:scale-100',
+              isButtonDisabled ? 'opacity-60 cursor-not-allowed' : ''
             ]"
           >
             <span 
@@ -71,7 +72,7 @@
             </span>
             <span 
               class="relative z-9 text-sm md:text-base text-center font-semibold pointer-events-none select-none text-white">
-              {{ isLoading ? 'Generating...' : 'Generate' }}
+              {{ buttonText }}
             </span>
           </button>
         </div>
@@ -112,7 +113,7 @@
 
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
 import api from '@/services/api';
 
 const props = defineProps({
@@ -140,13 +141,17 @@ const fileInput = ref(null);
 const error = ref(null);
 const showMissingInfoModal = ref(false);
 const showErrorModal = ref(false);
+const currentGenerationId = ref(null);
+const isStoppingAllowed = ref(false);
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
+const MAX_FILE_SIZE_BYTES = 7 * 1024 * 1024;
 const POLL_INTERVALS_MS = [
-  10000, 10000, 10000, 10000, 10000, 10000,
-  15000, 20000, 30000, 45000, 60000, 70000
+  5000, 5000, 5000, 5000, 5000, 5000,
+  5000, 5000, 5000, 5000, 5000, 5000
 ];
+
+let stopEnableTimerId = null;
 let pollingTimeoutId = null;
 let pollAttempt = 0;
 
@@ -170,8 +175,10 @@ const pollForResult = async () => {
   if (pollAttempt >= POLL_INTERVALS_MS.length) {
     stopPolling();
     isLoading.value = false;
+    currentGenerationId.value = null;
     error.value = 'Failed to get the generated image. Please try again later.';
     showErrorModal.value = true;
+    clearStopEnableTimer();
     return;
   }
 
@@ -184,6 +191,8 @@ const pollForResult = async () => {
       showErrorModal.value = true;
       isLoading.value = false;
       stopPolling();
+      currentGenerationId.value = null;
+      clearStopEnableTimer();
     } 
     else if (latest?.status === 'completed' && latest.output_img_signed_url) {
       outputImageUrl.value = latest.output_img_signed_url;
@@ -192,6 +201,8 @@ const pollForResult = async () => {
       }
       isLoading.value = false;
       stopPolling();
+      currentGenerationId.value = null;
+      clearStopEnableTimer();
     } 
     else {
       const nextInterval = POLL_INTERVALS_MS[pollAttempt];
@@ -199,10 +210,12 @@ const pollForResult = async () => {
       pollingTimeoutId = setTimeout(pollForResult, nextInterval);
     }
   } catch (err) {
-      error.value = 'Failed to get the generated image. Please try again.';
+      error.value = getErrorMessage(err);
       showErrorModal.value = true;
       isLoading.value = false;
       stopPolling();
+      currentGenerationId.value = null;
+      clearStopEnableTimer();
   }
 };
 
@@ -213,32 +226,131 @@ const startPolling = () => {
 };
 
 onMounted(async () => {
-  const response = await api.get('/api/generations/generation-requests/latest/');
-  const latest = response.data;
-  
-  if (latest) {
-    if (latest.status === 'processing') {
-        isLoading.value = true;
-        inputImageUrl.value = latest.input_img_signed_url;
-        outputImageUrl.value = null;
-        error.value = null;
-        startPolling();
-    } else if (latest.status === 'completed' && latest.output_img_signed_url) {
-        inputImageUrl.value = latest.input_img_signed_url;
-        outputImageUrl.value = latest.output_img_signed_url;
-    } else if (latest.status === 'failed') {
-        inputImageUrl.value = latest.input_img_signed_url;
-        error.value = latest.error || 'The last generation has failed.';
-        showErrorModal.value = true;
+  try {
+    const response = await api.get('/api/generations/generation-requests/latest/');
+    const latest = response.data;
+    
+    if (latest) {
+      if (latest.status === 'processing') {
+          isLoading.value = true;
+          currentGenerationId.value = latest.id;
+          inputImageUrl.value = latest.input_img_signed_url;
+          outputImageUrl.value = null;
+          error.value = null;
+          startStopEnableTimer();
+          startPolling();
+      } 
+      else if (latest.status === 'completed' && latest.output_img_signed_url) {
+          inputImageUrl.value = latest.input_img_signed_url;
+          outputImageUrl.value = latest.output_img_signed_url;
+      } 
+      else if (latest.status === 'failed') {
+          inputImageUrl.value = latest.input_img_signed_url;
+          error.value = latest.error || 'The last generation has failed.';
+          showErrorModal.value = true;
+          clearStopEnableTimer();
+      }
     }
+  } catch (err) {
+    error.value = getErrorMessage(err);
+    showErrorModal.value = true;
+    clearStopEnableTimer();
   }
 });
 
 onUnmounted(() => {
   stopPolling();
+  clearStopEnableTimer();
 });
 
+const buttonText = computed(() => {
+  if (!isLoading.value) {
+    return 'Transform';
+  }
+  if (isStoppingAllowed.value) {
+    return 'Stop transformation';
+  }
+  return 'Transforming...';
+});
+
+const isButtonDisabled = computed(() => {
+  return isLoading.value && !isStoppingAllowed.value;
+});
+
+const startStopEnableTimer = () => {
+  clearStopEnableTimer();
+  isStoppingAllowed.value = false;
+  stopEnableTimerId = setTimeout(() => {
+    isStoppingAllowed.value = true;
+  }, 30000);
+};
+
+const clearStopEnableTimer = () => {
+  clearTimeout(stopEnableTimerId);
+  stopEnableTimerId = null;
+};
+
+const handleButtonClick = () => {
+  if (!isLoading.value) {
+    handleGenerate();
+  } 
+  else {
+    handleStopGeneration();
+  }
+};
+
+const getErrorMessage = (err) => {
+  if (err.response) {
+    const status = err.response.status;
+    const data = err.response.data;
+    const serverError = data?.error || data?.detail;
+
+    switch (status) {
+      case 400:
+        return serverError || 'There was a problem with your request. Please check the input.';
+      case 404:
+        return serverError || 'The requested resource could not be found.';
+      case 500:
+        return 'An internal server error occurred. Please try again later.';
+      default:
+        return serverError || `An unexpected server error occurred (Status: ${status}).`;
+    }
+  } 
+  else if (err.request) {
+    return 'Could not connect to the server. Please check your network connection.';
+  }
+  return null;
+};
+
+const handleStopGeneration = async () => {
+  clearStopEnableTimer();
+  if (!currentGenerationId.value) {
+    stopPolling();
+    isLoading.value = false;
+    return;
+  }
+  try {
+    await api.post(`/api/generations/generation-requests/stop/${currentGenerationId.value}/`);
+    stopPolling();
+    isLoading.value = false;
+    currentGenerationId.value = null;
+  } catch (err) {
+    stopPolling();
+    isLoading.value = false;
+    currentGenerationId.value = null;
+    
+    if (err.response && [400, 404, 500].includes(err.response.status)) {
+      const message = getErrorMessage(err);
+      if (message) {
+        error.value = message;
+        showErrorModal.value = true;
+      }
+    }
+  }
+};
+
 const handleGenerate = async () => {
+  if (isLoading.value) return;
   if (!inputImageFile.value || !props.selectedStyleId) {
     showMissingInfoModal.value = true;
     return;
@@ -247,21 +359,26 @@ const handleGenerate = async () => {
   outputImageUrl.value = null;
   error.value = null;
   showErrorModal.value = false;
+  startStopEnableTimer();
 
   try {
     const formData = new FormData();
     formData.append('chosen_style', props.selectedStyleId);
     formData.append('input_image', inputImageFile.value);
 
-    await api.post('/api/generations/generation-requests/create/', formData, {
+    const response = await api.post('/api/generations/generation-requests/create/', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
+    
+    if (response.data && response.data.id) {
+        currentGenerationId.value = response.data.id;
+    }
     
     startPolling();
 
   } catch (err) {
     isLoading.value = false;
-    error.value = err.response?.data?.error || 'Generation failed. Please try again.';
+    error.value = getErrorMessage(err);
     showErrorModal.value = true;
   }
 };
@@ -288,7 +405,7 @@ const onFileSelected = (event) => {
     return;
   }
   else if (file.size > MAX_FILE_SIZE_BYTES) {
-    error.value = 'Maximum file size is 10 MB.';
+    error.value = 'Maximum file size is 7 MB.';
     showErrorModal.value = true;
     return;
   }
