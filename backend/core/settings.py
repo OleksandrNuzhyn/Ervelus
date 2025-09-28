@@ -103,8 +103,7 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'auditlog.middleware.AuditlogMiddleware',
-    'core.middleware.ThreadIDMiddleware' # TODO: Remove
+    'auditlog.middleware.AuditlogMiddleware'
 ]
 
 
@@ -137,7 +136,7 @@ FRONTEND_URL = os.getenv("FRONTEND_URL")
 REST_AUTH = {
     'TOKEN_MODEL': None,
     'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer',
-    'LOGIN_SERIALIZER': 'users.serializers.CustomLoginSerializer',
+    'LOGIN_SERIALIZER': 'users.serializers.CustomLoginSerializer'
 }
 
 REST_FRAMEWORK = {
