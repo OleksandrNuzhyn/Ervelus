@@ -23,8 +23,11 @@ dj-rest-auth==7.0.0
 Django==5.2.3
 django-allauth==0.61.1
 django-anymail==13.0
-django-debug-toolbar==6.0.0
+django-auditlog==3.2.1
+django-gdpr-assist==1.4.2
+django-otp==1.6.1
 django-solo==2.4.0
+django-yaa-settings==1.1.0
 djangorestframework==3.16.0
 frozenlist==1.7.0
 gcloud-aio-auth==5.4.2
@@ -35,6 +38,7 @@ google-cloud-core==2.4.3
 google-cloud-storage==3.2.0
 google-cloud-tasks==2.19.3
 google-crc32c==1.7.1
+google-genai==1.38.0
 google-resumable-media==2.7.2
 googleapis-common-protos==1.70.0
 grpc-google-iam-v1==0.14.2
@@ -49,7 +53,6 @@ importlib_metadata==8.7.0
 jiter==0.10.0
 multidict==6.6.3
 oauthlib==3.3.1
-openai==1.97.1
 opentelemetry-api==1.35.0
 opentelemetry-sdk==1.35.0
 opentelemetry-semantic-conventions==0.56b0
@@ -72,6 +75,7 @@ python-dotenv==1.1.1
 python-json-logger==3.3.0
 python3-openid==3.2.0
 PyYAML==6.0.2
+qrcode==8.2
 requests==2.32.4
 requests-oauthlib==2.0.0
 rsa==4.9.1

@@ -1,11 +1,12 @@
 from django.contrib import admin
+from django_otp.admin import OTPAdminSite
 from django.urls import path, include
 from django.conf import settings
-from debug_toolbar.toolbar import debug_toolbar_urls
 from . import views
 
 
 urlpatterns = []
+admin.site.__class__ = OTPAdminSite
 
 if settings.DEBUG:
     urlpatterns += [
@@ -21,7 +22,7 @@ if settings.DEBUG:
         path('api/products/', include('products.urls')),
         path('api/generations/', include('generations.urls_api')),
         path('api/agreements/', include('agreements.urls'))
-    ] + debug_toolbar_urls()
+    ]
 else:
     if settings.SERVICE_NAME == 'web_service':
         urlpatterns += [

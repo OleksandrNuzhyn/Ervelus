@@ -14,7 +14,7 @@ class Style(models.Model):
     prompt_template = models.TextField()
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.genre.name}"
 
 
 class SubscriptionPlan(models.Model):
@@ -29,8 +29,8 @@ class SubscriptionPlan(models.Model):
     features = models.JSONField(default=list)
     unlocked_styles = models.ManyToManyField(Style)
     generations_count = models.IntegerField()
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True, db_index=True)
     product_price = models.DecimalField(max_digits=8, decimal_places=2)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.description}"

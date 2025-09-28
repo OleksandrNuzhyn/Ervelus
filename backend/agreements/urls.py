@@ -3,7 +3,6 @@ from . import views
 
 
 urlpatterns = [
-    path('published/', views.published_agreements_list_view, name='published-list'),
-    path('pending/', views.pending_agreements_list_view, name='pending-list'),
-    path('accept/', views.accept_documents_latest_version, name='accept'),
+    path('accept_user_document_version/', views.accept_user_document_version_client_side, name='accept_user_document_version'),
+    path('<str:document_type>/', views.latest_document_version_detail, name='detail')
 ]

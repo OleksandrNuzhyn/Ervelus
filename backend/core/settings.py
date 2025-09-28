@@ -26,7 +26,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'debug_toolbar',
+    'gdpr_assist',
+    'django_otp',
+    'django_otp.plugins.otp_totp',
+    'auditlog',
+    'anymail',
     'solo',
 
     'rest_framework',
@@ -38,8 +42,6 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-
-    'anymail',
 
     'core',
     'users',
@@ -64,8 +66,9 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "Greeting! "
 ACCOUNT_RATE_LIMITS = {
-    'confirm_email': '1/25s',
+    'confirm_email': '1/15s',
 }
 
 
@@ -93,15 +96,14 @@ SOCIALACCOUNT_ADAPTER = 'users.adapters.CustomSocialAccountAdapter'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'agreements.middleware.AgreementCheckMiddleware',
-    'core.middleware.ThreadIDMiddleware' # TODO: Remove
+    'auditlog.middleware.AuditlogMiddleware'
 ]
 
 
@@ -134,7 +136,7 @@ FRONTEND_URL = os.getenv("FRONTEND_URL")
 REST_AUTH = {
     'TOKEN_MODEL': None,
     'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer',
-    'LOGIN_SERIALIZER': 'users.serializers.CustomLoginSerializer',
+    'LOGIN_SERIALIZER': 'users.serializers.CustomLoginSerializer'
 }
 
 REST_FRAMEWORK = {
@@ -168,6 +170,7 @@ CSRF_COOKIE_SAMESITE = 'Lax'
 ANYMAIL = {
     "MAILGUN_API_KEY": os.getenv("MAILGUN_API_KEY"),
     "MAILGUN_SENDER_DOMAIN": os.getenv("MAILGUN_SENDER_DOMAIN"),
+    "MAILGUN_API_URL": os.getenv("MAILGUN_API_BASE_URL")
 }
 MAILGUN_API_KEY = os.getenv("MAILGUN_API_KEY")
 MAILGUN_SENDER_DOMAIN = os.getenv("MAILGUN_SENDER_DOMAIN")
@@ -196,11 +199,11 @@ GCP_STORAGE_BUCKET_NAME = os.getenv("GCP_STORAGE_BUCKET_NAME")
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres-ervelus-test',
-        'USER': 'ervelus-test',
+        'NAME': 'postgres',
+        'USER': 'postgres',
         'PASSWORD': 'Trueelse23',
         'HOST': '34.118.74.91',
-        'PORT': '5432',
+        'PORT': '5432'
     }
 }
 
@@ -270,6 +273,11 @@ LOGGING = {
             "handlers": active_handlers,
             "level": "ERROR",
             "propagate": False,
+        },
+        "google_genai": {
+            "handlers": active_handlers,
+            "level": "WARNING",
+            "propagate": False
         }
     },
     "root": {
@@ -290,10 +298,10 @@ USE_I18N = True
 
 USE_TZ = True
 
-INTERNAL_IPS = [ # TODO: Remove
-    "127.0.0.1",
-]
-
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUDITLOG_INCLUDE_ALL_MODELS = True
+
+GDPR_LOG_ON_ANONYMISE = False
