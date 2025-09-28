@@ -4,28 +4,25 @@ from allauth.account.signals import email_confirmed
 from allauth.account.models import EmailAddress
 from django.contrib.auth import login
 
-
 @receiver(pre_social_login)
 def handle_social_login_verification(sender, request, sociallogin, **kwargs):
     if sociallogin.is_existing:
         user = sociallogin.user
         
         try:
-            email_obj = EmailAddress.objects.get(user=user, primary=True)
+            email_address = EmailAddress.objects.get(user=user, primary=True)
             
-            if not email_obj.verified:
-                email_obj.verified = True
-                email_obj.save()
-
+            if not email_address.verified:
+                email_address.verified = True
+                email_address.save()
         except EmailAddress.DoesNotExist:
             EmailAddress.objects.create(
                 user=user,
                 email=user.email,
                 verified=True,
-                primary=True,
+                primary=True
             )
-
-
+            
 @receiver(email_confirmed)
 def auto_login_on_email_confirmation(request, email_address, **kwargs):
     user = email_address.user

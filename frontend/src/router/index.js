@@ -15,6 +15,7 @@ const routes = [
   { path: '/generation', name: 'generation', component: () => import('@/views/GenerationPage.vue') },
   { path: '/contact-us', name: 'contact-us', component: () => import('@/views/ContactUsPage.vue') },
   { path: '/profile', name: 'profile', component: () => import('@/views/ProfilePage.vue'), meta: { requiresAuth: true } },
+  { path: '/gallery', name: 'gallery', component: () => import('@/views/GalleryPage.vue')}
 ];
 
 const router = createRouter({

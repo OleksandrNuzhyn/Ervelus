@@ -1,30 +1,26 @@
 from rest_framework import serializers
 from subscriptions.models import UserSubscription
 from .models import GenerationRequest
+from urllib.parse import urlparse
 from . import services
+import os
 
 
 class GenerationRequestCreateSerializer(serializers.ModelSerializer):
-    RESOLUTION_CHOICES = [
-        ('1536x1024', '1536x1024'),
-        ('1024x1536', '1024x1536'),
-        ('1024x1024', '1024x1024'),
-    ]
     input_image = serializers.ImageField(write_only=True, required=True)
-    resolution = serializers.ChoiceField(choices=RESOLUTION_CHOICES, write_only=True, required=True)
 
     class Meta:
         model = GenerationRequest
-        fields = ('input_image', 'resolution', 'chosen_style')
+        fields = ('input_image', 'chosen_style')
 
     def validate_input_image(self, value):
         allowed_content_types = ['image/jpeg', 'image/png', 'image/webp']
         if value.content_type not in allowed_content_types:
             raise serializers.ValidationError("Invalid image format. Allowed formats are: JPG, PNG, WebP")
         
-        max_size = 10 * 1024 * 1024
+        max_size = 7 * 1024 * 1024
         if value.size > max_size:
-            raise serializers.ValidationError(f"Image size cannot exceed 10 MB. Your file is {value.size // 1024 // 1024} MB")
+            raise serializers.ValidationError(f"Image size cannot exceed 7 MB. Your file is {value.size // 1024 // 1024} MB")
         
         return value
 
@@ -57,19 +53,31 @@ class GenerationRequestListSerializer(serializers.ModelSerializer):
     input_img_signed_url = serializers.SerializerMethodField()
     output_img_signed_url = serializers.SerializerMethodField()
 
+    def get_img_signed_url(self, original_img_url):
+        if not original_img_url:
+            return None
+
+        existing_blobs_names = self.context.get('existing_blobs_names', [])
+        
+        base_url, _ = os.path.splitext(original_img_url)
+        thumbnail_url = f"{base_url}_200x200.webp"
+        
+        path = urlparse(thumbnail_url).path.lstrip('/')
+        _, thumbnail_blob_name = path.split('/', 1)
+
+        img_url_to_sign = thumbnail_url if thumbnail_blob_name in existing_blobs_names else original_img_url
+        
+        return services.generate_signed_gcs_url(img_url_to_sign, expires_in_seconds=300)
+
     def get_input_img_signed_url(self, obj):
         try:
-            if not obj.input_img_url:
-                return None
-            return services.generate_signed_gcs_url(obj.input_img_url, expires_in_seconds=300)
+            return self.get_img_signed_url(obj.input_img_url)
         except Exception:
             return None
 
     def get_output_img_signed_url(self, obj):
         try:
-            if not obj.output_img_url:
-                return None
-            return services.generate_signed_gcs_url(obj.output_img_url, expires_in_seconds=300)
+            return self.get_img_signed_url(obj.output_img_url)
         except Exception:
             return None
 
@@ -77,6 +85,7 @@ class GenerationRequestListSerializer(serializers.ModelSerializer):
         model = GenerationRequest
         fields = (
             'id',
+            'status',
             'input_img_signed_url',
             'output_img_signed_url'
         )

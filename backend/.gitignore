@@ -19,5 +19,4 @@ __pycache__/
 *.log
 
 # Специфічні файли для IDE
-.idea/
 .vscode/
