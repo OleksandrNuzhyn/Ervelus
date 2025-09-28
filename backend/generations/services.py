@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 from datetime import timedelta
 from io import BytesIO
 from django.conf import settings
-from django.db import transaction, close_old_connections
+from django.db import transaction, connections
 from django.utils import timezone
 from django.utils.text import slugify
 from .models import GenerationRequest
@@ -215,9 +215,10 @@ async def handle_generation_process(generation_request_id):
         generation_request.error_message = "Failed to download input image from GCS"
         await generation_request.asave(update_fields=['status', 'error_message', 'updated_at'])
         return
+    
+    await sync_to_async(connections.close_all)()
 
     try:        
-        close_old_connections()
         output_image_bytes = await generate_output_image(prompt, input_image_bytes)
 
         if not output_image_bytes:
