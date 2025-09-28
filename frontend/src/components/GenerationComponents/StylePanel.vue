@@ -1,6 +1,7 @@
   <template>
-    <div class="bg-transparent backdrop-blur-[14px] rounded-xl shadow-lg p-4 h-[calc(100vh-10rem)] overflow-y-auto no-scrollbar">
-        <div class="flex justify-between items-center mb-6 px-2">
+    <div class="bg-transparent backdrop-blur-[14px] rounded-xl shadow-lg h-[calc(100vh-10rem)] flex flex-col">
+      <div class="flex-shrink-0 z-10 px-4 pt-4">
+        <div class="flex justify-between items-center mb-3">
           <h2 class="text-2xl font-bold text-white flex-grow text-center">Choose your destiny</h2>
           <button @click="handleClose" class="text-gray-400 hover:text-white bg-transparent p-2 transition-colors">
             <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -8,14 +9,16 @@
             </svg>
           </button>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-2">
+      </div>
+      <div class="overflow-y-auto no-scrollbar flex-grow" id="masked-scroll-container">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4 pb-4 pt-3">
           <StyleCard
             v-for="style in styles"
             :key="style.id"
             :style-data="style"
             :is-selected="style.id === selectedStyleId"
-            @select-style="onStyleSelected"
-          />
+            @select-style="onStyleSelected"/>
+        </div>
       </div>
     </div>
   </template>
@@ -47,6 +50,11 @@ const handleClose = ()=>{
 </script>
 
 <style scoped>
+#masked-scroll-container {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 1%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 1%);
+}
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
