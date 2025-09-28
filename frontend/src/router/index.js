@@ -13,7 +13,6 @@ const routes = [
   { path: '/privacy-policy', name: 'privacy-policy', component: () => import('@/views/PrivacyPolicyPage.vue') },
   { path: '/pricing', name: 'pricing', component: () => import('@/views/PricingPage.vue') },
   { path: '/generation', name: 'generation', component: () => import('@/views/GenerationPage.vue') },
-  { path: '/gallery', name: 'gallery', component: () => import('@/views/GalleryPage.vue')},
 ];
 
 const router = createRouter({
