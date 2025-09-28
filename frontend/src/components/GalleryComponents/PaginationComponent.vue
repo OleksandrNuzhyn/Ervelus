@@ -17,7 +17,7 @@
       class="px-3 py-2 rounded-md border"
       :class="[
         p === page
-          ? 'border-emerald-400/40 bg-emerald-400/10'
+          ? 'border-gray-300 bg-gray-300/10'
           : 'border-white/10 bg-black/30 hover:bg-black/50'
       ]"
       @click="$emit('change', p)"
