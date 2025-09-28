@@ -85,6 +85,7 @@ class GenerationRequestListSerializer(serializers.ModelSerializer):
         model = GenerationRequest
         fields = (
             'id',
+            'status',
             'input_img_signed_url',
             'output_img_signed_url'
         )

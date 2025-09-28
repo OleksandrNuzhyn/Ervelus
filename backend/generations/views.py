@@ -175,7 +175,7 @@ class GenerationRequestViewSet(viewsets.ViewSet):
             download_url = services.generate_signed_gcs_url(
                 generation_request.output_img_url,
                 expires_in_seconds=30,
-                response_disposition=f"attachment; filename='{filename}'"
+                response_disposition=f"attachment; filename={filename}"
             )
             
             return Response({"download_url": download_url}, status=200)
