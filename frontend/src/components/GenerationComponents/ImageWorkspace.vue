@@ -113,7 +113,7 @@
 
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
+import { ref, watch, onUnmounted, computed } from 'vue';
 import api from '@/services/api';
 
 const props = defineProps({
@@ -130,6 +130,10 @@ const props = defineProps({
   onOpenStylePanel: {
     type: Function,
     required: true,
+  },
+  latestGenerationData: {
+    type: Object,
+    default: null,
   }
 });
 
@@ -148,12 +152,36 @@ const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE_BYTES = 7 * 1024 * 1024;
 const POLL_INTERVALS_MS = [
   5000, 5000, 5000, 5000, 5000, 5000,
-  5000, 5000, 5000, 5000, 5000, 5000
+  5000, 5000, 5000
 ];
 
 let stopEnableTimerId = null;
 let pollingTimeoutId = null;
 let pollAttempt = 0;
+
+watch(() => props.latestGenerationData, (latest) => {
+  if (latest) {
+    if (latest.status === 'processing') {
+      isLoading.value = true;
+      currentGenerationId.value = latest.id;
+      inputImageUrl.value = latest.input_img_signed_url;
+      outputImageUrl.value = null;
+      error.value = null;
+      startStopEnableTimer();
+      startPolling();
+    } 
+    else if (latest.status === 'completed' && latest.output_img_signed_url) {
+      inputImageUrl.value = latest.input_img_signed_url;
+      outputImageUrl.value = latest.output_img_signed_url;
+    } 
+    else if (latest.status === 'failed') {
+      inputImageUrl.value = latest.input_img_signed_url;
+      error.value = latest.error || 'The last generation has failed.';
+      showErrorModal.value = true;
+      clearStopEnableTimer();
+    }
+  }
+}, { immediate: true });
 
 watch(inputImageUrl, (newVal) => {
   if (!newVal) {
@@ -224,39 +252,6 @@ const startPolling = () => {
   pollAttempt = 0;
   pollForResult();
 };
-
-onMounted(async () => {
-  try {
-    const response = await api.get('/api/generations/generation-requests/latest/');
-    const latest = response.data;
-    
-    if (latest) {
-      if (latest.status === 'processing') {
-          isLoading.value = true;
-          currentGenerationId.value = latest.id;
-          inputImageUrl.value = latest.input_img_signed_url;
-          outputImageUrl.value = null;
-          error.value = null;
-          startStopEnableTimer();
-          startPolling();
-      } 
-      else if (latest.status === 'completed' && latest.output_img_signed_url) {
-          inputImageUrl.value = latest.input_img_signed_url;
-          outputImageUrl.value = latest.output_img_signed_url;
-      } 
-      else if (latest.status === 'failed') {
-          inputImageUrl.value = latest.input_img_signed_url;
-          error.value = latest.error || 'The last generation has failed.';
-          showErrorModal.value = true;
-          clearStopEnableTimer();
-      }
-    }
-  } catch (err) {
-    error.value = getErrorMessage(err);
-    showErrorModal.value = true;
-    clearStopEnableTimer();
-  }
-});
 
 onUnmounted(() => {
   stopPolling();

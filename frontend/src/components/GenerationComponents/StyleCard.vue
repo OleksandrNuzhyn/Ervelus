@@ -93,4 +93,10 @@ const getSpriteClass = () => {
   background-repeat: no-repeat;
 }
 
+.bg-steampunk {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/sprite_test.png') -10px -10px;
+  background-repeat: no-repeat;
+}
 </style> 

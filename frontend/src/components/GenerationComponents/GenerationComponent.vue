@@ -12,7 +12,13 @@
           @close="handleClosePanel" />
       </div>
     </div>
-    <ImageWorkspace v-show="!isStylePanelOpen" :selected-style-name="selectedStyleName" :selected-style-id="selectedStyleId" :on-open-style-panel="handleOpenStylePanel" />
+    <ImageWorkspace 
+      v-show="!isStylePanelOpen" 
+      :selected-style-name="selectedStyleName" 
+      :selected-style-id="selectedStyleId" 
+      :on-open-style-panel="handleOpenStylePanel"
+      :latest-generation-data="latestGenerationData"
+    />
   </div>
 </template>
 
@@ -30,10 +36,17 @@ const styles = ref([]);
 const selectedGenreId = ref(null);
 const selectedStyleId = ref(null);
 const isStylePanelOpen = ref(false);
+const latestGenerationData = ref(null);
 
 onMounted(async () => {
-    const stylesResponse = await api.get('/api/products/styles/');
+  try {
+    const [stylesResponse, latestGenerationResponse] = await Promise.all([
+      api.get('/api/products/styles/'),
+      api.get('/api/generations/generation-requests/latest/')
+    ]);
+
     styles.value = stylesResponse.data;
+    latestGenerationData.value = latestGenerationResponse.data;
 
     if (styles.value.length > 0) {
       const genreMap = new Map();
@@ -44,6 +57,20 @@ onMounted(async () => {
       });
       genres.value = Array.from(genreMap.values());
     }
+
+    if (latestGenerationData.value && latestGenerationData.value.chosen_style) {
+      const styleId = latestGenerationData.value.chosen_style;
+      const selectedStyle = styles.value.find(s => s.id === styleId);
+      if (selectedStyle) {
+        selectedStyleId.value = styleId;
+        if (selectedStyle.genre && selectedStyle.genre.name) {
+          selectedGenreId.value = selectedStyle.genre.name;
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load initial data:', error);
+  }
 });
 
 const filteredStyles = computed(() => {
@@ -66,6 +93,7 @@ const handleStyleSelect=(styleId)=>{
   selectedStyleId.value=styleId;
   isStylePanelOpen.value=false;
 };
+
 const handleClosePanel=()=>{
   isStylePanelOpen.value=false;
   selectedGenreId.value=null;
