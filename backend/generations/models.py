@@ -15,7 +15,9 @@ class GenerationRequest(models.Model):
         verbose_name = 'Generation Request'
         verbose_name_plural = 'Generation Requests'
         indexes = [
-            models.Index(fields=['user', 'status', 'is_hidden', '-created_at'], name='u_s_ih_ca_idx')
+            models.Index(fields=['user', 'is_hidden', '-created_at'], name='user_hidden_created_idx'),
+            models.Index(fields=['user', '-created_at'], name='user_latest_req_idx'),
+            models.Index(fields=['-created_at'], name='gen_req_created_at_desc_idx')
         ]
 
     class PrivacyMeta:
@@ -49,7 +51,7 @@ class GenerationRequest(models.Model):
     error_message = models.TextField(null=True, blank=True)
     error_api_message = models.TextField(null=True, blank=True)
     is_hidden = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):

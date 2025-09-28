@@ -1,3 +1,4 @@
+import os
 import json
 import logging
 from . import services
@@ -14,6 +15,7 @@ from google.cloud import tasks_v2
 from google.cloud.tasks_v2.types import HttpMethod
 from google.protobuf import duration_pb2
 from django.conf import settings
+from urllib.parse import urlparse
 
 tasks_client = tasks_v2.CloudTasksClient()
 logger = logging.getLogger(__name__)
@@ -106,7 +108,7 @@ class GenerationRequestViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None, *args, **kwargs):
         try:
-            generation_request = GenerationRequest.objects.get(pk=pk, user=request.user)
+            generation_request = GenerationRequest.objects.select_related('chosen_style').get(pk=pk, user=request.user)
         except GenerationRequest.DoesNotExist:
             return Response(status=404)
 
@@ -142,7 +144,7 @@ class GenerationRequestViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['GET'])
     def latest(self, request, *args, **kwargs):
-        latest_user_generation_request = GenerationRequest.objects.filter(user=request.user).order_by('-created_at').first()
+        latest_user_generation_request = GenerationRequest.objects.select_related('chosen_style').filter(user=request.user).order_by('-created_at').first()
 
         if not latest_user_generation_request:
             return Response(status=204)
@@ -153,12 +155,43 @@ class GenerationRequestViewSet(viewsets.ViewSet):
         serializer = GenerationRequestSerializer(latest_user_generation_request)
         return Response(serializer.data, status=200)
     
+    @action(detail=True, methods=['GET'])
+    def download(self, request, pk=None, *args, **kwargs):
+        try:
+            generation_request = GenerationRequest.objects.get(pk=pk, user=request.user)
+        except GenerationRequest.DoesNotExist:
+            return Response(status=404)
+        
+        if generation_request.is_hidden:
+            return Response({"detail": "This generation is currently unavailable"}, status=400)
+
+        if not generation_request.output_img_url:
+            return Response({"detail": "Output image not available"}, status=400)
+
+        try:
+            parsed_url = urlparse(generation_request.output_img_url)
+            filename = os.path.basename(parsed_url.path)
+            
+            download_url = services.generate_signed_gcs_url(
+                generation_request.output_img_url,
+                expires_in_seconds=30,
+                response_disposition=f"attachment; filename='{filename}'"
+            )
+            
+            return Response({"download_url": download_url}, status=200)
+        except Exception as e:
+            logger.error(f"Failed to generate download URL for output image", extra={'generation_request_id': generation_request.id, 'error': str(e)}, exc_info=True)
+            return Response({"detail": "Failed to retrieve download URL"}, status=400)
+
     @action(detail=True, methods=['POST'])
     def stop(self, request, pk=None, *args, **kwargs):
         try:
             generation_request = GenerationRequest.objects.get(pk=pk, user=request.user, status=GenerationRequest.GenerationStatus.PROCESSING)
         except GenerationRequest.DoesNotExist:
             return Response({"detail": "Generation in progress not found or already stopped"}, status=404)
+
+        if generation_request.is_hidden:
+            return Response({"detail": "This generation is currently unavailable"}, status=400)
 
         if generation_request.created_at > timezone.now() - timedelta(seconds=30):
             return Response({"detail": "Cannot stop a generation within the first 30 seconds"}, status=400)

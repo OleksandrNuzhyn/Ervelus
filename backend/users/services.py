@@ -251,7 +251,7 @@ def send_email(recipient, template_name):
     auth = ("api", settings.MAILGUN_API_KEY)
     
     data = {
-        "from": f"Ervelus Support <{settings.DEFAULT_FROM_EMAIL}>",
+        "from": settings.DEFAULT_FROM_EMAIL,
         "to": recipient,
         "template": template_name
     }
@@ -270,8 +270,8 @@ def send_support_email(sender_email, text_body):
     auth = ("api", settings.MAILGUN_API_KEY)
     
     data = {
-        "from": f"Support Request from {escape(sender_email)} <{settings.DEFAULT_FROM_EMAIL}>",
-        "to": settings.DEFAULT_FROM_EMAIL,
+        "from": f"Request from {settings.DEFAULT_FROM_EMAIL}",
+        "to": "<support@ervelus.com>",
         "subject": escape(f"New letter from {sender_email}"),
         "text": escape(text_body)
     }

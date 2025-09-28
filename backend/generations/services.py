@@ -333,7 +333,7 @@ def upload_input_image_to_gcs(image_file, user_id):
 
     return blob.public_url
 
-def generate_signed_gcs_url(gcs_img_url, expires_in_seconds):
+def generate_signed_gcs_url(gcs_img_url, expires_in_seconds, response_disposition=None):
     parsed_url = urlparse(gcs_img_url)
     path = parsed_url.path.lstrip('/')
     bucket_name, blob_name = path.split('/', 1)
@@ -344,7 +344,8 @@ def generate_signed_gcs_url(gcs_img_url, expires_in_seconds):
     return blob.generate_signed_url(
         expiration=timedelta(seconds=expires_in_seconds),
         version='v4',
-        method='GET'
+        method='GET',
+        response_disposition=response_disposition
     )
 
 def get_user_gcs_all_blob_names(user_id):

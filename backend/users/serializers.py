@@ -2,7 +2,7 @@ from dj_rest_auth.registration.serializers import RegisterSerializer
 from dj_rest_auth.serializers import LoginSerializer
 from allauth.account.models import EmailAddress
 from allauth.account.utils import send_email_confirmation
-from agreements.services import accept_user_document_version
+from agreements import services
 from agreements.models import TermsVersion
 from rest_framework import serializers
 from django.db import transaction
@@ -46,7 +46,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         context = {"source": "registration_form", "method": "checkbox"}
 
         for latest_document_version_to_accept in latest_documents_version_to_accept:
-            accept_user_document_version(
+            services.accept_user_document_version(
                 user=user,
                 terms_version=latest_document_version_to_accept,
                 ip_address=ip_address,

@@ -12,6 +12,7 @@ class TermsVersion(models.Model):
         verbose_name = 'Terms Version'
         verbose_name_plural = 'Terms Versions'
         unique_together = ('document_type', 'version')
+        indexes = [models.Index(fields=['-published_at'])]
 
     document_type = models.CharField(max_length=40, choices=DocumentType.choices)
     version = models.DecimalField(max_digits=10, decimal_places=2)
@@ -27,6 +28,10 @@ class UserAgreement(models.Model):
         verbose_name = 'User Agreement'
         verbose_name_plural = 'User Agreements'
         unique_together = ('user', 'terms_version')
+        indexes = [
+            models.Index(fields=['-accepted_at']),
+            models.Index(fields=['ip_address'])
+        ]
 
     class PrivacyMeta:
         fields = [

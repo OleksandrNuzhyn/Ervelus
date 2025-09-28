@@ -36,7 +36,7 @@ class UserSubscriptionAdmin(NoLogAdminMixin, admin.ModelAdmin):
     list_select_related = ("user", "plan")
     list_filter = ("plan__name", "status", 'start_time', 'end_time', 'cancels_at')
     search_fields = ("user__email", "plan__name", "paddle_subscription_id")
-    ordering = ("-start_time",)
+    ordering = ("-id",)
     raw_id_fields = ("user", "plan")
     actions = [cancel_subscription_at_next_billing_period]
 
