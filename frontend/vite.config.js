@@ -1,16 +1,14 @@
 import { fileURLToPath, URL } from 'node:url'
-import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
-import svgLoader from 'vite-svg-loader'
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [
     vue(),
     vueDevTools(),
-    tailwindcss(),
-    svgLoader(),
+    tailwindcss()
   ],
   resolve: {
     alias: {
@@ -23,7 +21,7 @@ export default defineConfig({
       '/api': {
         target: 'https://backend.ervelus.com',
         changeOrigin: true,
-        secure: false,
+        secure: true
       },
     },
   },
