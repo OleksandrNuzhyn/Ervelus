@@ -49,7 +49,7 @@
           <button 
             type="submit"
             :disabled="isLoading"
-            class="w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-white/60 backdrop-blur-md border border-white/20 shadow-lg hover:bg-white/20"
+            class="w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-white/60 backdrop-blur-md border border-white/20 shadow-lg hover:bg-white/20 hover:text-white"
           >
             <span v-if="isLoading">Uncovering the truth...</span>
             <span v-else>Log in</span>

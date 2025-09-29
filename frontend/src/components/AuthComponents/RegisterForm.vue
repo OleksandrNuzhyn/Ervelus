@@ -1,5 +1,5 @@
 <template>
-  <div :class="['form-container', waitingEmailForm ? 'no-mask' : '']">
+  <div class="form-container">
     <form
       v-if="!waitingEmailForm"
       @submit.prevent="handleSubmit"
@@ -66,20 +66,35 @@
       <p v-if="errors.api" class="text-center text-red-400">{{ errors.api }}</p>
 
       <div class="space-y-4">
-        <div class="flex items-center">
+        <label for="terms-checkbox" class="flex items-center cursor-pointer group">
+          
           <input
             id="terms-checkbox"
             type="checkbox"
             v-model="agreedToTerms"
-            class="h-4 w-4 rounded border-gray-300 text-sky-500 focus:ring-sky-500"
+            class="peer hidden focus:outline-none"
           />
-          <label for="terms-checkbox" class="ml-3 block text-sm text-gray-300">
+
+          <div
+            class="relative h-4 w-4 shrink-0 rounded-full border border-gray-600 bg-gray-700
+                  transition-colors duration-200
+                  
+                  after:content-[''] after:absolute after:top-1/2 after:left-1/2 
+                  after:-translate-x-1/2 after:-translate-y-1/2
+                  after:h-2 after:w-2 after:rounded-full after:bg-sky-700
+                  after:scale-0 peer-checked:after:scale-135
+                  after:transition-transform after:duration-200"
+          >
+          </div>
+
+          <span class="ml-3 block text-sm text-gray-300 select-none">
             I agree to the
             <router-link to="/terms-of-service" target="_blank" class="font-medium text-sky-500 hover:text-sky-300">Terms of Service</router-link>
             and
             <router-link to="/privacy-policy" target="_blank" class="font-medium text-sky-500 hover:text-sky-300">Privacy Policy</router-link>.
-          </label>
-        </div>
+          </span>
+        </label>
+        
         <p v-if="errors.terms" class="mt-1 text-sm text-red-400">{{ errors.terms }}</p>
       </div>
 
@@ -87,7 +102,7 @@
         <button
           type="submit"
           :disabled="isLoading || !agreedToTerms"
-          class="w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md disabled:opacity-40 disabled:cursor-not-allowed bg-white/60 backdrop-blur-md border border-white/20 shadow-lg hover:bg-white/20"
+          class="w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md disabled:opacity-40 disabled:cursor-not-allowed bg-white/60 backdrop-blur-md border border-white/20 shadow-lg hover:bg-white/20 hover:text-white"
         >
           <span v-if="isLoading">Creating…</span>
           <span v-else>Confirm</span>
@@ -381,7 +396,6 @@ onUnmounted(() => {
     clearTimeout(timerId);
   }
 });
-
 </script>
 
 <style scoped>
@@ -432,13 +446,5 @@ input[type="password"]::-ms-reveal {
   display: none;
   width: 0;
   height: 0;
-}
-</style>
-<style scoped>
-@media (max-width: 768px) {
-  .no-mask {
-    mask-image: none !important;
-    -webkit-mask-image: none !important;
-  }
 }
 </style>
