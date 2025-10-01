@@ -1,6 +1,6 @@
 <template>
   <HeaderComponent />
-  <div class="background-container pt-16 md:pt-20">
+  <div class="background-container pt-20">
     <PricingComponent />
   </div>
   <FooterComponent />
@@ -17,6 +17,7 @@ import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue
   background-image: url('@/assets/pricing_assets/wall.webp');
   background-size: cover;
   background-position: top center;
+  background-attachment: fixed;
   min-height: max(100vh, calc(100vw * 23 / 48));
 }
 </style>

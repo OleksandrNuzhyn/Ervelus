@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!isLoadingConfig" class="background-container w-full flex items-stretch justify-end">
+  <div v-if="!isLoading" class="background-container w-full flex items-stretch justify-end">
     <div class="w-full md:w-[32rem]">
       <RegisterForm v-if="isRegistrationEnabled" />
       <RegistrationUnavailableComponent v-else />
@@ -14,7 +14,7 @@ import RegistrationUnavailableComponent from '@/components/AuthComponents/Regist
 import api from '@/services/api';
 
 const isRegistrationEnabled = ref(true);
-const isLoadingConfig = ref(true);
+const isLoading = ref(true);
 
 async function getApplicationConfig() {
   try {
@@ -25,7 +25,7 @@ async function getApplicationConfig() {
     isRegistrationEnabled.value = true;
   }
   finally {
-    isLoadingConfig.value = false;
+    isLoading.value = false;
   }
 }
 
