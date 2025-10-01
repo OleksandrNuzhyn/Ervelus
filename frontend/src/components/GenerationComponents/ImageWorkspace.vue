@@ -3,11 +3,16 @@
     <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 items-start">
       <div class="z-9 flex flex-col items-center w-full">
         <div class="bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-lg p-4 h-[400px] md:h-[660px] w-full flex flex-col items-center justify-center">
-          <div v-if="!inputImageUrl" @click="triggerFileInput" class="cursor-pointer w-full h-full flex flex-col items-center justify-center">
+          <div v-if="!inputImageUrl" @click="triggerFileInput"
+               @dragenter.prevent="onDragEnter"
+               @dragover.prevent="onDragOver"
+               @dragleave.prevent="onDragLeave"
+               @drop.prevent="onDrop"
+               :class="['cursor-pointer w-full h-full flex flex-col items-center justify-center', { 'bg-black/20 border-2 border-dashed border-gray-400': isDragging }]">
             <svg class="w-16 h-16 md:w-24 md:h-24 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
             </svg>
-            <p class="mt-4 text-lg text-gray-400">Click here to upload</p>
+            <p class="mt-4 text-lg text-gray-400">Click here to upload or drop an image</p>
             <input type="file" ref="fileInput" @change="onFileSelected" class="hidden" accept="image/jpeg, image/png, image/webp" />
           </div>
           <div v-else class="relative w-full h-full">
@@ -147,6 +152,7 @@ const showMissingInfoModal = ref(false);
 const showErrorModal = ref(false);
 const currentGenerationId = ref(null);
 const isStoppingAllowed = ref(false);
+const isDragging = ref(false);
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE_BYTES = 7 * 1024 * 1024;
@@ -387,10 +393,13 @@ const triggerFileInput = () => {
 const onFileSelected = (event) => {
   const target = event.target;
   const file = target.files?.[0];
+  handleFile(file);
+};
+
+const handleFile = (file) => {
   if (!file) {
     return;
   }
-
   error.value = null;
   showErrorModal.value = false;
 
@@ -411,6 +420,27 @@ const onFileSelected = (event) => {
     inputImageUrl.value = event.target?.result;
   };
   reader.readAsDataURL(file);
+};
+
+const onDragEnter = (event) => {
+  event.preventDefault();
+  isDragging.value = true;
+};
+
+const onDragOver = (event) => {
+  event.preventDefault(); 
+};
+
+const onDragLeave = (event) => {
+  event.preventDefault();
+  isDragging.value = false;
+};
+
+const onDrop = (event) => {
+  event.preventDefault();
+  isDragging.value = false;
+  const file = event.dataTransfer.files[0];
+  handleFile(file);
 };
 </script>
 
