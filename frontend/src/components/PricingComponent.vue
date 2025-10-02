@@ -1,46 +1,56 @@
 <template>
   <div v-if="!isLoading">
-    <div class="w-full max-w-screen-2xl mx-auto px-1 md:px-8 pt-5 pb-16">
+    <div class="w-full max-w-screen-2xl mx-auto px-2 pt-5 pb-16">
       <div class="text-center mb-9">
-        <h1 class="text-4xl font-bold text-gray-500 text-5xl medieval fade-in-heading">
+        <h1 class="font-bold text-5xl medieval fade-in-heading medieval-title mt-4 medieval-main-title-shadow">
           Contracts
         </h1>
       </div>
 
       <div :class="['grid grid-cols-1 gap-7 justify-items-center mt-8 md:mt-12', grid_col_num]">
         <div 
-          v-for="plan in plans" 
+          v-for="(plan, index) in plans"
           :key="plan.name"
-          class="plan-card relative flex flex-col w-full md:max-w-md h-[700px]"
+          :class="['plan-card relative flex flex-col w-full md:max-w-md h-[700px] plan-card-static-highlight', { 'plan-card-selected-highlight': highlightedIndex === index }]"
+          @mouseover="handleMouseOver(index)"
+          @mouseleave="handleMouseLeave"
         >
-          <div class="px-6 py-10">
-            <h2 class="text-3xl font text-center text-gray-500 medieval">{{ plan.name }}</h2>
-            <p class="mt-2 text-xl text-center text-black">{{ plan.description }}</p>
-            <div class="mt-6 text-center">
-              <span class="text-5xl font-bold text-black">${{ formatPrice(plan.price) }}</span>
-              <span class="text-base font-medium text-black">/month</span>
+          <div class="flex flex-col h-full p-8 text-center">
+            <h2 class="text-5xl scribe-text font-bold mt-7 mb-4" style="text-shadow: 0px 0px 3px rgba(0, 0, 0, 1), 0 0 45px rgba(255, 255, 255, 0.8);">{{ plan.name }}</h2>
+
+            <div class="mb-4">
+              <span class="text-5xl font-bold scribe-text">
+                ${{ formatPrice(plan.price) }}
+              </span>
+              <span class="text-2xl scribe-text">/month</span>
+              <p class="mt-4 text-2xl scribe-text">{{ plan.description }}</p>
             </div>
-          </div>
-          
-          <div class="flex-1 flex flex-col px-12 pt-12 relative">
-            <ul class="space-y-8 flex-1">
-              <li v-for="feature in plan.features" :key="feature" class="flex items-start">
+
+            <div class="separator">
+              <div class="separator-diamond"></div>
+            </div>
+
+            <ul class="space-y-4 flex-1">
+              <li v-for="feature in plan.features" :key="feature" class="flex items-center justify-center">
                 <div class="flex-shrink-0">
-                  <svg class="h-6 w-6 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  <svg class="h-4 w-4 feature-icon-shadow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M12 2L3 5v6c0 5.25 3.75 10.5 9 12 5.25-1.5 9-6.75 9-12V5l-9-3z" fill="#211F1D"/>
                   </svg>
                 </div>
-                <p class="ml-3 text-lg text-black medieval">{{ feature }}</p>
+                <p class="ml-3 text-3xl scribe-text">{{ feature }}</p>
               </li>
             </ul>
-            <div class="absolute inset-x-0 bottom-2 flex justify-center">
+            <div class="absolute inset-x-0 bottom-4 flex justify-center">
               <template v-if="plan.is_active">
-                  <button @click="buy(plan)" class="inline-flex justify-center p-0 transform hover:scale-103 transition focus:outline-none select-none">
-                      <img src="@/assets/pricing_assets/button.png" alt="Buy plan"/>
-                  </button>
+                <button @click="buy(plan)" class="inline-flex justify-center p-0 transform transition focus:outline-none select-none button-white-shadow">
+                  <img src="@/assets/pricing_assets/button.png" alt="Buy plan"/>
+                </button>
               </template>
-              <div v-else class="text-sm text-gray-500 font-bold medieval">Currently Unavailable</div>
+              <div v-else class="text-5xl scribe-text font-bold font-nothing-you-could-do mb-13" style="text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.8), 0 0 85px rgba(255, 255, 255, 1);">
+                Unavailable
+              </div>
             </div>
+
           </div>
         </div>
       </div>
@@ -48,8 +58,8 @@
 
     <div v-if="showLoginModal" @click.self="showLoginModal = false" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[7px]">
       <div class="w-full max-w-sm p-8 mx-4 text-center border shadow-2xl rounded-2xl backdrop-blur-[14px] bg-[rgba(10,10,10,0.3)] border-[rgba(255,255,255,0.15)]">
-          <h2 class="text-2xl font-bold text-white mb-4 medieval">Authentication Required</h2>
-          <p class="text-gray-300 mb-8">Please log in to purchase a subscription plan.</p>
+          <h2 class="text-2xl font-bold text-white mb-4 medieval" style="text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);">Authentication Required</h2>
+          <p class="text-gray-300 mb-8" style="text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);">Please log in to purchase a subscription plan</p>
           <router-link 
               to="/login" 
               class="block w-full px-6 py-3 font-bold text-white transition duration-300 rounded-md bg-white/10 backdrop-blur-md border border-white/10 shadow-lg hover:bg-white/20"
@@ -70,6 +80,7 @@ const auth = useAuthStore();
 const plans = ref([]);
 const showLoginModal = ref(false);
 const isLoading = ref(true);
+const highlightedIndex = ref(1);
 
 const grid_col_num = computed(() => {
   if (plans.value.length >= 3) return 'xl:grid-cols-3';
@@ -83,6 +94,14 @@ function formatPrice(price) {
     return num.toString();
   }
   return num.toFixed(2);
+}
+
+function handleMouseOver(index) {
+  highlightedIndex.value = index;
+}
+
+function handleMouseLeave() {
+  highlightedIndex.value = 1;
 }
 
 function buy(plan){
@@ -132,12 +151,94 @@ onMounted(() => {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Nothing+You+Could+Do&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;770&family=EB+Garamond&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Uncial+Antiqua&display=swap');
 .medieval{font-family:'MedievalSharp',cursive;}
+.heading-font{font-family: 'Cinzel Decorative', 'Uncial Antiqua', cursive;}
+.font-nothing-you-could-do{font-family: 'Nothing You Could Do', cursive;}
+.main-text-font { font-family: 'Lora', 'EB Garamond', serif; }
+.text-almost-black{color:#1c1c1c;}
+.text-dark-blood{color:#4a2323;}
+.medieval-title {
+  color: transparent;
+  background-image: linear-gradient(
+    75deg,
+    #1A2024 0%,
+    #3B4246 2%,
+    #6F7D82 4%,
+    #4A5458 6%,
+    #AAB2B6 8%,
+    #6F7D82 10%,
+    #AAB2B6 12%,
+    #8B9599 15%,
+    #E2E8EC 20%,
+    #FFFFFF 25%,
+    #D4DBDF 28%,
+    #7A8488 30%,
+    #B8C2C6 35%,
+    #E2E8EC 40%,
+    #FFFFFF 45%,
+    #AAB2B6 50%,
+    #6F7D82 55%,
+    #E2E8EC 60%,
+    #9CA3A6 65%,
+    #7A8488 70%,
+    #AAB2B6 75%,
+    #5B6366 80%,
+    #3B4246 85%,
+    #1A2024 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  opacity: 0.85;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5), 
+               0 0 12px rgba(0, 10, 15, 0.8);
+  filter: blur(0.7px);
+}
+
+.medieval-main-title-shadow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.45), 
+               0 0 15px rgba(0, 10, 15, 0.8);
+}
+
+.scribe-text {
+  font-family: 'Nothing You Could Do', cursive;
+  color: #1A1A1A;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.feature-icon-shadow {
+  filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.5));
+}
 
 .plan-card {
   position: relative;
   isolation: isolate;
+  transition: all 0.6s ease-in-out;
+  filter: drop-shadow(0 15px 30px rgba(10, 25, 30, 0.5));
+}
+
+.plan-card-static-highlight {
+  filter: drop-shadow(0 0 20px rgba(15, 35, 40, 0.8)) drop-shadow(0 0 45px rgba(20, 100, 120, 0.25));
+}
+
+.plan-card.recommended {
+  filter: drop-shadow(0 0 15px rgba(20, 100, 120, 0.4));
+}
+
+.plan-card-selected-highlight {
+  filter: drop-shadow(0 0px 50px rgba(15, 35, 40, 0.7)) drop-shadow(0 0 40px rgba(20, 100, 120, 0.6));
+}
+
+.button-white-shadow {
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.08));
+  transition: filter 0.4s ease-in-out;
+}
+
+.button-white-shadow:hover {
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.08)) brightness(0.8);
 }
 
 .plan-card::before{
@@ -149,6 +250,55 @@ onMounted(() => {
   background-position:center;
   background-repeat:no-repeat;
   z-index:-1;
+  filter: brightness(1.12);
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  flex-grow: 1;
+  height: 1px;
+  background-color: transparent;
+  background-image: linear-gradient(
+    75deg,
+    #362F27 0%,
+    #38312b 20%,
+    #302e3b 40%,
+    #473D35 60%,
+    #362F27 80%,
+    #2B251F 100%
+  );
+  opacity: 0.7;
+  filter: blur(0.7px);
+  margin-left: 2rem;
+  margin-right: 2rem;
+}
+
+.separator-diamond {
+  width: 8px;
+  height: 8px;
+  background-color: transparent;
+  background-image: linear-gradient(
+    75deg,
+    #362F27 0%,
+    #473D35 20%,
+    #5C5247 40%,
+    #473D35 60%,
+    #362F27 80%,
+    #2B251F 100%
+  );
+  opacity: 0.7;
+  transform: rotate(45deg);
+  margin: 0 1rem;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(0, 0, 0, 0.7);
+  filter: blur(0.7px);
 }
 
 @media (max-width: 767px) {

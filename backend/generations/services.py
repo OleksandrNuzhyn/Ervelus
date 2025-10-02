@@ -315,7 +315,7 @@ def prepare_image_for_upload(image_data, quality):
         transposed_image = transposed_image.convert("RGB")
 
     buffer = BytesIO()
-    transposed_image.save(buffer, format='JPEG', quality=quality, optimize=True, progressive=True)
+    transposed_image.save(buffer, format='JPEG', quality=quality, optimize=True)
     buffer.seek(0)
     
     return buffer.getvalue()
