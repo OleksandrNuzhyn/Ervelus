@@ -12,12 +12,18 @@
             <svg class="w-16 h-16 md:w-24 md:h-24 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
             </svg>
-            <p class="mt-4 text-lg text-gray-400">Click here to upload or drop an image</p>
+            <p class="mt-4 text-lg text-gray-400">Click here to upload image</p>
             <input type="file" ref="fileInput" @change="onFileSelected" class="hidden" accept="image/jpeg, image/png, image/webp" />
           </div>
           <div v-else class="relative w-full h-full">
-            <img :src="inputImageUrl" alt="Input" class="w-full h-full object-contain rounded-lg" />
-            <button @click="inputImageUrl = null; outputImageUrl = null" class="absolute top-1 right-1 bg-gray-800/80 hover:bg-gray-700/90 text-gray-300 hover:text-white p-1.5 transition-colors rounded border border-gray-600/50 hover:border-gray-500">
+            <img 
+              :src="inputImageUrl" 
+              alt="Input" 
+              class="w-full h-full object-contain rounded-lg transition-opacity duration-500 ease-in-out"
+              :style="{ opacity: inputImageLoaded ? 1 : 0 }"
+              @load="onInputImageLoad"
+            />
+            <button @click="inputImageUrl = null; outputImageUrl = null; inputImageLoaded = false" class="absolute top-1 right-1 bg-gray-800/80 hover:bg-gray-700/90 text-gray-300 hover:text-white p-1.5 transition-colors rounded border border-gray-600/50 hover:border-gray-500">
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -36,7 +42,13 @@
             <p class="text-gray-400 text-lg">Generating...</p>
           </div>
           <div v-else-if="outputImageUrl" class="w-full h-full">
-            <img :src="outputImageUrl" alt="Output" class="w-full h-full object-contain rounded-lg" />
+            <img 
+              :src="outputImageUrl" 
+              alt="Output" 
+              class="w-full h-full object-contain rounded-lg transition-opacity duration-500 ease-in-out"
+              :style="{ opacity: outputImageLoaded ? 1 : 0 }"
+              @load="onOutputImageLoad"
+            />
           </div>
           <div v-else class="text-center text-gray-400">
             <p>The result of the generation will appear here</p>
@@ -153,6 +165,8 @@ const showErrorModal = ref(false);
 const currentGenerationId = ref(null);
 const isStoppingAllowed = ref(false);
 const isDragging = ref(false);
+const inputImageLoaded = ref(false);
+const outputImageLoaded = ref(false);
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE_BYTES = 7 * 1024 * 1024;
@@ -192,9 +206,19 @@ watch(() => props.latestGenerationData, (latest) => {
 watch(inputImageUrl, (newVal) => {
   if (!newVal) {
     inputImageFile.value = null;
+    inputImageLoaded.value = false;
     if (fileInput.value) {
       fileInput.value.value = '';
     }
+  }
+  else {
+    inputImageLoaded.value = false;
+  }
+});
+
+watch(outputImageUrl, (newVal) => {
+  if (newVal) {
+    outputImageLoaded.value = false;
   }
 });
 
@@ -441,6 +465,14 @@ const onDrop = (event) => {
   isDragging.value = false;
   const file = event.dataTransfer.files[0];
   handleFile(file);
+};
+
+const onInputImageLoad = () => {
+  inputImageLoaded.value = true;
+};
+
+const onOutputImageLoad = () => {
+  outputImageLoaded.value = true;
 };
 </script>
 
