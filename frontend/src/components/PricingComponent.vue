@@ -113,6 +113,19 @@ function handleMouseLeave() {
   highlightedIndex.value = 1;
 }
 
+async function getSubscriptionPlans() {
+  try {
+    const response = await api.get('/api/products/subscription-plans/');
+    plans.value = response.data.map(plan => ({...plan}));
+  }
+  catch {
+    plans.value = [];
+  }
+  finally {
+    isLoading.value = false;
+  }
+}
+
 async function buy(plan) {
   if (!auth.isAuthenticated) {
     showLoginModal.value = true;
@@ -121,7 +134,7 @@ async function buy(plan) {
   if (!window.Paddle) {
     return;
   }
-  if (!plan.priceId) {
+  if (!plan.paddle_price_id) {
     return;
   }
 
@@ -132,7 +145,7 @@ async function buy(plan) {
     await api.post('/api/subscriptions/subscription-eligibility/', { plan_id: plan.id });
     window.Paddle.Checkout.open({
       items: [
-        { priceId: plan.priceId, quantity: 1 }
+        { priceId: plan.paddle_price_id, quantity: 1 }
       ],
       customer: {
         email: auth.user.email
@@ -144,8 +157,6 @@ async function buy(plan) {
   }
   catch (error) {
     if (error.response) {
-      showEligibilityModal.value = true;
-      
       if (error.response.status === 404) {
         message.value = 'The selected plan is unavailable';
         modalTitle.value = 'Plan Inactive';
@@ -158,27 +169,13 @@ async function buy(plan) {
         message.value = 'An unexpected error occurred. Please try again later';
         modalTitle.value = 'Error';
       }
+      showEligibilityModal.value = true;
     }
     else {
       message.value = 'Network error or no response from server';
       modalTitle.value = 'Error';
+      showEligibilityModal.value = true;
     }
-  }
-}
-
-async function getSubscriptionPlans() {
-  try {
-    const response = await api.get('/api/products/subscription-plans/');
-    plans.value = response.data.map(plan => ({
-      ...plan,
-      priceId: plan.paddle_price_id
-    }));
-  }
-  catch {
-    plans.value = [];
-  }
-  finally {
-    isLoading.value = false;
   }
 }
 
