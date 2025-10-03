@@ -18,7 +18,7 @@ async function initializeApp() {
     checkout: {
       settings: {
         theme: 'dark',
-        displayMode: 'inline'
+        displayMode: 'overlay'
       }
     }
   });
