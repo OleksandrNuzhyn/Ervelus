@@ -11,12 +11,13 @@ from agreements.permissions import HasAcceptedLatestAgreements
 @permission_classes([AllowAny])
 def subscription_plan_list(request):
     plans = SubscriptionPlan.objects.order_by('price').values(
+        'id',
         'name', 
         'description',
         'price',
         'paddle_price_id',
         'features',
-        'is_active',
+        'is_active'
     )
 
     subscription_plan_list = list(plans)

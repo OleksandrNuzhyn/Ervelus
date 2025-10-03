@@ -22,13 +22,13 @@ def subscription_eligibility_check(request):
     try:
         plan = SubscriptionPlan.objects.get(pk=plan_id, is_active=True)
     except SubscriptionPlan.DoesNotExist:
-        return Response({'detail': 'Plan is not active now'}, status=400)
+        return Response(status=404)
 
     config = ApplicationConfig.get_solo()
 
     potential_spend = config.reserved_for_spend + plan.product_price
     if potential_spend >= config.hard_budget:
-        return Response({'detail': 'Purchase unavailable due to budget limits. We apologize for the inconvenience — improvements are underway'}, status=400)
+        return Response(status=400)
 
     return Response(status=200)
 

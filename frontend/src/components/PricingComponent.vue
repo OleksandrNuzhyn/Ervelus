@@ -57,15 +57,21 @@
     </div>
 
     <div v-if="showLoginModal" @click.self="showLoginModal = false" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[7px]">
-      <div class="w-full max-w-sm p-8 mx-4 text-center border shadow-2xl rounded-2xl backdrop-blur-[14px] bg-[rgba(10,10,10,0.3)] border-[rgba(255,255,255,0.15)]">
-          <h2 class="text-2xl font-bold text-white mb-4 medieval" style="text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);">Authentication Required</h2>
-          <p class="text-gray-300 mb-8" style="text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);">Please log in to purchase a subscription plan</p>
+      <div class="w-full max-w-[340px] p-8 mx-4 text-center shadow-2xl rounded-2xl backdrop-blur-[14px] bg-[rgba(10,10,10,0.3)]">
+          <h2 class="text-3xl font-bold mb-8 medieval medieval-title medieval-main-title-shadow">Authentication Required</h2>
           <router-link 
               to="/login" 
-              class="block w-full px-6 py-3 font-bold text-white transition duration-300 rounded-md bg-white/10 backdrop-blur-md border border-white/10 shadow-lg hover:bg-white/20"
+              class="w-full flex justify-start items-center text-almost-black pl-29 router-link-login"
           >
-              Login
+              <img src="@/assets/svg/login.svg" alt="Login" class="w-9 h-9 login-icon-default" />
           </router-link>
+      </div>
+    </div>
+
+    <div v-if="showEligibilityModal" @click.self="showEligibilityModal = false; message = ''; modalTitle = ''" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[7px]">
+      <div class="w-full max-w-[340px] p-8 mx-4 text-center shadow-2xl rounded-2xl backdrop-blur-[14px] bg-[rgba(10,10,10,0.3)]">
+          <h2 class="text-3xl font-bold mb-8 medieval medieval-title medieval-main-title-shadow">{{ modalTitle }}</h2>
+          <p class="text-xl main-text-font">{{ message }}</p>
       </div>
     </div>
   </div>
@@ -79,7 +85,10 @@ import api from '@/services/api';
 const auth = useAuthStore();
 const plans = ref([]);
 const showLoginModal = ref(false);
+const showEligibilityModal = ref(false);
 const isLoading = ref(true);
+const message = ref('');
+const modalTitle = ref('');
 const highlightedIndex = ref(1);
 
 const grid_col_num = computed(() => {
@@ -104,7 +113,7 @@ function handleMouseLeave() {
   highlightedIndex.value = 1;
 }
 
-function buy(plan){
+async function buy(plan) {
   if (!auth.isAuthenticated) {
     showLoginModal.value = true;
     return;
@@ -116,17 +125,45 @@ function buy(plan){
     return;
   }
 
-  window.Paddle.Checkout.open({
-    items: [
-      { priceId: plan.priceId, quantity: 1 }
-    ],
-    customer: {
-      email: auth.user.email
-    },
-    customData: {
-      user_id: auth.user.pk
+  message.value = '';
+  modalTitle.value = '';
+
+  try {
+    await api.post('/api/subscriptions/subscription-eligibility/', { plan_id: plan.id });
+    window.Paddle.Checkout.open({
+      items: [
+        { priceId: plan.priceId, quantity: 1 }
+      ],
+      customer: {
+        email: auth.user.email
+      },
+      customData: {
+        user_id: auth.user.pk
+      }
+    });
+  }
+  catch (error) {
+    if (error.response) {
+      showEligibilityModal.value = true;
+      
+      if (error.response.status === 404) {
+        message.value = 'The selected plan is unavailable';
+        modalTitle.value = 'Plan Inactive';
+      }
+      else if (error.response.status === 400) {
+        message.value = 'Purchase unavailable due to budget limits. We apologize for the inconvenience — improvements are underway';
+        modalTitle.value = 'Purchase Unavailable';
+      }
+      else {
+        message.value = 'An unexpected error occurred. Please try again later';
+        modalTitle.value = 'Error';
+      }
     }
-  });
+    else {
+      message.value = 'Network error or no response from server';
+      modalTitle.value = 'Error';
+    }
+  }
 }
 
 async function getSubscriptionPlans() {
@@ -207,6 +244,11 @@ onMounted(() => {
   font-family: 'Nothing You Could Do', cursive;
   color: #1A1A1A;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.login-icon-default {
+  filter: invert(0.8) sepia(0.2) saturate(0.5) drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.8)) drop-shadow(0px 0px 20px rgba(255, 255, 255, 0.6));
+  transition: filter 0.5s ease-in-out;
 }
 
 .feature-icon-shadow {
@@ -334,5 +376,9 @@ onMounted(() => {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(25px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.router-link-login:hover img {
+  filter: invert(0.5) sepia(0.2) saturate(0.5);
 }
 </style>

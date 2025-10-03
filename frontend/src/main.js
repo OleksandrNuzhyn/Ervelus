@@ -18,9 +18,9 @@ async function initializeApp() {
     checkout: {
       settings: {
         theme: 'dark',
-        displayMode: 'overlay',
+        displayMode: 'inline'
       }
-    },
+    }
   });
 
   const app = createApp(App)
