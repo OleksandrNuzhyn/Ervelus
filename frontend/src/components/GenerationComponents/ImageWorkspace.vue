@@ -196,7 +196,13 @@ watch(() => props.latestGenerationData, (latest) => {
     } 
     else if (latest.status === 'failed') {
       inputImageUrl.value = latest.input_img_signed_url;
-      error.value = latest.error || 'The last generation has failed.';
+      error.value = latest.error_api_message;
+      showErrorModal.value = true;
+      clearStopEnableTimer();
+    }
+    else if (latest.status === 'rejected_by_safety') {
+      inputImageUrl.value = latest.input_img_signed_url;
+      error.value = latest.error_api_message;
       showErrorModal.value = true;
       clearStopEnableTimer();
     }
@@ -245,13 +251,21 @@ const pollForResult = async () => {
     const latest = response.data;
     
     if (latest?.status === 'failed') {
-      error.value = latest.error || 'Generation failed on the backend.';
+      error.value = latest.error_api_message;
       showErrorModal.value = true;
       isLoading.value = false;
       stopPolling();
       currentGenerationId.value = null;
       clearStopEnableTimer();
-    } 
+    }
+    else if (latest?.status === 'rejected_by_safety') {
+        error.value = latest.error_api_message;
+        showErrorModal.value = true;
+        isLoading.value = false;
+        stopPolling();
+        currentGenerationId.value = null;
+        clearStopEnableTimer();
+    }
     else if (latest?.status === 'completed' && latest.output_img_signed_url) {
       outputImageUrl.value = latest.output_img_signed_url;
       if (latest.input_img_signed_url && !inputImageUrl.value) {
@@ -365,11 +379,8 @@ const handleStopGeneration = async () => {
     currentGenerationId.value = null;
     
     if (err.response && [400, 404, 500].includes(err.response.status)) {
-      const message = getErrorMessage(err);
-      if (message) {
-        error.value = message;
-        showErrorModal.value = true;
-      }
+      error.value = getErrorMessage(err);
+      showErrorModal.value = true;
     }
   }
 };

@@ -1,7 +1,7 @@
 <template>
     <header class="fixed inset-x-0 top-0 z-50 bg-black/30 backdrop-blur-sm">
       <div class="max-w-screen mx-auto px-4 sm:px-6 lg:px-12">
-        <div class="flex items-center justify-between h-19">
+        <div class="flex items-center justify-between h-[70px]">
           <router-link to="/" class="text-2xl font-bold text-gray-100 medieval select-none">Ervelus</router-link>
           <nav class="hidden md:flex items-center gap-6 text-gray-200">
             <router-link to="/dashboard" class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 text-gray-100">Dashboard</router-link>
@@ -33,7 +33,7 @@
                 leave-active-class="transition ease-in duration-200"
                 leave-from-class="transform translate-x-0"
                 leave-to-class="transform translate-x-full">
-                <div v-if="isBarOpen" class="fixed right-0 top-19 h-[calc(100vh-4rem)] py-2 w-67 bg-[#202b32]/30 backdrop-blur-xl z-100 flex flex-col transform-gpu">
+                <div v-if="isBarOpen" class="fixed right-0 top-18 h-[calc(100vh-4rem)] py-2 w-80 bg-[#202b32]/30 backdrop-blur-xl z-100 flex flex-col transform-gpu">
                   <div class="px-4 py-4 text-sm text-gray-400 flex items-center justify-between">
                     <span>COINS: {{ credits }}</span>
                     <img src="@/assets/svg/coin.svg" class="h-10 w-10" />

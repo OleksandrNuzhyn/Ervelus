@@ -29,7 +29,7 @@ async function initializeApp() {
   app.use(pinia)
   app.use(router)
   app.use(GoogleSignInPlugin, {
-    clientId: '533652113906-hnenie5h5ge7fou1ctvno0l0f748ginl.apps.googleusercontent.com'
+    clientId: '281870812434-c175ecrljg0b8fr5sg30olverjkri2d0.apps.googleusercontent.com'
   });
   
   app.mount('#app')
