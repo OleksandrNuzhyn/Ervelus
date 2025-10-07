@@ -1,18 +1,21 @@
 <template>
   <div id="app" class="min-h-screen text-white">
-    <Transition name="fade">
+    <Transition name="loader-fade">
       <div v-if="!authStore.authChecked" class="loader-container">
         <div class="stars"></div>
       </div>
     </Transition>
-    <RouterView v-if="authStore.authChecked" />
+    <Transition name="fade" mode="out-in">
+      <RouterView v-if="authStore.authChecked" :key="route.fullPath" />
+    </Transition>
   </div>
 </template>
 
 <script setup>
-import { RouterView } from 'vue-router';
+import { RouterView, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 const authStore = useAuthStore();
+const route = useRoute();
 </script>
 
 <style scoped>
@@ -89,17 +92,5 @@ const authStore = useAuthStore();
 @keyframes animateStarLayer3 {
   from { background-position: 0 0; }
   to { background-position: 10000px -10000px; }
-}
-
-.fade-leave-active {
-  transition: opacity 1.2s ease-in-out;
-}
-
-.fade-leave-from {
-  opacity: 1;
-}
-
-.fade-leave-to {
-  opacity: 0;
 }
 </style>

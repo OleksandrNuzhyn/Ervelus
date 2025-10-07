@@ -44,7 +44,12 @@
         </div>
   
         <p v-if="errors.api" class="text-center text-red-400">{{ errors.api }}</p>
-  
+
+        <div class="text-sm text-center text-gray-400">
+            By continuing, you agree to our
+            <router-link to="/terms-of-service" target="_blank" class="text-sky-400 hover:underline">Terms of Service</router-link> and <router-link to="/privacy-policy" target="_blank" class="text-sky-400 hover:underline">Privacy Policy</router-link>
+        </div>
+
         <div>
           <button 
             type="submit"
@@ -52,7 +57,7 @@
             class="w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-white/60 backdrop-blur-md border border-white/20 shadow-lg hover:bg-white/20 hover:text-white"
           >
             <span v-if="isLoading">Uncovering the truth...</span>
-            <span v-else>Log in</span>
+            <span v-else>Sign In</span>
           </button>
         </div>
   

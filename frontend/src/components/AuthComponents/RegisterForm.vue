@@ -65,47 +65,19 @@
 
       <p v-if="errors.api" class="text-center text-red-400">{{ errors.api }}</p>
 
-      <div class="space-y-4">
-        <label for="terms-checkbox" class="flex items-center cursor-pointer group">
-          
-          <input
-            id="terms-checkbox"
-            type="checkbox"
-            v-model="agreedToTerms"
-            class="peer hidden focus:outline-none"
-          />
-
-          <div
-            class="relative h-4 w-4 shrink-0 rounded-full border border-gray-600 bg-gray-700
-                  transition-colors duration-200
-                  
-                  after:content-[''] after:absolute after:top-1/2 after:left-1/2 
-                  after:-translate-x-1/2 after:-translate-y-1/2
-                  after:h-2 after:w-2 after:rounded-full after:bg-sky-700
-                  after:scale-0 peer-checked:after:scale-135
-                  after:transition-transform after:duration-200"
-          >
-          </div>
-
-          <span class="ml-3 block text-sm text-gray-300 select-none">
-            I agree to the
-            <router-link to="/terms-of-service" target="_blank" class="font-medium text-sky-500 hover:text-sky-300">Terms of Service</router-link>
-            and
-            <router-link to="/privacy-policy" target="_blank" class="font-medium text-sky-500 hover:text-sky-300">Privacy Policy</router-link>.
-          </span>
-        </label>
-        
-        <p v-if="errors.terms" class="mt-1 text-sm text-red-400">{{ errors.terms }}</p>
+      <div class="text-sm text-center text-gray-400">
+          By signing up, you agree to our
+          <router-link to="/terms-of-service" target="_blank" class="text-sky-400 hover:underline">Terms of Service</router-link> and <router-link to="/privacy-policy" target="_blank" class="text-sky-400 hover:underline">Privacy Policy</router-link>
       </div>
 
       <div>
         <button
           type="submit"
-          :disabled="isLoading || !agreedToTerms"
+          :disabled="isLoading"
           class="w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md disabled:opacity-40 disabled:cursor-not-allowed bg-white/60 backdrop-blur-md border border-white/20 shadow-lg hover:bg-white/20 hover:text-white"
         >
           <span v-if="isLoading">Creating…</span>
-          <span v-else>Confirm</span>
+          <span v-else>Sign Up</span>
         </button>
       </div>
 
@@ -119,7 +91,7 @@
         <button
           type="button"
           @click="googleLogin"
-          :disabled="!isReady || isGoogleLoading || !agreedToTerms"
+          :disabled="!isReady || isGoogleLoading"
           class="w-full py-3 font-bold text-white transition duration-300 rounded-md disabled:opacity-45 disabled:cursor-not-allowed bg-sky-500/40 backdrop-blur-md border border-white/20 shadow-lg hover:bg-sky-500/15 flex items-center justify-center gap-2"
         >
           <svg class="w-5 h-5" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -135,7 +107,7 @@
 
       <div class="text-center mt-2">
         <span class="text-sm text-gray-400">Already have an account? </span>
-        <router-link to="/login" draggable="false" class="text-sm text-orange-400 hover:text-orange-200">Log in</router-link>
+        <router-link to="/login" draggable="false" class="text-sm text-orange-400 hover:text-orange-200">Sign In</router-link>
       </div>
     </form>
 
@@ -182,13 +154,11 @@ const isLoading = ref(false);
 const isGoogleLoading = ref(false);
 const showPassword1 = ref(false);
 const showPassword2 = ref(false);
-const agreedToTerms = ref(false);
 const errors = ref({
   email: '',
   password1: '',
   password2: '',
   api: '',
-  terms: '',
 });
 const waitingEmailForm = ref(false);
 const canResend = ref(false);
@@ -218,10 +188,6 @@ const { isReady, login: googleLogin } = useTokenClient({
 });
 
 async function handleGoogleSuccess(response) {
-  if (!agreedToTerms.value) {
-    errors.value.terms = 'You shall not pass without accepting the terms of service.';
-    return;
-  }
   isGoogleLoading.value = true;
   errors.value.api = '';
   const accessToken = response.access_token;
@@ -295,13 +261,8 @@ async function handleResendEmail() {
 }
 
 function validateForm() {
-  errors.value = { email: '', password1: '', password2: '', api: '', terms: '' };
+  errors.value = { email: '', password1: '', password2: '', api: '' };
   let isValid = true;
-
-  if (!agreedToTerms.value) {
-    errors.value.terms = 'You shall not pass without accepting the terms of service..';
-    isValid = false;
-  }
 
   if (!email.value) {
     errors.value.email = 'Email is required.';
@@ -346,7 +307,7 @@ async function handleSubmit() {
     startResendTimer();
   }
   catch (error) {
-    errors.value = { email: '', password1: '', password2: '', api: '', terms: '' };
+    errors.value = { email: '', password1: '', password2: '', api: '' };
 
     if (error.response) {
       const { status, data = {} } = error.response;
