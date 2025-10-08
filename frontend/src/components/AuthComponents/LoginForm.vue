@@ -151,7 +151,7 @@ async function handleLoginSuccess(response) {
 }
 
 function handleLoginError() {
-  errors.value.api = 'Google sign-in failed.';
+  errors.value.api = 'Google sign-in failed';
 }
 
 function validateForm() {
@@ -193,41 +193,39 @@ async function handleSubmit() {
     });
 
     await authStore.checkAuth();
-
     router.push('/dashboard');
+  }
+  catch (error) {
+    errors.value = { email: '', password: '', api: '' };
+    if (error.response) {
+      const { status, data = {} } = error.response;
 
-    } 
-    catch (error) {
-      errors.value = { email: '', password: '', api: '' };
-      if (error.response) {
-        const { status, data = {} } = error.response;
+      switch (status) {
+        case 400:
+          if (data.non_field_errors && data.non_field_errors.length > 0) {
+            errors.value.api = data.non_field_errors[0];
+          } 
+          else {
+            errors.value.api = 'Incorrect email or password. Please try again.';
+          }
+          break;
 
-        switch (status) {
-          case 400:
-            if (data.non_field_errors && data.non_field_errors.length > 0) {
-              errors.value.api = data.non_field_errors[0];
-            } 
-            else {
-              errors.value.api = 'Incorrect email or password. Please try again.';
-            }
-            break;
-
-          case 500:
-            errors.value.api = data.detail || 'Server Error Occured.';
-            break;
-            
-          default:
-            errors.value.api = 'An unexpected error occurred. Please try again.';
-        }
-      } 
-      else {
-        errors.value.api = 'Unable to connect to the server. Please check your network connection.';
+        case 500:
+          errors.value.api = data.detail || 'Server Error Occured.';
+          break;
+          
+        default:
+          errors.value.api = 'An unexpected error occurred. Please try again.';
       }
-    }
-    finally {
-      isLoading.value = false;
+    } 
+    else {
+      errors.value.api = 'Unable to connect to the server. Please check your network connection.';
     }
   }
+  finally {
+    isLoading.value = false;
+  }
+}
 </script>
 
 <style scoped>
