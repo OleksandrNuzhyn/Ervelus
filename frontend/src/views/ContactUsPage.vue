@@ -1,9 +1,11 @@
 <template>
-  <HeaderComponent />
-  <div class="background-container flex items-center justify-center">
-    <ContactUsComponent />
+  <div>
+    <HeaderComponent />
+    <div class="background-container flex items-center justify-center">
+      <ContactUsComponent />
+    </div>
+    <FooterComponent />
   </div>
-  <FooterComponent />
 </template>
 
 <script setup>

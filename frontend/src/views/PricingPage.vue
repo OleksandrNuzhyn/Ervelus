@@ -1,9 +1,11 @@
 <template>
-  <HeaderComponent />
-  <div class="background-container pt-20">
-    <PricingComponent />
+  <div>
+    <HeaderComponent />
+    <div class="background-container pt-20">
+      <PricingComponent />
+    </div>
+    <FooterComponent />
   </div>
-  <FooterComponent />
 </template>
 
 <script setup>

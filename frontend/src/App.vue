@@ -1,41 +1,61 @@
 <template>
   <div id="app" class="min-h-screen text-white">
-    <Transition name="loader-fade">
-      <div v-if="!authStore.authChecked" class="loader-container">
+    <router-view v-if="authStore.authChecked" />
+
+    <Transition name="fade" @after-enter="onLoaderFadedIn">
+      <div v-if="isLoading || !authStore.authChecked" class="loader-overlay">
         <div class="stars"></div>
       </div>
-    </Transition>
-    <Transition name="fade" mode="out-in">
-      <RouterView v-if="authStore.authChecked" :key="route.fullPath" />
     </Transition>
   </div>
 </template>
 
 <script setup>
-import { RouterView, useRoute } from 'vue-router';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+
+const router = useRouter();
 const authStore = useAuthStore();
-const route = useRoute();
+const isLoading = ref(false);
+let resolveNavigation = null;
+
+function onLoaderFadedIn() {
+  if (resolveNavigation) {
+    resolveNavigation();
+    resolveNavigation = null;
+  }
+}
+
+router.beforeEach(async (to, from) => {
+  if (from.name === undefined) {
+    return true;
+  }
+
+  isLoading.value = true;
+  await new Promise((resolve) => {
+    resolveNavigation = resolve;
+  });
+
+  return true;
+});
+
+router.afterEach(() => {
+  isLoading.value = false;
+});
 </script>
 
 <style scoped>
-.loader-container {
+.loader-overlay {
   position: fixed;
   inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #0c0d14;
   z-index: 100;
+  background-color: #0c0d14;
 }
 
 .stars {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   overflow: hidden;
   background-image:
     radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
@@ -48,14 +68,16 @@ const route = useRoute();
   animation: animateStarLayer1 800s linear infinite;
 }
 
-.stars::before {
+.stars::before,
+.stars::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
+}
+
+.stars::before {
   background-image:
+    radial-gradient(2px 2px at 10px 200px, #ddd, rgba(0,0,0,0)),
     radial-gradient(2.5px 2.5px at 150px 150px, #fff, rgba(0,0,0,0)),
     radial-gradient(3px 3px at 200px 30px, #eee, rgba(0,0,0,0)),
     radial-gradient(2px 2px at 10px 200px, #ddd, rgba(0,0,0,0));
@@ -65,12 +87,6 @@ const route = useRoute();
 }
 
 .stars::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
   background-image:
     radial-gradient(3px 3px at 80px 80px, #fff, rgba(0,0,0,0)),
     radial-gradient(4px 4px at 120px 20px, #eee, rgba(0,0,0,0));
