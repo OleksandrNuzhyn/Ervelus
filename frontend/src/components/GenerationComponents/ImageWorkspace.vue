@@ -41,7 +41,7 @@
             <img src="@/assets/svg/staff_logo.svg" class="wave-animation animation-pulse h-45 w-45 pointer-events-none select-none" />
             <p class="text-gray-400 text-lg">Generating...</p>
           </div>
-          <div v-else-if="outputImageUrl" class="w-full h-full">
+          <div v-else-if="outputImageUrl" class="relative w-full h-full">
             <img 
               :src="outputImageUrl" 
               alt="Output" 
@@ -49,6 +49,11 @@
               :style="{ opacity: outputImageLoaded ? 1 : 0 }"
               @load="onOutputImageLoad"
             />
+            <button @click="downloadOutputImage" class="absolute top-1 right-1 bg-gray-800/80 hover:bg-gray-700/90 text-gray-300 hover:text-white p-1.5 transition-colors rounded border border-gray-600/50 hover:border-gray-500">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+            </button>
           </div>
           <div v-else class="text-center text-gray-400">
             <p>The result of the generation will appear here</p>
@@ -167,6 +172,7 @@ const isStoppingAllowed = ref(false);
 const isDragging = ref(false);
 const inputImageLoaded = ref(false);
 const outputImageLoaded = ref(false);
+const completedGenerationId = ref(null);
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE_BYTES = 7 * 1024 * 1024;
@@ -187,12 +193,13 @@ watch(() => props.latestGenerationData, (latest) => {
       inputImageUrl.value = latest.input_img_signed_url;
       outputImageUrl.value = null;
       error.value = null;
-      startStopEnableTimer();
+      startStopEnableTimer(latest.created_at);
       startPolling();
     } 
     else if (latest.status === 'completed' && latest.output_img_signed_url) {
       inputImageUrl.value = latest.input_img_signed_url;
       outputImageUrl.value = latest.output_img_signed_url;
+      completedGenerationId.value = latest.id;
     } 
     else if (latest.status === 'failed') {
       inputImageUrl.value = latest.input_img_signed_url;
@@ -268,6 +275,7 @@ const pollForResult = async () => {
     }
     else if (latest?.status === 'completed' && latest.output_img_signed_url) {
       outputImageUrl.value = latest.output_img_signed_url;
+      completedGenerationId.value = latest.id;
       if (latest.input_img_signed_url && !inputImageUrl.value) {
           inputImageUrl.value = latest.input_img_signed_url;
       }
@@ -316,12 +324,28 @@ const isButtonDisabled = computed(() => {
   return isLoading.value && !isStoppingAllowed.value;
 });
 
-const startStopEnableTimer = () => {
+const startStopEnableTimer = (creationTime) => {
   clearStopEnableTimer();
   isStoppingAllowed.value = false;
-  stopEnableTimerId = setTimeout(() => {
-    isStoppingAllowed.value = true;
-  }, 30000);
+
+  if (creationTime) {
+    const createdAt = new Date(creationTime);
+    const now = new Date();
+    const elapsedTime = now.getTime() - createdAt.getTime();
+    const remainingTime = 30000 - elapsedTime;
+
+    if (remainingTime <= 0) {
+      isStoppingAllowed.value = true;
+    } else {
+      stopEnableTimerId = setTimeout(() => {
+        isStoppingAllowed.value = true;
+      }, remainingTime);
+    }
+  } else {
+    stopEnableTimerId = setTimeout(() => {
+      isStoppingAllowed.value = true;
+    }, 30000);
+  }
 };
 
 const clearStopEnableTimer = () => {
@@ -393,6 +417,7 @@ const handleGenerate = async () => {
   }
   isLoading.value = true;
   outputImageUrl.value = null;
+  completedGenerationId.value = null;
   error.value = null;
   showErrorModal.value = false;
   startStopEnableTimer();
@@ -484,6 +509,27 @@ const onInputImageLoad = () => {
 
 const onOutputImageLoad = () => {
   outputImageLoaded.value = true;
+};
+
+const downloadOutputImage = async () => {
+  if (!completedGenerationId.value) {
+    error.value = "Cannot download image: generation ID is missing.";
+    showErrorModal.value = true;
+    return;
+  }
+
+  try {
+    const response = await api.get(`api/generations/generation-requests/download/${completedGenerationId.value}/`);
+    const link = document.createElement('a');
+    link.href = response.data.download_url;
+    link.setAttribute('download', `ervelus-image-${completedGenerationId.value}.png`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (err) {
+    error.value = getErrorMessage(err) || 'Download failed. Please try again later.';
+    showErrorModal.value = true;
+  }
 };
 </script>
 
