@@ -64,38 +64,11 @@
             @click="handleButtonClick"
             :disabled="isButtonDisabled"
             :class="[
-              'relative px-4 py-4 lg:py-7 sm:px-6 md:px-8 transition-all min-w-[100px] w-full duration-200 rounded-xl generate-button flex items-center justify-center',
-              isLoading ? 'scale-100' : 'group hover:scale-100',
+              'w-full bg-gray-700/50 backdrop-blur-[10px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl py-3 lg:py-6 text-center text-xl md:text-2xl font-bold text-white cursor-pointer hover:bg-gray-700/40 transition-all duration-200 border border-transparent hover:border-gray-600',
               isButtonDisabled ? 'opacity-60 cursor-not-allowed' : ''
             ]"
           >
-            <span 
-              v-if="!isLoading"
-              :class="[
-                'absolute -inset-1 rounded-xl border-3 pointer-events-none transition-all duration-100',
-                'group-hover:opacity-100 opacity-75',
-                'border-[#022653]'
-              ]">
-            </span>
-            <span 
-              v-if="isLoading"
-              class="absolute -inset-0.5 rounded-xl pointer-events-none opacity-70 border-gradient-animated"
-              :style="{
-                '--start-color': '#022653'
-              }">
-            </span>
-            <span 
-              class="absolute inset-0 rounded-xl bg-transparent backdrop-blur-[1px]">
-            </span>
-            <span 
-              class="absolute inset-[1px] rounded-lg"
-              :style="{
-              background: 'linear-gradient(to bottom right, #032441, #032247, #0A273E)'}">
-            </span>
-            <span 
-              class="relative z-9 text-sm md:text-base text-center font-semibold pointer-events-none select-none text-white">
-              {{ buttonText }}
-            </span>
+            {{ buttonText }}
           </button>
         </div>
       </div>
