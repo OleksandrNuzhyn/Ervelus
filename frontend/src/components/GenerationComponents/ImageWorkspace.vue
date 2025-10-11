@@ -73,36 +73,6 @@
         </div>
       </div>
     </div>
-
-    <div v-if="showMissingInfoModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0" @click="showMissingInfoModal = false"></div>
-      <div class="relative bg-black/40 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] border border-gray-700 text-white rounded-2xl px-6 py-5 text-center">
-        <div class="flex items-center justify-center gap-4">
-          <svg class="w-7 h-7 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <circle cx="12" cy="12" r="9" stroke-width="2"></circle>
-            <path d="M12 7v6" stroke-linecap="round" stroke-width="2"></path>
-            <circle cx="12" cy="17" r="1.25" fill="currentColor" stroke="none"></circle>
-          </svg>
-          <p class="modal-text text-lg md:text-xl font-medium sm:whitespace-nowrap">Choose your picture and destiny</p>
-        </div>
-        <button @click="showMissingInfoModal = false" class="modal-button mt-4 px-4 py-2 font-bold text-white transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-white/10 backdrop-blur-md border border-white/1 shadow-lg hover:bg-white/20">Got it!</button>
-      </div>
-    </div>
-
-    <div v-if="showErrorModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0" @click="showErrorModal = false"></div>
-      <div class="relative bg-black/40 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] border border-gray-700 text-white rounded-2xl px-6 py-5 text-center">
-        <div class="flex items-center justify-center gap-4">
-          <svg class="w-7 h-7 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <circle cx="12" cy="12" r="9" stroke-width="2"></circle>
-            <line x1="15" y1="9" x2="9" y2="15" stroke-width="2"></line>
-            <line x1="9" y1="9" x2="15" y2="15" stroke-width="2"></line>
-          </svg>
-          <p class="modal-text text-lg md:text-xl font-medium sm:whitespace-nowrap">{{ error }}</p>
-        </div>
-        <button @click="showErrorModal = false; error = null" class="modal-button mt-4 px-4 py-2 font-bold text-white transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-white/10 backdrop-blur-md border border-white/1 shadow-lg hover:bg-white/20">OK</button>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -110,6 +80,7 @@
 <script setup>
 import { ref, watch, onUnmounted, computed } from 'vue';
 import api from '@/services/api';
+import { toast } from '@/services/toast';
 
 const props = defineProps({
   selectedStyleName: {
@@ -137,9 +108,6 @@ const inputImageFile = ref(null);
 const outputImageUrl = ref(null);
 const isLoading = ref(false);
 const fileInput = ref(null);
-const error = ref(null);
-const showMissingInfoModal = ref(false);
-const showErrorModal = ref(false);
 const currentGenerationId = ref(null);
 const isStoppingAllowed = ref(false);
 const isDragging = ref(false);
@@ -165,7 +133,6 @@ watch(() => props.latestGenerationData, (latest) => {
       currentGenerationId.value = latest.id;
       inputImageUrl.value = latest.input_img_signed_url;
       outputImageUrl.value = null;
-      error.value = null;
       startStopEnableTimer(latest.created_at);
       startPolling();
     } 
@@ -176,14 +143,12 @@ watch(() => props.latestGenerationData, (latest) => {
     } 
     else if (latest.status === 'failed') {
       inputImageUrl.value = latest.input_img_signed_url;
-      error.value = latest.error_api_message;
-      showErrorModal.value = true;
+      toast.info(latest.error_api_message);
       clearStopEnableTimer();
     }
     else if (latest.status === 'rejected_by_safety') {
       inputImageUrl.value = latest.input_img_signed_url;
-      error.value = latest.error_api_message;
-      showErrorModal.value = true;
+      toast.info(latest.error_api_message);
       clearStopEnableTimer();
     }
   }
@@ -220,8 +185,7 @@ const pollForResult = async () => {
     stopPolling();
     isLoading.value = false;
     currentGenerationId.value = null;
-    error.value = 'Failed to get the generated image. Please try again later.';
-    showErrorModal.value = true;
+    toast.info('Failed to get the generated image. Please try again later.'); //чи треба це взагалі?
     clearStopEnableTimer();
     return;
   }
@@ -231,16 +195,14 @@ const pollForResult = async () => {
     const latest = response.data;
     
     if (latest?.status === 'failed') {
-      error.value = latest.error_api_message;
-      showErrorModal.value = true;
+      toast.info(latest.error_api_message);
       isLoading.value = false;
       stopPolling();
       currentGenerationId.value = null;
       clearStopEnableTimer();
     }
     else if (latest?.status === 'rejected_by_safety') {
-        error.value = latest.error_api_message;
-        showErrorModal.value = true;
+        toast.info(latest.error_api_message);
         isLoading.value = false;
         stopPolling();
         currentGenerationId.value = null;
@@ -263,8 +225,8 @@ const pollForResult = async () => {
       pollingTimeoutId = setTimeout(pollForResult, nextInterval);
     }
   } catch (err) {
-      error.value = getErrorMessage(err);
-      showErrorModal.value = true;
+      const errorMessage = getErrorMessage(err) || "An unexpected error occurred while checking generation status.";
+      toast.info(errorMessage);
       isLoading.value = false;
       stopPolling();
       currentGenerationId.value = null;
@@ -335,25 +297,32 @@ const handleButtonClick = () => {
   }
 };
 
-const getErrorMessage = (err) => {
-  if (err.response) {
-    const status = err.response.status;
-    const data = err.response.data;
-    const serverError = data?.error || data?.detail;
+const getErrorMessage = (err, endpoint) => {
+  if (!err.response) {
+    return null;
+  }
 
-    switch (status) {
-      case 400:
-        return serverError || 'There was a problem with your request. Please check the input.';
-      case 404:
-        return serverError || 'The requested resource could not be found.';
-      case 500:
-        return 'An internal server error occurred. Please try again later.';
-      default:
-        return serverError || `An unexpected server error occurred (Status: ${status}).`;
+  const { status, data } = err.response;
+  const serverError = data?.detail;
+
+  if (status === 400) {
+    if (endpoint === 'create') {
+      return serverError || 'Could not create request. Check your input data.';
+    } 
+    else if (endpoint === 'stop') {
+      return serverError || 'Could not stop generation.';
+    } 
+    else if (endpoint === 'download') {
+      return serverError || 'Could not download the image.';
     }
   } 
-  else if (err.request) {
-    return 'Could not connect to the server. Please check your network connection.';
+  else if (status === 404) {
+    if (endpoint === 'stop') {
+      return serverError || 'Generation request not found.';
+    } 
+    else if (endpoint === 'download') {
+      return serverError || 'File for download not found.';
+    }
   }
   return null;
 };
@@ -375,9 +344,8 @@ const handleStopGeneration = async () => {
     isLoading.value = false;
     currentGenerationId.value = null;
     
-    if (err.response && [400, 404, 500].includes(err.response.status)) {
-      error.value = getErrorMessage(err);
-      showErrorModal.value = true;
+    if (err.response && [400, 404].includes(err.response.status)) {
+      toast.info(getErrorMessage(err, 'stop'));
     }
   }
 };
@@ -385,14 +353,12 @@ const handleStopGeneration = async () => {
 const handleGenerate = async () => {
   if (isLoading.value) return;
   if (!inputImageFile.value || !props.selectedStyleId) {
-    showMissingInfoModal.value = true;
+    toast.info('Choose your picture and destiny');
     return;
   }
   isLoading.value = true;
   outputImageUrl.value = null;
   completedGenerationId.value = null;
-  error.value = null;
-  showErrorModal.value = false;
   startStopEnableTimer();
 
   try {
@@ -412,14 +378,13 @@ const handleGenerate = async () => {
 
   } catch (err) {
     isLoading.value = false;
-    error.value = getErrorMessage(err);
-    showErrorModal.value = true;
+    if (err.response && err.response.status === 400) {
+        toast.info(getErrorMessage(err, 'create'));
+    }
   }
 };
 
 const triggerFileInput = () => {
-  error.value = null;
-  showErrorModal.value = false;
   fileInput.value?.click();
 };
 
@@ -433,17 +398,13 @@ const handleFile = (file) => {
   if (!file) {
     return;
   }
-  error.value = null;
-  showErrorModal.value = false;
 
   if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-    error.value = 'Invalid file type. Please select an image in JPEG, PNG or WEBP format.';
-    showErrorModal.value = true;
+    toast.info('Invalid file type. Our magicians support only JPEG, PNG or WEBP format.');
     return;
   }
   else if (file.size > MAX_FILE_SIZE_BYTES) {
-    error.value = 'Maximum file size is 7 MB.';
-    showErrorModal.value = true;
+    toast.info('Maximum file size is 7 MB.');
     return;
   }
 
@@ -486,8 +447,7 @@ const onOutputImageLoad = () => {
 
 const downloadOutputImage = async () => {
   if (!completedGenerationId.value) {
-    error.value = "Cannot download image: generation ID is missing.";
-    showErrorModal.value = true;
+    toast.info("Cannot download image. Please try again later.");
     return;
   }
 
@@ -500,8 +460,9 @@ const downloadOutputImage = async () => {
     link.click();
     document.body.removeChild(link);
   } catch (err) {
-    error.value = getErrorMessage(err) || 'Download failed. Please try again later.';
-    showErrorModal.value = true;
+    if (err.response && [400, 404].includes(err.response.status)) {
+      toast.info(getErrorMessage(err, 'download'));
+    }
   }
 };
 </script>
