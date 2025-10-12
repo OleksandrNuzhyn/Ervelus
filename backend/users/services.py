@@ -162,28 +162,26 @@ def delete_user_images_from_gcs(user):
         'deleted_resized_count': resized_count
     }
 
-def delete_user_audit_records(user):
-    log_entries_to_delete = Q(actor=user)
+def delete_user_audit_records(user, related_objects_ids):
+    related_logs_query = Q(actor=user)
 
-    objects_to_check = [
-        user,
-        *user.subscriptions.all(),
-        *user.agreements.all(),
-        *user.generation_requests.all(),
-        *user.emailaddress_set.all(),
-        *user.socialaccount_set.all()
-    ]
+    for ct, pk in related_objects_ids:
+        related_logs_query |= Q(content_type=ct, object_pk=pk)
 
-    if hasattr(user, 'profile'):
-        objects_to_check.append(user.profile)
+    all_related_logs = LogEntry.objects.filter(related_logs_query)
 
-    for obj in objects_to_check:
-        if obj is None:
-            continue
-        ct = ContentType.objects.get_for_model(obj)
-        log_entries_to_delete |= Q(content_type=ct, object_pk=str(obj.pk))
+    gdpr_logs_query = Q(additional_data__gdpr_deletion_process=True) | Q(additional_data__gdpr_export_process=True)
 
-    LogEntry.objects.filter(log_entries_to_delete).exclude(additional_data__gdpr_deletion_process=True).exclude(additional_data__gdpr_export_process=True).delete()
+    logs_to_anonymise = all_related_logs.filter(gdpr_logs_query)
+    logs_to_anonymise.update(
+        actor_email='',
+        object_repr=f"Anonymised record of user_id: {user.pk}",
+        actor=None,
+        remote_addr=None
+    )
+
+    logs_to_delete = all_related_logs.exclude(gdpr_logs_query)
+    logs_to_delete.delete()
 
 
 

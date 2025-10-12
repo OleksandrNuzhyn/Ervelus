@@ -7,9 +7,11 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from agreements.permissions import HasAcceptedLatestAgreements
 from generations.models import GenerationRequest
 from rest_framework.response import Response
+from django.contrib.contenttypes.models import ContentType
 from .serializers import UserCreditsSerializer, SupportEmailSerializer
 from .models import UserProfile
 from auditlog.models import LogEntry
+from auditlog.context import set_actor
 from django.db import transaction
 from . import services
 import requests
@@ -79,6 +81,25 @@ def account_delete(request):
         except Exception as e:
             logger.error("Failed to parse user uncancelled subscriptions in delete request due to unknown error", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)
             return Response(status=400)
+    
+    related_objects_ids = []
+    objects_to_check = [user]
+
+    try:
+        objects_to_check.extend(user.subscriptions.all())
+        objects_to_check.extend(user.agreements.all())
+        objects_to_check.extend(user.generation_requests.all())
+        objects_to_check.extend(user.emailaddress_set.all())
+        objects_to_check.extend(user.socialaccount_set.all())
+
+        if hasattr(user, 'profile'):
+            objects_to_check.append(user.profile)
+    except Exception as e:
+        logger.error(f"Could not fully collect related objects in delete request", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)
+
+    for obj in objects_to_check:
+        if obj:
+            related_objects_ids.append((ContentType.objects.get_for_model(obj), str(obj.pk)))
 
     LogEntry.objects.log_create(
         instance=user,
@@ -105,9 +126,7 @@ def account_delete(request):
     try:
         services.remove_user_from_mailgun_list(user)
     except requests.exceptions.HTTPError as e:
-        if e.response.status_code == 404:
-            logger.info("User was not found in Mailgun list in delete request", extra={'user_id': user.id})
-        else:
+        if e.response.status_code != 404:
             raise
     except requests.exceptions.RequestException as e:
         logger.error("Failed to remove user from Mailgun list in delete request due to HTTP error", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)
@@ -140,26 +159,32 @@ def account_delete(request):
     
     try:
         with transaction.atomic():
-            user.generation_requests.all().anonymise()
-            user.agreements.all().anonymise()
+            for generation_request in user.generation_requests.all():
+                generation_request.anonymise()
+
+            for agreement in user.agreements.all():
+                agreement.anonymise()
+                
             user.socialaccount_set.all().delete()
             user.emailaddress_set.all().delete()
 
             user.anonymise()
 
-            services.delete_user_audit_records(user)
+            services.delete_user_audit_records(user, related_objects_ids)
     except Exception as e:
         logger.error("Failed to anonymise user data in delete request", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)
         return Response(status=400)
 
-    LogEntry.objects.log_create(
-        instance=user,
-        action=LogEntry.Action.UPDATE,
-        changes={},
-        additional_data={
-            "gdpr_deletion_process": True,
-            "message": "User data anonymization process completed"
-        }
-    )
+    with set_actor(actor=None, remote_addr=None):
+        LogEntry.objects.log_create(
+            instance=user,
+            action=LogEntry.Action.UPDATE,
+            changes={},
+            object_repr = f"Anonymised record of user_id: {user.pk}",
+            additional_data={
+                "gdpr_deletion_process": True,
+                "message": "User data anonymization process completed"
+            }
+        )
     
     return Response(status=204)

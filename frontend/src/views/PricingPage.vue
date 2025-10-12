@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeaderComponent />
-    <div class="background-container pt-20">
+    <div class="background-container pt-19">
       <PricingComponent />
     </div>
     <FooterComponent />
@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import PricingComponent from '@/components/PricingComponent.vue';
+import PricingComponent from '@/components/OtherComponents/PricingComponent.vue';
 import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue';
 import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue';
 </script>

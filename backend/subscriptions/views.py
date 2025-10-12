@@ -7,6 +7,7 @@ from .serializers import UserSubscriptionListSerializer, SubscriptionEligibility
 from products.models import SubscriptionPlan
 from core.models import ApplicationConfig
 from agreements.permissions import HasAcceptedLatestAgreements
+from django.db.models import Count
 import requests
 import logging
 
@@ -35,7 +36,12 @@ def subscription_eligibility_check(request):
 @api_view(['GET'])
 @permission_classes([HasAcceptedLatestAgreements])
 def user_subscription_list(request):
-    user_subscriptions = UserSubscription.objects.select_related('plan').filter(user=request.user)
+    user_subscriptions = UserSubscription.objects.select_related('plan').filter(
+        user=request.user
+    ).annotate(
+        plan_unlocked_styles_count=Count('plan__unlocked_styles')
+    ).order_by('start_time')
+
     serializer = UserSubscriptionListSerializer(user_subscriptions, many=True)
     profile = request.user.profile
     portal_url = None

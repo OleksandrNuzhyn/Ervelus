@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import ContactUsComponent from '@/components/ContactUsComponent.vue';
+import ContactUsComponent from '@/components/OtherComponents/ContactUsComponent.vue';
 import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue';
 import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue';
 </script> 

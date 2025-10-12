@@ -65,12 +65,12 @@ class UserSubscription(models.Model):
                 return "Active"
             
             if self.cancels_at > now:
-                return f"Active until {self.cancels_at.strftime('%b %d, %Y')}"
+                return f"Active until {self.cancels_at.strftime('%B %d, %Y')}"
             
             return "Cancellation Processing"
         
         if self.status == self.SubscriptionStatus.PAST_DUE:
-            return f"Payment issue. Please update your payment method by {self.end_time.strftime('%b %d, %Y')}"
+            return f"Update your payment method by {self.end_time.strftime('%B %d, %Y')}"
             
         if self.status == self.SubscriptionStatus.CANCELED:
             return "Canceled"
