@@ -82,6 +82,15 @@ import { ref, watch, onUnmounted, computed } from 'vue';
 import api from '@/services/api';
 import { toast } from '@/services/toast';
 
+const urlToFile = async (url, filename) => {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Failed to fetch image from URL: ${response.statusText}`);
+    }
+    const blob = await response.blob();
+    return new File([blob], filename, { type: blob.type || 'image/jpeg' });
+};
+
 const props = defineProps({
   selectedStyleName: {
     type: String,
@@ -114,6 +123,7 @@ const isDragging = ref(false);
 const inputImageLoaded = ref(false);
 const outputImageLoaded = ref(false);
 const completedGenerationId = ref(null);
+const isFirstCheck = ref(true);
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE_BYTES = 7 * 1024 * 1024;
@@ -128,6 +138,13 @@ let pollAttempt = 0;
 
 watch(() => props.latestGenerationData, (latest) => {
   if (latest) {
+    const statuses = ['completed', 'failed', 'stopped_by_user', 'rejected_by_safety'];
+    if (isFirstCheck.value && statuses.includes(latest.status)) {
+      isFirstCheck.value = false;
+      return;
+    }
+    isFirstCheck.value = false;
+    
     if (latest.status === 'processing') {
       isLoading.value = true;
       currentGenerationId.value = latest.id;
@@ -143,7 +160,11 @@ watch(() => props.latestGenerationData, (latest) => {
     } 
     else if (latest.status === 'failed') {
       inputImageUrl.value = latest.input_img_signed_url;
-      toast.info(latest.error_api_message);
+      toast.info(latest.error_api_message || latest.error_message);
+      clearStopEnableTimer();
+    }
+    else if (latest.status === 'stopped_by_user') {
+      inputImageUrl.value = latest.input_img_signed_url;
       clearStopEnableTimer();
     }
     else if (latest.status === 'rejected_by_safety') {
@@ -195,11 +216,17 @@ const pollForResult = async () => {
     const latest = response.data;
     
     if (latest?.status === 'failed') {
-      toast.info(latest.error_api_message);
+      toast.info(latest.error_api_message || latest.error_message);
       isLoading.value = false;
       stopPolling();
       currentGenerationId.value = null;
       clearStopEnableTimer();
+    }
+    else if (latest?.status === 'stopped_by_user') {
+        isLoading.value = false;
+        stopPolling();
+        currentGenerationId.value = null;
+        clearStopEnableTimer();
     }
     else if (latest?.status === 'rejected_by_safety') {
         toast.info(latest.error_api_message);
@@ -225,12 +252,12 @@ const pollForResult = async () => {
       pollingTimeoutId = setTimeout(pollForResult, nextInterval);
     }
   } catch (err) {
-      const errorMessage = getErrorMessage(err) || "An unexpected error occurred while checking generation status.";
-      toast.info(errorMessage);
-      isLoading.value = false;
-      stopPolling();
-      currentGenerationId.value = null;
-      clearStopEnableTimer();
+    const errorMessage = err.response?.data?.detail || 'An unexpected error occurred while checking generation status.';
+    toast.info(errorMessage);
+    isLoading.value = false;
+    stopPolling();
+    currentGenerationId.value = null;
+    clearStopEnableTimer();
   }
 };
 
@@ -307,7 +334,7 @@ const getErrorMessage = (err, endpoint) => {
 
   if (status === 400) {
     if (endpoint === 'create') {
-      return serverError || 'Could not create request. Check your input data.';
+      return serverError || data?.non_field_errors?.[0] || 'Could not create request. Check your input data.';
     } 
     else if (endpoint === 'stop') {
       return serverError || 'Could not stop generation.';
@@ -352,7 +379,7 @@ const handleStopGeneration = async () => {
 
 const handleGenerate = async () => {
   if (isLoading.value) return;
-  if (!inputImageFile.value || !props.selectedStyleId) {
+  if ((!inputImageFile.value && !inputImageUrl.value) || !props.selectedStyleId) {
     toast.info('Choose your picture and destiny');
     return;
   }
@@ -362,9 +389,14 @@ const handleGenerate = async () => {
   startStopEnableTimer();
 
   try {
+    let fileToUpload = inputImageFile.value;
+    if (!fileToUpload && inputImageUrl.value) {
+        fileToUpload = await urlToFile(inputImageUrl.value, 'reloaded-image.jpeg');
+    }
+    
     const formData = new FormData();
     formData.append('chosen_style', props.selectedStyleId);
-    formData.append('input_image', inputImageFile.value);
+    formData.append('input_image', fileToUpload);
 
     const response = await api.post('/api/generations/generation-requests/create/', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
