@@ -1,5 +1,5 @@
   <template>
-    <div class="bg-transparent backdrop-blur-[14px] rounded-xl shadow-lg h-[calc(100vh-10rem)] flex flex-col">
+    <div class="bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl h-[calc(100vh-10rem)] flex flex-col">
       <div class="flex-shrink-0 z-10 px-4 pt-4">
         <div class="flex justify-between items-center mb-3">
           <h2 class="text-2xl font-bold text-white flex-grow text-center">Choose your destiny</h2>

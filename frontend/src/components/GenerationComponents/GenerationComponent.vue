@@ -5,7 +5,7 @@
         <CategoryStrip :categories="genres" :selected-category-id="selectedGenreId" @category-selected="handleGenreSelect"/>
         <StylePanel
           v-if="isStylePanelOpen"
-          class="absolute top-full mt-2 w-full z-20"
+          class="absolute top-full mt-2 w-64/65 left-1/2 -translate-x-1/2 z-20"
           :styles="filteredStyles"
           :selected-style-id="selectedStyleId"
           @style-selected="handleStyleSelect"
