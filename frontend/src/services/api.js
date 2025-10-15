@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
+import { toast } from './toast';
 
-function getCookie(name) {
+export function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== '') {
     const cookies = document.cookie.split(';');
@@ -44,6 +45,10 @@ api.interceptors.response.use(
       const router = (await import('@/router')).default;
       await router.push({ name: 'login' });
       return Promise.resolve();
+    }
+
+    if (error.response && error.response.status === 500) {
+      toast.info("Oh! Something went wrong. Dwarves are already working on it. Please try again later.");
     }
 
     return Promise.reject(error);

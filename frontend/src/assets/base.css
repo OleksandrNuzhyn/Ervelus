@@ -1,1 +1,26 @@
 @import "tailwindcss";
+
+.Vue-Toastification__toast.Vue-Toastification__toast--info {
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(25px);
+  color: #ffffff;
+  border-radius: 15px;
+  border: 1px solid oklch(44.6% 0.03 256.802);
+  max-width: fit-content;
+  width: auto;
+}
+
+.Vue-Toastification__toast--info .Vue-Toastification__toast-body {
+  white-space: nowrap;
+}
+
+.Vue-Toastification__toast--info .Vue-Toastification__close-button {
+  color: #ffffff;
+  opacity: 1;
+}
+
+@media (max-width: 1024px) {
+  .Vue-Toastification__toast--info .Vue-Toastification__toast-body {
+    white-space: normal;
+  }
+}
