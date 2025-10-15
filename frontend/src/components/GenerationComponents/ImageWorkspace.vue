@@ -1,111 +1,76 @@
 <template>
-  <div class="mt-0 p-3">
-    <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 items-start">
+  <div class="mt-0 p-3 lg:flex lg:flex-col lg:min-h-[calc(100vh-9rem)]">
+    <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 items-start lg:items-stretch lg:flex-grow">
       <div class="z-9 flex flex-col items-center w-full">
-        <div class="bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-lg p-4 h-[400px] md:h-[660px] w-full flex flex-col items-center justify-center">
-          <div v-if="!inputImageUrl" @click="triggerFileInput" class="cursor-pointer w-full h-full flex flex-col items-center justify-center">
+        <div class="bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-lg p-4 h-[400px] md:h-[660px] w-full flex flex-col items-center justify-center lg:h-auto lg:flex-grow lg:min-h-0">
+          <div v-if="!inputImageUrl" @click="triggerFileInput"
+               @dragenter.prevent="onDragEnter"
+               @dragover.prevent="onDragOver"
+               @dragleave.prevent="onDragLeave"
+               @drop.prevent="onDrop"
+               :class="['cursor-pointer w-full h-full flex flex-col items-center justify-center', { 'bg-black/20 border-2 border-dashed border-gray-400': isDragging }]">
             <svg class="w-16 h-16 md:w-24 md:h-24 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
             </svg>
-            <p class="mt-4 text-lg text-gray-400">Click here to upload</p>
+            <p class="mt-4 text-lg text-gray-400">Click here to upload image</p>
             <input type="file" ref="fileInput" @change="onFileSelected" class="hidden" accept="image/jpeg, image/png, image/webp" />
           </div>
           <div v-else class="relative w-full h-full">
-            <img :src="inputImageUrl" alt="Input" class="w-full h-full object-contain rounded-lg" />
-            <button @click="inputImageUrl = null; outputImageUrl = null" class="absolute top-1 right-1 bg-gray-800/80 hover:bg-gray-700/90 text-gray-300 hover:text-white p-1.5 transition-colors rounded border border-gray-600/50 hover:border-gray-500">
+            <img 
+              :src="inputImageUrl" 
+              alt="Input" 
+              class="absolute inset-0 w-full h-full object-contain rounded-lg transition-opacity duration-500 ease-in-out"
+              :style="{ opacity: inputImageLoaded ? 1 : 0 }"
+              @load="onInputImageLoad"
+            />
+            <button @click="inputImageUrl = null; outputImageUrl = null; inputImageLoaded = false" class="absolute top-1 right-1 bg-gray-800/80 hover:bg-gray-700/90 text-gray-300 hover:text-white p-1.5 transition-colors rounded border border-gray-600/50 hover:border-gray-500">
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
             </button>
           </div>
         </div>
-        <div @click="onOpenStylePanel" class="w-full bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl py-3 lg:py-6 mt-7 lg:mt-10 text-center text-xl md:text-2xl font-bold cursor-pointer hover:bg-black/40 transition-all duration-200 border border-transparent hover:border-gray-600">
+        <div @click="onOpenStylePanel" class="w-full bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl py-3 lg:py-6 mt-7 lg:mt-4 text-center text-xl md:text-2xl font-bold cursor-pointer hover:bg-black/40 transition-all duration-200 border border-transparent hover:border-gray-600">
           {{ selectedStyleName || 'Choose style' }}
         </div>
       </div>
 
       <div class="flex flex-col w-full">
-        <div class="flex flex-col items-center justify-center bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-lg p-4 h-[400px] md:h-[660px]">
+        <div class="flex flex-col items-center justify-center bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-lg p-4 h-[400px] md:h-[660px] lg:h-auto lg:flex-grow lg:min-h-0">
           <div v-if="isLoading" class="flex flex-col items-center justify-center">
             <img src="@/assets/svg/staff_logo.svg" class="wave-animation animation-pulse h-45 w-45 pointer-events-none select-none" />
             <p class="text-gray-400 text-lg">Generating...</p>
           </div>
-          <div v-else-if="outputImageUrl" class="w-full h-full">
-            <img :src="outputImageUrl" alt="Output" class="w-full h-full object-contain rounded-lg" />
+          <div v-else-if="outputImageUrl" class="relative w-full h-full">
+            <img 
+              :src="outputImageUrl" 
+              alt="Output" 
+              class="absolute inset-0 w-full h-full object-contain rounded-lg transition-opacity duration-500 ease-in-out"
+              :style="{ opacity: outputImageLoaded ? 1 : 0 }"
+              @load="onOutputImageLoad"
+            />
+            <button @click="downloadOutputImage" class="absolute top-1 right-1 bg-gray-800/80 hover:bg-gray-700/90 text-gray-300 hover:text-white p-1.5 transition-colors rounded border border-gray-600/50 hover:border-gray-500">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+            </button>
           </div>
           <div v-else class="text-center text-gray-400">
             <p>The result of the generation will appear here</p>
           </div>
         </div>
-        <div class="mt-7 lg:mt-10 mb-2 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-8 sm:gap-5 md:gap-6 lg:gap-10">
+        <div class="mt-7 lg:mt-4 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-8 sm:gap-5 md:gap-6 lg:gap-10">
           <button 
             @click="handleButtonClick"
             :disabled="isButtonDisabled"
             :class="[
-              'relative px-4 py-4 lg:py-7 sm:px-6 md:px-8 transition-all min-w-[100px] w-full duration-200 rounded-xl generate-button flex items-center justify-center',
-              isLoading ? 'scale-100' : 'group hover:scale-100',
+              'w-full bg-gray-700/50 backdrop-blur-[10px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl py-3 lg:py-6 text-center text-xl md:text-2xl font-bold text-white cursor-pointer hover:bg-gray-700/40 transition-all duration-200 border border-transparent hover:border-gray-600',
               isButtonDisabled ? 'opacity-60 cursor-not-allowed' : ''
             ]"
           >
-            <span 
-              v-if="!isLoading"
-              :class="[
-                'absolute -inset-1 rounded-xl border-3 pointer-events-none transition-all duration-100',
-                'group-hover:opacity-100 opacity-75',
-                'border-[#022653]'
-              ]">
-            </span>
-            <span 
-              v-if="isLoading"
-              class="absolute -inset-0.5 rounded-xl pointer-events-none opacity-70 border-gradient-animated"
-              :style="{
-                '--start-color': '#022653'
-              }">
-            </span>
-            <span 
-              class="absolute inset-0 rounded-xl bg-transparent backdrop-blur-[1px]">
-            </span>
-            <span 
-              class="absolute inset-[1px] rounded-lg"
-              :style="{
-              background: 'linear-gradient(to bottom right, #032441, #032247, #0A273E)'}">
-            </span>
-            <span 
-              class="relative z-9 text-sm md:text-base text-center font-semibold pointer-events-none select-none text-white">
-              {{ buttonText }}
-            </span>
+            {{ buttonText }}
           </button>
         </div>
-      </div>
-    </div>
-
-    <div v-if="showMissingInfoModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0" @click="showMissingInfoModal = false"></div>
-      <div class="relative bg-black/40 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] border border-gray-700 text-white rounded-2xl px-6 py-5 text-center">
-        <div class="flex items-center justify-center gap-4">
-          <svg class="w-7 h-7 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <circle cx="12" cy="12" r="9" stroke-width="2"></circle>
-            <path d="M12 7v6" stroke-linecap="round" stroke-width="2"></path>
-            <circle cx="12" cy="17" r="1.25" fill="currentColor" stroke="none"></circle>
-          </svg>
-          <p class="modal-text text-lg md:text-xl font-medium sm:whitespace-nowrap">Choose your picture and destiny</p>
-        </div>
-        <button @click="showMissingInfoModal = false" class="modal-button mt-4 px-4 py-2 font-bold text-white transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-white/10 backdrop-blur-md border border-white/1 shadow-lg hover:bg-white/20">Got it!</button>
-      </div>
-    </div>
-
-    <div v-if="showErrorModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0" @click="showErrorModal = false"></div>
-      <div class="relative bg-black/40 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] border border-gray-700 text-white rounded-2xl px-6 py-5 text-center">
-        <div class="flex items-center justify-center gap-4">
-          <svg class="w-7 h-7 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <circle cx="12" cy="12" r="9" stroke-width="2"></circle>
-            <line x1="15" y1="9" x2="9" y2="15" stroke-width="2"></line>
-            <line x1="9" y1="9" x2="15" y2="15" stroke-width="2"></line>
-          </svg>
-          <p class="modal-text text-lg md:text-xl font-medium sm:whitespace-nowrap">{{ error }}</p>
-        </div>
-        <button @click="showErrorModal = false; error = null" class="modal-button mt-4 px-4 py-2 font-bold text-white transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-white/10 backdrop-blur-md border border-white/1 shadow-lg hover:bg-white/20">OK</button>
       </div>
     </div>
   </div>
@@ -115,6 +80,16 @@
 <script setup>
 import { ref, watch, onUnmounted, computed } from 'vue';
 import api from '@/services/api';
+import { toast } from '@/services/toast';
+
+const urlToFile = async (url, filename) => {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Failed to fetch image from URL: ${response.statusText}`);
+    }
+    const blob = await response.blob();
+    return new File([blob], filename, { type: blob.type || 'image/jpeg' });
+};
 
 const props = defineProps({
   selectedStyleName: {
@@ -142,11 +117,13 @@ const inputImageFile = ref(null);
 const outputImageUrl = ref(null);
 const isLoading = ref(false);
 const fileInput = ref(null);
-const error = ref(null);
-const showMissingInfoModal = ref(false);
-const showErrorModal = ref(false);
 const currentGenerationId = ref(null);
 const isStoppingAllowed = ref(false);
+const isDragging = ref(false);
+const inputImageLoaded = ref(false);
+const outputImageLoaded = ref(false);
+const completedGenerationId = ref(null);
+const isFirstCheck = ref(true);
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE_BYTES = 7 * 1024 * 1024;
@@ -161,23 +138,38 @@ let pollAttempt = 0;
 
 watch(() => props.latestGenerationData, (latest) => {
   if (latest) {
+    const statuses = ['completed', 'failed', 'stopped_by_user', 'rejected_by_safety'];
+    if (isFirstCheck.value && statuses.includes(latest.status)) {
+      isFirstCheck.value = false;
+      return;
+    }
+    isFirstCheck.value = false;
+    
     if (latest.status === 'processing') {
       isLoading.value = true;
       currentGenerationId.value = latest.id;
       inputImageUrl.value = latest.input_img_signed_url;
       outputImageUrl.value = null;
-      error.value = null;
-      startStopEnableTimer();
+      startStopEnableTimer(latest.created_at);
       startPolling();
     } 
     else if (latest.status === 'completed' && latest.output_img_signed_url) {
       inputImageUrl.value = latest.input_img_signed_url;
       outputImageUrl.value = latest.output_img_signed_url;
+      completedGenerationId.value = latest.id;
     } 
     else if (latest.status === 'failed') {
       inputImageUrl.value = latest.input_img_signed_url;
-      error.value = latest.error || 'The last generation has failed.';
-      showErrorModal.value = true;
+      toast.info(latest.error_api_message || latest.error_message);
+      clearStopEnableTimer();
+    }
+    else if (latest.status === 'stopped_by_user') {
+      inputImageUrl.value = latest.input_img_signed_url;
+      clearStopEnableTimer();
+    }
+    else if (latest.status === 'rejected_by_safety') {
+      inputImageUrl.value = latest.input_img_signed_url;
+      toast.info(latest.error_api_message);
       clearStopEnableTimer();
     }
   }
@@ -186,9 +178,19 @@ watch(() => props.latestGenerationData, (latest) => {
 watch(inputImageUrl, (newVal) => {
   if (!newVal) {
     inputImageFile.value = null;
+    inputImageLoaded.value = false;
     if (fileInput.value) {
       fileInput.value.value = '';
     }
+  }
+  else {
+    inputImageLoaded.value = false;
+  }
+});
+
+watch(outputImageUrl, (newVal) => {
+  if (newVal) {
+    outputImageLoaded.value = false;
   }
 });
 
@@ -204,8 +206,7 @@ const pollForResult = async () => {
     stopPolling();
     isLoading.value = false;
     currentGenerationId.value = null;
-    error.value = 'Failed to get the generated image. Please try again later.';
-    showErrorModal.value = true;
+    toast.info('Failed to get the generated image. Please try again later.'); //чи треба це взагалі?
     clearStopEnableTimer();
     return;
   }
@@ -215,15 +216,28 @@ const pollForResult = async () => {
     const latest = response.data;
     
     if (latest?.status === 'failed') {
-      error.value = latest.error || 'Generation failed on the backend.';
-      showErrorModal.value = true;
+      toast.info(latest.error_api_message || latest.error_message);
       isLoading.value = false;
       stopPolling();
       currentGenerationId.value = null;
       clearStopEnableTimer();
-    } 
+    }
+    else if (latest?.status === 'stopped_by_user') {
+        isLoading.value = false;
+        stopPolling();
+        currentGenerationId.value = null;
+        clearStopEnableTimer();
+    }
+    else if (latest?.status === 'rejected_by_safety') {
+        toast.info(latest.error_api_message);
+        isLoading.value = false;
+        stopPolling();
+        currentGenerationId.value = null;
+        clearStopEnableTimer();
+    }
     else if (latest?.status === 'completed' && latest.output_img_signed_url) {
       outputImageUrl.value = latest.output_img_signed_url;
+      completedGenerationId.value = latest.id;
       if (latest.input_img_signed_url && !inputImageUrl.value) {
           inputImageUrl.value = latest.input_img_signed_url;
       }
@@ -238,12 +252,12 @@ const pollForResult = async () => {
       pollingTimeoutId = setTimeout(pollForResult, nextInterval);
     }
   } catch (err) {
-      error.value = getErrorMessage(err);
-      showErrorModal.value = true;
-      isLoading.value = false;
-      stopPolling();
-      currentGenerationId.value = null;
-      clearStopEnableTimer();
+    const errorMessage = err.response?.data?.detail || 'An unexpected error occurred while checking generation status.';
+    toast.info(errorMessage);
+    isLoading.value = false;
+    stopPolling();
+    currentGenerationId.value = null;
+    clearStopEnableTimer();
   }
 };
 
@@ -272,12 +286,28 @@ const isButtonDisabled = computed(() => {
   return isLoading.value && !isStoppingAllowed.value;
 });
 
-const startStopEnableTimer = () => {
+const startStopEnableTimer = (creationTime) => {
   clearStopEnableTimer();
   isStoppingAllowed.value = false;
-  stopEnableTimerId = setTimeout(() => {
-    isStoppingAllowed.value = true;
-  }, 30000);
+
+  if (creationTime) {
+    const createdAt = new Date(creationTime);
+    const now = new Date();
+    const elapsedTime = now.getTime() - createdAt.getTime();
+    const remainingTime = 30000 - elapsedTime;
+
+    if (remainingTime <= 0) {
+      isStoppingAllowed.value = true;
+    } else {
+      stopEnableTimerId = setTimeout(() => {
+        isStoppingAllowed.value = true;
+      }, remainingTime);
+    }
+  } else {
+    stopEnableTimerId = setTimeout(() => {
+      isStoppingAllowed.value = true;
+    }, 30000);
+  }
 };
 
 const clearStopEnableTimer = () => {
@@ -294,25 +324,32 @@ const handleButtonClick = () => {
   }
 };
 
-const getErrorMessage = (err) => {
-  if (err.response) {
-    const status = err.response.status;
-    const data = err.response.data;
-    const serverError = data?.error || data?.detail;
+const getErrorMessage = (err, endpoint) => {
+  if (!err.response) {
+    return null;
+  }
 
-    switch (status) {
-      case 400:
-        return serverError || 'There was a problem with your request. Please check the input.';
-      case 404:
-        return serverError || 'The requested resource could not be found.';
-      case 500:
-        return 'An internal server error occurred. Please try again later.';
-      default:
-        return serverError || `An unexpected server error occurred (Status: ${status}).`;
+  const { status, data } = err.response;
+  const serverError = data?.detail;
+
+  if (status === 400) {
+    if (endpoint === 'create') {
+      return serverError || data?.non_field_errors?.[0] || 'Could not create request. Check your input data.';
+    } 
+    else if (endpoint === 'stop') {
+      return serverError || 'Could not stop generation.';
+    } 
+    else if (endpoint === 'download') {
+      return serverError || 'Could not download the image.';
     }
   } 
-  else if (err.request) {
-    return 'Could not connect to the server. Please check your network connection.';
+  else if (status === 404) {
+    if (endpoint === 'stop') {
+      return serverError || 'Generation request not found.';
+    } 
+    else if (endpoint === 'download') {
+      return serverError || 'File for download not found.';
+    }
   }
   return null;
 };
@@ -334,32 +371,32 @@ const handleStopGeneration = async () => {
     isLoading.value = false;
     currentGenerationId.value = null;
     
-    if (err.response && [400, 404, 500].includes(err.response.status)) {
-      const message = getErrorMessage(err);
-      if (message) {
-        error.value = message;
-        showErrorModal.value = true;
-      }
+    if (err.response && [400, 404].includes(err.response.status)) {
+      toast.info(getErrorMessage(err, 'stop'));
     }
   }
 };
 
 const handleGenerate = async () => {
   if (isLoading.value) return;
-  if (!inputImageFile.value || !props.selectedStyleId) {
-    showMissingInfoModal.value = true;
+  if ((!inputImageFile.value && !inputImageUrl.value) || !props.selectedStyleId) {
+    toast.info('Choose your picture and destiny');
     return;
   }
   isLoading.value = true;
   outputImageUrl.value = null;
-  error.value = null;
-  showErrorModal.value = false;
+  completedGenerationId.value = null;
   startStopEnableTimer();
 
   try {
+    let fileToUpload = inputImageFile.value;
+    if (!fileToUpload && inputImageUrl.value) {
+        fileToUpload = await urlToFile(inputImageUrl.value, 'reloaded-image.jpeg');
+    }
+    
     const formData = new FormData();
     formData.append('chosen_style', props.selectedStyleId);
-    formData.append('input_image', inputImageFile.value);
+    formData.append('input_image', fileToUpload);
 
     const response = await api.post('/api/generations/generation-requests/create/', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
@@ -373,35 +410,33 @@ const handleGenerate = async () => {
 
   } catch (err) {
     isLoading.value = false;
-    error.value = getErrorMessage(err);
-    showErrorModal.value = true;
+    if (err.response && err.response.status === 400) {
+        toast.info(getErrorMessage(err, 'create'));
+    }
   }
 };
 
 const triggerFileInput = () => {
-  error.value = null;
-  showErrorModal.value = false;
   fileInput.value?.click();
 };
 
 const onFileSelected = (event) => {
   const target = event.target;
   const file = target.files?.[0];
+  handleFile(file);
+};
+
+const handleFile = (file) => {
   if (!file) {
     return;
   }
 
-  error.value = null;
-  showErrorModal.value = false;
-
   if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-    error.value = 'Invalid file type. Please select an image in JPEG, PNG or WEBP format.';
-    showErrorModal.value = true;
+    toast.info('Invalid file type. Our magicians support only JPEG, PNG or WEBP format.');
     return;
   }
   else if (file.size > MAX_FILE_SIZE_BYTES) {
-    error.value = 'Maximum file size is 7 MB.';
-    showErrorModal.value = true;
+    toast.info('Maximum file size is 7 MB.');
     return;
   }
 
@@ -411,6 +446,56 @@ const onFileSelected = (event) => {
     inputImageUrl.value = event.target?.result;
   };
   reader.readAsDataURL(file);
+};
+
+const onDragEnter = (event) => {
+  event.preventDefault();
+  isDragging.value = true;
+};
+
+const onDragOver = (event) => {
+  event.preventDefault(); 
+};
+
+const onDragLeave = (event) => {
+  event.preventDefault();
+  isDragging.value = false;
+};
+
+const onDrop = (event) => {
+  event.preventDefault();
+  isDragging.value = false;
+  const file = event.dataTransfer.files[0];
+  handleFile(file);
+};
+
+const onInputImageLoad = () => {
+  inputImageLoaded.value = true;
+};
+
+const onOutputImageLoad = () => {
+  outputImageLoaded.value = true;
+};
+
+const downloadOutputImage = async () => {
+  if (!completedGenerationId.value) {
+    toast.info("Cannot download image. Please try again later.");
+    return;
+  }
+
+  try {
+    const response = await api.get(`api/generations/generation-requests/download/${completedGenerationId.value}/`);
+    const link = document.createElement('a');
+    link.href = response.data.download_url;
+    link.setAttribute('download', `ervelus-image-${completedGenerationId.value}.png`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (err) {
+    if (err.response && [400, 404].includes(err.response.status)) {
+      toast.info(getErrorMessage(err, 'download'));
+    }
+  }
 };
 </script>
 

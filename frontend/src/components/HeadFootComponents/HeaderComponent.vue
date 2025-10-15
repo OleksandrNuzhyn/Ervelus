@@ -1,7 +1,7 @@
 <template>
     <header class="fixed inset-x-0 top-0 z-50 bg-black/30 backdrop-blur-sm">
       <div class="max-w-screen mx-auto px-4 sm:px-6 lg:px-12">
-        <div class="flex items-center justify-between h-19">
+        <div class="flex items-center justify-between h-[70px]">
           <router-link to="/" class="text-2xl font-bold text-gray-100 medieval select-none">Ervelus</router-link>
           <nav class="hidden md:flex items-center gap-6 text-gray-200">
             <router-link to="/dashboard" class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 text-gray-100">Dashboard</router-link>
@@ -33,7 +33,7 @@
                 leave-active-class="transition ease-in duration-200"
                 leave-from-class="transform translate-x-0"
                 leave-to-class="transform translate-x-full">
-                <div v-if="isBarOpen" class="fixed right-0 top-19 h-[calc(100vh-4rem)] py-2 w-67 bg-[#202b32]/30 backdrop-blur-xl z-100 flex flex-col transform-gpu">
+                <div v-if="isBarOpen" class="fixed right-0 top-18 h-[calc(100vh-4rem)] py-2 w-80 bg-[#202b32]/30 backdrop-blur-xl z-100 flex flex-col transform-gpu">
                   <div class="px-4 py-4 text-sm text-gray-400 flex items-center justify-between">
                     <span>COINS: {{ credits }}</span>
                     <img src="@/assets/svg/coin.svg" class="h-10 w-10" />
@@ -50,15 +50,15 @@
                       <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   </router-link>
-                  <router-link to="/contact-us" @click="isBarOpen = false" class="px-4 py-4 text-sm text-gray-400 hover:text-white flex items-center justify-between border-b border-gray-700">
+                  <router-link to="/contact-us" @click="isBarOpen = false" class="px-4 py-4 text-sm text-gray-400 hover:text-white flex items-center justify-between">
                     <span>Contact us</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>
                   </router-link>
                   <div class="mt-auto">
-                    <div class="p-1 mb-2">
-                      <img src="@/assets/video/bonfire.gif" alt="Bonfire animation" class="w-full filter contrast-150" />
+                    <div class="">
+                      <img src="@/assets/svg/sidebar1.webp" class="w-full" />
                     </div>
                     <button @click="handleLogout" class="w-full text-left px-4 py-4 text-sm bg-black/20 text-gray-400 hover:text-white flex items-center justify-between">
                       <span>Sign out</span>
