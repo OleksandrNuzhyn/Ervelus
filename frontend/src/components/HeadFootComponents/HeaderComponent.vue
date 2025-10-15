@@ -58,7 +58,7 @@
                   </router-link>
                   <div class="mt-auto">
                     <div class="">
-                      <img src="@/assets/svg/sidebar1.webp" class="w-full" />
+                      <img src="@/assets/svg/sidebar.webp" class="w-full" />
                     </div>
                     <button @click="handleLogout" class="w-full text-left px-4 py-4 text-sm bg-black/20 text-gray-400 hover:text-white flex items-center justify-between">
                       <span>Sign out</span>
