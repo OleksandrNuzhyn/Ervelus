@@ -8,7 +8,7 @@
               <h2 class="text-3xl font-semibold text-gray-200 mb-6 medieval text-center">Subscriptions</h2>
               
               <div v-if="subscriptions.length > 0" class="space-y-6 pb-6">
-                <div v-for="sub in subscriptions" :key="sub.id" class="single-subscription-card">
+                <div v-for="sub in subscriptions" :key="sub.id" class="subscription-display-card">
                   <div class="relative z-10 flex flex-col h-full">
                     <div>
                       <div class="flex justify-between items-baseline">
@@ -71,7 +71,7 @@
               </div>
 
               <div v-else class="pb-6">
-                <div class="single-subscription-card flex flex-col items-center justify-center text-center text-gray-400">
+                <div class="subscription-display-card flex flex-col items-center justify-center text-center text-gray-400">
                   <div class="relative z-10 flex flex-col h-full justify-center items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     <h3 class="text-lg text-gray-300">No Subscriptions Found</h3>
@@ -145,8 +145,8 @@ async function getProfileData() {
   
   try {
     const response = await api.get('/api/subscriptions/user-subscriptions/');
-    subscriptions.value = response.data.subscriptions;
-    portalUrl.value = response.data.portal_url;
+    subscriptions.value = response.data?.subscriptions || [];
+    portalUrl.value = response.data?.portal_url || '';
   }
   catch (error) {
     errorMessage.value = 'Could not load your subscription data. Please try again later';
@@ -178,33 +178,31 @@ async function deleteAccount() {
         errorMessage.value = 'An unexpected error occurred while deleting your account';
       }
     }
+    finally {
+      confirmActionResolve = null;
+    }
   }
 }
 
-const handleConfirm = () => {
+function handleConfirm() {
   if (confirmActionResolve) {
     confirmActionResolve(true);
     showConfirmModal.value = false;
   }
-};
+}
 
-const handleCancel = () => {
+function handleCancel() {
   if (confirmActionResolve) {
     confirmActionResolve(false);
     showConfirmModal.value = false;
   }
-};
+}
 
 function formatDateTime(dateString) {
-  if (!dateString) return 'None';
-  const options = {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit'
-  };
-  return new Date(dateString).toLocaleString(undefined, options);
+  if (!dateString) {
+    return 'None';
+  }
+  return new Date(dateString).toLocaleString(undefined);
 }
 
 function getStatusDotClass(status) {
@@ -390,7 +388,7 @@ onMounted(() => {
     }
 }
 
-.single-subscription-card {
+.subscription-display-card {
   background: rgba(255, 255, 255, 0.03);
   will-change: backdrop-filter, transform;
   transform: translateZ(0);
