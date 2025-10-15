@@ -4,38 +4,37 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import GoogleSignInPlugin from 'vue3-google-signin'
 import { initializePaddle } from '@paddle/paddle-js';
-import { ToastPlugin, toastOptions } from './services/toast';
 
 import App from './App.vue'
 import router from './router'
 import api, { getCookie } from './services/api'
 
+const app = createApp(App)
+const pinia = createPinia()
+
+app.use(pinia)
+app.use(router)
+app.use(GoogleSignInPlugin, {
+  clientId: '281870812434-c175ecrljg0b8fr5sg30olverjkri2d0.apps.googleusercontent.com'
+});
+
+app.mount('#app')
+
 async function initializeApp() {
-    if (!getCookie('csrftoken')) {
-      await api.get('/api/auth/csrf-token/');
-    }
-  const paddle = await initializePaddle({
+  if (!getCookie('csrftoken')) {
+    await api.get('/api/auth/csrf-token/');
+  }
+
+  await initializePaddle({
     token: 'test_d1b7d123c2e298499433b486045',
     environment: 'sandbox',
     checkout: {
       settings: {
         theme: 'dark',
-        displayMode: 'overlay',
+        displayMode: 'overlay'
       }
-    },
+    }
   });
-
-  const app = createApp(App)
-  const pinia = createPinia()
-  
-  app.use(pinia)
-  app.use(router)
-  app.use(ToastPlugin, toastOptions)
-  app.use(GoogleSignInPlugin, {
-    clientId: '281870812434-c175ecrljg0b8fr5sg30olverjkri2d0.apps.googleusercontent.com'
-  });
-  
-  app.mount('#app')
 }
 
 initializeApp();

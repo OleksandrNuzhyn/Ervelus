@@ -12,7 +12,7 @@ import ResetPasswordConfirm from '@/components/AuthComponents/ResetPasswordConfi
 
 <style scoped>
 .background-container {
-  background-image: url('@/assets/background_assets/light_leak.webp');
+  background-image: url('@/assets/background_assets/side_background.webp');
   min-height: 100vh;
   background-position: center;
   background-size: cover;

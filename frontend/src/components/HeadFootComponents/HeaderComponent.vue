@@ -220,11 +220,16 @@ watch(isBurgerOpen, (newValue) => {
   }
 });
 
-const handleLogout = async () => {
-  await api.post('/api/auth/logout/');
-  authStore.$reset();
-  await router.push({ name: 'login' });
-  isBarOpen.value = false;
-  isBurgerOpen.value = false;
-};
+async function handleLogout() {
+  try {
+    await api.post('/api/auth/logout/');
+  }
+  finally {
+    authStore.logout();
+    await router.push({ name: 'login' });
+
+    isBarOpen.value = false;
+    isBurgerOpen.value = false;
+  }
+}
 </script> 

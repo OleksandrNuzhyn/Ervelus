@@ -1,13 +1,15 @@
 <template>
-  <HeaderComponent />
-  <div class="background-container flex items-center justify-center">
-    <ContactUsComponent />
+  <div>
+    <HeaderComponent />
+    <div class="background-container flex items-center justify-center">
+      <ContactUsComponent />
+    </div>
+    <FooterComponent />
   </div>
-  <FooterComponent />
 </template>
 
 <script setup>
-import ContactUsComponent from '@/components/ContactUsComponent.vue';
+import ContactUsComponent from '@/components/OtherComponents/ContactUsComponent.vue';
 import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue';
 import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue';
 </script> 

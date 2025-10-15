@@ -315,13 +315,13 @@ def prepare_image_for_upload(image_data, quality):
         transposed_image = transposed_image.convert("RGB")
 
     buffer = BytesIO()
-    transposed_image.save(buffer, format='JPEG', quality=quality, optimize=True, progressive=True)
+    transposed_image.save(buffer, format='JPEG', quality=quality, optimize=True)
     buffer.seek(0)
     
     return buffer.getvalue()
 
 def upload_input_image_to_gcs(image_file, user_id):
-    prepared_image_bytes = prepare_image_for_upload(image_file, quality=75)
+    prepared_image_bytes = prepare_image_for_upload(image_file, quality=80)
 
     timestamp = timezone.now().strftime('%Y-%m-%d-%H-%M-%S')
     bucket_name = settings.GCP_STORAGE_BUCKET_NAME

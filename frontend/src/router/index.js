@@ -2,20 +2,19 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
 const routes = [
+  { path: '/', name: 'home', component: () => import('@/views/HomePage.vue') },
   { path: '/login', name: 'login', component: () => import('@/views/LoginPage.vue'), meta: { guest: true } },
   { path: '/register', name: 'register', component: () => import('@/views/RegisterPage.vue'), meta: { guest: true } },
   { path: '/forgot-password', name: 'forgot-password', component: () => import('@/views/ForgotPasswordPage.vue') },
   { path: '/reset-password-confirm/:uid/:token', name: 'reset-password-confirm', component: () => import('@/views/ResetPasswordConfirmPage.vue') },
-  { path: '/dashboard', name: 'dashboard', component: () => import('@/views/DashboardPage.vue'), meta: { requiresAuth: true } },
   { path: '/verify-email/:token', name: 'verify-email', component: () => import('@/views/ConfirmEmailPage.vue') },
-  { path: '/', name: 'home-root', component: () => import('@/views/HomePage.vue') },
   { path: '/terms-of-service', name: 'terms-of-service', component: () => import('@/views/TermsOfServicePage.vue') },
   { path: '/privacy-policy', name: 'privacy-policy', component: () => import('@/views/PrivacyPolicyPage.vue') },
   { path: '/pricing', name: 'pricing', component: () => import('@/views/PricingPage.vue') },
-  { path: '/generation', name: 'generation', component: () => import('@/views/GenerationPage.vue') },
   { path: '/contact-us', name: 'contact-us', component: () => import('@/views/ContactUsPage.vue') },
-  { path: '/profile', name: 'profile', component: () => import('@/views/ProfilePage.vue'), meta: { requiresAuth: true } },
-  { path: '/gallery', name: 'gallery', component: () => import('@/views/GalleryPage.vue')}
+  { path: '/dashboard', name: 'dashboard', component: () => import('@/views/GenerationPage.vue'), meta: { requiresAuth: true } },
+  { path: '/gallery', name: 'gallery', component: () => import('@/views/GalleryPage.vue'), meta: { requiresAuth: true } },
+  { path: '/profile', name: 'profile', component: () => import('@/views/ProfilePage.vue'), meta: { requiresAuth: true } }
 ];
 
 const router = createRouter({

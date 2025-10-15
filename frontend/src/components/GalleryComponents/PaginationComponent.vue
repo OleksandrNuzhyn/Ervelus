@@ -1,12 +1,16 @@
 <template>
-  <nav
-    class="mt-6 mb-6 flex items-center justify-center gap-2 text-sm"
-    aria-label="Pagination"
-  >
+  <nav class="mt-6 mb-6 flex items-center justify-center gap-2 text-sm" aria-label="Pagination">
     <button
-      class="px-3 py-2 rounded-md border border-white/10 bg-black/30 backdrop-blur hover:bg-black/50 disabled:opacity-40 disabled:cursor-not-allowed"
-      :disabled="page <= 1 || loading"
+      :class="[
+        'px-3 py-2 rounded-md border backdrop-blur disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-400 ease-in-out',
+        hoveredPage === 'prev'
+          ? 'border-white/20 bg-white/10 text-white'
+          : 'border-white/10 bg-black/30'
+      ]"
+      :disabled="page <= 1 || isLoading"
       @click="$emit('change', page - 1)"
+      @mouseover="hoveredPage = 'prev'"
+      @mouseleave="hoveredPage = null"
     >
       Prev
     </button>
@@ -14,22 +18,31 @@
     <button
       v-for="p in pagesToShow"
       :key="p"
-      class="px-3 py-2 rounded-md border"
+      class="px-3 py-2 rounded-md border transition-colors duration-400 ease-in-out"
       :class="[
-        p === page
-          ? 'border-gray-300 bg-gray-300/10'
-          : 'border-white/10 bg-black/30 hover:bg-black/50'
+        (p === hoveredPage || (hoveredPage === null && p === page))
+          ? 'border-white/20 bg-white/10 text-white backdrop-blur'
+          : 'border-white/10 bg-black/30 backdrop-blur'
       ]"
       @click="$emit('change', p)"
-      :disabled="loading"
+      :disabled="isLoading"
+      @mouseover="hoveredPage = p"
+      @mouseleave="hoveredPage = null"
     >
       {{ p }}
     </button>
 
     <button
-      class="px-3 py-2 rounded-md border border-white/10 bg-black/30 backdrop-blur hover:bg-black/50 disabled:opacity-40 disabled:cursor-not-allowed"
-      :disabled="page >= pageCount || loading"
+      :class="[
+        'px-3 py-2 rounded-md border backdrop-blur disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-400 ease-in-out',
+        hoveredPage === 'next'
+          ? 'border-white/20 bg-white/10 text-white'
+          : 'border-white/10 bg-black/30'
+      ]"
+      :disabled="page >= pageCount || isLoading"
       @click="$emit('change', page + 1)"
+      @mouseover="hoveredPage = 'next'"
+      @mouseleave="hoveredPage = null"
     >
       Next
     </button>
@@ -37,18 +50,19 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = defineProps({
   page: { type: Number, required: true },
   pageCount: { type: Number, required: true },
-  loading: { type: Boolean, default: false },
-  range: { type: Number, default: 1 },
+  isLoading: { type: Boolean, default: false }
 })
 
+const hoveredPage = ref(null)
+
 const pagesToShow = computed(() => {
-  const start = Math.max(1, props.page - props.range)
-  const end = Math.min(props.pageCount, props.page + props.range)
+  const start = Math.max(1, props.page - 1)
+  const end = Math.min(props.pageCount, props.page + 1)
   const list = []
   for (let p = start; p <= end; p++) list.push(p)
   if (!list.includes(1)) list.unshift(1)

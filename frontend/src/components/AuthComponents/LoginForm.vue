@@ -44,15 +44,20 @@
         </div>
   
         <p v-if="errors.api" class="text-center text-red-400">{{ errors.api }}</p>
-  
+
+        <div class="text-sm text-center text-gray-400">
+            By continuing, you agree to our
+            <router-link to="/terms-of-service" target="_blank" class="text-sky-400 hover:underline">Terms of Service</router-link> and <router-link to="/privacy-policy" target="_blank" class="text-sky-400 hover:underline">Privacy Policy</router-link>
+        </div>
+
         <div>
           <button 
             type="submit"
             :disabled="isLoading"
-            class="w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-white/60 backdrop-blur-md border border-white/20 shadow-lg hover:bg-white/20"
+            class="w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-white/60 backdrop-blur-md border border-white/20 shadow-lg hover:bg-white/20 hover:text-white"
           >
             <span v-if="isLoading">Uncovering the truth...</span>
-            <span v-else>Log in</span>
+            <span v-else>Sign In</span>
           </button>
         </div>
   
@@ -146,7 +151,7 @@ async function handleLoginSuccess(response) {
 }
 
 function handleLoginError() {
-  errors.value.api = 'Google sign-in failed.';
+  errors.value.api = 'Google sign-in failed';
 }
 
 function validateForm() {
@@ -188,41 +193,39 @@ async function handleSubmit() {
     });
 
     await authStore.checkAuth();
-
     router.push('/dashboard');
+  }
+  catch (error) {
+    errors.value = { email: '', password: '', api: '' };
+    if (error.response) {
+      const { status, data = {} } = error.response;
 
-    } 
-    catch (error) {
-      errors.value = { email: '', password: '', api: '' };
-      if (error.response) {
-        const { status, data = {} } = error.response;
+      switch (status) {
+        case 400:
+          if (data.non_field_errors && data.non_field_errors.length > 0) {
+            errors.value.api = data.non_field_errors[0];
+          } 
+          else {
+            errors.value.api = 'Incorrect email or password. Please try again.';
+          }
+          break;
 
-        switch (status) {
-          case 400:
-            if (data.non_field_errors && data.non_field_errors.length > 0) {
-              errors.value.api = data.non_field_errors[0];
-            } 
-            else {
-              errors.value.api = 'Incorrect email or password. Please try again.';
-            }
-            break;
-
-          case 500:
-            errors.value.api = data.detail || 'Server Error Occured.';
-            break;
-            
-          default:
-            errors.value.api = 'An unexpected error occurred. Please try again.';
-        }
-      } 
-      else {
-        errors.value.api = 'Unable to connect to the server. Please check your network connection.';
+        case 500:
+          errors.value.api = data.detail || 'Server Error Occured.';
+          break;
+          
+        default:
+          errors.value.api = 'An unexpected error occurred. Please try again.';
       }
-    }
-    finally {
-      isLoading.value = false;
+    } 
+    else {
+      errors.value.api = 'Unable to connect to the server. Please check your network connection.';
     }
   }
+  finally {
+    isLoading.value = false;
+  }
+}
 </script>
 
 <style scoped>

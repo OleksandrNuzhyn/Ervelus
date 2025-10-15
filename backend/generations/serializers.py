@@ -94,6 +94,7 @@ class GenerationRequestListSerializer(serializers.ModelSerializer):
 class GenerationRequestSerializer(serializers.ModelSerializer):
     input_img_signed_url = serializers.SerializerMethodField()
     output_img_signed_url = serializers.SerializerMethodField()
+    chosen_style_name = serializers.CharField(source='chosen_style.name')
 
     def get_input_img_signed_url(self, obj):
         try:
@@ -116,9 +117,11 @@ class GenerationRequestSerializer(serializers.ModelSerializer):
         fields = (
             'id', 
             'chosen_style',
+            'chosen_style_name',
             'input_img_signed_url',
             'output_img_signed_url',
             'status',
+            'created_at',
             'error_message',
             'error_api_message'
         )

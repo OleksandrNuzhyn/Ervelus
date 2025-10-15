@@ -7,6 +7,7 @@ from .serializers import UserSubscriptionListSerializer, SubscriptionEligibility
 from products.models import SubscriptionPlan
 from core.models import ApplicationConfig
 from agreements.permissions import HasAcceptedLatestAgreements
+from django.db.models import Count
 import requests
 import logging
 
@@ -22,20 +23,25 @@ def subscription_eligibility_check(request):
     try:
         plan = SubscriptionPlan.objects.get(pk=plan_id, is_active=True)
     except SubscriptionPlan.DoesNotExist:
-        return Response({'detail': 'Plan is not active now'}, status=400)
+        return Response(status=404)
 
     config = ApplicationConfig.get_solo()
 
     potential_spend = config.reserved_for_spend + plan.product_price
     if potential_spend >= config.hard_budget:
-        return Response({'detail': 'Purchase unavailable due to budget limits. We apologize for the inconvenience — improvements are underway'}, status=400)
+        return Response(status=400)
 
     return Response(status=200)
 
 @api_view(['GET'])
 @permission_classes([HasAcceptedLatestAgreements])
 def user_subscription_list(request):
-    user_subscriptions = UserSubscription.objects.select_related('plan').filter(user=request.user)
+    user_subscriptions = UserSubscription.objects.select_related('plan').filter(
+        user=request.user
+    ).annotate(
+        plan_unlocked_styles_count=Count('plan__unlocked_styles')
+    ).order_by('start_time')
+
     serializer = UserSubscriptionListSerializer(user_subscriptions, many=True)
     profile = request.user.profile
     portal_url = None

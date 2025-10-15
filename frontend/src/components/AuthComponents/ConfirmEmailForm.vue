@@ -34,7 +34,7 @@ onMounted(async () => {
   const { token } = route.params;
 
   if (!token) {
-    error.value = 'Verification token was not found in the URL.';
+    error.value = 'Verification token was not found in the URL';
     return;
   }
 
@@ -51,7 +51,7 @@ onMounted(async () => {
     
     setTimeout(() => {
       router.push('/dashboard');
-    }, 3000);
+    }, 2500);
 
   } 
   catch (err) {
@@ -59,7 +59,7 @@ onMounted(async () => {
         error.value = err.response.data.detail;
     } 
     else {
-        error.value = 'The token is invalid or has expired. Please try again.';
+        error.value = 'The token is invalid or has expired. Please try again';
     }
   } 
   finally {
