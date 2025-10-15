@@ -3,13 +3,15 @@
     <div class="w-full">
       <div class="relative">
         <CategoryStrip :categories="genres" :selected-category-id="selectedGenreId" @category-selected="handleGenreSelect"/>
-        <StylePanel
-          v-if="isStylePanelOpen"
-          class="absolute top-full mt-2 w-64/65 left-1/2 -translate-x-1/2 z-20"
-          :styles="filteredStyles"
-          :selected-style-id="selectedStyleId"
-          @style-selected="handleStyleSelect"
-          @close="handleClosePanel" />
+        <transition name="slide-fade">
+          <StylePanel
+            v-if="isStylePanelOpen"
+            class="absolute top-full mt-3 w-64/65 left-1/2 -translate-x-1/2 z-20"
+            :styles="filteredStyles"
+            :selected-style-id="selectedStyleId"
+            @style-selected="handleStyleSelect"
+            @close="handleClosePanel" />
+        </transition>
       </div>
     </div>
     <ImageWorkspace 
@@ -103,3 +105,22 @@ const handleOpenStylePanel = () => {
 };
 
 </script>
+
+<style scoped>
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-enter-from {
+  transform: translateY(-100px);
+  opacity: 0;
+}
+.slide-fade-leave-to {
+  transform: translateY(-100px);
+  opacity: 0;
+}
+</style>

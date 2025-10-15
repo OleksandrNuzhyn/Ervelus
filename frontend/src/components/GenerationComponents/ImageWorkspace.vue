@@ -1,8 +1,8 @@
 <template>
-  <div class="mt-0 p-3">
-    <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 items-start">
+  <div class="mt-0 p-3 lg:flex lg:flex-col lg:min-h-[calc(100vh-9rem)]">
+    <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 items-start lg:items-stretch lg:flex-grow">
       <div class="z-9 flex flex-col items-center w-full">
-        <div class="bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-lg p-4 h-[400px] md:h-[660px] w-full flex flex-col items-center justify-center">
+        <div class="bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-lg p-4 h-[400px] md:h-[660px] w-full flex flex-col items-center justify-center lg:h-auto lg:flex-grow lg:min-h-0">
           <div v-if="!inputImageUrl" @click="triggerFileInput"
                @dragenter.prevent="onDragEnter"
                @dragover.prevent="onDragOver"
@@ -19,7 +19,7 @@
             <img 
               :src="inputImageUrl" 
               alt="Input" 
-              class="w-full h-full object-contain rounded-lg transition-opacity duration-500 ease-in-out"
+              class="absolute inset-0 w-full h-full object-contain rounded-lg transition-opacity duration-500 ease-in-out"
               :style="{ opacity: inputImageLoaded ? 1 : 0 }"
               @load="onInputImageLoad"
             />
@@ -30,13 +30,13 @@
             </button>
           </div>
         </div>
-        <div @click="onOpenStylePanel" class="w-full bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl py-3 lg:py-6 mt-7 lg:mt-10 text-center text-xl md:text-2xl font-bold cursor-pointer hover:bg-black/40 transition-all duration-200 border border-transparent hover:border-gray-600">
+        <div @click="onOpenStylePanel" class="w-full bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl py-3 lg:py-6 mt-7 lg:mt-4 text-center text-xl md:text-2xl font-bold cursor-pointer hover:bg-black/40 transition-all duration-200 border border-transparent hover:border-gray-600">
           {{ selectedStyleName || 'Choose style' }}
         </div>
       </div>
 
       <div class="flex flex-col w-full">
-        <div class="flex flex-col items-center justify-center bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-lg p-4 h-[400px] md:h-[660px]">
+        <div class="flex flex-col items-center justify-center bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-lg p-4 h-[400px] md:h-[660px] lg:h-auto lg:flex-grow lg:min-h-0">
           <div v-if="isLoading" class="flex flex-col items-center justify-center">
             <img src="@/assets/svg/staff_logo.svg" class="wave-animation animation-pulse h-45 w-45 pointer-events-none select-none" />
             <p class="text-gray-400 text-lg">Generating...</p>
@@ -45,7 +45,7 @@
             <img 
               :src="outputImageUrl" 
               alt="Output" 
-              class="w-full h-full object-contain rounded-lg transition-opacity duration-500 ease-in-out"
+              class="absolute inset-0 w-full h-full object-contain rounded-lg transition-opacity duration-500 ease-in-out"
               :style="{ opacity: outputImageLoaded ? 1 : 0 }"
               @load="onOutputImageLoad"
             />
@@ -59,7 +59,7 @@
             <p>The result of the generation will appear here</p>
           </div>
         </div>
-        <div class="mt-7 lg:mt-10 mb-2 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-8 sm:gap-5 md:gap-6 lg:gap-10">
+        <div class="mt-7 lg:mt-4 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-8 sm:gap-5 md:gap-6 lg:gap-10">
           <button 
             @click="handleButtonClick"
             :disabled="isButtonDisabled"
