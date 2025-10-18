@@ -2,11 +2,11 @@
     <header class="fixed inset-x-0 top-0 z-50 bg-black/30 backdrop-blur-sm">
       <div class="max-w-screen mx-auto px-4 sm:px-6 lg:px-12">
         <div class="flex items-center justify-between h-[70px]">
-          <router-link to="/" class="text-2xl font-bold text-gray-100 medieval select-none">Ervelus</router-link>
-          <nav class="hidden md:flex items-center gap-6 text-gray-200">
-            <router-link to="/dashboard" class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 text-gray-100">Dashboard</router-link>
-            <router-link to="/pricing" class="hover:text-gray-50">Pricing</router-link>
-            <router-link to="/gallery" class="hover:text-gray-50">Gallery</router-link>
+          <router-link to="/" class="text-2xl font-bold text-gray-100 select-none">Ervelus</router-link>
+          <nav v-if="authStore.isAuthenticated" class="hidden md:flex items-center gap-6 font-thin text-gray-100">
+            <router-link to="/dashboard" class="hover:text-gray-400">Dashboard</router-link>
+            <router-link to="/gallery" class="hover:text-gray-400">Gallery</router-link>
+            <router-link to="/pricing" class="hover:text-gray-400">Pricing</router-link>
             <SideBarComponent
               ref="sideBar"
               :credits="credits"
@@ -14,8 +14,7 @@
               @logout="handleLogout"
             />
           </nav>
-  
-          <button @click="isBurgerOpen = !isBurgerOpen" class="md:hidden text-gray-200 hover:text-gray-50 focus:outline-none">
+          <button v-if="authStore.isAuthenticated" @click="isBurgerOpen = !isBurgerOpen" class="md:hidden text-gray-200 hover:text-gray-50 focus:outline-none">
             <svg v-if="!isBurgerOpen" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
             </svg>
@@ -23,6 +22,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
+          <router-link v-else to="/register" class="border-2 border-white-100 rounded-full px-4 py-2 hover:text-gray-400 hover:border-gray-400 font-medium text-gray-100">Start now</router-link>
         </div>
       </div>
       

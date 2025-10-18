@@ -334,21 +334,21 @@ const getErrorMessage = (err, endpoint) => {
 
   if (status === 400) {
     if (endpoint === 'create') {
-      return serverError || data?.non_field_errors?.[0] || 'Could not create request. Check your input data.';
+      return serverError || data?.non_field_errors?.[0] || 'Could not create request. Please try again later.';
     } 
     else if (endpoint === 'stop') {
-      return serverError || 'Could not stop generation.';
+      return serverError || 'Could not stop generation. Please try again later.';
     } 
     else if (endpoint === 'download') {
-      return serverError || 'Could not download the image.';
+      return serverError || 'Could not download the image. Please try again later.';
     }
   } 
   else if (status === 404) {
     if (endpoint === 'stop') {
-      return serverError || 'Generation request not found.';
+      return serverError || 'Generation request not found. Please try again later.';
     } 
     else if (endpoint === 'download') {
-      return serverError || 'File for download not found.';
+      return serverError || 'File for download not found. Please try again later.';
     }
   }
   return null;
