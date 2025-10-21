@@ -122,6 +122,5 @@ class GenerationRequestSerializer(serializers.ModelSerializer):
             'output_img_signed_url',
             'status',
             'created_at',
-            'error_message',
-            'error_api_message'
+            'error_message'
         )
