@@ -21,3 +21,7 @@ DATABASES = {
 }
 
 STORAGE_BUCKET_NAME = os.getenv("GCP_STORAGE_BUCKET_NAME")
+
+TIME_ZONE = 'Europe/Kyiv'
+
+USE_TZ = True

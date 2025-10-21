@@ -2,6 +2,7 @@ import os
 import io
 import django
 import logging
+from django.utils import timezone
 from google.cloud import storage
 from urllib.parse import urlparse
 from django.db import connections
@@ -123,6 +124,7 @@ def execute_image_resize(request):
 
         if update_data:
             update_data['is_visible'] = True
+            update_data['updated_at'] = timezone.now()
             GenerationRequest.objects.filter(id=generation_request_id).update(**update_data)
     except Exception as e:
         logging.error("Failed to process image resize", extra={'request_json': request_json, 'error': str(e)}, exc_info=True)
