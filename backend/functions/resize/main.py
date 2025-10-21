@@ -4,6 +4,7 @@ import django
 import logging
 from google.cloud import storage
 from urllib.parse import urlparse
+from django.db import connections
 import functions_framework
 from PIL import Image
 
@@ -139,4 +140,6 @@ def image_resize_handler(request):
         execute_image_resize(request)
     except Exception as e:
         logging.error(f"An unhandled exception occurred", extra={'error': str(e)}, exc_info=True)
-    return 204
+    finally:
+        connections.close_all()
+    return "OK", 200

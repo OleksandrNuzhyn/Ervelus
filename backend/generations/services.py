@@ -144,7 +144,7 @@ def create_task_for_resizing(generation_request_id, user_id, input_img_url, outp
         queue_path = tasks_client.queue_path(
             settings.GCP_PROJECT_ID,
             settings.GCP_TASKS_LOCATION,
-            settings.GCP_TASKS_RESIZE_QUEUE_ID,
+            settings.GCP_TASKS_RESIZE_EVENTS_QUEUE_ID,
         )
 
         task = {
@@ -270,16 +270,19 @@ async def handle_generation_process(generation_request_id):
 
 
 def upload_input_image_to_gcs(image_file, user_id):
+    extension_for_pillow = os.path.splitext(image_file.name)[1].lower()
+    save_format = Image.EXTENSION[extension_for_pillow]
+
     image_file.seek(0)
 
     image = Image.open(image_file)
     image = ImageOps.exif_transpose(image)
 
     buffer = BytesIO()
-    image.save(buffer, format=image.format)
+    image.save(buffer, format=save_format)
 
-    content_type = Image.MIME.get(image.format)
-    file_extension = f"{image.format.lower().replace('jpeg', 'jpg')}"
+    content_type = Image.MIME.get(save_format)
+    file_extension = extension_for_pillow.lstrip('.').replace('jpeg', 'jpg')
 
     timestamp = timezone.now().strftime('%Y-%m-%d-%H-%M-%S')
     bucket_name = settings.GCP_TEMP_BUCKET_NAME
