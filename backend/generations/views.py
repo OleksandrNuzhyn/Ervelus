@@ -71,7 +71,7 @@ class GenerationRequestViewSet(viewsets.ViewSet):
                     'headers': {'Content-Type': 'application/json'},
                     'body': json.dumps(event_data).encode('utf-8')
                 },
-                'dispatch_deadline': duration_pb2.Duration(seconds=360)
+                'dispatch_deadline': duration_pb2.Duration(seconds=300)
             }
 
             tasks_client.create_task(request={'parent': queue_path, 'task': task})

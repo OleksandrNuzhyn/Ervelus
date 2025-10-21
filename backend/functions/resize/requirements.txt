@@ -1,0 +1,5 @@
+functions-framework==3.9.2
+google-cloud-storage==3.2.0
+Pillow-SIMD==9.5.0.post2
+Django==5.2.3
+psycopg-binary==3.2.9

@@ -1,4 +1,5 @@
 import os
+import json
 import logging
 from PIL import Image, ImageOps
 from urllib.parse import urlparse
@@ -10,14 +11,16 @@ from django.utils import timezone
 from django.utils.text import slugify
 from .models import GenerationRequest
 from subscriptions.models import UserSubscription
-from tenacity import retry, wait_random_exponential, retry_if_exception, stop_after_attempt
+from tenacity import retry, wait_random_exponential, retry_if_exception, stop_after_delay
 from gcloud.aio.storage import Storage as GCSAsyncStorage
 from google.cloud import storage as gcs_sync_storage
 from asgiref.sync import sync_to_async
 from google import genai
 from google.genai import types
+from google.cloud.tasks_v2.types import HttpMethod
 from google.genai.types import HarmCategory, HarmBlockThreshold
 from google.genai import errors
+from generations.views import tasks_client
 
 logger = logging.getLogger(__name__)
 gcs_sync_storage_client = gcs_sync_storage.Client()
@@ -33,14 +36,14 @@ def is_retryable_error(error):
         return True
     return False
 
-@retry(wait=wait_random_exponential(min=5, max=60), stop=stop_after_attempt(7), retry=retry_if_exception(is_retryable_error))
+@retry(wait=wait_random_exponential(min=5, max=60), stop=stop_after_delay(240), retry=retry_if_exception(is_retryable_error))
 async def generate_output_image(prompt, input_image_bytes):
     image = Image.open(BytesIO(input_image_bytes))
     genai_client = genai.Client()
 
     try:
         response = await genai_client.aio.models.generate_content(
-            model="gemini-2.5-flash-image-preview",
+            model="gemini-2.5-flash-image",
             contents = [prompt, image],
             config=types.GenerateContentConfig(
                 safety_settings=[
@@ -108,32 +111,78 @@ def delete_generation_request_images_from_gcs(generation_request):
         else:
             logger.error(f"Missing original or thumbnail blob in deletion request", extra={'original_blob_name': blob_name, 'thumbnail_blob_name': thumbnail_blob_name})
 
-async def upload_output_image_to_gcs(image_bytes, user_id, style_name):
-    prepared_image_bytes = await sync_to_async(prepare_image_for_upload)(image_bytes, quality=100)
-
+def upload_output_image_to_gcs(image_bytes, user_id, style_name):
     slugified_style_name = slugify(style_name)
     timestamp = timezone.now().strftime('%Y-%m-%d-%H-%M-%S')
 
-    bucket_name = settings.GCP_STORAGE_BUCKET_NAME
-    blob_name = f"users/{user_id}/images/outputs/{slugified_style_name}-{timestamp}.jpg"
+    content_type = 'image/png'
+    file_extension = 'png'
 
-    async with GCSAsyncStorage() as gcs_async_storage_client:
-        await gcs_async_storage_client.upload(bucket_name, blob_name, prepared_image_bytes, content_type='image/jpeg')
+    bucket_name = settings.GCP_TEMP_BUCKET_NAME
+    blob_name = f"users/{user_id}/outputs/{slugified_style_name}-{timestamp}.{file_extension}"
+
+    bucket = gcs_sync_storage_client.bucket(bucket_name)
+    blob = bucket.blob(blob_name)
+
+    blob.upload_from_string(image_bytes, content_type=content_type)
 
     return f"https://storage.googleapis.com/{bucket_name}/{blob_name}"
 
 
 
+def create_task_for_resizing(generation_request_id, user_id, input_img_url, output_img_url=None):
+    try:
+        target_url = settings.RESIZING_WORKER_URL
+        
+        event_data = {
+            "generation_request_id": generation_request_id,
+            "user_id": str(user_id),
+            "input_img_url": input_img_url,
+            "output_img_url": output_img_url
+        }
+
+        queue_path = tasks_client.queue_path(
+            settings.GCP_PROJECT_ID,
+            settings.GCP_TASKS_LOCATION,
+            settings.GCP_TASKS_RESIZE_QUEUE_ID,
+        )
+
+        task = {
+            'http_request': {
+                'url': target_url,
+                'http_method': HttpMethod.POST,
+                'headers': {'Content-Type': 'application/json'},
+                'body': json.dumps(event_data).encode('utf-8'),
+            },
+        }
+
+        tasks_client.create_task(request={'parent': queue_path, 'task': task})
+    except Exception as e:
+        logger.error(f"Failed to create resizing task for generation request", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
+        raise
+
 @sync_to_async
-def processing_successful_generation(generation_request, output_image_url):
+def processing_successful_generation(generation_request_id, output_image_bytes, user_id, style_name):
     with transaction.atomic():
+        try:
+            generation_request = GenerationRequest.objects.select_for_update().get(id=generation_request_id)
+        except GenerationRequest.DoesNotExist:
+            logger.error(f"Generation request was deleted. Upload and processing aborted", extra={'generation_request_id': generation_request_id})
+            return
+        
+        output_img_url = upload_output_image_to_gcs(
+            image_bytes=output_image_bytes,
+            user_id=user_id,
+            style_name=style_name
+        )
+
         subscription_for_debiting_credit = generation_request.user.subscriptions.select_for_update().filter(
             status=UserSubscription.SubscriptionStatus.ACTIVE,
             remaining_credits__gt=0
         ).order_by('end_time').first()
         
         if not subscription_for_debiting_credit:
-            generation_request.output_img_url = output_image_url
+            generation_request.output_img_url = output_img_url
             generation_request.status = GenerationRequest.GenerationStatus.COMPLETED
             generation_request.error_message = "Credit was not debited: no active subscription with credits at processing time"
             generation_request.save(update_fields=['output_img_url', 'status', 'error_message', 'updated_at'])
@@ -143,9 +192,16 @@ def processing_successful_generation(generation_request, output_image_url):
         subscription_for_debiting_credit.remaining_credits -= 1
         subscription_for_debiting_credit.save(update_fields=['remaining_credits'])
 
-        generation_request.output_img_url = output_image_url
+        generation_request.output_img_url = output_img_url
         generation_request.status = GenerationRequest.GenerationStatus.COMPLETED
         generation_request.save(update_fields=['output_img_url', 'status', 'updated_at'])
+
+        transaction.on_commit(lambda: create_task_for_resizing(
+            generation_request_id=generation_request_id,
+            user_id=user_id,
+            input_img_url=generation_request.input_img_url,
+            output_img_url=output_img_url
+        ))
 
 async def handle_generation_process(generation_request_id):
     try:
@@ -155,7 +211,7 @@ async def handle_generation_process(generation_request_id):
     except Exception as e:
         logger.error(f"Failed to get generation request", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
         return
-        
+    
     try:
         if not all([
             generation_request.input_img_url,
@@ -164,75 +220,35 @@ async def handle_generation_process(generation_request_id):
             generation_request.chosen_style.name,
             generation_request.user
         ]):
-            generation_request.status = GenerationRequest.GenerationStatus.FAILED
-            generation_request.error_message = "Input data is missing"
-            await generation_request.asave(update_fields=['status', 'error_message', 'updated_at'])
-            logger.error(f"Input data is missing", extra={'generation_request_id': generation_request_id})
-            return
-    except Exception as e:
-        logger.error(f"Failed to check input data", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
-        return
-    
-    prompt = generation_request.chosen_style.prompt_template
-    style_name = generation_request.chosen_style.name
-    input_image_url = generation_request.input_img_url
-    user_id = generation_request.user.id
+            raise Exception("Input data is missing")
+        
+        prompt = generation_request.chosen_style.prompt_template
+        style_name = generation_request.chosen_style.name
+        input_image_url = generation_request.input_img_url
+        user_id = generation_request.user.id
 
-    try:
         parsed_url = urlparse(input_image_url)
         path = parsed_url.path.lstrip('/')
 
         if '/' not in path:
-            raise ValueError("URL path does not contain a separator")
+            raise Exception("Failed to parse GCS URL path: URL path does not contain a separator")
 
         bucket_name, blob_name = path.split('/', 1)
 
         if not bucket_name or not blob_name:
-            raise ValueError("Bucket name or blob name is empty after split")
-    except ValueError as e:
-        logger.error(f"Failed to parse GCS URL path", extra={'generation_request_id': generation_request_id, 'error': str(e)})
+            raise Exception("Failed to parse GCS URL path: bucket name or blob name is empty after split")
 
-        generation_request.status = GenerationRequest.GenerationStatus.FAILED
-        generation_request.error_message = "Failed to parse GCS URL path"
-        await generation_request.asave(update_fields=['status', 'error_message', 'updated_at'])
-        return
-
-    try:
         async with GCSAsyncStorage() as gcs_async_storage_client:
             input_image_bytes = await gcs_async_storage_client.download(bucket_name, blob_name)
-    except Exception as e:
-        logger.error(f"Failed to download input image from GCS", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
-
-        try:
-            await sync_to_async(generation_request.refresh_from_db)()
-        except GenerationRequest.DoesNotExist:
-            return
-
-        if generation_request.status == GenerationRequest.GenerationStatus.STOPPED_BY_USER:
-            return
-
-        generation_request.status = GenerationRequest.GenerationStatus.FAILED
-        generation_request.error_message = "Failed to download input image from GCS"
-        await generation_request.asave(update_fields=['status', 'error_message', 'updated_at'])
-        return
     
-    await sync_to_async(connections.close_all)()
-
-    try:        
+        await sync_to_async(connections.close_all)()
         output_image_bytes = await generate_output_image(prompt, input_image_bytes)
 
         if not output_image_bytes:
-            raise ValueError("Generated image data is empty")
+            raise Exception("Generated image data is empty")
+
+        await processing_successful_generation(generation_request_id, output_image_bytes, user_id, style_name)
     except ContentBlockedError:
-        try:
-            await sync_to_async(generation_request.refresh_from_db)()
-        except GenerationRequest.DoesNotExist:
-            return
-
-        if generation_request.status == GenerationRequest.GenerationStatus.STOPPED_BY_USER:
-            logger.error(f"Generation request stopped by user with content blocked error", extra={'generation_request_id': generation_request_id})
-            return
-
         try:
             await sync_to_async(delete_generation_request_images_from_gcs)(generation_request)
         except Exception as e:
@@ -240,99 +256,41 @@ async def handle_generation_process(generation_request_id):
 
         generation_request.input_img_url = None
         generation_request.status = GenerationRequest.GenerationStatus.REJECTED_BY_SAFETY
-        generation_request.error_api_message = "Your request was rejected by the safety system"
-        await generation_request.asave(update_fields=['input_img_url', 'status', 'error_api_message', 'updated_at'])
-        return
+        generation_request.error_message = "Request was rejected by the safety system"
+        await generation_request.asave(update_fields=['input_img_url', 'status', 'error_message', 'updated_at'])
     except Exception as e:
-        logger.error(f"Failed to generate output image", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
-        
-        try:
-            await sync_to_async(generation_request.refresh_from_db)()
-        except GenerationRequest.DoesNotExist:
-            return
-
-        if generation_request.status == GenerationRequest.GenerationStatus.STOPPED_BY_USER:
-            return
+        logger.error(f"Error during image generation process", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
 
         generation_request.status = GenerationRequest.GenerationStatus.FAILED
-        generation_request.error_api_message = "Failed to generate output image"
-        await generation_request.asave(update_fields=['status', 'error_api_message', 'updated_at'])
-        return
-
-    try:
-        try:
-            await sync_to_async(generation_request.refresh_from_db)()
-        except GenerationRequest.DoesNotExist:
-            return
-
-        if generation_request.status == GenerationRequest.GenerationStatus.STOPPED_BY_USER:
-            return
-
-        output_image_url = await upload_output_image_to_gcs(
-            image_bytes=output_image_bytes,
-            user_id=user_id,
-            style_name=style_name
-        )
-    except Exception as e:
-        logger.error(f"Failed to upload output image to GCS", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
-
-        try:
-            await sync_to_async(generation_request.refresh_from_db)()
-        except GenerationRequest.DoesNotExist:
-            return
-
-        if generation_request.status == GenerationRequest.GenerationStatus.STOPPED_BY_USER:
-            return
-
-        generation_request.status = GenerationRequest.GenerationStatus.FAILED
-        generation_request.error_message = "Failed to upload output image to GCS"
+        generation_request.error_message = str(e)
         await generation_request.asave(update_fields=['status', 'error_message', 'updated_at'])
-        return
 
-    try:
-        await processing_successful_generation(generation_request, output_image_url)
-    except Exception as e:
-        logger.error(f"Failed to process successful generation", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
-
-        generation_request.status = GenerationRequest.GenerationStatus.FAILED
-        generation_request.error_message = "Failed to process successful generation"
-        await generation_request.asave(update_fields=['status', 'error_message', 'updated_at'])
-        return
+        sync_to_async(create_task_for_resizing)(generation_request_id, user_id, input_image_url)
 
 
-
-def prepare_image_for_upload(image_data, quality):
-    if isinstance(image_data, bytes):
-        image_file = BytesIO(image_data)
-    else:
-        image_file = image_data
-        image_file.seek(0)
-
-    image = Image.open(image_file)
-    transposed_image = ImageOps.exif_transpose(image)
-
-    if transposed_image.mode != "RGB":
-        transposed_image = transposed_image.convert("RGB")
-
-    buffer = BytesIO()
-    transposed_image.save(buffer, format='JPEG', quality=quality, optimize=True)
-    buffer.seek(0)
-    
-    return buffer.getvalue()
 
 def upload_input_image_to_gcs(image_file, user_id):
-    prepared_image_bytes = prepare_image_for_upload(image_file, quality=80)
+    image_file.seek(0)
+
+    image = Image.open(image_file)
+    image = ImageOps.exif_transpose(image)
+
+    buffer = BytesIO()
+    image.save(buffer, format=image.format)
+
+    content_type = Image.MIME.get(image.format)
+    file_extension = f"{image.format.lower().replace('jpeg', 'jpg')}"
 
     timestamp = timezone.now().strftime('%Y-%m-%d-%H-%M-%S')
-    bucket_name = settings.GCP_STORAGE_BUCKET_NAME
-    blob_name = f"users/{user_id}/images/inputs/input-{timestamp}.jpg"
+    bucket_name = settings.GCP_TEMP_BUCKET_NAME
+    blob_name = f"users/{user_id}/inputs/input-{timestamp}.{file_extension}"
     
     bucket = gcs_sync_storage_client.bucket(bucket_name)
     blob = bucket.blob(blob_name)
     
-    blob.upload_from_string(prepared_image_bytes, content_type='image/jpeg')
+    blob.upload_from_string(buffer.getvalue(), content_type=content_type)
 
-    return blob.public_url
+    return f"https://storage.googleapis.com/{bucket_name}/{blob_name}"
 
 def generate_signed_gcs_url(gcs_img_url, expires_in_seconds, response_disposition=None):
     parsed_url = urlparse(gcs_img_url)
