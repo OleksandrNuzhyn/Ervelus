@@ -7,6 +7,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 INSTALLED_APPS = [
     'generations',
+    'products'
 ]
 
 DATABASES = {
