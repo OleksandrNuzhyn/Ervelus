@@ -123,7 +123,7 @@ const isDragging = ref(false);
 const inputImageLoaded = ref(false);
 const outputImageLoaded = ref(false);
 const completedGenerationId = ref(null);
-const isFirstCheck = ref(true);
+//const isFirstCheck = ref(true);
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE_BYTES = 7 * 1024 * 1024;
@@ -137,41 +137,48 @@ let pollingTimeoutId = null;
 let pollAttempt = 0;
 
 watch(() => props.latestGenerationData, (latest) => {
-  if (latest) {
-    const statuses = ['completed', 'failed', 'stopped_by_user', 'rejected_by_safety'];
-    if (isFirstCheck.value && statuses.includes(latest.status)) {
-      isFirstCheck.value = false;
-      return;
-    }
-    isFirstCheck.value = false;
+  // if (latest) {
+  //   const statuses = ['completed', 'failed', 'stopped_by_user', 'rejected_by_safety'];
+  //   if (isFirstCheck.value && statuses.includes(latest.status)) {
+  //     isFirstCheck.value = false;
+  //     return;
+  //   }
+  //   isFirstCheck.value = false;
     
-    if (latest.status === 'processing') {
-      isLoading.value = true;
-      currentGenerationId.value = latest.id;
-      inputImageUrl.value = latest.input_img_signed_url;
-      outputImageUrl.value = null;
-      startStopEnableTimer(latest.created_at);
-      startPolling();
-    } 
-    else if (latest.status === 'completed' && latest.output_img_signed_url) {
-      inputImageUrl.value = latest.input_img_signed_url;
-      outputImageUrl.value = latest.output_img_signed_url;
-      completedGenerationId.value = latest.id;
-    } 
-    else if (latest.status === 'failed') {
-      inputImageUrl.value = latest.input_img_signed_url;
-      toast.info(latest.error_api_message || latest.error_message);
-      clearStopEnableTimer();
-    }
-    else if (latest.status === 'stopped_by_user') {
-      inputImageUrl.value = latest.input_img_signed_url;
-      clearStopEnableTimer();
-    }
-    else if (latest.status === 'rejected_by_safety') {
-      inputImageUrl.value = latest.input_img_signed_url;
-      toast.info(latest.error_api_message);
-      clearStopEnableTimer();
-    }
+  //   if (latest.status === 'processing') {
+  //     isLoading.value = true;
+  //     currentGenerationId.value = latest.id;
+  //     inputImageUrl.value = latest.input_img_signed_url;
+  //     outputImageUrl.value = null;
+  //     startStopEnableTimer(latest.created_at);
+  //     startPolling();
+  //   } 
+  //   else if (latest.status === 'completed' && latest.output_img_signed_url) {
+  //     inputImageUrl.value = latest.input_img_signed_url;
+  //     outputImageUrl.value = latest.output_img_signed_url;
+  //     completedGenerationId.value = latest.id;
+  //   } 
+  //   else if (latest.status === 'failed') {
+  //     inputImageUrl.value = latest.input_img_signed_url;
+  //     toast.info(latest.error_api_message || latest.error_message);
+  //     clearStopEnableTimer();
+  //   }
+  //   else if (latest.status === 'stopped_by_user') {
+  //     inputImageUrl.value = latest.input_img_signed_url;
+  //     clearStopEnableTimer();
+  //   }
+  //   else if (latest.status === 'rejected_by_safety') {
+  //     inputImageUrl.value = latest.input_img_signed_url;
+  //     toast.info(latest.error_api_message);
+  //     clearStopEnableTimer();
+  //   }
+  if (latest && latest.status === 'processing') {
+    isLoading.value = true;
+    currentGenerationId.value = latest.id;
+    inputImageUrl.value = latest.input_img_signed_url;
+    outputImageUrl.value = null;
+    startStopEnableTimer(latest.created_at);
+    startPolling();
   }
 }, { immediate: true });
 
