@@ -1,8 +1,8 @@
 <template>
   <div class="w-full max-w-xl mx-auto px-4 md:px-8 pt-5 pb-16">
-    <div class="bg-black/30 backdrop-blur-sm rounded-lg border border-white/10 p-6">
-      <h1 class="text-3xl font-bold medieval text-center">Contact Us</h1>
-      <p class="mt-2 text-sm text-gray-400 text-center">Leave your email and ideas/suggestions here.</p>
+    <h1 class="text-3xl font-bold medieval text-center text-gray-200 mb-6">Contact Us</h1>
+    <div class="form-container-card">
+      <p class="text-xl text-gray-300 text-center">Leave your email and ideas/suggestions here</p>
 
       <form class="mt-6 space-y-4" @submit.prevent="onSubmit">
         <div>
@@ -27,20 +27,18 @@
             class="w-full min-h-[140px] rounded-md bg-gray-800 border border-gray-700 focus:border-gray-500 focus:outline-none px-3 py-2 text-gray-100 placeholder-gray-500 resize-y"
             placeholder="Your ideas, suggestions or questions..."
             :disabled="submitting"
-            required
-          />
+            required/>
           <p v-if="messageError" class="mt-1 text-xs text-red-400">{{ messageError }}</p>
         </div>
 
         <button
           type="submit"
-          class="w-full px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 text-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="w-full px-4 py-3 mt-2 rounded-full bg-white/10 hover:bg-white/20 text-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
           :disabled="submitting"
         >
           <span v-if="!submitting">Send</span>
           <span v-else>Sending...</span>
         </button>
-
         <p v-if="successMessage" class="text-sm text-emerald-400 text-center">{{ successMessage }}</p>
         <p v-if="errorMessage" class="text-sm text-red-400 text-center">{{ errorMessage }}</p>
       </form>
@@ -113,3 +111,22 @@ async function onSubmit() {
   }
 }
 </script> 
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+.medieval {
+  font-family: 'MedievalSharp', cursive;
+}
+
+.form-container-card {
+  background: rgba(255, 255, 255, 0.03);
+  will-change: backdrop-filter, transform;
+  transform: translateZ(0);
+  border-radius: 20px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+</style> 

@@ -3,7 +3,7 @@
       <div class="max-w-screen mx-auto px-4 sm:px-6 lg:px-12">
         <div class="flex items-center justify-between h-[70px]">
           <router-link to="/" class="text-2xl font-bold text-gray-100 select-none">Ervelus</router-link>
-          <nav v-if="authStore.isAuthenticated" class="hidden md:flex items-center gap-6 font-thin text-gray-100">
+          <nav v-if="authStore.isAuthenticated" class="hidden md:flex items-center gap-15 font-thin text-gray-100">
             <router-link to="/dashboard" class="hover:text-gray-400">Dashboard</router-link>
             <router-link to="/gallery" class="hover:text-gray-400">Gallery</router-link>
             <router-link to="/pricing" class="hover:text-gray-400">Pricing</router-link>
@@ -22,7 +22,11 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <router-link v-else to="/register" class="border-2 border-white-100 rounded-full px-4 py-2 hover:text-gray-400 hover:border-gray-400 font-medium text-gray-100">Start now</router-link>
+          <div v-else class="flex items-center gap-15 font-thin text-gray-100">
+            <router-link to="/pricing" class="hidden md:block hover:text-gray-400">Pricing</router-link>
+            <router-link to="/contact-us" class="hidden md:block hover:text-gray-400">Contact us</router-link>
+            <router-link to="/register" class="border-2 border-white-100 rounded-full px-4 py-2 hover:text-gray-400 hover:border-gray-400  text-gray-100">Start now</router-link>
+          </div>
         </div>
       </div>
       
