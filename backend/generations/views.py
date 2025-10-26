@@ -25,12 +25,12 @@ class GenerationRequestViewSet(viewsets.ViewSet):
     permission_classes = [HasAcceptedLatestAgreements]
 
     def create(self, request, *args, **kwargs):
+        latest_request = GenerationRequest.objects.filter(user=request.user).order_by('-created_at').first()
+        if latest_request and not latest_request.is_visible:
+            return Response({"detail": "You already have a generation in progress. Please wait for it to complete"}, status=400)
+
         serializer = GenerationRequestCreateSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
-
-        latest_request = GenerationRequest.objects.filter(user=request.user).order_by('-created_at').first()
-        if latest_request and latest_request.status == GenerationRequest.GenerationStatus.PROCESSING:
-            return Response({"detail": "You already have a generation in progress. Please wait for it to complete or stop it"}, status=400)
 
         input_image_file = serializer.validated_data['input_image']
         
@@ -46,23 +46,28 @@ class GenerationRequestViewSet(viewsets.ViewSet):
         try:
             generation_request = GenerationRequest.objects.create(
                 user=request.user,
-                chosen_style=serializer.validated_data['chosen_style'],
-                input_img_url=input_image_url,
+                chosen_style=serializer.validated_data['chosen_style']
             )
         except Exception as e:
             logger.error(f"Failed to create generation request", extra={'user_id': request.user.id, 'error': str(e)}, exc_info=True)
             return Response(status=400)
 
         try:
-            target_url = f"{settings.BACKEND_URL.rstrip('/')}/webhooks/generations/tasks/"
+            target_url = f"{settings.GENERATIONS_WORKER_URL.rstrip('/')}/webhooks/generations/tasks/"
             
-            event_data = {'generation_request_id': generation_request.id}
+            event_data = {
+                "task_type": "generate_image",
+                "payload": {
+                    "generation_request_id": generation_request.id,
+                    "input_image_url": input_image_url
+                }
+            }
 
             queue_path = tasks_client.queue_path(
                 settings.GCP_PROJECT_ID,
                 settings.GCP_TASKS_LOCATION,
                 settings.GCP_TASKS_GENERATION_EVENTS_QUEUE_ID,
-                )
+            )
 
             task = {
                 'http_request': {
@@ -86,24 +91,19 @@ class GenerationRequestViewSet(viewsets.ViewSet):
         queryset = (
             GenerationRequest.objects.filter(
                 user=request.user,
+                is_visible=True,
                 is_hidden=False
             ).order_by('-created_at')
         )
-
-        existing_blobs_names = []
-        try:
-            existing_blobs_names = services.get_user_gcs_all_blob_names(request.user.id)
-        except Exception as e:
-            logger.error(f"Failed to get user GCS blob names", extra={'user_id': request.user.id, 'error': str(e)}, exc_info=True)
         
         paginator = CustomPaginationClass()
         page = paginator.paginate_queryset(queryset, request, view=self)
 
         if page is not None:
-            serializer = GenerationRequestListSerializer(page, many=True, context={'existing_blobs_names': existing_blobs_names})
+            serializer = GenerationRequestListSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
 
-        serializer = GenerationRequestListSerializer(queryset, many=True, context={'existing_blobs_names': existing_blobs_names})
+        serializer = GenerationRequestListSerializer(queryset, many=True)
         return Response(serializer.data, status=200)
 
     def retrieve(self, request, pk=None, *args, **kwargs):
@@ -130,13 +130,18 @@ class GenerationRequestViewSet(viewsets.ViewSet):
         except GenerationRequest.DoesNotExist:
             return Response(status=404)
 
-        if generation_request.status == GenerationRequest.GenerationStatus.PROCESSING:
-            return Response({"detail": "You cannot delete a generation that is currently in progress"}, status=400)
-
         try:
-            services.delete_generation_request_images_from_gcs(generation_request)
-            generation_request.delete()
+            image_urls = [
+                generation_request.input_thumb_url,
+                generation_request.input_large_url,
+                generation_request.output_thumb_url,
+                generation_request.output_large_url,
+                generation_request.output_original_url,
+            ]
             
+            services.schedule_image_deletion(image_urls)
+            generation_request.delete()
+
             return Response(status=204)
         except Exception as e:
             logger.error(f"Failed to delete generation request", extra={'generation_request_id': generation_request.id, 'error': str(e)}, exc_info=True)
@@ -150,9 +155,9 @@ class GenerationRequestViewSet(viewsets.ViewSet):
             return Response(status=204)
         
         if latest_user_generation_request.is_hidden:
-            return Response({"detail": "This generation is currently unavailable"}, status=400)
+            return Response({"detail": "This generation is unavailable"}, status=400)
         
-        serializer = GenerationRequestSerializer(latest_user_generation_request)
+        serializer = GenerationRequestSerializer(latest_user_generation_request, context={'view': self})
         return Response(serializer.data, status=200)
     
     @action(detail=True, methods=['GET'])
@@ -162,18 +167,18 @@ class GenerationRequestViewSet(viewsets.ViewSet):
         except GenerationRequest.DoesNotExist:
             return Response(status=404)
         
-        if generation_request.is_hidden:
-            return Response({"detail": "This generation is currently unavailable"}, status=400)
+        if generation_request.is_hidden or not generation_request.is_visible:
+            return Response({"detail": "This generation is unavailable"}, status=400)
 
-        if not generation_request.output_img_url:
-            return Response({"detail": "Output image not available"}, status=400)
+        if not generation_request.output_original_url:
+            return Response({"detail": "Output image is unavailable"}, status=400)
 
         try:
-            parsed_url = urlparse(generation_request.output_img_url)
+            parsed_url = urlparse(generation_request.output_original_url)
             filename = os.path.basename(parsed_url.path)
             
             download_url = services.generate_signed_gcs_url(
-                generation_request.output_img_url,
+                generation_request.output_original_url,
                 expires_in_seconds=30,
                 response_disposition=f"attachment; filename={filename}"
             )
@@ -182,24 +187,3 @@ class GenerationRequestViewSet(viewsets.ViewSet):
         except Exception as e:
             logger.error(f"Failed to generate download URL for output image", extra={'generation_request_id': generation_request.id, 'error': str(e)}, exc_info=True)
             return Response({"detail": "Failed to retrieve download URL"}, status=400)
-
-    @action(detail=True, methods=['POST'])
-    def stop(self, request, pk=None, *args, **kwargs):
-        try:
-            generation_request = GenerationRequest.objects.get(pk=pk, user=request.user, status=GenerationRequest.GenerationStatus.PROCESSING)
-        except GenerationRequest.DoesNotExist:
-            return Response({"detail": "Generation in progress not found or already stopped"}, status=404)
-
-        if generation_request.is_hidden:
-            return Response({"detail": "This generation is currently unavailable"}, status=400)
-
-        if generation_request.created_at > timezone.now() - timedelta(seconds=30):
-            return Response({"detail": "Cannot stop a generation within the first 30 seconds"}, status=400)
-
-        try:
-            generation_request.status = GenerationRequest.GenerationStatus.STOPPED_BY_USER
-            generation_request.save(update_fields=['status', 'updated_at'])
-            return Response(status=204)
-        except Exception as e:
-            logger.error(f"Failed to stop generation_request", extra={'generation_request_id': generation_request.id, 'error': str(e)}, exc_info=True)
-            return Response(status=400)

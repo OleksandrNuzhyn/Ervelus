@@ -24,10 +24,10 @@
             <div class="flex flex-col p-3 sm:p-4 h-full">
               <div class="grid grid-cols-2 gap-2 h-full">
                 <figure class="relative overflow-hidden rounded-xl bg-zinc-900/50 z-20">
-                  <img v-if="request.input_img_signed_url" :src="request.input_img_signed_url" alt="Input Image" :class="['h-full w-full object-cover aspect-square image-fade', { 'image-visible': request.requestLoaded }]"/>
+                  <img v-if="request.input_thumb_signed_url" :src="request.input_thumb_signed_url" alt="Input Image" :class="['h-full w-full object-cover aspect-square image-fade', { 'image-visible': request.requestLoaded }]"/>
                 </figure>
                 <figure class="relative overflow-hidden rounded-xl bg-zinc-900/50 z-20">
-                  <img v-if="request.output_img_signed_url" :src="request.output_img_signed_url" alt="Output Image" :class="['h-full w-full object-cover aspect-square image-fade', { 'image-visible': request.requestLoaded }]"/>
+                  <img v-if="request.output_thumb_signed_url" :src="request.output_thumb_signed_url" alt="Output Image" :class="['h-full w-full object-cover aspect-square image-fade', { 'image-visible': request.requestLoaded }]"/>
                 </figure>
               </div>
               <div class="mt-3 flex items-center justify-between text-xs text-zinc-300/80 font-medium">
@@ -134,7 +134,7 @@ async function getPage(p) {
 
       for (const [index, request] of galleryItems.value.entries()) {
         setTimeout(async () => {
-          const urlsToLoad = [request.input_img_signed_url, request.output_img_signed_url].filter(Boolean);
+          const urlsToLoad = [request.input_thumb_signed_url, request.output_thumb_signed_url].filter(Boolean);
           if (urlsToLoad.length > 0) {
             await preloadRequest(urlsToLoad);
             request.requestLoaded = true;

@@ -8,7 +8,7 @@ from agreements.models import UserAgreement
 from subscriptions.models import UserSubscription
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.contenttypes.models import ContentType
-from django.utils.html import escape
+from generations import services
 from django.utils import timezone
 from django.db.models import Q
 import logging
@@ -133,7 +133,7 @@ def archive_paddle_customer(user):
     response = requests.patch(url, headers=headers, json=data)
     response.raise_for_status()
 
-def delete_user_images_from_gcs(user):
+def schedule_user_images_deletion(user):
     bucket_name = settings.GCP_STORAGE_BUCKET_NAME
     bucket = gcs_sync_storage_client.bucket(bucket_name)
 
@@ -141,26 +141,14 @@ def delete_user_images_from_gcs(user):
     blobs_to_delete = list(bucket.list_blobs(prefix=prefix))
 
     if not blobs_to_delete:
-        return {'deleted_original_count': 0, 'deleted_resized_count': 0}
-
-    original_count = 0
-    resized_count = 0
-
-    for blob in blobs_to_delete:
-        if '200x200' in blob.name:
-            resized_count += 1
-        else:
-            original_count += 1
+        return
     
-    for i in range(0, len(blobs_to_delete), 100):
-        with gcs_sync_storage_client.batch():
-            for blob in blobs_to_delete[i:i+100]:
-                blob.delete()
-    
-    return {
-        'deleted_original_count': original_count,
-        'deleted_resized_count': resized_count
-    }
+    image_urls = [
+        f"https://storage.googleapis.com/{bucket_name}/{blob.name}"
+        for blob in blobs_to_delete
+    ]
+
+    services.schedule_image_deletion(image_urls)
 
 def delete_user_audit_records(user, related_objects_ids):
     related_logs_query = Q(actor=user)
@@ -270,8 +258,8 @@ def send_support_email(sender_email, text_body):
     data = {
         "from": f"Request from {settings.DEFAULT_FROM_EMAIL}",
         "to": "<support@ervelus.com>",
-        "subject": escape(f"New letter from {sender_email}"),
-        "text": escape(text_body)
+        "subject": f"New letter from {sender_email}",
+        "text": text_body
     }
     
     response = requests.post(url, auth=auth, data=data)

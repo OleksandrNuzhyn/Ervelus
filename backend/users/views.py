@@ -61,8 +61,8 @@ def send_support_email(request):
 def account_delete(request):
     user = request.user
 
-    if GenerationRequest.objects.filter(user=user, status=GenerationRequest.GenerationStatus.PROCESSING).exists():
-        return Response({"detail": "You have generation requests in progress. Please wait for them to complete or stop before deleting your account"}, status=400)
+    if GenerationRequest.objects.filter(user=user, is_visible=False).exists():
+        return Response({"detail": "You have generation requests in progress. Please wait for them to complete"}, status=400)
 
     if user.profile.paddle_customer_id:
         try:
@@ -96,6 +96,7 @@ def account_delete(request):
             objects_to_check.append(user.profile)
     except Exception as e:
         logger.error(f"Could not fully collect related objects in delete request", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)
+        return Response(status=400)
 
     for obj in objects_to_check:
         if obj:
@@ -146,15 +147,9 @@ def account_delete(request):
         return Response(status=400)
 
     try:
-        deletion_report = services.delete_user_images_from_gcs(user)
-
-        deleted_originals = deletion_report.get('deleted_original_count', 0)
-        deleted_resized = deletion_report.get('deleted_resized_count', 0)
-
-        if deleted_originals != deleted_resized:
-            logger.error("Mismatch in deleted image counts from GCS", extra={'user_id': user.id, 'deleted_originals': deleted_originals, 'deleted_resized': deleted_resized})
+        services.schedule_user_images_deletion(user)
     except Exception as e:
-        logger.error("Failed to delete user images from GCS in delete request", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)
+        logger.error("Failed to schedule user images deletion in delete request", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)
         return Response(status=400)
     
     try:

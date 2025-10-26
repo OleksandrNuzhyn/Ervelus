@@ -13,7 +13,7 @@ class GenerationRequest(models.Model):
         verbose_name = 'Generation Request'
         verbose_name_plural = 'Generation Requests'
         indexes = [
-            models.Index(fields=['user', 'is_visible', '-created_at'], name='user_visible_created_idx'),
+            models.Index(fields=['user', 'is_visible', 'is_hidden', '-created_at'], name='user_visible_hidden_idx'),
             models.Index(fields=['user', '-created_at'], name='user_latest_req_idx'),
             models.Index(fields=['-created_at'], name='gen_req_created_at_desc_idx')
         ]
@@ -21,8 +21,6 @@ class GenerationRequest(models.Model):
     class PrivacyMeta:
         fields = [
             'user',
-            'input_img_url',
-            'output_img_url',
             'input_thumb_url',
             'input_large_url',
             'output_thumb_url',
@@ -36,8 +34,6 @@ class GenerationRequest(models.Model):
         def export(self, instance):
             return {
                 'chosen_style_name': instance.chosen_style.name,
-                'input_img_url': instance.input_img_url,
-                'output_img_url': instance.output_img_url,
                 'input_thumb_url': instance.input_thumb_url,
                 'input_large_url': instance.input_large_url,
                 'output_thumb_url': instance.output_thumb_url,
@@ -53,8 +49,6 @@ class GenerationRequest(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='generation_requests')
     chosen_style = models.ForeignKey('products.Style', on_delete=models.PROTECT, related_name='generation_requests')
-    input_img_url = models.URLField(max_length=1024, null=True, blank=True)
-    output_img_url = models.URLField(max_length=1024, null=True, blank=True)
     input_thumb_url = models.URLField(max_length=1024, null=True, blank=True)
     input_large_url = models.URLField(max_length=1024, null=True, blank=True)
     output_thumb_url = models.URLField(max_length=1024, null=True, blank=True)

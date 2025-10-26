@@ -12,8 +12,7 @@ if settings.DEBUG:
     urlpatterns += [
         path('admin/', admin.site.urls),
         
-        path('webhooks/subscriptions/', include('subscriptions.urls_paddle_webhooks')),
-        path('webhooks/subscriptions/', include('subscriptions.urls_tasks_webhooks')),
+        path('webhooks/subscriptions/', include('subscriptions.urls_webhooks')),
         path('webhooks/generations/', include('generations.urls_webhooks')),
 
         path('api/auth/', include('users.urls')),
@@ -28,7 +27,7 @@ else:
         urlpatterns += [
             path('admin/', admin.site.urls),
 
-            path('webhooks/subscriptions/', include('subscriptions.urls_paddle_webhooks')),
+            path('webhooks/subscriptions/', include('subscriptions.urls_webhooks')),
 
             path('api/auth/', include('users.urls')),
             path('api/core/app-config/', views.app_config_details, name='app-config-details'),
@@ -37,11 +36,7 @@ else:
             path('api/generations/', include('generations.urls_api')),
             path('api/agreements/', include('agreements.urls'))
         ]
-    elif settings.SERVICE_NAME == 'generations_worker':
+    elif settings.SERVICE_NAME == 'generations_service':
         urlpatterns += [
             path('webhooks/generations/', include('generations.urls_webhooks'))
-        ]
-    elif settings.SERVICE_NAME == 'subscriptions_worker':
-        urlpatterns += [
-            path('webhooks/subscriptions/', include('subscriptions.urls_tasks_webhooks'))
         ]

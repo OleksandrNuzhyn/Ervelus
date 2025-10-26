@@ -17,14 +17,14 @@
                 <div class="flex-grow flex flex-col md:flex-row justify-center items-stretch gap-4 px-6 pt-8 pb-3 min-h-0">
                   <div class="flex-1 flex justify-center items-center min-w-0">
                     <img
-                      :src="currentRequest.input_img_signed_url"
+                      :src="currentRequest.input_large_signed_url"
                       alt="Input image"
                       class="block max-w-full max-h-full object-contain rounded-2xl"
                     />
                   </div>
                   <div class="flex-1 flex justify-center items-center min-w-0">
                     <img
-                      :src="currentRequest.output_img_signed_url"
+                      :src="currentRequest.output_large_signed_url"
                       alt="Output image"
                       class="block max-w-full max-h-full object-contain rounded-2xl"
                     />
@@ -114,7 +114,7 @@ async function getCurrentRequest(request) {
   try {
     const response = await api.get(`/api/generations/generation-requests/retrieve/${request.id}/`);
 
-    const urlsToLoad = [response.data?.input_img_signed_url, response.data?.output_img_signed_url].filter(Boolean);
+    const urlsToLoad = [response.data?.input_large_signed_url, response.data?.output_large_signed_url].filter(Boolean);
     if (urlsToLoad.length > 0) {
       await preloadRequest(urlsToLoad);
     }

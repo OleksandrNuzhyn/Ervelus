@@ -12,17 +12,24 @@ logger = logging.getLogger(__name__)
 @authentication_classes([])
 @permission_classes([AllowAny])
 async def tasks_handler(request):
-    generation_request_id = None
+    event_data = None
 
     try:
         event_data = json.loads(request.body.decode('utf-8'))
-        generation_request_id = event_data.get('generation_request_id')
-    except Exception as e:
-        logger.error(f"Failed to parse generation event data", extra={'error': str(e)}, exc_info=True)
+        task_type = event_data.get('task_type')
+        payload = event_data.get('payload', {})
 
-    try:
-        await services.handle_generation_process(generation_request_id)
+        if task_type == 'generate_image':
+            generation_request_id = payload.get('generation_request_id')
+            input_image_url = payload.get('input_image_url')
+            await services.handle_generation_process(generation_request_id, input_image_url)
+        elif task_type == 'update_after_resize':
+            generation_request_id = payload.get('generation_request_id')
+            update_data = payload.get('update_data')
+            await services.handle_update_after_resize(generation_request_id, update_data)
+        else:
+            logger.error(f"Received unknown task type", extra={'event_data': event_data})
     except Exception as e:
-        logger.error(f"Failed to handle generation process", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
+        logger.error(f"An error occurred while handling task", extra={'event_data': event_data, 'error': str(e)}, exc_info=True)
 
     return Response(status=204)
