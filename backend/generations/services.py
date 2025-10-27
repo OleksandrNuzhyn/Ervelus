@@ -277,11 +277,20 @@ async def handle_generation_process(generation_request_id, input_image_url):
     
     try:
         if generation_request_status:
-            rows_affected = await GenerationRequest.objects.filter(id=generation_request_id).aupdate(
-                status=generation_request_status,
-                error_message=error_message,
-                updated_at=timezone.now()
-            )
+            update_fields = {
+                'status': generation_request_status,
+                'error_message': error_message,
+                'updated_at': timezone.now()
+            }
+
+            if generation_request_status == GenerationRequest.GenerationStatus.REJECTED_BY_SAFETY:
+                update_fields['is_visible'] = True
+                try:
+                    await sync_to_async(schedule_image_deletion)([input_image_url])
+                except Exception as e:
+                    logger.error("Failed to schedule image deletion", extra={'generation_request_id': generation_request_id, 'input_image_url': input_image_url, 'error': str(e)}, exc_info=True)
+
+            rows_affected = await GenerationRequest.objects.filter(id=generation_request_id).aupdate(**update_fields)
 
             if rows_affected == 0:
                 logger.error("Generation request was deleted before status update", extra={'generation_request_id': generation_request_id})
@@ -305,8 +314,3 @@ async def handle_generation_process(generation_request_id, input_image_url):
             )
         except Exception as e:
             logger.error("Failed to create resizing task", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
-    elif generation_request_status == GenerationRequest.GenerationStatus.REJECTED_BY_SAFETY:
-        try:
-            await sync_to_async(schedule_image_deletion)([input_image_url])
-        except Exception as e:
-            logger.error("Failed to schedule image deletion", extra={'generation_request_id': generation_request_id, 'input_image_url': input_image_url, 'error': str(e)}, exc_info=True)

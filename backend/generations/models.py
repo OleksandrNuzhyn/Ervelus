@@ -14,6 +14,7 @@ class GenerationRequest(models.Model):
         verbose_name_plural = 'Generation Requests'
         indexes = [
             models.Index(fields=['user', 'is_visible', 'is_hidden', '-created_at'], name='user_visible_hidden_idx'),
+            models.Index(fields=['user', 'is_hidden', '-created_at'], name='user_hidden_created_idx'),
             models.Index(fields=['user', '-created_at'], name='user_latest_req_idx'),
             models.Index(fields=['-created_at'], name='gen_req_created_at_desc_idx')
         ]

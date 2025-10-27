@@ -5,8 +5,6 @@ from . import services
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from django.utils import timezone
-from datetime import timedelta
 from agreements.permissions import HasAcceptedLatestAgreements
 from .models import GenerationRequest
 from .serializers import GenerationRequestCreateSerializer, GenerationRequestListSerializer, GenerationRequestSerializer
@@ -93,7 +91,9 @@ class GenerationRequestViewSet(viewsets.ViewSet):
                 user=request.user,
                 is_visible=True,
                 is_hidden=False
-            ).order_by('-created_at')
+            )
+            .exclude(status=GenerationRequest.GenerationStatus.REJECTED_BY_SAFETY)
+            .order_by('-created_at')
         )
         
         paginator = CustomPaginationClass()
@@ -108,12 +108,13 @@ class GenerationRequestViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None, *args, **kwargs):
         try:
-            generation_request = GenerationRequest.objects.select_related('chosen_style').get(pk=pk, user=request.user)
+            generation_request = GenerationRequest.objects.select_related('chosen_style').get(
+                pk=pk,
+                user=request.user,
+                is_hidden=False
+            )
         except GenerationRequest.DoesNotExist:
-            return Response(status=404)
-
-        if generation_request.is_hidden:
-            return Response({"detail": "This generation is currently unavailable"}, status=400)
+            return Response({"detail": "Generation not found or is unavailable"}, status=404)
 
         serializer = GenerationRequestSerializer(generation_request)
         return Response(serializer.data, status=200)
@@ -149,13 +150,10 @@ class GenerationRequestViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['GET'])
     def latest(self, request, *args, **kwargs):
-        latest_user_generation_request = GenerationRequest.objects.select_related('chosen_style').filter(user=request.user).order_by('-created_at').first()
+        latest_user_generation_request = GenerationRequest.objects.select_related('chosen_style').filter(user=request.user, is_hidden=False).order_by('-created_at').first()
 
         if not latest_user_generation_request:
             return Response(status=204)
-        
-        if latest_user_generation_request.is_hidden:
-            return Response({"detail": "This generation is unavailable"}, status=400)
         
         serializer = GenerationRequestSerializer(latest_user_generation_request, context={'view': self})
         return Response(serializer.data, status=200)
@@ -163,15 +161,17 @@ class GenerationRequestViewSet(viewsets.ViewSet):
     @action(detail=True, methods=['GET'])
     def download(self, request, pk=None, *args, **kwargs):
         try:
-            generation_request = GenerationRequest.objects.get(pk=pk, user=request.user)
+            generation_request = GenerationRequest.objects.get(
+                pk=pk,
+                user=request.user,
+                is_hidden=False,
+                is_visible=True
+            )
         except GenerationRequest.DoesNotExist:
-            return Response(status=404)
-        
-        if generation_request.is_hidden or not generation_request.is_visible:
-            return Response({"detail": "This generation is unavailable"}, status=400)
+            return Response({"detail": "Generation not found or is unavailable"}, status=404)
 
         if not generation_request.output_original_url:
-            return Response({"detail": "Output image is unavailable"}, status=400)
+            return Response({"detail": "Output image is unavailable for this generation"}, status=400)
 
         try:
             parsed_url = urlparse(generation_request.output_original_url)
