@@ -12,9 +12,9 @@ const routes = [
   { path: '/privacy-policy', name: 'privacy-policy', component: () => import('@/views/PrivacyPolicyPage.vue') },
   { path: '/pricing', name: 'pricing', component: () => import('@/views/PricingPage.vue') },
   { path: '/contact-us', name: 'contact-us', component: () => import('@/views/ContactUsPage.vue') },
-  { path: '/dashboard', name: 'dashboard', component: () => import('@/views/GenerationPage.vue'), meta: { requiresAuth: true } },
+  { path: '/dashboard', name: 'dashboard', component: () => import('@/views/GenerationPage.vue'), meta: { requiresAuth: false } },
   { path: '/gallery', name: 'gallery', component: () => import('@/views/GalleryPage.vue'), meta: { requiresAuth: true } },
-  { path: '/profile', name: 'profile', component: () => import('@/views/ProfilePage.vue'), meta: { requiresAuth: false } }
+  { path: '/profile', name: 'profile', component: () => import('@/views/ProfilePage.vue'), meta: { requiresAuth: true } }
 ];
 
 const router = createRouter({

@@ -78,7 +78,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 import api from '@/services/api';
 import isEmail from 'validator/lib/isEmail';
 
@@ -93,10 +94,32 @@ const emailError = ref('');
 const messageError = ref('');
 
 
+onMounted(() => {
+  const authStore = useAuthStore();
+  if (authStore.isAuthenticated && authStore.user.email) {
+    email.value = authStore.user.email;
+  }
+});
+
 const faqs = ref([
   {
     question: 'What is Ervelus?',
-    answer: 'It is a service for image stylization based on artificial intelligence.',
+    answer: 'It is a service for image stylization based on artificial intelligence. Our platform specialises in transforming images into various genre styles.',
+    isOpen: false,
+  },
+  {
+    question: 'How is this different from standard photo filters?',
+    answer: 'Standard filters simply adjust colors, contrast, or overlay a texture. Our AI reinterprets the entire image. It understands the content (like a face or a building) and the style (like Dark Fantasy or Steampunk) and merges them, creating a fundamentally new artwork that didn\'t exist before.',
+    isOpen: false,
+  },
+  {
+    question: 'I can\'t find the style I\'m looking for. Can I suggest a new one?',
+    answer: 'Yes, absolutely! We are always open to new ideas and would love to hear your suggestions. Our team is working to expand our style choices, and the best ideas often come directly from users. We can\'t guarantee that we\'ll add every suggestion, but we\'ll review all requests 💜',
+    isOpen: false,
+  },
+  {
+    question: 'Is this service free?',
+    answer: 'We do not currently offer free credits or free trial periods. We offer affordable subscriptions that allow you to fully experience all the features of our service. You can view prices and join Ervelus on the Pricing page.',
     isOpen: false,
   },
   {
@@ -105,8 +128,48 @@ const faqs = ref([
     isOpen: false,
   },
   {
+    question: 'How styles vary from subscription to subscription?',
+    answer: 'Each subscription provides access to a different set of styles. Our plans are cumulative — each higher level includes all the features and styles of the previous ones.',
+    isOpen: false,
+  },
+  {
     question: 'What happens if I don\'t use my credits by the end of my subscription?',
-    answer: 'Generations expire at the end of the subscription period.',
+    answer: 'Credits expire at the end of the subscription period.',
+    isOpen: false,
+  },
+  {
+    question: 'How can I get the best possible result?',
+    answer: 'Use good quality, clear, and well-lit images. Photos with strong subjects (like a person, your pet, or building) and less "busy" backgrounds usually produce the most stunning results. Feel free to experiment with different styles and photos!',
+    isOpen: false,
+  },
+  {
+    question: 'Do you keep my uploaded photos?',
+    answer: 'We save your uploaded photos and your generated results. We do this specifically for your benefit, to allow you to easily access, view, and download all of your previous generations in one place (in the Gallery page), so you never lose an artwork you\'ve created.',
+    isOpen: false,
+  },
+  {
+    question: 'What happens to my generations if they are rejected by the safety system?',
+    answer: 'Generations that are rejected by our safety system are automatically and permanently deleted. They are not stored anywhere.',
+    isOpen: false,
+  },
+  {
+    question: 'Can other users see my original photos or my generated images?',
+    answer: 'No. All your uploads and generated artworks are 100% private by default and tied to your account.',
+    isOpen: false,
+  },
+  {
+    question: 'What file formats and sizes are supported?',
+    answer: 'We support the following file formats: JPEG, PNG and WEBP. The maximum size for uploads is 7MB.',
+    isOpen: false,
+  },
+  {
+    question: 'How long does it take to process an image?',
+    answer: 'Each image usually takes less than 30 seconds.',
+    isOpen: false,
+  },
+  {
+    question: 'What should I do if I get an error while using the service?',
+    answer: 'Please wait a moment and try again later. If you\'re still having the same error, please contact us, and we\'ll be happy to help.',
     isOpen: false,
   },
 ]);
