@@ -16,6 +16,7 @@ from .models import GenerationRequest
 from asgiref.sync import sync_to_async
 from google.protobuf import duration_pb2
 from generations.views import tasks_client
+from auditlog.context import disable_auditlog
 from subscriptions.models import UserSubscription
 from google.cloud.tasks_v2.types import HttpMethod
 from google.cloud import storage as gcs_sync_storage
@@ -212,6 +213,11 @@ def schedule_image_resizing(generation_request_id, user_id, input_image_url, out
 
     tasks_client.create_task(request={'parent': queue_path, 'task': task})
 
+@sync_to_async
+def save_without_auditlog(obj):
+    with disable_auditlog():
+        obj.save(update_fields=['remaining_credits'])
+
 async def handle_generation_process(generation_request_id, input_image_url):
     output_image_url = None
     generation_request_status = None
@@ -259,7 +265,7 @@ async def handle_generation_process(generation_request_id, input_image_url):
 
         if debit_subscription:
             debit_subscription.remaining_credits -= 1
-            await debit_subscription.asave(update_fields=['remaining_credits'])
+            await save_without_auditlog(debit_subscription)
         else:
             logger.error("Credit not debited, no active subscription found", extra={'generation_request_id': generation_request_id})
 
