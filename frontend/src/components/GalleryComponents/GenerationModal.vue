@@ -4,76 +4,91 @@
       <div class="fixed inset-0 modal-overlay transition-opacity" />
 
       <div class="fixed inset-0 z-50 overflow-y-auto" @click="emit('close-modal')">
-        <div class="flex min-h-full items-start md:items-center justify-center p-3 text-center">
-          
-          <div
-            :class="[
-              'relative flex w-full max-w-[1400px] md:h-[90vh] transform flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/50 text-left align-middle shadow-xl backdrop-blur transition-all',
-              { 'unified-shimmer-container': isLoading }
-            ]"
-          >
-            <Transition name="fade-content">
-              <div v-if="!isLoading && currentRequest" class="flex h-full flex-col">
-                <div class="flex-grow flex flex-col md:flex-row justify-center items-stretch gap-4 px-6 pt-8 pb-3 min-h-0">
-                  <div class="flex-1 flex justify-center items-center min-w-0">
-                    <img
-                      :src="currentRequest.input_large_signed_url"
-                      alt="Input image"
-                      class="block max-w-full max-h-full object-contain rounded-2xl"
-                    />
-                  </div>
-                  <div class="flex-1 flex justify-center items-center min-w-0">
-                    <img
-                      :src="currentRequest.output_large_signed_url"
-                      alt="Output image"
-                      class="block max-w-full max-h-full object-contain rounded-2xl"
-                    />
-                  </div>
-                </div>
-                
-                <div class="flex-shrink-0 flex h-20 items-center justify-between px-6 pb-2">
-                  <div class="flex items-center justify-between w-full">
-                    <div class="text-left">
-                      <p v-if="currentStyleName" class="font-semibold text-zinc-300 truncate" :title="currentStyleName">
-                        {{ currentStyleName }}
-                      </p>
-                      <p v-if="currentFormattedDate" class="text-sm text-zinc-400">{{ currentFormattedDate }}</p>
+        <div class="flex min-h-full items-center justify-center p-3 text-center">
+          <Transition name="fade-content">
+            <div v-if="isLoading && isMobile" key="spinner" class="spinner"></div>
+
+            <div
+              v-else
+              :class="[
+                'relative flex w-full max-w-[1400px] md:h-[90vh] transform flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/50 text-left align-middle shadow-xl backdrop-blur transition-all',
+              ]"
+            >
+              <Transition name="fade-content">
+                <div v-if="!isLoading && currentRequest" class="flex h-full flex-col">
+                  <div class="flex-grow flex flex-col md:flex-row justify-center items-stretch gap-4 px-6 pt-8 pb-3 min-h-0">
+                    <div class="flex-1 flex justify-center items-center min-w-0">
+                      <img
+                        v-if="currentRequest.input_large_signed_url"
+                        :src="currentRequest.input_large_signed_url"
+                        alt="Input image"
+                        class="block max-w-full max-h-full object-contain rounded-2xl"
+                      />
+                      <div v-else class="h-44 md:h-full w-full flex items-center justify-center text-zinc-500 text-sm font-medium border border-zinc-800 rounded-2xl md:border-0">
+                        Failed to generate input image
+                      </div>
                     </div>
-                    <div class="flex items-center gap-x-6">
-                      <a
-                        href="#"
-                        @click.prevent.stop="downloadOutput(currentRequest)"
-                        class="h-min w-min inline-flex justify-center text-zinc-400 hover:text-white transition-colors"
-                        title="Download"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download w-6 h-6">
-                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                          <polyline points="7 10 12 15 17 10"></polyline>
-                          <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                      </a>
-                      <button
-                        type="button"
-                        @click.stop="$emit('delete-request', currentRequest)"
-                        class="h-min w-min inline-flex justify-center text-zinc-400 hover:text-red-400 transition-colors"
-                        title="Delete"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 w-6 h-6">
-                          <polyline points="3 6 5 6 21 6"></polyline>
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                          <line x1="10" y1="11" x2="10" y2="17"></line>
-                          <line x1="14" y1="11" x2="14" y2="17"></line>
-                        </svg>
-                      </button>
+                    <div class="flex-1 flex justify-center items-center min-w-0">
+                      <img
+                        v-if="currentRequest.output_large_signed_url"
+                        :src="currentRequest.output_large_signed_url"
+                        alt="Output image"
+                        class="block max-w-full max-h-full object-contain rounded-2xl"
+                      />
+                      <div v-else class="h-44 md:h-full w-full flex items-center justify-center text-zinc-500 text-sm font-medium border border-zinc-800 rounded-2xl md:border-0">
+                        Failed to generate output image
+                      </div>
                     </div>
                   </div>
+
+                  <div class="flex-shrink-0 flex h-20 items-center justify-between px-6 pb-2">
+                    <div class="flex items-center justify-between w-full">
+                      <div class="text-left">
+                        <p v-if="currentStyleName" class="font-semibold text-zinc-300 truncate" :title="currentStyleName">
+                          {{ currentStyleName }}
+                        </p>
+                        <p v-if="currentFormattedDate" class="text-sm text-zinc-400">{{ currentFormattedDate }}</p>
+                      </div>
+                      <div class="flex items-center gap-x-6">
+                        <button
+                          type="button"
+                          @click.prevent.stop="downloadOutput(currentRequest)"
+                          :disabled="!currentRequest.output_large_signed_url"
+                          class="h-min w-min inline-flex justify-center text-zinc-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Download"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download w-6 h-6">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          @click.stop="$emit('delete-request', currentRequest)"
+                          class="h-min w-min inline-flex justify-center text-zinc-400 hover:text-red-400 transition-colors"
+                          title="Delete"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 w-6 h-6">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Transition>
+
+              <div v-if="isLoading && !isMobile" class="absolute inset-0 z-10 flex items-center justify-center">
+                  <div :class="{'unified-shimmer-container': !isMobile}" class="h-full w-full">
+                  <div class="stars"></div>
                 </div>
               </div>
-              <div v-else-if="isLoading" class="absolute inset-0 z-10">
-                <div class="stars"></div>
-              </div>
-            </Transition>
-          </div>
+            </div>
+          </Transition>
         </div>
       </div>
     </div>
@@ -82,7 +97,8 @@
 
 <script setup>
 import api from '@/services/api'
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { toast } from '@/services/toast';
 
 const props = defineProps({
   isOpen: { type: Boolean, required: true },
@@ -95,6 +111,11 @@ const currentRequest = ref(null);
 const currentStyleName = ref('');
 const currentFormattedDate = ref('');
 const isLoading = ref(false);
+const isMobile = ref(false);
+
+function handleResize() {
+  isMobile.value = window.innerWidth < 768;
+}
 
 async function preloadRequest(urlsToLoad) {
   const promises = urlsToLoad.map(urlToLoad => {
@@ -131,7 +152,13 @@ async function getCurrentRequest(request) {
       }
     }
   }
-  catch {
+  catch (error) {
+    if (error.response && error.response.status === 404) {
+      toast.info(error.response.data.detail || 'Request not found');
+    }
+    else {
+      toast.info('An error occurred while fetching the generation');
+    }
     emit('close-modal');
   }
   finally {
@@ -153,7 +180,12 @@ async function downloadOutput(request) {
     document.body.removeChild(link);
   }
   catch (error) {
-    console.error('Download failed:', error);
+    if (error.response && (error.response.status === 404 || error.response.status === 400)) {
+      toast.info(error.response.data.detail || 'Download failed');
+    }
+    else {
+      toast.info('Download failed');
+    }
   }
 };
 
@@ -166,6 +198,15 @@ watch(() => props.isOpen, (newVal) => {
     currentStyleName.value = '';
     currentFormattedDate.value = '';
   }
+});
+
+onMounted(() => {
+  handleResize();
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize); 
 });
 </script>
 
@@ -236,7 +277,12 @@ watch(() => props.isOpen, (newVal) => {
 }
 
 .fade-content-leave-active {
-  transition: opacity 0.7s ease-in-out;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -28px;
+  margin-left: -28px;
+  animation: fadeOut 0.4s linear;
   transform: translateZ(0);
   will-change: opacity, transform;
 }
@@ -303,5 +349,25 @@ watch(() => props.isOpen, (newVal) => {
 @keyframes animateStarLayer3 {
   from { background-position: 0 0; }
   to { background-position: 10000px -10000px; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.spinner {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-left-color: #fff;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
