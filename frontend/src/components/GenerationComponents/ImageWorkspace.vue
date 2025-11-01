@@ -137,45 +137,11 @@ let pollingTimeoutId = null;
 let pollAttempt = 0;
 
 watch(() => props.latestGenerationData, (latest) => {
-  // if (latest) {
-  //   const statuses = ['completed', 'failed', 'stopped_by_user', 'rejected_by_safety'];
-  //   if (isFirstCheck.value && statuses.includes(latest.status)) {
-  //     isFirstCheck.value = false;
-  //     return;
-  //   }
-  //   isFirstCheck.value = false;
-    
-  //   if (latest.status === 'processing') {
-  //     isLoading.value = true;
-  //     currentGenerationId.value = latest.id;
-  //     inputImageUrl.value = latest.input_img_signed_url;
-  //     outputImageUrl.value = null;
-  //     startStopEnableTimer(latest.created_at);
-  //     startPolling();
-  //   } 
-  //   else if (latest.status === 'completed' && latest.output_img_signed_url) {
-  //     inputImageUrl.value = latest.input_img_signed_url;
-  //     outputImageUrl.value = latest.output_img_signed_url;
-  //     completedGenerationId.value = latest.id;
-  //   } 
-  //   else if (latest.status === 'failed') {
-  //     inputImageUrl.value = latest.input_img_signed_url;
-  //     toast.info(latest.error_api_message || latest.error_message);
-  //     clearStopEnableTimer();
-  //   }
-  //   else if (latest.status === 'stopped_by_user') {
-  //     inputImageUrl.value = latest.input_img_signed_url;
-  //     clearStopEnableTimer();
-  //   }
-  //   else if (latest.status === 'rejected_by_safety') {
-  //     inputImageUrl.value = latest.input_img_signed_url;
-  //     toast.info(latest.error_api_message);
-  //     clearStopEnableTimer();
-  //   }
+  
   if (latest && latest.status === 'processing') {
     isLoading.value = true;
     currentGenerationId.value = latest.id;
-    inputImageUrl.value = latest.input_img_signed_url;
+    inputImageUrl.value = null;
     outputImageUrl.value = null;
     startStopEnableTimer(latest.created_at);
     startPolling();
@@ -183,6 +149,7 @@ watch(() => props.latestGenerationData, (latest) => {
 }, { immediate: true });
 
 watch(inputImageUrl, (newVal) => {
+  
   if (!newVal) {
     inputImageFile.value = null;
     inputImageLoaded.value = false;
@@ -196,6 +163,7 @@ watch(inputImageUrl, (newVal) => {
 });
 
 watch(outputImageUrl, (newVal) => {
+  
   if (newVal) {
     outputImageLoaded.value = false;
   }
@@ -213,7 +181,6 @@ const pollForResult = async () => {
     stopPolling();
     isLoading.value = false;
     currentGenerationId.value = null;
-    toast.info('Failed to get the generated image. Please try again later.'); //чи треба це взагалі?
     clearStopEnableTimer();
     return;
   }
@@ -222,8 +189,23 @@ const pollForResult = async () => {
     const response = await api.get('/api/generations/generation-requests/latest/');
     const latest = response.data;
     
-    if (latest?.status === 'failed') {
-      toast.info(latest.error_api_message || latest.error_message);
+    if (latest && !latest.is_visible) {
+      const nextInterval = POLL_INTERVALS_MS[pollAttempt];
+      pollAttempt++;
+      pollingTimeoutId = setTimeout(pollForResult, nextInterval);
+      return;
+    }
+
+    if (latest?.status === 'completed' && latest.output_large_signed_url) {
+      outputImageUrl.value = latest.output_large_signed_url;
+      completedGenerationId.value = latest.id;
+      isLoading.value = false;
+      stopPolling();
+      currentGenerationId.value = null;
+      clearStopEnableTimer();
+    }
+    else if (latest?.status === 'failed') {
+      toast.info("The spell has failed! Try casting the magic again.");
       isLoading.value = false;
       stopPolling();
       currentGenerationId.value = null;
@@ -236,23 +218,14 @@ const pollForResult = async () => {
         clearStopEnableTimer();
     }
     else if (latest?.status === 'rejected_by_safety') {
-        toast.info(latest.error_api_message);
+        toast.info("This dark magic was rejected by the safety system. Try another image.");
+        inputImageUrl.value = null;
+        outputImageUrl.value = null;
         isLoading.value = false;
         stopPolling();
         currentGenerationId.value = null;
         clearStopEnableTimer();
     }
-    else if (latest?.status === 'completed' && latest.output_img_signed_url) {
-      outputImageUrl.value = latest.output_img_signed_url;
-      completedGenerationId.value = latest.id;
-      if (latest.input_img_signed_url && !inputImageUrl.value) {
-          inputImageUrl.value = latest.input_img_signed_url;
-      }
-      isLoading.value = false;
-      stopPolling();
-      currentGenerationId.value = null;
-      clearStopEnableTimer();
-    } 
     else {
       const nextInterval = POLL_INTERVALS_MS[pollAttempt];
       pollAttempt++;
