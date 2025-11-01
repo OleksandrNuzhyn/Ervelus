@@ -4,13 +4,16 @@ import api from '@/services/api';
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
-    authChecked: false
+    authChecked: false,
+    isMaintenanceMode: false
   }),
-
   getters: {
     isAuthenticated: (state) => !!state.user,
   },
   actions: {
+    setMaintenanceMode(status) {
+      this.isMaintenanceMode = status;
+    },
     logout() {
       this.user = null;
       this.authChecked = true;

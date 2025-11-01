@@ -11,7 +11,9 @@ SERVICE_NAME = os.getenv("SERVICE_NAME")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = True # TODO: False
+DEBUG = os.getenv("DEBUG") == "True"
+
+MAINTENANCE_MODE = os.getenv("MAINTENANCE_MODE") == "True"
 
 ALLOWED_HOSTS = ['backend.ervelus.com', '127.0.0.1'] # TODO: Set up for production
 
@@ -94,6 +96,7 @@ SOCIALACCOUNT_ADAPTER = 'users.adapters.CustomSocialAccountAdapter'
 
 
 MIDDLEWARE = [
+    'core.middleware.MaintenanceModeMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -148,6 +151,16 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_THROTTLE_CLASSES': (
+        'core.throttling.CustomScopedRateThrottle',
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'auth_anon': '5/minute',
+        'contact_anon': '5/hour'
+    }
 }
 
 
@@ -305,6 +318,8 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

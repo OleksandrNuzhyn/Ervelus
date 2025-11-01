@@ -1,10 +1,18 @@
 <template>
   <div id="app" class="min-h-screen text-white">
-    <router-view v-if="authStore.authChecked" />
+    <router-view v-if="!authStore.isMaintenanceMode && authStore.authChecked" />
 
     <Transition name="fade" @after-enter="onLoaderFadedIn">
-      <div v-if="isLoading || !authStore.authChecked" class="loader-overlay">
+      <div v-if="isLoading || !authStore.authChecked || authStore.isMaintenanceMode" class="loader-overlay">
         <div class="stars"></div>
+        <div v-if="authStore.isMaintenanceMode" class="maintenance-content">
+          <Transition name="fade-box" appear>
+            <div class="maintenance-box">
+              <h1>The site is under maintenance</h1>
+              <p>We'll be back soon. We apologize for the inconvenience</p>
+            </div>
+          </Transition>
+        </div>
       </div>
     </Transition>
   </div>
@@ -51,6 +59,27 @@ router.afterEach(() => {
   inset: 0;
   z-index: 100;
   background-color: #0c0d14;
+}
+
+.maintenance-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  padding: 0 1rem;
+}
+
+.maintenance-box {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(5px);
+  padding: 2.5rem 4rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .stars {
@@ -108,5 +137,15 @@ router.afterEach(() => {
 @keyframes animateStarLayer3 {
   from { background-position: 0 0; }
   to { background-position: 10000px -10000px; }
+}
+
+.fade-box-enter-active {
+  transition: opacity 0.6s ease-out;
+  transition-delay: 0.2s;
+}
+
+.fade-box-enter-from {
+  opacity: 0;
+  transform: translateZ(0);
 }
 </style>

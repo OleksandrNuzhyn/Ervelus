@@ -1,12 +1,9 @@
 # Backend
 __pycache__/
 /backend/.venv/
-/backend/static/
-/backend/staticfiles/
 
 # Frontend
 /frontend/node_modules/
-/frontend/dist/
 
 # General
 *.log
