@@ -145,12 +145,6 @@ const fetchCredits = async () => {
   }
 };
 
-onMounted(() => {
-  if (authStore.isAuthenticated) {
-    fetchCredits();
-  }
-});
-
 watch(isBurgerOpen, (newValue) => {
   if (newValue) {
     fetchCredits();

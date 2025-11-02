@@ -164,7 +164,7 @@ const faqs = ref([
   },
   {
     question: 'How long does it take to process an image?',
-    answer: 'Each image usually takes less than 30 seconds.',
+    answer: 'Each image usually takes less than 45 seconds.',
     isOpen: false,
   },
   {
