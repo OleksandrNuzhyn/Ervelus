@@ -65,7 +65,7 @@ api.interceptors.response.use(
     }
 
     if (error.response && error.response.status === 500) {
-      toast.info("Oh! Something went wrong. Dwarves are already working on it. Please try again later");
+      toast.info("Oh! Something went wrong. Dwarves are already working on it");
     }
 
     if (error.response && error.response.status === 503 && error.response.data?.maintenance_mode === true) {

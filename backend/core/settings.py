@@ -1,11 +1,11 @@
-from dotenv import load_dotenv # TODO: Remove
 import os
-from pathlib import Path
 import logging.config
-
-load_dotenv() # TODO: Remove
+from pathlib import Path
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / '.env')
 
 SERVICE_NAME = os.getenv("SERVICE_NAME")
 
