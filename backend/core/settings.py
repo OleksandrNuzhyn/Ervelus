@@ -270,7 +270,7 @@ LOGGING = {
             "filename": BASE_DIR / "debug.log"
         },
         "google_cloud_handler": {
-            "class": "google.cloud.logging.handlers.CloudLoggingHandler",
+            "class": "google.cloud.logging.handlers.StructuredLogHandler",
         },
         "null": {
             "class": "logging.NullHandler",
