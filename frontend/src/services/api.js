@@ -18,12 +18,12 @@ export function getCookie(name) {
 }
 
 const api = axios.create({
-  baseURL: '/',
   withCredentials: true,
 });
 
 api.interceptors.request.use(
   (config) => {
+    console.log('Making request to:', config.url);
     const csrfToken = getCookie('csrftoken'); 
 
     if (csrfToken) {
