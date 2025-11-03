@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(BASE_DIR / '.env')
 
-SERVICE_NAME = os.getenv("SERVICE_NAME")
+SERVICE_NAME = os.getenv("K_SERVICE")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
@@ -15,7 +15,13 @@ DEBUG = os.getenv("DEBUG") == "True"
 
 MAINTENANCE_MODE = os.getenv("MAINTENANCE_MODE") == "True"
 
-ALLOWED_HOSTS = ['backend.ervelus.com', '127.0.0.1'] # TODO: Set up for production
+ALLOWED_HOSTS = [
+    'ervelus.com',
+    'backend.ervelus.com',
+    'valiant-hexagon-471121-i7.web.app',
+    'localhost',
+    '127.0.0.1'
+]
 
 
 
@@ -167,17 +173,21 @@ REST_FRAMEWORK = {
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = False # TODO: True
+SESSION_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_AGE = 3888000
 
 
 
 CSRF_TRUSTED_ORIGINS = [
-    os.getenv("CSRF_TRUSTED_ORIGINS"),
+    'https://ervelus.com',
+    'https://backend.ervelus.com',
+    'https://valiant-hexagon-471121-i7.web.app',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173'
 ]
 CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SECURE = False # TODO: True
+CSRF_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SAMESITE = 'Lax'
 
 
@@ -187,6 +197,7 @@ ANYMAIL = {
     "MAILGUN_SENDER_DOMAIN": os.getenv("MAILGUN_SENDER_DOMAIN"),
     "MAILGUN_API_URL": os.getenv("MAILGUN_API_BASE_URL")
 }
+
 MAILGUN_API_KEY = os.getenv("MAILGUN_API_KEY")
 MAILGUN_SENDER_DOMAIN = os.getenv("MAILGUN_SENDER_DOMAIN")
 MAILGUN_API_BASE_URL = os.getenv("MAILGUN_API_BASE_URL")
@@ -220,8 +231,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'Trueelse23#',
-        'HOST': '34.116.178.6',
+        'PASSWORD': os.getenv("DB_PASSWORD"),
+        'HOST': os.getenv("DB_HOST"),
         'PORT': '5432'
     }
 }
@@ -240,7 +251,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    }
 ]
 
 
@@ -257,10 +268,6 @@ LOGGING = {
         "json_formatter": {
             "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
             "format": "{levelname} {name} {funcName} {message}",
-            "style": "{"
-        },
-        "verbose": {
-            "format": "[{levelname}] [{name}:{funcName}] {message}",
             "style": "{"
         }
     },

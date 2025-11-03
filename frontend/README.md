@@ -1,16 +1,14 @@
 ### Install packages
-```sh
+```bash
 npm install
 ```
 
 ### Compile and Hot-Reload for Development
-
-```sh
+```bash
 npm run dev
 ```
 
 ### Compile and Minify for Production
-
-```sh
+```bash
 npm run build
 ```
