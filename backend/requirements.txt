@@ -34,7 +34,10 @@ gcloud-aio-auth==5.4.2
 gcloud-aio-storage==9.5.0
 google-api-core==2.25.1
 google-auth==2.40.3
+google-cloud-appengine-logging==1.7.0
+google-cloud-audit-log==0.4.0
 google-cloud-core==2.4.3
+google-cloud-logging==3.12.1
 google-cloud-storage==3.2.0
 google-cloud-tasks==2.19.3
 google-crc32c==1.7.1

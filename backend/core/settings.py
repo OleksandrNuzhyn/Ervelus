@@ -259,27 +259,18 @@ AUTH_PASSWORD_VALIDATORS = [
 if DEBUG:
     active_handlers = ["file"]
 else:
-    active_handlers = ["console"]
+    active_handlers = ["google_cloud_handler"]
 
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "formatters": {
-        "json_formatter": {
-            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
-            "format": "{levelname} {name} {funcName} {message}",
-            "style": "{"
-        }
-    },
     "handlers": {
         "file": {
             "class": "logging.FileHandler",
-            "filename": BASE_DIR / "debug.log",
-            "formatter": "json_formatter",
+            "filename": BASE_DIR / "debug.log"
         },
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "json_formatter",
+        "google_cloud_handler": {
+            "class": "google.cloud.logging.handlers.CloudLoggingHandler",
         },
         "null": {
             "class": "logging.NullHandler",

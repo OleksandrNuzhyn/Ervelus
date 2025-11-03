@@ -1,1 +1,1 @@
-web: uvicorn --host 0.0.0.0 --port $PORT --workers 1 core.asgi:application
+web: uvicorn --host 0.0.0.0 --port $PORT --workers 1 --no-access-log core.asgi:application
