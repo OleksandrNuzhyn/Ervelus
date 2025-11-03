@@ -264,6 +264,12 @@ else:
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "google_json_formatter": {
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+            "format": "%(message)s",
+        }
+    },
     "handlers": {
         "file": {
             "class": "logging.FileHandler",
@@ -271,6 +277,7 @@ LOGGING = {
         },
         "google_cloud_handler": {
             "class": "google.cloud.logging.handlers.StructuredLogHandler",
+            "formatter": "google_json_formatter"
         },
         "null": {
             "class": "logging.NullHandler",
