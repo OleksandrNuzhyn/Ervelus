@@ -18,6 +18,7 @@ export function getCookie(name) {
 }
 
 const api = axios.create({
+  baseURL: '/',
   withCredentials: true,
 });
 
