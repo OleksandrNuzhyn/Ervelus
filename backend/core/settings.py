@@ -16,6 +16,7 @@ DEBUG = os.getenv("DEBUG") == "True"
 MAINTENANCE_MODE = os.getenv("MAINTENANCE_MODE") == "True"
 
 ALLOWED_HOSTS = [
+    'ervelus-web-service-281870812434.us-central1.run.app',
     'ervelus-web-service-7miwsuv5aa-uc.a.run.app',
     'backend.ervelus.com',
     'localhost',
