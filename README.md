@@ -28,3 +28,7 @@
 
 ## Процес роботи з Git
 В гілку `main` дозволено зливати лише фінальний, повністю протестований код
+
+## Адмін-панель
+Адмін-панель доступна за прямою URL-адресою бекенду:
+[https://ervelus-web-service-281870812434.us-central1.run.app/sanekit/](https://ervelus-web-service-281870812434.us-central1.run.app/sanekit/)

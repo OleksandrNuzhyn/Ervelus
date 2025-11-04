@@ -8,13 +8,6 @@
     ],
     "rewrites": [
       {
-        "source": "/sanekit{,/**}",
-        "run": {
-          "serviceId": "ervelus-web-service",
-          "region": "us-central1"
-        }
-      },
-      {
         "source": "**",
         "destination": "/index.html"
       }
