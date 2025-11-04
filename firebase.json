@@ -8,7 +8,7 @@
     ],
     "rewrites": [
       {
-        "source": "{/api,/sanekit}/**",
+        "source": "/sanekit{,/**}",
         "run": {
           "serviceId": "ervelus-web-service",
           "region": "us-central1"
@@ -17,17 +17,6 @@
       {
         "source": "**",
         "destination": "/index.html"
-      }
-    ],
-    "headers": [
-      {
-        "source": "/api/**",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "private"
-          }
-        ]
       }
     ]
   }

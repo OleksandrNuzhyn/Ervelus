@@ -19,10 +19,10 @@ export default defineConfig({
     host: 'localhost',
     proxy: {
       '/api': {
-        target: 'https://ervelus-web-service-7miwsuv5aa-uc.a.run.app',
+        target: 'https://ervelus-web-service-281870812434.us-central1.run.app',
         changeOrigin: true,
         secure: false
-      },
-    },
-  },
+      }
+    }
+  }
 })

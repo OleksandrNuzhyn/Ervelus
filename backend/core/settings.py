@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'corsheaders',
     'gdpr_assist',
     'django_otp',
     'django_otp.plugins.otp_totp',
@@ -105,6 +106,7 @@ MIDDLEWARE = [
     'core.middleware.MaintenanceModeMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -174,21 +176,30 @@ REST_FRAMEWORK = {
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = not DEBUG
-SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_AGE = 3888000
 
 
 
 CSRF_TRUSTED_ORIGINS = [
     'https://ervelus.com',
-    'https://backend.ervelus.com',
     'https://valiant-hexagon-471121-i7.web.app',
     'http://localhost:5173',
     'http://127.0.0.1:5173'
 ]
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'None'
+
+
+
+CORS_ALLOWED_ORIGINS = [
+    'https://ervelus.com',
+    'https://valiant-hexagon-471121-i7.web.app',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173'
+]
+CORS_ALLOW_CREDENTIALS = True
 
 
 

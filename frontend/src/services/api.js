@@ -18,7 +18,8 @@ export function getCookie(name) {
 }
 
 const api = axios.create({
-  withCredentials: true,
+  baseURL: 'https://ervelus-web-service-281870812434.us-central1.run.app',
+  withCredentials: true
 });
 
 api.interceptors.request.use(
