@@ -183,6 +183,7 @@ SESSION_COOKIE_AGE = 3888000
 
 
 CSRF_TRUSTED_ORIGINS = [
+    'https://ervelus-web-service-281870812434.us-central1.run.app',
     'https://ervelus.com',
     'https://valiant-hexagon-471121-i7.web.app',
     'http://localhost:5173',
