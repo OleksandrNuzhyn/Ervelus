@@ -33,5 +33,4 @@
 [https://valiant-hexagon-471121-i7.web.app/](https://valiant-hexagon-471121-i7.web.app/)
 
 ## Адмін-панель
-Адмін-панель доступна за прямою URL-адресою бекенду:
 [https://ervelus-web-service-281870812434.us-central1.run.app/sanekit/](https://ervelus-web-service-281870812434.us-central1.run.app/sanekit/)
