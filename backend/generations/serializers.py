@@ -56,7 +56,8 @@ class GenerationRequestListSerializer(serializers.ModelSerializer):
             if not obj.input_thumb_url:
                 return None
             return services.generate_signed_gcs_url(obj.input_thumb_url, expires_in_seconds=300)
-        except Exception:
+        except Exception as e:
+            print(f"Error in get_input_thumb_signed_url for {obj.id}: {e}")
             return None
 
     def get_output_thumb_signed_url(self, obj):
