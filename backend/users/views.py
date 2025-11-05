@@ -3,6 +3,7 @@ from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
 from rest_framework.decorators import api_view, permission_classes
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.middleware.csrf import get_token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from agreements.permissions import HasAcceptedLatestAgreements
 from generations.models import GenerationRequest
@@ -29,7 +30,7 @@ class GoogleLogin(SocialLoginView):
 @permission_classes([AllowAny])
 @ensure_csrf_cookie
 def csrf_token(request):
-    return Response(status=204)
+    return Response({"csrf_token": get_token(request)}, status=200)
 
 @api_view(['GET'])
 @permission_classes([HasAcceptedLatestAgreements])

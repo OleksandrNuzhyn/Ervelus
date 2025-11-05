@@ -2,34 +2,27 @@ import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
 import { toast } from './toast';
 
-export function getCookie(name) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-    const cookies = document.cookie.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim();
-      if (cookie.substring(0, name.length + 1) === (name + '=')) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
-  }
-  return cookieValue;
-}
-
 const api = axios.create({
   baseURL: 'https://ervelus-web-service-281870812434.us-central1.run.app',
   withCredentials: true
 });
 
 api.interceptors.request.use(
-  (config) => {
-    const csrfToken = getCookie('csrftoken'); 
-
-    if (csrfToken) {
-      config.headers['X-CSRFToken'] = csrfToken;
-    }
+  async (config) => {
+    const authStore = useAuthStore();
     
+    const unsafeMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
+    if (unsafeMethods.includes(config.method.toUpperCase())) {
+      try {
+        const csrfToken = await authStore.fetchCsrfToken();
+        if (csrfToken) {
+          config.headers['X-CSRFToken'] = csrfToken;
+        }
+      }
+      catch (error) {
+        return Promise.reject(error);
+      }
+    }
     return config;
   },
   (error) => {

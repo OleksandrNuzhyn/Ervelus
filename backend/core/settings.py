@@ -149,8 +149,7 @@ FRONTEND_URL = os.getenv("FRONTEND_URL")
 
 REST_AUTH = {
     'TOKEN_MODEL': None,
-    'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer',
-    'LOGIN_SERIALIZER': 'users.serializers.CustomLoginSerializer'
+    'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer'
 }
 
 REST_FRAMEWORK = {

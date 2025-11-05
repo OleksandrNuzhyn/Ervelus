@@ -1,5 +1,4 @@
 from dj_rest_auth.registration.serializers import RegisterSerializer
-from dj_rest_auth.serializers import LoginSerializer
 from allauth.account.models import EmailAddress
 from allauth.account.utils import send_email_confirmation
 from agreements import services
@@ -55,10 +54,6 @@ class CustomRegisterSerializer(RegisterSerializer):
             )
         
         return user
-
-
-class CustomLoginSerializer(LoginSerializer):
-    username = None
 
 
 class UserCreditsSerializer(serializers.ModelSerializer):
