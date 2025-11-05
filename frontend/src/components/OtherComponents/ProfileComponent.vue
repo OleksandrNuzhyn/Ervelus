@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'animations-paused': !animationsEnabled}" class="p-3 text-white h-full flex flex-col font-sans profile-container">
+  <div class="p-3 text-white h-full flex flex-col font-sans profile-container">
     <transition name="fade">
       <div v-if="!isLoading" class="flex-grow flex flex-col w-full max-w-[1850px] mx-auto space-y-8">
         <div class="py-2 flex-grow flex flex-col items-center">
@@ -130,7 +130,6 @@ const subscriptions = ref([]);
 const portalUrl = ref('');
 const isLoading = ref(true);
 const errorMessage = ref('');
-const animationsEnabled = ref(false);
 const showConfirmModal = ref(false);
 const displayEmail = ref(null);
 let confirmActionResolve = null;
@@ -230,9 +229,6 @@ function formattedStatus(status) {
 
 onMounted(() => {
   getProfileData();
-  setTimeout(() => {
-    animationsEnabled.value = true;
-  }, 1500);
 });
 </script>
 
@@ -251,141 +247,6 @@ onMounted(() => {
 .profile-container {
   position: relative;
   overflow: hidden;
-}
-
-.animations-paused::before,
-.animations-paused::after {
-  animation-play-state: paused !important;
-}
-
-.profile-container::before {
-    content: '';
-    position: absolute;
-    top: -40%;
-    left: -40%;
-    width: 180%;
-    height: 180%;
-    z-index: 0;
-    transform: translateZ(0);
-    background: 
-        radial-gradient(ellipse 800px 200px at 2% 10%, rgba(129, 180, 253, 0.22) 0%, transparent 60%),
-        radial-gradient(ellipse 200px 900px at 98% 2%, rgba(147, 226, 252, 0.18) 0%, transparent 55%),
-        radial-gradient(ellipse 1000px 300px at 10% 95%, rgba(168, 213, 253, 0.17) 0%, transparent 68%),
-        radial-gradient(ellipse 300px 1000px at 90% 98%, rgba(129, 180, 253, 0.20) 0%, transparent 50%),
-        radial-gradient(ellipse 700px 400px at 30% -5%, rgba(147, 226, 252, 0.15) 0%, transparent 70%),
-        radial-gradient(ellipse 400px 700px at -5% 80%, rgba(168, 213, 253, 0.13) 0%, transparent 60%),
-        radial-gradient(ellipse 900px 250px at 70% 15%, rgba(129, 180, 253, 0.16) 0%, transparent 65%),
-        radial-gradient(ellipse 250px 900px at 20% 70%, rgba(147, 226, 252, 0.13) 0%, transparent 58%),
-        radial-gradient(ellipse 600px 350px at 85% 60%, rgba(168, 213, 253, 0.18) 0%, transparent 62%),
-        radial-gradient(ellipse 350px 600px at 50% 30%, rgba(129, 180, 253, 0.13) 0%, transparent 60%),
-        radial-gradient(ellipse 700px 400px at 15% 45%, rgba(147, 226, 252, 0.15) 0%, transparent 70%),
-        radial-gradient(ellipse 400px 700px at 75% 5%, rgba(168, 213, 253, 0.17) 0%, transparent 65%),
-        radial-gradient(ellipse 800px 300px at 5% 50%, rgba(129, 180, 253, 0.14) 0%, transparent 60%),
-        radial-gradient(ellipse 300px 800px at 95% 40%, rgba(147, 226, 252, 0.10) 0%, transparent 70%);
-    filter: blur(50px);
-    animation: chaotic-leaks-1 120s ease-in-out infinite;
-}
-
-.profile-container::after {
-    content: '';
-    position: absolute;
-    top: -45%;
-    left: -45%;
-    width: 190%;
-    height: 190%;
-    z-index: 0;
-    transform: translateZ(0);
-    background: 
-        radial-gradient(ellipse 900px 400px at 5% 80%, rgba(129, 180, 253, 0.10) 0%, transparent 60%),
-        radial-gradient(ellipse 300px 900px at 5% 95%, rgba(129, 180, 253, 0.21) 0%, transparent 55%),
-        radial-gradient(ellipse 1100px 400px at 30% 10%, rgba(168, 213, 253, 0.18) 0%, transparent 68%),
-        radial-gradient(ellipse 400px 1100px at 100% 70%, rgba(129, 180, 253, 0.15) 0%, transparent 50%),
-        radial-gradient(ellipse 900px 500px at 0% 30%, rgba(147, 226, 252, 0.13) 0%, transparent 70%),
-        radial-gradient(ellipse 600px 900px at 80% 0%, rgba(168, 213, 253, 0.16) 0%, transparent 60%),
-        radial-gradient(ellipse 300px 700px at 20% 100%, rgba(129, 180, 253, 0.13) 0%, transparent 58%),
-        radial-gradient(ellipse 800px 300px at 10% 60%, rgba(147, 226, 252, 0.17) 0%, transparent 78%),
-        radial-gradient(ellipse 700px 900px at 90% 40%, rgba(168, 213, 253, 0.20) 0%, transparent 62%),
-        radial-gradient(ellipse 500px 800px at 40% 70%, rgba(129, 180, 253, 0.13) 0%, transparent 60%),
-        radial-gradient(ellipse 800px 500px at 25% 15%, rgba(147, 226, 252, 0.15) 0%, transparent 70%),
-        radial-gradient(ellipse 500px 800px at 70% 5%, rgba(168, 213, 253, 0.17) 0%, transparent 65%),
-        radial-gradient(ellipse 900px 400px at 5% 80%, rgba(129, 180, 253, 0.13) 0%, transparent 60%),
-        radial-gradient(ellipse 400px 900px at 95% 30%, rgba(147, 226, 252, 0.10) 0%, transparent 70%);
-    filter: blur(40px);
-    animation: chaotic-leaks-2 120s ease-in-out infinite reverse;
-}
-
-@keyframes chaotic-leaks-1 {
-    0% { 
-        transform: translate(0%, 0%) scale(1) rotate(0deg);
-        opacity: 0.77;
-    }
-    12% { 
-        transform: translate(-8%, 5%) scale(1.1) rotate(15deg);
-        opacity: 0.95;
-    }
-    25% { 
-        transform: translate(6%, -10%) scale(0.9) rotate(-8deg);
-        opacity: 0.70;
-    }
-    38% { 
-        transform: translate(-5%, 12%) scale(1.2) rotate(25deg);
-        opacity: 0.8;
-    }
-    50% { 
-        transform: translate(10%, -7%) scale(0.85) rotate(-18deg);
-        opacity: 0.75;
-    }
-    63% { 
-        transform: translate(-9%, -3%) scale(1.05) rotate(35deg);
-        opacity: 0.9;
-    }
-    75% { 
-        transform: translate(4%, 8%) scale(0.95) rotate(-25deg);
-        opacity: 0.7;
-    }
-    88% { 
-        transform: translate(-6%, -11%) scale(1.15) rotate(12deg);
-        opacity: 0.5;
-    }
-    100% { 
-        transform: translate(0%, 0%) scale(1) rotate(0deg);
-        opacity: 0.77;
-    }
-}
-
-@keyframes chaotic-leaks-2 {
-    0% { 
-        transform: translate(0%, 0%) scale(0.95) rotate(0deg);
-        opacity: 0.5;
-    }
-    15% { 
-        transform: translate(9%, -6%) scale(1.25) rotate(-20deg);
-        opacity: 0.90;
-    }
-    30% { 
-        transform: translate(-11%, 8%) scale(0.8) rotate(30deg);
-        opacity: 0.95;
-    }
-    45% { 
-        transform: translate(5%, -13%) scale(1.1) rotate(-12deg);
-        opacity: 0.3;
-    }
-    60% { 
-        transform: translate(-8%, 4%) scale(0.9) rotate(40deg);
-        opacity: 0.85;
-    }
-    75% { 
-        transform: translate(12%, 6%) scale(1.0) rotate(-32deg);
-        opacity: 0.75;
-    }
-    90% { 
-        transform: translate(-4%, -9%) scale(1.2) rotate(22deg);
-        opacity: 0.90;
-    }
-    100% { 
-        transform: translate(0%, 0%) scale(0.95) rotate(0deg);
-        opacity: 0.5;
-    }
 }
 
 .subscription-display-card {

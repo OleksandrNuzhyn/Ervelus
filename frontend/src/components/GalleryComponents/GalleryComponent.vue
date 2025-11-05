@@ -1,47 +1,50 @@
 <template>
-  <section class="relative mx-auto max-w-[1370px] px-4 pt-8 pb-3 h-full flex flex-col">
+  <section class="relative mx-auto max-w-[1370px] px-4 pt-12 pb-3 h-full flex flex-col">
     <div id="gallery-top"></div>
     
-    <div class="flex-grow"
+    <div class="flex-grow mb-2"
       :class="{
         'overflow-y-auto': galleryItems.length > 0,
-        'flex items-center justify-center': !galleryItems.length
+        'flex items-center justify-center': !isLoading && !galleryItems.length
       }">
-      <transition name="gallery-fade">
-        <transition-group
-          v-if="!isLoading && galleryItems.length"
-          tag="div"
-          name="gallery-list"
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full mt-6"
+      <transition-group
+        v-if="!isLoading && galleryItems.length"
+        tag="div"
+        name="gallery-list"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full"
+      >
+        <article
+          v-for="request in galleryItems"
+          :key="request.id"
+          :class="{'gallery-item-visible': request.requestLoaded}"
+          class="group relative rounded-2xl border border-white/10 bg-zinc-900/50 backdrop-blur ring-1 ring-black/20 hover:border-white/20 cursor-pointer gallery-item generation-card"
+          @click="openModal(request)"
         >
-          <article
-            v-for="request in galleryItems"
-            :key="request.id"
-            :class="{'gallery-item-visible': request.requestLoaded}"
-            class="group relative overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/50 backdrop-blur shadow-lg ring-1 ring-black/20 hover:border-white/20 cursor-pointer gallery-item generation-card"
-            @click="openModal(request)"
-          >
-            <div class="flex flex-col p-3 sm:p-4 h-full">
-              <div class="grid grid-cols-2 gap-2 h-full">
-                <figure class="relative overflow-hidden rounded-xl bg-zinc-900/50 z-20">
-                  <img v-if="request.input_img_signed_url" :src="request.input_img_signed_url" alt="Input Image" :class="['h-full w-full object-cover aspect-square image-fade', { 'image-visible': request.requestLoaded }]"/>
-                </figure>
-                <figure class="relative overflow-hidden rounded-xl bg-zinc-900/50 z-20">
-                  <img v-if="request.output_img_signed_url" :src="request.output_img_signed_url" alt="Output Image" :class="['h-full w-full object-cover aspect-square image-fade', { 'image-visible': request.requestLoaded }]"/>
-                </figure>
-              </div>
-              <div class="mt-3 flex items-center justify-between text-xs text-zinc-300/80 font-medium">
-                <span class="pl-1">Original</span>
-                <span class="pr-1">Stylized</span>
-              </div>
+          <div class="flex flex-col p-3 sm:p-4 h-full">
+            <div class="grid grid-cols-2 gap-2 h-full">
+              <figure class="relative overflow-hidden rounded-xl bg-zinc-900/50 z-20">
+                <img v-if="request.input_thumb_signed_url" :src="request.input_thumb_signed_url" alt="Input Image" :class="['h-full w-full object-cover aspect-square image-fade', { 'image-visible': request.requestLoaded }]"/>
+                <div v-else class="h-full w-full flex items-center justify-center text-zinc-500">
+                  <XCircleIcon class="h-8 w-8 opacity-40" />
+                </div>
+              </figure>
+              <figure class="relative overflow-hidden rounded-xl bg-zinc-900/50 z-20">
+                <img v-if="request.output_thumb_signed_url" :src="request.output_thumb_signed_url" alt="Output Image" :class="['h-full w-full object-cover aspect-square image-fade', { 'image-visible': request.requestLoaded }]"/>
+                <div v-else class="h-full w-full flex items-center justify-center text-zinc-500">
+                  <XCircleIcon class="h-8 w-8 opacity-40" />
+                </div>
+              </figure>
             </div>
-            <div
-              class="pointer-events-none absolute inset-0 rounded-2xl ring-0 ring-emerald-400/0 group-hover:ring-2 group-hover:ring-emerald-400/30 transition"
-              aria-hidden="true"
-            />
-          </article>
-        </transition-group>
-        <div v-else-if="!isLoading && !galleryItems.length" class="w-full mx-auto max-w-md text-center rounded-2xl border border-white/10 bg-zinc-900/40 backdrop-blur p-10 text-zinc-300">
+            <div class="mt-3 flex items-center justify-between text-xs text-zinc-300/80 font-medium">
+              <span class="pl-1">Original</span>
+              <span class="pr-1">Stylized</span>
+            </div>
+          </div>
+        </article>
+      </transition-group>
+      
+      <transition name="gallery-fade">
+        <div v-if="!isLoading && !galleryItems.length" class="w-full mx-auto max-w-md text-center rounded-2xl border border-white/10 bg-zinc-900/40 backdrop-blur p-10 text-zinc-300">
           <p class="text-lg font-medium">No images yet</p>
           <p class="mt-1 text-sm text-zinc-400">Stylize your first images to see it here</p>
           <router-link to="/dashboard" class="manage-button small-manage-button mt-8 mx-auto">
@@ -94,6 +97,8 @@ import { ref, onMounted } from 'vue'
 import api from '@/services/api'
 import PaginationComponent from '@/components/GalleryComponents/PaginationComponent.vue'
 import GenerationModal from '@/components/GalleryComponents/GenerationModal.vue'
+import { toast } from '@/services/toast';
+import { XCircleIcon } from '@heroicons/vue/24/solid';
 
 const galleryItems = ref([])
 const isLoading = ref(true)
@@ -120,29 +125,29 @@ async function preloadRequest(urlsToLoad) {
 
 async function getPage(p) {
   isLoading.value = true
+  galleryItems.value = [];
   
   try {
     const response = await api.get(`/api/generations/generation-requests/gallery/?custom_page_size=${customPageSize}&page=${p}`)
     
-    galleryItems.value = (response.data?.results || []).map(request => ({ ...request, requestLoaded: false }));
+    const results = response.data?.results || [];
     count.value = Number(response.data?.count || 0)
     pageCount.value = Math.max(1, Math.ceil(count.value / customPageSize))
 
-    if ((response.data?.results || []).length > 0) {
-      const initialDelay = 75; 
-      const staggerMs = 75;
+    isLoading.value = false;
 
-      for (const [index, request] of galleryItems.value.entries()) {
-        setTimeout(async () => {
-          const urlsToLoad = [request.input_img_signed_url, request.output_img_signed_url].filter(Boolean);
-          if (urlsToLoad.length > 0) {
-            await preloadRequest(urlsToLoad);
-            request.requestLoaded = true;
-          }
-          else {
-            request.requestLoaded = true;
-          }
-        }, initialDelay + (index * staggerMs));
+    if (results.length > 0) {
+      const tempItems = results.map(request => ({ ...request, requestLoaded: false }));
+      galleryItems.value = tempItems;
+      
+      const staggerMs = 75;
+      for (const request of galleryItems.value) {
+        const urlsToLoad = [request.input_thumb_signed_url, request.output_thumb_signed_url].filter(Boolean);
+        if (urlsToLoad.length > 0) {
+          await preloadRequest(urlsToLoad);
+        }
+        request.requestLoaded = true;
+        await new Promise(resolve => setTimeout(resolve, staggerMs));
       }
     }
   }
@@ -151,9 +156,8 @@ async function getPage(p) {
     count.value = 0
     page.value = 1
     pageCount.value = 1
-  }
-  finally {
     isLoading.value = false;
+    toast.info('Failed to load gallery');
   }
 }
 
@@ -174,6 +178,7 @@ async function deleteRequest(request) {
       }
 
       await api.delete(`/api/generations/generation-requests/delete/${request.id}/`);
+      toast.info('Generation deleted successfully');
         
       count.value--;
       pageCount.value = Math.max(1, Math.ceil(count.value / customPageSize));
@@ -185,8 +190,18 @@ async function deleteRequest(request) {
         await getPage(page.value);
       }
     }
-    catch {
-      console.error('Failed to delete image pair:');
+    catch (error) {
+      if (error.response) {
+        if (error.response.status === 404) {
+          toast.info('This generation does not exist anymore');
+        }
+        else {
+          toast.info('Failed to delete generation');
+        }
+      }
+      else {
+        toast.info('Failed to delete generation');
+      }
     }
     finally {
       deleteActionResolve = null;
@@ -311,6 +326,16 @@ onMounted(() => {
 }
 
 .gallery-fade-leave-to {
+  opacity: 0;
+}
+
+.gallery-fade-enter-active {
+  transition: opacity 0.8s ease;
+  will-change: opacity, transform;
+  transform: translateZ(0);
+}
+
+.gallery-fade-enter-from {
   opacity: 0;
 }
 

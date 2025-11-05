@@ -1,19 +1,27 @@
-from dotenv import load_dotenv # TODO: Remove
 import os
-from pathlib import Path
 import logging.config
-
-load_dotenv() # TODO: Remove
+from pathlib import Path
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SERVICE_NAME = os.getenv("SERVICE_NAME")
+load_dotenv(BASE_DIR / '.env')
+
+SERVICE_NAME = os.getenv("K_SERVICE")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = True # TODO: False
+DEBUG = os.getenv("DEBUG") == "True"
 
-ALLOWED_HOSTS = ['backend.ervelus.com', '127.0.0.1'] # TODO: Set up for production
+MAINTENANCE_MODE = os.getenv("MAINTENANCE_MODE") == "True"
+
+ALLOWED_HOSTS = [
+    'ervelus-web-service-281870812434.us-central1.run.app',
+    'ervelus-generations-service-281870812434.us-central1.run.app',
+    'backend.ervelus.com',
+    'localhost',
+    '127.0.0.1'
+]
 
 
 
@@ -26,6 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'corsheaders',
     'gdpr_assist',
     'django_otp',
     'django_otp.plugins.otp_totp',
@@ -66,7 +75,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-ACCOUNT_EMAIL_SUBJECT_PREFIX = "Greeting! "
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "Welcome to Ervelus! "
 ACCOUNT_RATE_LIMITS = {
     'confirm_email': '1/15s',
 }
@@ -94,8 +103,11 @@ SOCIALACCOUNT_ADAPTER = 'users.adapters.CustomSocialAccountAdapter'
 
 
 MIDDLEWARE = [
+    'core.middleware.MaintenanceModeMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -128,15 +140,16 @@ TEMPLATES = [
 
 ASGI_APPLICATION = 'core.asgi.application'
 
-BACKEND_URL = os.getenv("BACKEND_URL")
+WEB_WORKER_URL = os.getenv("WEB_WORKER_URL")
+GENERATIONS_WORKER_URL = os.getenv("GENERATIONS_WORKER_URL")
+BACKGROUND_WORKER_URL = os.getenv("BACKGROUND_WORKER_URL")
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 
 
 
 REST_AUTH = {
     'TOKEN_MODEL': None,
-    'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer',
-    'LOGIN_SERIALIZER': 'users.serializers.CustomLoginSerializer'
+    'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer'
 }
 
 REST_FRAMEWORK = {
@@ -146,24 +159,48 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_THROTTLE_CLASSES': (
+        'core.throttling.CustomScopedRateThrottle',
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'auth_anon': '5/minute',
+        'contact_anon': '5/hour'
+    }
 }
 
 
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = False # TODO: True
-SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_AGE = 3888000
 
 
 
 CSRF_TRUSTED_ORIGINS = [
-    os.getenv("CSRF_TRUSTED_ORIGINS"),
+    'https://ervelus-web-service-281870812434.us-central1.run.app',
+    'https://ervelus.com',
+    'https://valiant-hexagon-471121-i7.web.app',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173'
 ]
 CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SECURE = False # TODO: True
-CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SAMESITE = 'None'
+
+
+
+CORS_ALLOWED_ORIGINS = [
+    'https://ervelus.com',
+    'https://valiant-hexagon-471121-i7.web.app',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173'
+]
+CORS_ALLOW_CREDENTIALS = True
 
 
 
@@ -172,6 +209,7 @@ ANYMAIL = {
     "MAILGUN_SENDER_DOMAIN": os.getenv("MAILGUN_SENDER_DOMAIN"),
     "MAILGUN_API_URL": os.getenv("MAILGUN_API_BASE_URL")
 }
+
 MAILGUN_API_KEY = os.getenv("MAILGUN_API_KEY")
 MAILGUN_SENDER_DOMAIN = os.getenv("MAILGUN_SENDER_DOMAIN")
 MAILGUN_API_BASE_URL = os.getenv("MAILGUN_API_BASE_URL")
@@ -189,10 +227,14 @@ PADDLE_WEBHOOK_SECRET_KEY = os.getenv("PADDLE_WEBHOOK_SECRET_KEY")
 
 
 GCP_PROJECT_ID = os.getenv("GCP_PROJECT_ID")
+GCP_TASKS_SECRET_KEY = os.getenv("GCP_TASKS_SECRET_KEY")
 GCP_TASKS_LOCATION = os.getenv("GCP_TASKS_LOCATION")
 GCP_TASKS_PADDLE_EVENTS_QUEUE_ID = os.getenv("GCP_TASKS_PADDLE_EVENTS_QUEUE_ID")
 GCP_TASKS_GENERATION_EVENTS_QUEUE_ID = os.getenv("GCP_TASKS_GENERATION_EVENTS_QUEUE_ID")
+GCP_TASKS_RESIZE_EVENTS_QUEUE_ID = os.getenv("GCP_TASKS_RESIZE_EVENTS_QUEUE_ID")
+GCP_TASKS_DELETE_EVENTS_QUEUE_ID = os.getenv("GCP_TASKS_DELETE_EVENTS_QUEUE_ID")
 GCP_STORAGE_BUCKET_NAME = os.getenv("GCP_STORAGE_BUCKET_NAME")
+GCP_TEMP_BUCKET_NAME = os.getenv("GCP_TEMP_BUCKET_NAME")
 
 
 
@@ -201,8 +243,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'Trueelse23#',
-        'HOST': '34.116.178.6',
+        'PASSWORD': os.getenv("DB_PASSWORD"),
+        'HOST': os.getenv("DB_HOST"),
         'PORT': '5432'
     }
 }
@@ -221,7 +263,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    }
 ]
 
 
@@ -229,31 +271,25 @@ AUTH_PASSWORD_VALIDATORS = [
 if DEBUG:
     active_handlers = ["file"]
 else:
-    active_handlers = ["console"]
+    active_handlers = ["google_cloud_handler"]
 
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "json_formatter": {
+        "google_json_formatter": {
             "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
-            "format": "{levelname} {name} {funcName} {message}",
-            "style": "{"
-        },
-        "verbose": {
-            "format": "[{levelname}] [{name}:{funcName}] {message}",
-            "style": "{"
+            "format": "%(message)s",
         }
     },
     "handlers": {
         "file": {
             "class": "logging.FileHandler",
-            "filename": BASE_DIR / "debug.log",
-            "formatter": "json_formatter",
+            "filename": BASE_DIR / "debug.log"
         },
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "json_formatter",
+        "google_cloud_handler": {
+            "class": "google.cloud.logging.handlers.StructuredLogHandler",
+            "formatter": "google_json_formatter"
         },
         "null": {
             "class": "logging.NullHandler",
@@ -300,8 +336,14 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUDITLOG_INCLUDE_ALL_MODELS = True
+
+AUDITLOG_EXCLUDE_TRACKING_MODELS = (
+    "generations.GenerationRequest",
+)
 
 GDPR_LOG_ON_ANONYMISE = False

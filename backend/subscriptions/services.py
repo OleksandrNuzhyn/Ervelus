@@ -1,7 +1,7 @@
 import datetime
 import logging
 from django.contrib.auth import get_user_model
-from django.db import transaction
+from django.db import transaction, DatabaseError
 from django.db.models import F
 from django.utils.dateparse import parse_datetime
 from django.utils import timezone
@@ -72,6 +72,8 @@ def create_new_subscription(data):
         logger.error("User not found, cannot create subscription", extra={'paddle_subscription_id': paddle_subscription_id})
     except SubscriptionPlan.DoesNotExist:
         logger.error("Plan not found, cannot create subscription", extra={'paddle_subscription_id': paddle_subscription_id})
+    except DatabaseError:
+        raise
     except Exception as e:
         logger.error("Failed to create new subscription", extra={'paddle_subscription_id': paddle_subscription_id, 'error': str(e)}, exc_info=True)
 
@@ -129,6 +131,8 @@ def renew_subscription(data):
                 logger.error("Cannot renew subscription with unexpected status", extra={'paddle_subscription_id': paddle_subscription_id})
     except UserSubscription.DoesNotExist:
         logger.error("Subscription not found for renewal", extra={'paddle_subscription_id': paddle_subscription_id})
+    except DatabaseError:
+        raise
     except Exception as e:
         logger.error("Failed to renew subscription", extra={'paddle_subscription_id': paddle_subscription_id, 'error': str(e)}, exc_info=True)
 
@@ -149,6 +153,8 @@ def handle_transaction_past_due(data):
             user_subscription.save(update_fields=['status', 'end_time'])
     except UserSubscription.DoesNotExist:
         logger.error("Subscription not found for past_due handling", extra={'paddle_subscription_id': paddle_subscription_id})
+    except DatabaseError:
+        raise
     except Exception as e:
         logger.error("Failed to handle past_due event", extra={'paddle_subscription_id': paddle_subscription_id, 'error': str(e)}, exc_info=True)
     
@@ -183,6 +189,8 @@ def handle_subscription_updated(data):
                 logger.error("Unhandled subscription updated scenario", extra={'paddle_subscription_id': paddle_subscription_id})
     except UserSubscription.DoesNotExist:
         logger.error("Subscription not found for update handling", extra={'paddle_subscription_id': paddle_subscription_id})
+    except DatabaseError:
+        raise
     except Exception as e:
         logger.error("Failed to handle subscription update", extra={'paddle_subscription_id': paddle_subscription_id, 'error': str(e)}, exc_info=True)
 
@@ -206,5 +214,7 @@ def handle_subscription_canceled(data):
             config.save(update_fields=['reserved_for_spend'])
     except UserSubscription.DoesNotExist:
         logger.error("Subscription not found for cancellation", extra={'paddle_subscription_id': paddle_subscription_id})
+    except DatabaseError:
+        raise
     except Exception as e:
         logger.error("Failed to cancel subscription", extra={'paddle_subscription_id': paddle_subscription_id, 'error': str(e)}, exc_info=True)

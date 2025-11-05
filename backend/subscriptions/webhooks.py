@@ -1,11 +1,12 @@
-from django.conf import settings
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from paddle_billing.Notifications import Secret, Verifier
+from django.conf import settings
 from google.cloud import tasks_v2
 from google.cloud.tasks_v2.types import HttpMethod
 from google.protobuf import duration_pb2
+from django.db import DatabaseError
 from . import services
 import json
 import logging
@@ -23,7 +24,7 @@ def paddle_handler(request):
         return Response(status=400)
 
     try:
-        target_url = f"{settings.BACKEND_URL.rstrip('/')}/webhooks/subscriptions/tasks/"
+        target_url = f"{settings.WEB_WORKER_URL.rstrip('/')}/webhooks/subscriptions/tasks/"
 
         queue_path = tasks_client.queue_path(
             settings.GCP_PROJECT_ID,
@@ -35,7 +36,10 @@ def paddle_handler(request):
             'http_request': {
                 'url': target_url,
                 'http_method': HttpMethod.POST,
-                'headers': {'Content-Type': 'application/json'},
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'X-Task-Secret': settings.GCP_TASKS_SECRET_KEY,
+                },
                 'body': request.body
             },
             'dispatch_deadline': duration_pb2.Duration(seconds=60)
@@ -51,6 +55,11 @@ def paddle_handler(request):
 @authentication_classes([])
 @permission_classes([AllowAny])
 def tasks_handler(request):
+    incoming_secret = request.headers.get('X-Task-Secret')
+    if not incoming_secret or incoming_secret != settings.GCP_TASKS_SECRET_KEY:
+        logger.error("Unauthorized task attempt", extra={'remote_addr': request.META.get('REMOTE_ADDR')})
+        return Response(status=401)
+        
     event = None
     event_type = None
     paddle_subscription_id = None
@@ -69,6 +78,9 @@ def tasks_handler(request):
             services.handle_subscription_canceled(event['data'])
         else:
             logger.error(f"Unhandled event type", extra={'event_type': event_type})
+    except DatabaseError as e:
+        logger.error(f"Database error while processing paddle event", extra={'event': event, 'error': str(e)}, exc_info=True)
+        raise
     except Exception as e:
         try:
             if isinstance(event, dict):
