@@ -153,7 +153,7 @@ async def generate_output_image(prompt, input_image_bytes):
             )
         )
     
-        if not response.candidates[0].content:
+        if not response.candidates or not response.candidates[0].content:
             raise ContentBlockedError()
 
         output_image_bytes = None
