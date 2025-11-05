@@ -24,8 +24,9 @@ from gcloud.aio.storage import Storage as GCSAsyncStorage
 from google.genai.types import HarmCategory, HarmBlockThreshold
 from tenacity import retry, wait_random_exponential, retry_if_exception, stop_after_delay
 
+GCS_KEY_PATH = os.path.join(settings.BASE_DIR, 'core', 'gcs_key.json')
 logger = logging.getLogger(__name__)
-gcs_sync_storage_client = gcs_sync_storage.Client()
+gcs_sync_storage_client = gcs_sync_storage.Client.from_service_account_json(GCS_KEY_PATH)
 
 def generate_signed_gcs_url(gcs_img_url, expires_in_seconds, response_disposition=None):
     parsed_url = urlparse(gcs_img_url)
