@@ -31,7 +31,7 @@
           </div>
         </div>
         <div @click="onOpenStylePanel" class="w-full bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl py-3 lg:py-6 mt-7 lg:mt-4 text-center text-xl md:text-2xl font-bold cursor-pointer hover:bg-black/40 transition-all duration-200 border border-transparent hover:border-gray-600">
-          {{ selectedStyleName || 'Choose style' }}
+          {{ styleButtonText }}
         </div>
       </div>
 
@@ -118,12 +118,10 @@ const outputImageUrl = ref(null);
 const isLoading = ref(false);
 const fileInput = ref(null);
 const currentGenerationId = ref(null);
-const isStoppingAllowed = ref(false);
 const isDragging = ref(false);
 const inputImageLoaded = ref(false);
 const outputImageLoaded = ref(false);
 const completedGenerationId = ref(null);
-const isFirstCheck = ref(true);
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE_BYTES = 7 * 1024 * 1024;
@@ -132,50 +130,23 @@ const POLL_INTERVALS_MS = [
   5000, 5000, 5000
 ];
 
-let stopEnableTimerId = null;
 let pollingTimeoutId = null;
+let cancellationTimeoutId = null; 
 let pollAttempt = 0;
 
 watch(() => props.latestGenerationData, (latest) => {
-  if (latest) {
-    const statuses = ['completed', 'failed', 'stopped_by_user', 'rejected_by_safety'];
-    if (isFirstCheck.value && statuses.includes(latest.status)) {
-      isFirstCheck.value = false;
-      return;
-    }
-    isFirstCheck.value = false;
-    
-    if (latest.status === 'processing') {
-      isLoading.value = true;
-      currentGenerationId.value = latest.id;
-      inputImageUrl.value = latest.input_img_signed_url;
-      outputImageUrl.value = null;
-      startStopEnableTimer(latest.created_at);
-      startPolling();
-    } 
-    else if (latest.status === 'completed' && latest.output_img_signed_url) {
-      inputImageUrl.value = latest.input_img_signed_url;
-      outputImageUrl.value = latest.output_img_signed_url;
-      completedGenerationId.value = latest.id;
-    } 
-    else if (latest.status === 'failed') {
-      inputImageUrl.value = latest.input_img_signed_url;
-      toast.info(latest.error_api_message || latest.error_message);
-      clearStopEnableTimer();
-    }
-    else if (latest.status === 'stopped_by_user') {
-      inputImageUrl.value = latest.input_img_signed_url;
-      clearStopEnableTimer();
-    }
-    else if (latest.status === 'rejected_by_safety') {
-      inputImageUrl.value = latest.input_img_signed_url;
-      toast.info(latest.error_api_message);
-      clearStopEnableTimer();
-    }
+  
+  if (latest && latest.status === 'processing') {
+    isLoading.value = true;
+    currentGenerationId.value = latest.id;
+    inputImageUrl.value = null;
+    outputImageUrl.value = null;
+    startPolling(latest.created_at);
   }
 }, { immediate: true });
 
 watch(inputImageUrl, (newVal) => {
+  
   if (!newVal) {
     inputImageFile.value = null;
     inputImageLoaded.value = false;
@@ -189,6 +160,7 @@ watch(inputImageUrl, (newVal) => {
 });
 
 watch(outputImageUrl, (newVal) => {
+  
   if (newVal) {
     outputImageLoaded.value = false;
   }
@@ -199,15 +171,34 @@ const stopPolling = () => {
     clearTimeout(pollingTimeoutId);
     pollingTimeoutId = null;
   }
+  if (cancellationTimeoutId) {
+    clearTimeout(cancellationTimeoutId);
+    cancellationTimeoutId = null;
+  }
+};
+
+const deleteLongRunningRequest = async (id) => {
+  try {
+    const finalCheckResponse = await api.get('/api/generations/generation-requests/latest/');
+    const finalCheckLatest = finalCheckResponse.data;
+
+    if (finalCheckLatest && finalCheckLatest.id === id && !finalCheckLatest.is_visible) {
+      await api.delete(`/api/generations/generation-requests/delete/${id}/`);
+      toast.info("The generation request was cancelled because it took too long to complete.");
+    }
+  } catch (err) {
+    if (err.response && [400, 404].includes(err.response.status)) {
+      toast.info("Could not cancel the generation request. It might have already been completed or cancelled.");
+    }
+  } finally {
+    isLoading.value = false;
+    stopPolling();
+    currentGenerationId.value = null;
+  }
 };
 
 const pollForResult = async () => {
   if (pollAttempt >= POLL_INTERVALS_MS.length) {
-    stopPolling();
-    isLoading.value = false;
-    currentGenerationId.value = null;
-    toast.info('Failed to get the generated image. Please try again later.'); //чи треба це взагалі?
-    clearStopEnableTimer();
     return;
   }
 
@@ -215,37 +206,34 @@ const pollForResult = async () => {
     const response = await api.get('/api/generations/generation-requests/latest/');
     const latest = response.data;
     
-    if (latest?.status === 'failed') {
-      toast.info(latest.error_api_message || latest.error_message);
+    if (latest && !latest.is_visible) {
+      const nextInterval = POLL_INTERVALS_MS[pollAttempt];
+      pollAttempt++;
+      pollingTimeoutId = setTimeout(pollForResult, nextInterval);
+      return;
+    }
+
+    if (latest?.status === 'completed' && latest.output_large_signed_url) {
+      outputImageUrl.value = latest.output_large_signed_url;
+      completedGenerationId.value = latest.id;
       isLoading.value = false;
       stopPolling();
       currentGenerationId.value = null;
-      clearStopEnableTimer();
     }
-    else if (latest?.status === 'stopped_by_user') {
-        isLoading.value = false;
-        stopPolling();
-        currentGenerationId.value = null;
-        clearStopEnableTimer();
+    else if (latest?.status === 'failed') {
+      toast.info("The spell has failed! Try casting the magic again.");
+      isLoading.value = false;
+      stopPolling();
+      currentGenerationId.value = null;
     }
     else if (latest?.status === 'rejected_by_safety') {
-        toast.info(latest.error_api_message);
+        toast.info("This dark magic was rejected by the safety system. Try another image.");
+        inputImageUrl.value = null;
+        outputImageUrl.value = null;
         isLoading.value = false;
         stopPolling();
         currentGenerationId.value = null;
-        clearStopEnableTimer();
     }
-    else if (latest?.status === 'completed' && latest.output_img_signed_url) {
-      outputImageUrl.value = latest.output_img_signed_url;
-      completedGenerationId.value = latest.id;
-      if (latest.input_img_signed_url && !inputImageUrl.value) {
-          inputImageUrl.value = latest.input_img_signed_url;
-      }
-      isLoading.value = false;
-      stopPolling();
-      currentGenerationId.value = null;
-      clearStopEnableTimer();
-    } 
     else {
       const nextInterval = POLL_INTERVALS_MS[pollAttempt];
       pollAttempt++;
@@ -257,70 +245,56 @@ const pollForResult = async () => {
     isLoading.value = false;
     stopPolling();
     currentGenerationId.value = null;
-    clearStopEnableTimer();
   }
 };
 
-const startPolling = () => {
+const startPolling = (createdAt = null) => {
   stopPolling();
   pollAttempt = 0;
   pollForResult();
+
+  const fiveMinutesInMs = 5 * 60 * 1000;
+  let timeoutDuration = fiveMinutesInMs;
+
+  if (createdAt) {
+    const startTime = new Date(createdAt).getTime();
+    const elapsedTime = Date.now() - startTime;
+    timeoutDuration = Math.max(0, fiveMinutesInMs - elapsedTime);
+  }
+
+  cancellationTimeoutId = setTimeout(() => {
+    if (isLoading.value && currentGenerationId.value) {
+      deleteLongRunningRequest(currentGenerationId.value);
+    }
+  }, timeoutDuration);
 };
 
 onUnmounted(() => {
   stopPolling();
-  clearStopEnableTimer();
+});
+
+const styleButtonText = computed(() => {
+  if (props.latestGenerationData === null) {
+    return '\u00A0';
+  }
+  
+  return props.selectedStyleName || 'Choose style';
 });
 
 const buttonText = computed(() => {
   if (!isLoading.value) {
     return 'Transform';
   }
-  if (isStoppingAllowed.value) {
-    return 'Stop transformation';
-  }
   return 'Transforming...';
 });
 
 const isButtonDisabled = computed(() => {
-  return isLoading.value && !isStoppingAllowed.value;
+  return isLoading.value;
 });
-
-const startStopEnableTimer = (creationTime) => {
-  clearStopEnableTimer();
-  isStoppingAllowed.value = false;
-
-  if (creationTime) {
-    const createdAt = new Date(creationTime);
-    const now = new Date();
-    const elapsedTime = now.getTime() - createdAt.getTime();
-    const remainingTime = 30000 - elapsedTime;
-
-    if (remainingTime <= 0) {
-      isStoppingAllowed.value = true;
-    } else {
-      stopEnableTimerId = setTimeout(() => {
-        isStoppingAllowed.value = true;
-      }, remainingTime);
-    }
-  } else {
-    stopEnableTimerId = setTimeout(() => {
-      isStoppingAllowed.value = true;
-    }, 30000);
-  }
-};
-
-const clearStopEnableTimer = () => {
-  clearTimeout(stopEnableTimerId);
-  stopEnableTimerId = null;
-};
 
 const handleButtonClick = () => {
   if (!isLoading.value) {
     handleGenerate();
-  } 
-  else {
-    handleStopGeneration();
   }
 };
 
@@ -334,47 +308,18 @@ const getErrorMessage = (err, endpoint) => {
 
   if (status === 400) {
     if (endpoint === 'create') {
-      return serverError || data?.non_field_errors?.[0] || 'Could not create request. Check your input data.';
-    } 
-    else if (endpoint === 'stop') {
-      return serverError || 'Could not stop generation.';
+      return serverError || data?.non_field_errors?.[0] || 'Could not create request. Please try again later.';
     } 
     else if (endpoint === 'download') {
-      return serverError || 'Could not download the image.';
+      return serverError || 'Could not download the image. Please try again later.';
     }
   } 
   else if (status === 404) {
-    if (endpoint === 'stop') {
-      return serverError || 'Generation request not found.';
-    } 
-    else if (endpoint === 'download') {
-      return serverError || 'File for download not found.';
+    if (endpoint === 'download') {
+      return serverError || 'File for download not found. Please try again later.';
     }
   }
   return null;
-};
-
-const handleStopGeneration = async () => {
-  clearStopEnableTimer();
-  if (!currentGenerationId.value) {
-    stopPolling();
-    isLoading.value = false;
-    return;
-  }
-  try {
-    await api.post(`/api/generations/generation-requests/stop/${currentGenerationId.value}/`);
-    stopPolling();
-    isLoading.value = false;
-    currentGenerationId.value = null;
-  } catch (err) {
-    stopPolling();
-    isLoading.value = false;
-    currentGenerationId.value = null;
-    
-    if (err.response && [400, 404].includes(err.response.status)) {
-      toast.info(getErrorMessage(err, 'stop'));
-    }
-  }
 };
 
 const handleGenerate = async () => {
@@ -386,7 +331,6 @@ const handleGenerate = async () => {
   isLoading.value = true;
   outputImageUrl.value = null;
   completedGenerationId.value = null;
-  startStopEnableTimer();
 
   try {
     let fileToUpload = inputImageFile.value;

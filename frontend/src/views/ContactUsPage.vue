@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeaderComponent />
-    <div class="background-container flex items-center justify-center">
+    <div class="background-container flex justify-center py-20">
       <ContactUsComponent />
     </div>
     <FooterComponent />
@@ -16,9 +16,10 @@ import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue
 
 <style scoped>
 .background-container {
-  background-image: url('@/assets/background_assets/wall.webp');
+  background-image: url('@/assets/background_assets/side_background.webp');
   background-size: cover;
   background-position: top center;
+  background-attachment: fixed;
   min-height: max(100vh, calc(100vw * 23 / 48));
 }
 </style>
