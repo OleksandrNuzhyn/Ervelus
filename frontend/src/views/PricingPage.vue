@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeaderComponent />
-    <div class="background-container pt-19">
+    <div class="background-container pt-24">
       <PricingComponent />
     </div>
     <FooterComponent />
