@@ -10,6 +10,7 @@ const routes = [
   { path: '/verify-email/:token', name: 'verify-email', component: () => import('@/views/ConfirmEmailPage.vue') },
   { path: '/terms-of-service', name: 'terms-of-service', component: () => import('@/views/TermsOfServicePage.vue') },
   { path: '/privacy-policy', name: 'privacy-policy', component: () => import('@/views/PrivacyPolicyPage.vue') },
+  { path: '/dmca-policy', name: 'dmca-policy', component: () => import('@/views/DMCAPolicyPage.vue') },
   { path: '/pricing', name: 'pricing', component: () => import('@/views/PricingPage.vue') },
   { path: '/contact-us', name: 'contact-us', component: () => import('@/views/ContactUsPage.vue') },
   { path: '/dashboard', name: 'dashboard', component: () => import('@/views/GenerationPage.vue'), meta: { requiresAuth: true } },
