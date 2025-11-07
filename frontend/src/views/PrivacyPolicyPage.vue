@@ -1,13 +1,13 @@
 <template>
   <div class="flex flex-col min-h-screen">
     <HeaderComponent />
-    <main class="flex-grow pt-15">
-      <div class="document-container">
-        <div v-if="document.content" v-html="document.content" class="document-content"></div>
-        <div v-else-if="errorMessage" class="flex flex-col items-center justify-center text-center min-h-[50vh]">
-          <h1 class="text-3xl font-bold text-white">{{ document.title }}</h1>
-          <p class="mt-4 text-gray-300">{{ errorMessage }}</p>
-        </div>
+    <main class="flex-grow pt-20 pb-10 flex flex-col">
+      <div v-if="document.content" class="document-container">
+        <div v-html="document.content" class="document-content"></div>
+      </div>
+      <div v-else-if="errorMessage" class="flex-grow flex flex-col items-center justify-center text-center">
+        <h1 class="text-3xl font-bold text-white">{{ document.title }}</h1>
+        <p class="mt-4 text-gray-300">{{ errorMessage }}</p>
       </div>
     </main>
     <FooterComponent v-if="isContentLoaded" />

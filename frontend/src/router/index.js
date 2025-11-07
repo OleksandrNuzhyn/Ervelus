@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import { toast } from '@/services/toast';
 
 const routes = [
   { path: '/', name: 'home', component: () => import('@/views/HomePage.vue') },
@@ -36,6 +37,20 @@ router.beforeEach(async (to, from) => {
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     return { name: 'login' };
+  }
+});
+
+router.onError((error, to) => {
+  if (error.message.includes('Failed to fetch dynamically imported module')) {
+    if (window.navigator.onLine) {
+      toast.info('New version available, the page will reload');
+      setTimeout(() => {
+        window.location = to.fullPath;
+      }, 3000);
+    }
+    else {
+      toast.error('You are offline. Please check your connection');
+    }
   }
 });
 
