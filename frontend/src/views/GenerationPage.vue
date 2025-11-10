@@ -16,7 +16,7 @@ import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue
 
 <style scoped>
 .background-container {
-  background-image: url('@/assets/background_assets/entrance.webp');
+  background-image: url('@/assets/background_assets/dashboard.webp');
   background-size: cover;
   background-position: center;
   min-height: max(100vh, calc(100vw * 23 / 48));

@@ -44,7 +44,7 @@
   </transition>
   <transition name="modal-fade">
     <div v-if="showConfirmDeleteModal" class="fixed inset-0 flex items-center justify-center z-50 confirm-modal-overlay" @click.self="handleCancelDelete">
-      <div class="modal-content-card p-8 w-full max-w-lg shadow-lg flex flex-col gap-6 text-gray-200 relative">
+      <div class="modal-content-card p-8 w-11/12 max-w-md shadow-lg flex flex-col gap-5 text-gray-200 relative">
         <div class="pb-2">
           <h3 class="medieval text-2xl text-center text-gray-100">Delete Account</h3>
         </div>
