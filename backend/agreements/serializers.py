@@ -7,7 +7,7 @@ class TermsVersionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TermsVersion
-        fields = ('id', 'document_type', 'version', 'content')
+        fields = ('id', 'document_type', 'content')
 
 
 class AcceptUserDocumentVersionSerializer(serializers.Serializer):

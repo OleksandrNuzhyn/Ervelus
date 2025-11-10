@@ -21,7 +21,7 @@ import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue
 import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue';
 
 const document = ref({
-  title: 'DMCA Policy',
+  title: 'Cookie Policy',
   content: ''
 });
 const errorMessage = ref(null);
@@ -29,7 +29,7 @@ const isContentLoaded = ref(false);
 
 async function getDocument() {
   try {
-    const response = await api.get('/api/agreements/dmca_policy/');
+    const response = await api.get('/api/agreements/cookie_policy/');
     document.value.content = response.data.content;
   }
   catch (error) {

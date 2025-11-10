@@ -6,6 +6,7 @@ class TermsVersion(models.Model):
     class DocumentType(models.TextChoices):
         TERMS_OF_SERVICE = 'terms_of_service', 'Terms of Service'
         PRIVACY_POLICY = 'privacy_policy', 'Privacy Policy'
+        COOKIE_POLICY = 'cookie_policy', 'Cookie Policy'
         DMCA_POLICY = 'dmca_policy', 'DMCA Policy'
 
     class Meta:

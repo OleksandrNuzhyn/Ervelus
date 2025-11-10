@@ -5,7 +5,7 @@
       <div class="flex items-center gap-4">
         <router-link to="/terms-of-service" class="hover:text-white transition">Terms of Service</router-link>
         <router-link to="/privacy-policy" class="hover:text-white transition">Privacy Policy</router-link>
-        <router-link to="/dmca-policy" class="hover:text-white transition">DMCA Policy</router-link>
+        <router-link to="/cookie-policy" class="hover:text-white transition">Cookie Policy</router-link>
       </div>
     </div>
   </footer>

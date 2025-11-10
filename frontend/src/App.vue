@@ -9,12 +9,14 @@
           <Transition name="fade-box" appear>
             <div class="maintenance-box">
               <h1>The site is under maintenance</h1>
-              <p>We'll be back soon. We apologize for the inconvenience</p>
+              <p>We'll be back soon. We apologize for the inconvenience.</p>
+              <p class="mt-4 text-sm text-gray-400">Please refresh the page periodically to check our status</p>
             </div>
           </Transition>
         </div>
       </div>
     </Transition>
+    <TermsAcceptModal />
   </div>
 </template>
 
@@ -22,6 +24,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import TermsAcceptModal from '@/components/OtherComponents/TermsAcceptModal.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();

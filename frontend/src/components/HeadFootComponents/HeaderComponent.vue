@@ -117,6 +117,7 @@ import SideBarComponent from './SideBarComponent.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import api from '@/services/api';
+import { toast } from '@/services/toast';
 
 const isBurgerOpen = ref(false);
 const isBarOpen = ref(false);
@@ -162,11 +163,13 @@ const handleBarChange = (newValue) => {
 async function handleLogout() {
   try {
     await api.post('/api/auth/logout/');
+    authStore.logout();
+    router.push({ name: 'login' });
+  }
+  catch (error) {
+    toast.info('Could not sign out. Please try again');
   }
   finally {
-    authStore.logout();
-    await router.push({ name: 'login' });
-
     if (sideBar.value) {
       sideBar.value.closeBar();
     }

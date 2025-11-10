@@ -25,6 +25,9 @@ class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
     client_class = OAuth2Client
 
+    def login(self):
+        self.user = self.serializer.validated_data['user']
+
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -61,9 +64,10 @@ def send_support_email(request):
 @permission_classes([IsAuthenticated])
 def account_delete(request):
     user = request.user
+    requests_in_process = GenerationRequest.objects.filter(user=user, is_visible=False)
 
-    if GenerationRequest.objects.filter(user=user, is_visible=False).exists():
-        return Response({"detail": "You have generation requests in progress. Please wait for them to complete"}, status=400)
+    if requests_in_process.exists():
+        logger.error("User deletion with unfinished generations", extra={'user_id': user.id, 'requests_in_process_ids': list(requests_in_process.values_list('id', flat=True))})
 
     if user.profile.paddle_customer_id:
         try:
@@ -89,7 +93,6 @@ def account_delete(request):
     try:
         objects_to_check.extend(user.subscriptions.all())
         objects_to_check.extend(user.agreements.all())
-        objects_to_check.extend(user.generation_requests.all())
         objects_to_check.extend(user.emailaddress_set.all())
         objects_to_check.extend(user.socialaccount_set.all())
 

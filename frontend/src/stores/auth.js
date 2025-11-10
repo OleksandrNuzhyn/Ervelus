@@ -20,8 +20,8 @@ export const useAuthStore = defineStore('auth', {
       this.user = null;
       this.authChecked = true;
     },
-    async fetchCsrfToken() {
-      if (this.csrfToken) {
+    async fetchCsrfToken(force = false) {
+      if (this.csrfToken && !force) {
         return this.csrfToken;
       }
       
