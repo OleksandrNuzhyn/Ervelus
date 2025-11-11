@@ -69,7 +69,5 @@ def image_delete(data):
                     for blob_name in batch:
                         blob = bucket.blob(blob_name)
                         blob.delete()
-            
-            logging.info(f"Successfully requested deletion", extra={'bucket_name': bucket_name, 'blobs_to_delete': blobs_to_delete})
         except Exception as e:
             logging.error("Failed to process batch deletion for bucket", extra={'bucket_name': bucket_name, 'error': str(e)}, exc_info=True)
