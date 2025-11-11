@@ -197,7 +197,7 @@ async function handleGoogleSuccess(response) {
     router.push('/dashboard');
   } 
   catch (error) {
-    errors.value.api = error.response?.data?.detail || 'Google sign-up failed.';
+    errors.value.api = error.response?.data?.detail || 'Google sign-up failed';
   } 
   finally {
     isGoogleLoading.value = false;
@@ -205,7 +205,7 @@ async function handleGoogleSuccess(response) {
 }
 
 function handleGoogleError() {
-  errors.value.api = 'Google sign-up process failed. Please try again.';
+  errors.value.api = 'Google sign-up process failed. Please try again';
 }
 
 function startResendTimer() {
@@ -232,27 +232,17 @@ async function handleResendEmail() {
   catch (error) {
     if (error.response) {
       const { status, data = {} } = error.response;
-      switch (status) {
-        case 400:
-          if (data.email) {
-            errors.value.api = Array.isArray(data.email) ? data.email[0] : data.email;
-          } 
-          else if (data.detail) {
-            errors.value.api = data.detail[0];
-          } 
-          else {
-            errors.value.api = 'Invalid request. Please check your email address.';
-          }
-          break;
-        case 500:
-          errors.value.api = data.detail || 'Server Error Occured.';
-          break;
-        default:
-          errors.value.api = 'An unexpected error occurred while resending the email.';
+      if (status === 400) {
+        if (data.email) {
+          errors.value.api = Array.isArray(data.email) ? data.email[0] : data.email;
+        } 
+        else if (data.detail) {
+          errors.value.api = data.detail[0];
+        } 
+        else {
+          errors.value.api = 'Invalid request. Please check your email address';
+        }
       }
-    } 
-    else {
-      errors.value.api = 'Unable to connect to the server. Please check your network connection.';
     }
   } 
   finally {
@@ -265,29 +255,29 @@ function validateForm() {
   let isValid = true;
 
   if (!email.value) {
-    errors.value.email = 'Email is required.';
+    errors.value.email = 'Email is required';
     isValid = false;
   } 
   else if (!isEmail(email.value)) {
-    errors.value.email = 'Invalid email format.';
+    errors.value.email = 'Invalid email format';
     isValid = false;
   }
 
   if (!password1.value) {
-    errors.value.password1 = 'Password is required.';
+    errors.value.password1 = 'Password is required';
     isValid = false;
   } 
   else if (password1.value.length < 8) {
-    errors.value.password1 = 'Your password must contain no fewer than 8 characters.';
+    errors.value.password1 = 'Your password must contain no fewer than 8 characters';
     isValid = false;
   }
 
   if (!password2.value) {
-    errors.value.password2 = 'Please confirm password.';
+    errors.value.password2 = 'Please confirm password';
     isValid = false;
   } 
   else if (password1.value !== password2.value) {
-    errors.value.password2 = 'Passwords are not in harmony.';
+    errors.value.password2 = 'Passwords are not in harmony';
     isValid = false;
   }
 
@@ -311,10 +301,8 @@ async function handleSubmit() {
 
     if (error.response) {
       const { status, data = {} } = error.response;
-
-      switch (status) {
-        case 400:
-          if (data.email) {
+      if (status === 400) {
+        if (data.email) {
             errors.value.email = Array.isArray(data.email) ? data.email[0] : data.email;
           }
           if (data.password1) {
@@ -327,24 +315,12 @@ async function handleSubmit() {
             errors.value.api = Array.isArray(data.non_field_errors) ? data.non_field_errors[0] : data.non_field_errors;
           }
           if (!errors.value.email && !errors.value.password1 && !errors.value.password2 && !errors.value.api) {
-            errors.value.api = 'Invalid data provided. Please check your input.';
+            errors.value.api = 'Invalid data provided. Please check your input';
           }
-          break;
-        
-        case 409:
-          errors.value.api ='A soul with this name is already wandering the Ervelus.';
-          break;
-
-        case 500:
-          errors.value.api ='Internal Server Error.';
-          break;
-
-        default:
-          errors.value.api = `An unexpected error occurred (Status: ${status}). Please try again.`;
       }
-    } 
-    else {
-      errors.value.api = 'Unable to connect to the server. Please check your magic connection.';
+      else if (status === 409) {
+        errors.value.api ='A soul with this name is already wandering the Ervelus';
+      }
     }
   } 
   finally {

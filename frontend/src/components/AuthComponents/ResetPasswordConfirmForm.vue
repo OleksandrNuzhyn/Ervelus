@@ -34,119 +34,107 @@
   </div>
 </template>
   
-  <script setup>
-  import { ref, computed } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
-  import api from '@/services/api';
-  import eye_of_sauron from '@/assets/svg/geralt_closed.svg';
-  import eye_of_sauron_looking from '@/assets/svg/geralt_looking.svg';
-  
-  const route = useRoute();
-  const router = useRouter();
-  const uid = route.params.uid;
-  const token = route.params.token;
-  
-  const password1 = ref('');
-  const password2 = ref('');
-  const isLoading = ref(false);
-  const errors = ref({ password1: '', password2: '', api: '' });
-  
-  const showPassword1 = ref(false);
-  const showPassword2 = ref(false);
-  
-  const password1FieldType = computed(() => showPassword1.value ? 'text' : 'password');
-  const password1Icon = computed(() => showPassword1.value ? eye_of_sauron_looking : eye_of_sauron);
-  
-  const password2FieldType = computed(() => showPassword2.value ? 'text' : 'password');
-  const password2Icon = computed(() => showPassword2.value ? eye_of_sauron_looking : eye_of_sauron);
-  
-  function togglePassword1Visibility() {
-    showPassword1.value = !showPassword1.value;
+<script setup>
+import { ref, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import api from '@/services/api';
+import eye_of_sauron from '@/assets/svg/geralt_closed.svg';
+import eye_of_sauron_looking from '@/assets/svg/geralt_looking.svg';
+
+const route = useRoute();
+const router = useRouter();
+const uid = route.params.uid;
+const token = route.params.token;
+
+const password1 = ref('');
+const password2 = ref('');
+const isLoading = ref(false);
+const errors = ref({ password1: '', password2: '', api: '' });
+
+const showPassword1 = ref(false);
+const showPassword2 = ref(false);
+
+const password1FieldType = computed(() => showPassword1.value ? 'text' : 'password');
+const password1Icon = computed(() => showPassword1.value ? eye_of_sauron_looking : eye_of_sauron);
+
+const password2FieldType = computed(() => showPassword2.value ? 'text' : 'password');
+const password2Icon = computed(() => showPassword2.value ? eye_of_sauron_looking : eye_of_sauron);
+
+function togglePassword1Visibility() {
+  showPassword1.value = !showPassword1.value;
+}
+
+function togglePassword2Visibility() {
+  showPassword2.value = !showPassword2.value;
+}
+
+function validateForm() {
+  errors.value = { password1: '', password2: '', api: '' };
+  let ok = true;
+
+  if (!password1.value) {
+    errors.value.password1 = 'Password is required';
+    ok = false;
+  } 
+  else if (password1.value.length < 8) {
+    errors.value.password1 = 'Your password must contain no fewer than 8 characters';
+    ok = false;
   }
-  
-  function togglePassword2Visibility() {
-    showPassword2.value = !showPassword2.value;
+
+  if (!password2.value) {
+    errors.value.password2 = 'Please confirm password';
+    ok = false;
+  } 
+  else if (password1.value !== password2.value) {
+    errors.value.password2 = 'Passwords are not in harmony';
+    ok = false;
   }
-  
-  function validateForm() {
+
+  return ok;
+}
+
+async function handleSubmit() {
+  if (!validateForm()) return;
+  isLoading.value = true;
+  try {
+    await api.post('/api/auth/password/reset/confirm/', {
+      uid,
+      token,
+      new_password1: password1.value,
+      new_password2: password2.value,
+    });
+    router.push({ path: '/login', query: { reset: 'done' } }); 
+  } 
+  catch (error) {
     errors.value = { password1: '', password2: '', api: '' };
-    let ok = true;
 
-    if (!password1.value) {
-      errors.value.password1 = 'Password is required.';
-      ok = false;
-    } 
-    else if (password1.value.length < 8) {
-      errors.value.password1 = 'Your password must contain no fewer than 8 characters.';
-      ok = false;
-    }
+    if (error.response) {
+      const { status, data = {} } = error.response;
 
-    if (!password2.value) {
-      errors.value.password2 = 'Please confirm password.';
-      ok = false;
-    } 
-    else if (password1.value !== password2.value) {
-      errors.value.password2 = 'Passwords are not in harmony.';
-      ok = false;
-    }
-
-    return ok;
-  }
-  
-  async function handleSubmit() {
-    if (!validateForm()) return;
-    isLoading.value = true;
-    try {
-      await api.post('/api/auth/password/reset/confirm/', {
-        uid,
-        token,
-        new_password1: password1.value,
-        new_password2: password2.value,
-      });
-      router.push({ path: '/login', query: { reset: 'done' } }); 
-    } 
-    catch (error) {
-      errors.value = { password1: '', password2: '', api: '' };
-
-      if (error.response) {
-        const { status, data = {} } = error.response;
-
-        switch (status) {
-          case 400:
-            if (data.new_password1) {
-              errors.value.password1 = Array.isArray(data.new_password1) ? data.new_password1[0] : data.new_password1;
-            }
-            if (data.new_password2) {
-              errors.value.password2 = Array.isArray(data.new_password2) ? data.new_password2[0] : data.new_password2;
-            }
-            if (data.token) {
-              errors.value.api = Array.isArray(data.token) ? data.token[0] : data.token;
-            } 
-            else if (data.non_field_errors) {
-              errors.value.api = Array.isArray(data.non_field_errors) ? data.non_field_errors[0] : data.non_field_errors;
-            } 
-            else if (data.detail) {
-               errors.value.api = data.detail;
-            }
-            break;
-          case 500:
-            errors.value.api = data.detail || 'Server Error Occured.';
-            
-            break;
-
-          default:
-            errors.value.api = 'An unexpected error occurred.';
+      if (status === 400) {
+        if (data.new_password1) {
+          errors.value.password1 = Array.isArray(data.new_password1) ? data.new_password1[0] : data.new_password1;
         }
-      } 
-      else {
-        errors.value.api = 'Unable to connect to the server. Please check your magic connection.';
+        if (data.new_password2) {
+          errors.value.password2 = Array.isArray(data.new_password2) ? data.new_password2[0] : data.new_password2;
+        }
+        if (data.token) {
+          errors.value.api = Array.isArray(data.token) ? data.token[0] : data.token;
+        } 
+        else if (data.non_field_errors) {
+          errors.value.api = Array.isArray(data.non_field_errors) ? data.non_field_errors[0] : data.non_field_errors;
+        } 
+        else if (data.detail) {
+            errors.value.api = data.detail;
+        }
       }
     } 
-    finally {
-      isLoading.value = false;
-    }
+  } 
+  finally {
+    isLoading.value = false;
   }
-  </script> 
+}
+</script> 
 
 <style scoped>
 .form-container {
