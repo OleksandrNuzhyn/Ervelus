@@ -4,17 +4,19 @@
 
     <Transition name="fade" @after-enter="onLoaderFadedIn">
       <div v-if="isLoading || !authStore.authChecked || authStore.isMaintenanceMode" class="loader-overlay">
-        <div class="stars"></div>
+        <div class="stars-loader"></div>
         <div v-if="authStore.isMaintenanceMode" class="maintenance-content">
           <Transition name="fade-box" appear>
             <div class="maintenance-box">
               <h1>The site is under maintenance</h1>
-              <p>We'll be back soon. We apologize for the inconvenience</p>
+              <p>We'll be back soon. We apologize for the inconvenience.</p>
+              <p class="mt-4 text-sm text-gray-400">Please refresh the page periodically to check our status</p>
             </div>
           </Transition>
         </div>
       </div>
     </Transition>
+    <TermsAcceptModal />
   </div>
 </template>
 
@@ -22,6 +24,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import TermsAcceptModal from '@/components/OtherComponents/TermsAcceptModal.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -80,63 +83,6 @@ router.afterEach(() => {
   padding: 2.5rem 4rem;
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.stars {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  background-image:
-    radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1.5px 1.5px at 50px 160px, #ddd, rgba(0,0,0,0)),
-    radial-gradient(2.5px 2.5px at 90px 40px, #fff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 100px 100px, #eee, rgba(0,0,0,0));
-  background-repeat: repeat;
-  background-size: 250px 250px;
-  animation: animateStarLayer1 800s linear infinite;
-}
-
-.stars::before,
-.stars::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-}
-
-.stars::before {
-  background-image:
-    radial-gradient(2px 2px at 10px 200px, #ddd, rgba(0,0,0,0)),
-    radial-gradient(2.5px 2.5px at 150px 150px, #fff, rgba(0,0,0,0)),
-    radial-gradient(3px 3px at 200px 30px, #eee, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 10px 200px, #ddd, rgba(0,0,0,0));
-  background-repeat: repeat;
-  background-size: 350px 350px;
-  animation: animateStarLayer2 1000s linear infinite;
-}
-
-.stars::after {
-  background-image:
-    radial-gradient(3px 3px at 80px 80px, #fff, rgba(0,0,0,0)),
-    radial-gradient(4px 4px at 120px 20px, #eee, rgba(0,0,0,0));
-  background-repeat: repeat;
-  background-size: 450px 450px;
-  animation: animateStarLayer3 1300s linear infinite;
-}
-
-@keyframes animateStarLayer1 {
-  from { background-position: 0 0; }
-  to { background-position: 10000px 10000px; }
-}
-
-@keyframes animateStarLayer2 {
-  from { background-position: 0 0; }
-  to { background-position: -10000px 10000px; }
-}
-
-@keyframes animateStarLayer3 {
-  from { background-position: 0 0; }
-  to { background-position: 10000px -10000px; }
 }
 
 .fade-box-enter-active {

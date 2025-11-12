@@ -143,7 +143,9 @@ async function handleLoginSuccess(response) {
     router.push('/dashboard');
   } 
   catch (error) {
-    errors.value.api = error.response?.data?.detail || 'Google sign-in failed.';
+    if (error.response) {
+      errors.value.api = error.response?.data?.detail || 'Google sign-in failed';
+    }
   } 
   finally {
     isGoogleLoading.value = false;
@@ -159,20 +161,20 @@ function validateForm() {
 
   let isValid = true;
   if (!email.value) {
-    errors.value.email = 'The email field cannot be empty.';
+    errors.value.email = 'The email field cannot be empty';
     isValid = false;
   } 
   else if (!isEmail(email.value)) {
-    errors.value.email = 'Incorrect email format.';
+    errors.value.email = 'Incorrect email format';
     isValid = false;
   }
   
   if (!password.value) {
-    errors.value.password = 'Please enter your password.';
+    errors.value.password = 'Please enter your password';
     isValid = false;
   } 
   else if (password.value.length < 8) {
-    errors.value.password = 'Your password must contain no fewer than 8 characters.';
+    errors.value.password = 'Your password must contain no fewer than 8 characters';
     isValid = false;
   }
 
@@ -198,29 +200,16 @@ async function handleSubmit() {
   catch (error) {
     errors.value = { email: '', password: '', api: '' };
     if (error.response) {
-      const { status, data = {} } = error.response;
-
-      switch (status) {
-        case 400:
-          if (data.non_field_errors && data.non_field_errors.length > 0) {
-            errors.value.api = data.non_field_errors[0];
-          } 
-          else {
-            errors.value.api = 'Incorrect email or password. Please try again.';
-          }
-          break;
-
-        case 500:
-          errors.value.api = data.detail || 'Server Error Occured.';
-          break;
-          
-        default:
-          errors.value.api = 'An unexpected error occurred. Please try again.';
+      if (error.response.status === 400) {
+        const { data = {} } = error.response;
+        if (data.non_field_errors && data.non_field_errors.length > 0) {
+          errors.value.api = data.non_field_errors[0];
+        } 
+        else {
+          errors.value.api = 'Incorrect email or password. Please try again';
+        }
       }
     } 
-    else {
-      errors.value.api = 'Unable to connect to the server. Please check your network connection.';
-    }
   }
   finally {
     isLoading.value = false;

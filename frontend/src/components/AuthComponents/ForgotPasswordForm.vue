@@ -44,29 +44,14 @@ watch(email, () => {
 async function handleSubmit() {
   error.value = '';
   if (!isEmail(email.value)) {
-    error.value = 'Invalid email format.';
+    error.value = 'Invalid email format';
     return;
   }
   isLoading.value = true;
   try {
     await api.post('/api/auth/password/reset/', { email: email.value });
     sent.value = true;
-  } 
-  catch (err) {
-    if (err.response) {
-      const { status, data = {} } = err.response;
-      switch (status) {
-        case 500:
-          error.value = data.detail || 'A server error occurred.';
-          break;
-        default:
-          error.value = 'An unexpected error occurred.';
-      }
-    } 
-    else {
-      error.value = 'Unable to connect to the server. Please check your magic connection.';
-    }
-  } 
+  }
   finally {
     isLoading.value = false;
   }
@@ -97,5 +82,4 @@ input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
   font-family: 'Manrope', sans-serif;
 }
-
 </style>

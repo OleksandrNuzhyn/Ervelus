@@ -2,6 +2,7 @@ import os
 import io
 import json
 import logging
+import logging.config
 from PIL import Image
 from google.cloud import storage
 from urllib.parse import urlparse
@@ -15,7 +16,28 @@ GCP_TASKS_LOCATION = os.getenv("GCP_TASKS_LOCATION")
 GCP_TASKS_GENERATION_EVENTS_QUEUE_ID = os.getenv("GCP_TASKS_GENERATION_EVENTS_QUEUE_ID")
 GENERATIONS_WORKER_URL = os.getenv("GENERATIONS_WORKER_URL")
 
-logging.basicConfig(level=logging.INFO)
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "google_json_formatter": {
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+            "format": "%(message)s",
+        }
+    },
+    "handlers": {
+        "google_cloud_handler": {
+            "class": "google.cloud.logging.handlers.StructuredLogHandler",
+            "formatter": "google_json_formatter"
+        },
+    },
+    "root": {
+        "handlers": ["google_cloud_handler"],
+        "level": "INFO",
+    }
+}
+
+logging.config.dictConfig(LOGGING)
 storage_client = storage.Client()
 tasks_client = tasks_v2.CloudTasksClient()
 
