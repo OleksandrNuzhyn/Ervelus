@@ -20,9 +20,10 @@
         </button>
       </div>
     </div>
-    <div
+    <button
       v-if="showLeftArrow"
-      class="absolute top-0 left-0 h-full w-16 flex items-center justify-start pointer-events-none bg-gradient-to-r from-black/80 to-transparent pl-4"
+      @click="scrollLeft"
+      class="absolute top-1/2 -translate-y-1/2 left-2 z-10 p-1 cursor-pointer transition-opacity hover:opacity-60"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -33,10 +34,11 @@
       >
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
-    </div>
-    <div
+    </button>
+    <button
       v-if="showArrow"
-      class="absolute top-0 right-0 h-full w-16 flex items-center justify-end pointer-events-none bg-gradient-to-l from-black/80 to-transparent pr-4"
+      @click="scrollRight"
+      class="absolute top-1/2 -translate-y-1/2 right-2 z-10 p-1 cursor-pointer transition-opacity hover:opacity-60"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -47,7 +49,7 @@
       >
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
-    </div>
+    </button>
   </div>
 </template>
 
@@ -85,6 +87,22 @@ const checkScroll = () => {
     const isScrolledToEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
     showArrow.value = isScrollable && !isScrolledToEnd;
     showLeftArrow.value = isScrollable && el.scrollLeft > 0;
+  }
+};
+
+const scrollLeft = () => {
+  const el = scrollContainer.value;
+  if (el) {
+    const scrollAmount = window.innerWidth >= 768 ? 264 : 136;
+    el.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+  }
+};
+
+const scrollRight = () => {
+  const el = scrollContainer.value;
+  if (el) {
+    const scrollAmount = window.innerWidth >= 768 ? 264 : 136;
+    el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
   }
 };
 
