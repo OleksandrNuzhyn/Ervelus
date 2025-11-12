@@ -1,13 +1,7 @@
 <template>
   <div v-if="!isLoading">
-    <div class="w-full max-w-screen-2xl mx-auto px-2 pt-5 pb-16">
-      <div class="text-center mb-9">
-        <h1 class="font-bold text-5xl medieval fade-in-heading medieval-title mt-4 medieval-main-title-shadow">
-          Contracts
-        </h1>
-      </div>
-
-      <div :class="['grid grid-cols-1 gap-7 justify-items-center mt-8 md:mt-12', grid_col_num]">
+    <div class="w-full max-w-screen-2xl mx-auto px-2 pb-8">
+      <div :class="['grid grid-cols-1 gap-7 justify-items-center mt-4 plans-grid', grid_col_num]">
         <div 
           v-for="(plan, index) in plans"
           :key="plan.name"
@@ -53,6 +47,14 @@
 
           </div>
         </div>
+      </div>
+
+      <div class="parchment-wrapper fade-in-policy">
+        <p class="main-text-font">
+          By continuing, you agree to our
+          <router-link to="/terms-of-service" class="parchment-link">Terms of Service</router-link>,
+          which includes our subscription and refund policies
+        </p>
       </div>
     </div>
 
@@ -243,6 +245,34 @@ onMounted(() => {
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
+.parchment-wrapper {
+  position: relative;
+  z-index: 9;
+  max-width: 1050px;
+  margin: 1.4rem auto 0;
+  padding: 1.3rem 1rem;
+  background-image: url('@/assets/pricing_assets/paper.webp');
+  background-size: 100% 100%;
+  background-position: center;
+  text-align: center;
+  filter: brightness(0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.parchment-wrapper p {
+  font-size: 1rem;
+  color: #000;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+}
+
+.parchment-link {
+  color: #000;
+  text-decoration: underline;
+}
+
 .login-icon-default {
   filter: invert(0.8) sepia(0.2) saturate(0.5) drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.8)) drop-shadow(0px 0px 20px rgba(255, 255, 255, 0.6));
   transition: filter 0.5s ease-in-out;
@@ -364,18 +394,23 @@ onMounted(() => {
   animation-delay: 0.21s;
 }
 
-.fade-in-heading {
-  opacity: 0;
-  animation: fadeIn 0.9s ease-in-out forwards;
-  animation-delay: 0s;
-}
-
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(25px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
+.fade-in-policy {
+  opacity: 0;
+  animation: fadeIn 0.9s ease-in-out forwards;
+  animation-delay: 0.18s;
+}
+
 .router-link-login:hover img {
   filter: invert(0.5) sepia(0.2) saturate(0.5);
+}
+
+.plans-grid {
+  position: relative;
+  z-index: 10;
 }
 </style>

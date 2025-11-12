@@ -55,11 +55,8 @@ onMounted(async () => {
 
   } 
   catch (err) {
-    if (err.response && err.response.data && err.response.data.detail) {
-        error.value = err.response.data.detail;
-    } 
-    else {
-        error.value = 'The token is invalid or has expired. Please try again';
+    if (err.response) {
+      error.value = err.response.data?.detail || 'The token is invalid or has expired. Please try again';
     }
   } 
   finally {

@@ -10,6 +10,7 @@ const routes = [
   { path: '/verify-email/:token', name: 'verify-email', component: () => import('@/views/ConfirmEmailPage.vue') },
   { path: '/terms-of-service', name: 'terms-of-service', component: () => import('@/views/TermsOfServicePage.vue') },
   { path: '/privacy-policy', name: 'privacy-policy', component: () => import('@/views/PrivacyPolicyPage.vue') },
+  { path: '/cookie-policy', name: 'cookie-policy', component: () => import('@/views/CookiePolicyPage.vue') },
   { path: '/pricing', name: 'pricing', component: () => import('@/views/PricingPage.vue') },
   { path: '/contact-us', name: 'contact-us', component: () => import('@/views/ContactUsPage.vue') },
   { path: '/dashboard', name: 'dashboard', component: () => import('@/views/GenerationPage.vue'), meta: { requiresAuth: true } },
@@ -35,6 +36,12 @@ router.beforeEach(async (to, from) => {
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     return { name: 'login' };
+  }
+});
+
+router.onError((error, to) => {
+  if (error.message.includes('Failed to fetch dynamically imported module') && window.navigator.onLine) {
+    window.location = to.fullPath;
   }
 });
 

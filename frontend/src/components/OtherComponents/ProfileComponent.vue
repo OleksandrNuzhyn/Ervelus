@@ -122,6 +122,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '@/services/api';
 import { useAuthStore } from '@/stores/auth';
+import { toast } from '@/services/toast';
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -166,8 +167,9 @@ async function deleteAccount() {
   if (confirmed) {
     try {
       await api.delete('/api/auth/account/delete/');
-      router.push({ name: 'home' });
+      toast.info('Your account has been successfully deleted');
       authStore.logout();
+      router.push({ name: 'home' });
     }
     catch (error) {
       if (error.response && error.response.status === 400 && error.response.data && error.response.data.detail) {

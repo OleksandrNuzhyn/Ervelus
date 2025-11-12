@@ -18,7 +18,7 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 def get_user_uncancelled_paddle_subscriptions(customer_id):
-    url = f"{settings.PADDLE_API_BASE_URL.rstrip('/')}/subscriptions?customer_id={customer_id}&status=active,past_due"
+    url = f"{settings.PADDLE_API_BASE_URL.rstrip('/')}/subscriptions?customer_id={customer_id}&status=active,past_due&scheduled_change_action=pause,resume,none"
     headers = {
         "Authorization": f"Bearer {settings.PADDLE_API_KEY}",
         "Content-Type": "application/json",
@@ -26,9 +26,9 @@ def get_user_uncancelled_paddle_subscriptions(customer_id):
     
     response = requests.get(url, headers=headers)
     response.raise_for_status()
-    response_data = response.json()
+    uncancelled_subscriptions = response.json().get('data', [])
     
-    return response_data.get('data', [])
+    return uncancelled_subscriptions
 
 def create_customer_portal_session(customer_id):
     url = f"{settings.PADDLE_API_BASE_URL.rstrip('/')}/customers/{customer_id}/portal-sessions"
