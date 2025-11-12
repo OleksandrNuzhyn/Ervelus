@@ -2,27 +2,19 @@
   <div>
     <HeaderComponent />
     <div class="landing-wrapper">
-      <!-- Hero Section - Apple Style -->
       <section class="hero-apple">
         <div class="hero-content">
           <h1 class="hero-title">
-            Unleash Your Imagination.
+            Unleash Your Fantasy
           </h1>
           <p class="hero-subtitle">
-            AI-Powered Artistry at Your Fingertips.
+            Countless Worlds In Your Pocket
           </p>
           <p class="hero-description">
-            Transform ordinary images into extraordinary masterpieces across legendary genres.
+            Give ordinary images spectacular looks based on legendary genres
           </p>
-          <button @click="navigateToGeneration" class="cta-primary">
-            Start Your Creation
-            <svg class="cta-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-            </svg>
-          </button>
         </div>
         
-        <!-- Floating preview cards -->
         <div class="hero-visual">
           <div class="preview-card preview-card-1">
             <div class="card-shimmer"></div>
@@ -35,8 +27,7 @@
           </div>
         </div>
       </section>
-
-      <!-- Comparison Section - Paddle Style -->
+  
       <section class="section-comparison">
         <div class="section-header">
           <h2 class="section-title">See the transformation</h2>
@@ -45,7 +36,6 @@
           </p>
         </div>
 
-        <!-- Style Pills -->
         <div class="style-pills">
           <button
             v-for="style in previewStyles"
@@ -57,10 +47,8 @@
           </button>
         </div>
 
-        <!-- Comparison Slider -->
         <div class="comparison-container">
           <div class="comparison-frame">
-            <!-- Before Image -->
             <div class="comparison-side before-side">
               <div class="comparison-placeholder">
                 <svg class="placeholder-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,7 +58,6 @@
               </div>
             </div>
 
-            <!-- After Image -->
             <div 
               class="comparison-side after-side"
               :style="{ 'clip-path': `inset(0 ${100 - sliderPosition}% 0 0)` }"
@@ -81,11 +68,11 @@
               </div>
             </div>
 
-            <!-- Slider Handle -->
-            <div 
+            <div
               class="slider-handle-wrapper"
               :style="{ left: `${sliderPosition}%` }"
               @mousedown.prevent="startDrag"
+              @touchstart.prevent="startDrag"
             >
               <div class="slider-handle">
                 <svg class="slider-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,7 +92,6 @@
         </div>
       </section>
 
-      <!-- Styles & Pricing Section - Apple/Paddle Hybrid -->
       <section class="section-styles">
         <div class="section-header">
           <h2 class="section-title">Choose your plan</h2>
@@ -114,7 +100,6 @@
           </p>
         </div>
 
-        <!-- Pricing Cards -->
         <div class="pricing-list">
           <div 
             v-for="tier in subscriptionTiers"
@@ -153,7 +138,6 @@
         </div>
       </section>
 
-      <!-- Genres Section - Clean Grid -->
       <section class="section-genres">
         <div class="section-header">
           <h2 class="section-title">Legendary genres</h2>
@@ -177,12 +161,11 @@
         </div>
       </section>
 
-      <!-- How it Works - Apple Minimalism -->
       <section class="section-steps">
         <div class="section-header">
-          <h2 class="section-title">Simple. Powerful. Fast.</h2>
+          <h2 class="section-title">Everything you need for magic</h2>
           <p class="section-subtitle">
-            Create magic in three effortless steps
+            Just in three simple steps
           </p>
         </div>
 
@@ -202,15 +185,14 @@
         </div>
       </section>
 
-      <!-- Final CTA - Paddle Style -->
       <section class="section-final-cta">
         <div class="final-cta-content">
           <h2 class="final-cta-title">Ready to create?</h2>
           <p class="final-cta-subtitle">
-            Start transforming your images today. No credit card required.
+            Start transforming your images today
           </p>
-          <button @click="navigateToGeneration" class="cta-primary large">
-            Get Started Free
+          <button @click="navigateToDashboard" class="cta-primary large">
+            Get Started
           </button>
         </div>
       </section>
@@ -240,7 +222,6 @@ const sliderPosition = ref(50)
 let isDragging = false
 const selectedPreviewStyle = ref('dark-fantasy')
 
-// Preview styles
 const previewStyles = [
   { id: 'dark-fantasy', name: 'Dark Fantasy', icon: FireIcon },
   { id: 'gothic-horror', name: 'Gothic Horror', icon: BeakerIcon },
@@ -249,7 +230,6 @@ const previewStyles = [
   { id: 'anime', name: 'Anime', icon: SparklesHeroIcon }
 ]
 
-// Subscription tiers - Horizontal style
 const subscriptionTiers = [
   {
     id: 'free',
@@ -321,7 +301,6 @@ const subscriptionTiers = [
   }
 ]
 
-// Genres
 const genres = [
   {
     id: 'dark-fantasy',
@@ -355,12 +334,11 @@ const genres = [
   }
 ]
 
-// Steps
 const steps = [
   {
     id: 'upload',
     title: 'Upload Your Image',
-    description: 'Choose any photo from your collection',
+    description: 'Choose any photo from your gallery',
     icon: CloudArrowUpIcon
   },
   {
@@ -372,7 +350,7 @@ const steps = [
   {
     id: 'generate',
     title: 'Generate & Download',
-    description: 'Watch AI create your masterpiece',
+    description: 'Watch how we transform reality ',
     icon: ArrowDownTrayIcon
   }
 ]
@@ -396,18 +374,22 @@ const startDrag = (e) => {
   isDragging = true
   document.addEventListener('mousemove', handleDrag)
   document.addEventListener('mouseup', stopDrag)
+  document.addEventListener('touchmove', handleDrag)
+  document.addEventListener('touchend', stopDrag)
 }
 
 const handleDrag = (e) => {
   if (!isDragging) return
-  
+
   const sliderElement = document.querySelector('.comparison-frame')
   if (!sliderElement) return
-  
+
   const rect = sliderElement.getBoundingClientRect()
-  const x = e.clientX - rect.left
+  // Handle both mouse and touch events
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX
+  const x = clientX - rect.left
   const percentage = (x / rect.width) * 100
-  
+
   sliderPosition.value = Math.max(0, Math.min(100, percentage))
 }
 
@@ -415,20 +397,23 @@ const stopDrag = () => {
   isDragging = false
   document.removeEventListener('mousemove', handleDrag)
   document.removeEventListener('mouseup', stopDrag)
+  document.removeEventListener('touchmove', handleDrag)
+  document.removeEventListener('touchend', stopDrag)
 }
 
-const navigateToGeneration = () => {
-  router.push('/generation')
+const navigateToDashboard = () => {
+  router.push('/dashboard')
 }
 
 onUnmounted(() => {
   document.removeEventListener('mousemove', handleDrag)
   document.removeEventListener('mouseup', stopDrag)
+  document.removeEventListener('touchmove', handleDrag)
+  document.removeEventListener('touchend', stopDrag)
 })
 </script>
 
 <style scoped>
-/* Apple/Paddle Design System */
 .landing-wrapper {
   --color-bg: #000000;
   --color-surface: #1c1c1e;
@@ -463,7 +448,6 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
-/* Typography - Apple San Francisco Style */
 .section-title {
   font-size: clamp(40px, 5vw, 64px);
   font-weight: 700;
@@ -542,7 +526,6 @@ onUnmounted(() => {
   margin-right: auto;
 }
 
-/* CTA Button - Apple Style */
 .cta-primary {
   display: inline-flex;
   align-items: center;
@@ -580,7 +563,6 @@ onUnmounted(() => {
   transform: translateX(4px);
 }
 
-/* Hero Visual - Floating Cards */
 .hero-visual {
   position: absolute;
   inset: 0;
@@ -640,14 +622,10 @@ onUnmounted(() => {
   100% { transform: translateX(100%); }
 }
 
-/* Sections */
 section {
   position: relative;
   padding: var(--spacing-2xl) var(--spacing-md);
 }
-
-/* Comparison Section - Paddle Style */
-
 
 .style-pills {
   display: flex;
@@ -739,7 +717,6 @@ section {
   letter-spacing: 0.05em;
 }
 
-/* Style-specific gradients */
 .comparison-styled {
   color: #fff;
 }
@@ -749,7 +726,6 @@ section {
 .style-steampunk { background: linear-gradient(135deg, #b45309 0%, #1c1917 100%); }
 .style-anime { background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); }
 
-/* Slider Handle */
 .slider-handle-wrapper {
   position: absolute;
   top: 0;
@@ -813,7 +789,6 @@ section {
   height: 16px;
 }
 
-/* Pricing Section - Horizontal Cards */
 .section-styles {
   background: rgba(0, 0, 0, 0.1);
 }
@@ -1043,7 +1018,6 @@ section {
 }
 
 
-/* Genres Section */
 .section-genres {
   background: rgba(0, 0, 0, 0.1);
 }
@@ -1102,7 +1076,6 @@ section {
   margin: 0;
 }
 
-/* Steps Section */
 .section-steps {
   background: rgba(0, 0, 0, 0.2);
 }
