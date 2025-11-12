@@ -10,9 +10,6 @@
           <p class="hero-subtitle">
             Countless Worlds In Your Pocket
           </p>
-          <p class="hero-description">
-            Give ordinary images spectacular looks based on legendary genres
-          </p>
         </div>
         
         <div class="hero-visual">
@@ -32,7 +29,7 @@
         <div class="section-header">
           <h2 class="section-title">See the transformation</h2>
           <p class="section-subtitle">
-            Experience the power of AI. Drag to compare original and styled versions.
+            Experience the power of AI. Drag to compare original and styled versions
           </p>
         </div>
 
@@ -96,7 +93,7 @@
         <div class="section-header">
           <h2 class="section-title">Choose your plan</h2>
           <p class="section-subtitle">
-            Access powerful AI styles tailored to your creative needs
+            Access powerful AI styles tailored to your needs
           </p>
         </div>
 
@@ -119,7 +116,7 @@
 
             <div class="pricing-right">
               <div v-if="tier.includePrevious" class="previous-styles-note">
-                + Всі стилі з плану "{{ tier.previousPlanName }}"
+                + All styles from the "{{ tier.previousPlanName }}" plan
               </div>
               
               <div class="styles-grid">
@@ -187,9 +184,9 @@
 
       <section class="section-final-cta">
         <div class="final-cta-content">
-          <h2 class="final-cta-title">Ready to create?</h2>
+          <h2 class="final-cta-title">Ready to enter the Ervelus?</h2>
           <p class="final-cta-subtitle">
-            Start transforming your images today
+            Give ordinary images spectacular looks based on legendary genres now
           </p>
           <button @click="navigateToDashboard" class="cta-primary large">
             Get Started
@@ -206,7 +203,7 @@ import { ref, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue'
 import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue'
-import { 
+import {
   FireIcon,
   BeakerIcon,
   SparklesIcon as SparklesHeroIcon,
@@ -214,7 +211,11 @@ import {
   CubeIcon,
   CloudArrowUpIcon,
   SwatchIcon,
-  ArrowDownTrayIcon
+  ArrowDownTrayIcon,
+  ClockIcon,
+  GlobeAltIcon,
+  SparklesIcon,
+  ArrowTrendingUpIcon
 } from '@heroicons/vue/24/outline'
 
 const router = useRouter()
@@ -303,34 +304,40 @@ const subscriptionTiers = [
 
 const genres = [
   {
-    id: 'dark-fantasy',
-    title: 'Epic Dark Fantasy',
-    description: 'Dragons, magic, and ancient powers',
+    id: 'fantasy',
+    title: 'Fantasy',
+    description: 'Epic adventures in magical worlds',
     icon: FireIcon
   },
   {
-    id: 'gothic-horror',
-    title: 'Gothic Horror',
-    description: 'Shadows, mysteries, and dark tales',
-    icon: BeakerIcon
-  },
-  {
-    id: 'mythic-scifi',
-    title: 'Mythic Sci-Fi',
-    description: 'Cosmic wonders and stellar myths',
-    icon: SparklesHeroIcon
-  },
-  {
-    id: 'steampunk-noir',
-    title: 'Steampunk Noir',
-    description: 'Gears, steam, and dark mechanics',
+    id: 'punkverse',
+    title: 'Punkverse',
+    description: 'Alternative worlds of technology and rebellion',
     icon: CogIcon
   },
   {
-    id: 'arcane-cyber',
-    title: 'Arcane Cyberpunk',
-    description: 'Digital magic and neon runes',
-    icon: CubeIcon
+    id: 'time-travel',
+    title: 'Time Travel',
+    description: 'Journey through time',
+    icon: ClockIcon
+  },
+  {
+    id: 'around-the-world',
+    title: 'Around the World',
+    description: 'Explore distant lands',
+    icon: GlobeAltIcon
+  },
+  {
+    id: 'events',
+    title: 'Events',
+    description: 'Celebrations and festivals',
+    icon: SparklesIcon
+  },
+  {
+    id: 'trending',
+    title: 'Trending',
+    description: 'Popular styles of the moment',
+    icon: ArrowTrendingUpIcon
   }
 ]
 
@@ -419,8 +426,8 @@ onUnmounted(() => {
   --color-surface: #1c1c1e;
   --color-text-primary: #ffffff;
   --color-text-secondary: #a1a1a6;
-  --color-accent: #0071e3;
-  --color-accent-hover: #0077ed;
+  --color-accent: #8b5cf6;
+  --color-accent-hover: #a78bfa;
   --spacing-xs: 8px;
   --spacing-sm: 16px;
   --spacing-md: 24px;
@@ -539,13 +546,13 @@ onUnmounted(() => {
   border-radius: 980px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 16px rgba(0, 113, 227, 0.3);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.5), 0 4px 16px rgba(139, 92, 246, 0.3);
 }
 
 .cta-primary:hover {
   background: var(--color-accent-hover);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 113, 227, 0.4);
+  box-shadow: 0 0 50px rgba(139, 92, 246, 0.6), 0 8px 24px rgba(139, 92, 246, 0.5);
 }
 
 .cta-primary.large {
@@ -656,6 +663,7 @@ section {
   color: #fff;
   background: var(--color-accent);
   border-color: var(--color-accent);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
 }
 
 .comparison-container {
@@ -821,11 +829,11 @@ section {
 
 .pricing-card-horizontal.featured {
   border-color: var(--color-accent);
-  box-shadow: 0 20px 40px rgba(0, 113, 227, 0.2);
+  box-shadow: 0 0 60px rgba(139, 92, 246, 0.3), 0 20px 40px rgba(139, 92, 246, 0.2);
 }
 
 .pricing-card-horizontal.featured::before {
-  content: 'Популярний';
+  content: 'Elder\'s Choice';
   position: absolute;
   top: -12px;
   left: var(--spacing-lg);
@@ -837,6 +845,7 @@ section {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-radius: 980px;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
 }
 
 .pricing-left {
@@ -894,8 +903,8 @@ section {
 
 .previous-styles-note {
   padding: var(--spacing-sm) var(--spacing-md);
-  background: rgba(0, 113, 227, 0.1);
-  border: 1px solid rgba(0, 113, 227, 0.3);
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.3);
   border-radius: var(--radius-sm);
   color: var(--color-accent);
   font-size: 14px;
@@ -944,7 +953,7 @@ section {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(0, 113, 227, 0.3),
+    rgba(139, 92, 246, 0.3),
     transparent
   );
   animation: shimmer-continuous 3s ease-in-out infinite;
@@ -967,12 +976,12 @@ section {
 @keyframes pulse-border {
   0%, 100% {
     border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 0 rgba(0, 113, 227, 0);
+    box-shadow: 0 0 0 rgba(139, 92, 246, 0);
   }
-  
+
   50% {
-    border-color: rgba(0, 113, 227, 0.3);
-    box-shadow: 0 0 15px rgba(0, 113, 227, 0.2);
+    border-color: rgba(139, 92, 246, 0.3);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
   }
 }
 
@@ -980,7 +989,7 @@ section {
   background: rgba(255, 255, 255, 0.06);
   border-color: var(--color-accent);
   transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 8px 24px rgba(0, 113, 227, 0.2);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.4), 0 8px 24px rgba(139, 92, 246, 0.2);
 }
 
 .style-item:active {
@@ -1024,10 +1033,11 @@ section {
 
 .genres-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--spacing-md);
-  max-width: 1200px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--spacing-sm);
+  max-width: 1400px;
   margin: 0 auto;
+  padding: 0 var(--spacing-sm);
 }
 
 .genre-card {
@@ -1036,9 +1046,10 @@ section {
   -webkit-backdrop-filter: blur(40px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   text-align: center;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 0;
 }
 
 .genre-card:hover {
@@ -1051,29 +1062,33 @@ section {
 }
 
 .genre-icon {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   color: var(--color-accent);
   margin: 0 auto;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.3));
 }
 
 .genre-card:hover .genre-icon {
   transform: scale(1.1) rotate(5deg);
+  filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.5));
 }
 
 .genre-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--color-text-primary);
-  margin: 0 0 var(--spacing-sm);
+  margin: 0 0 var(--spacing-xs);
+  word-wrap: break-word;
 }
 
 .genre-description {
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.4;
   color: var(--color-text-secondary);
   margin: 0;
+  word-wrap: break-word;
 }
 
 .section-steps {
@@ -1105,6 +1120,7 @@ section {
   color: #fff;
   background: var(--color-accent);
   border-radius: 50%;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
 }
 
 .step-icon-wrapper {
@@ -1196,7 +1212,28 @@ section {
     grid-template-columns: 1fr;
   }
 
-  .genres-grid,
+  .genres-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-xs);
+  }
+
+  .genre-card {
+    padding: var(--spacing-sm);
+  }
+
+  .genre-title {
+    font-size: 16px;
+  }
+
+  .genre-description {
+    font-size: 12px;
+  }
+
+  .genre-icon {
+    width: 32px;
+    height: 32px;
+  }
+
   .steps-container {
     grid-template-columns: 1fr;
   }
@@ -1218,6 +1255,29 @@ section {
 
   .comparison-frame {
     aspect-ratio: 4 / 3;
+  }
+
+  .genres-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-xs);
+    padding: 0 var(--spacing-xs);
+  }
+
+  .genre-card {
+    padding: var(--spacing-sm);
+  }
+
+  .genre-title {
+    font-size: 14px;
+  }
+
+  .genre-description {
+    font-size: 11px;
+  }
+
+  .genre-icon {
+    width: 28px;
+    height: 28px;
   }
 }
 </style>
