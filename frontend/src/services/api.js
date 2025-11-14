@@ -12,7 +12,7 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('user-token');
     
-    if (token) {
+    if (typeof token === 'string' && token) {
       config.headers['Authorization'] = `Token ${token}`;
     }
     
@@ -29,7 +29,7 @@ api.interceptors.response.use(
     const originalRequest = error.config;
     const authStore = useAuthStore();
 
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+    if (error.response && error.response.status === 401) {
       const requestUrl = originalRequest.url || "";
       
       if (authStore.isAuthenticated && !requestUrl.endsWith('/api/auth/logout/')) {

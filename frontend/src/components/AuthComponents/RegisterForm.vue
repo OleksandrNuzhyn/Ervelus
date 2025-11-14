@@ -194,9 +194,11 @@ async function handleGoogleSuccess(response) {
   try {
     const response = await api.post('/api/auth/google/', { access_token: accessToken });
     const token = response.data.key;
-    localStorage.setItem('user-token', token);
-    await authStore.checkAuth();
-    router.push('/dashboard');
+    if (token) {
+      localStorage.setItem('user-token', token);
+      await authStore.checkAuth();
+      router.push('/dashboard');
+    }
   } 
   catch (error) {
     errors.value.api = error.response?.data?.detail || 'Google sign-up failed';
@@ -296,9 +298,11 @@ async function handleSubmit() {
       password2: password2.value,
     });
     const token = response.data.key;
-    localStorage.setItem('user-token', token);
-    waitingEmailForm.value = true;
-    startResendTimer();
+    if (token) {
+      localStorage.setItem('user-token', token);
+      waitingEmailForm.value = true;
+      startResendTimer();
+    }
   }
   catch (error) {
     errors.value = { email: '', password1: '', password2: '', api: '' };
