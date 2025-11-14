@@ -2,27 +2,16 @@
   <div>
     <HeaderComponent />
     <div class="landing-wrapper">
-      <!-- Hero Section - Apple Style -->
       <section class="hero-apple">
         <div class="hero-content">
           <h1 class="hero-title">
-            Unleash Your Imagination.
+            Unleash Your Fantasy
           </h1>
           <p class="hero-subtitle">
-            AI-Powered Artistry at Your Fingertips.
+            Countless Worlds In Your Pocket
           </p>
-          <p class="hero-description">
-            Transform ordinary images into extraordinary masterpieces across legendary genres.
-          </p>
-          <button @click="navigateToGeneration" class="cta-primary">
-            Start Your Creation
-            <svg class="cta-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-            </svg>
-          </button>
         </div>
         
-        <!-- Floating preview cards -->
         <div class="hero-visual">
           <div class="preview-card preview-card-1">
             <div class="card-shimmer"></div>
@@ -35,17 +24,15 @@
           </div>
         </div>
       </section>
-
-      <!-- Comparison Section - Paddle Style -->
+  
       <section class="section-comparison">
         <div class="section-header">
           <h2 class="section-title">See the transformation</h2>
           <p class="section-subtitle">
-            Experience the power of AI. Drag to compare original and styled versions.
+            Experience the power of AI. Drag to compare original and styled versions
           </p>
         </div>
 
-        <!-- Style Pills -->
         <div class="style-pills">
           <button
             v-for="style in previewStyles"
@@ -57,10 +44,8 @@
           </button>
         </div>
 
-        <!-- Comparison Slider -->
         <div class="comparison-container">
           <div class="comparison-frame">
-            <!-- Before Image -->
             <div class="comparison-side before-side">
               <div class="comparison-placeholder">
                 <svg class="placeholder-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,7 +55,6 @@
               </div>
             </div>
 
-            <!-- After Image -->
             <div 
               class="comparison-side after-side"
               :style="{ 'clip-path': `inset(0 ${100 - sliderPosition}% 0 0)` }"
@@ -81,11 +65,11 @@
               </div>
             </div>
 
-            <!-- Slider Handle -->
-            <div 
+            <div
               class="slider-handle-wrapper"
               :style="{ left: `${sliderPosition}%` }"
               @mousedown.prevent="startDrag"
+              @touchstart.prevent="startDrag"
             >
               <div class="slider-handle">
                 <svg class="slider-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,16 +89,14 @@
         </div>
       </section>
 
-      <!-- Styles & Pricing Section - Apple/Paddle Hybrid -->
       <section class="section-styles">
         <div class="section-header">
           <h2 class="section-title">Choose your plan</h2>
           <p class="section-subtitle">
-            Access powerful AI styles tailored to your creative needs
+            Access powerful AI styles tailored to your needs
           </p>
         </div>
 
-        <!-- Pricing Cards -->
         <div class="pricing-list">
           <div 
             v-for="tier in subscriptionTiers"
@@ -134,7 +116,7 @@
 
             <div class="pricing-right">
               <div v-if="tier.includePrevious" class="previous-styles-note">
-                + Всі стилі з плану "{{ tier.previousPlanName }}"
+                + All styles from the "{{ tier.previousPlanName }}" plan
               </div>
               
               <div class="styles-grid">
@@ -153,7 +135,6 @@
         </div>
       </section>
 
-      <!-- Genres Section - Clean Grid -->
       <section class="section-genres">
         <div class="section-header">
           <h2 class="section-title">Legendary genres</h2>
@@ -177,12 +158,11 @@
         </div>
       </section>
 
-      <!-- How it Works - Apple Minimalism -->
       <section class="section-steps">
         <div class="section-header">
-          <h2 class="section-title">Simple. Powerful. Fast.</h2>
+          <h2 class="section-title">Everything you need for magic</h2>
           <p class="section-subtitle">
-            Create magic in three effortless steps
+            Just in three simple steps
           </p>
         </div>
 
@@ -202,15 +182,14 @@
         </div>
       </section>
 
-      <!-- Final CTA - Paddle Style -->
       <section class="section-final-cta">
         <div class="final-cta-content">
-          <h2 class="final-cta-title">Ready to create?</h2>
+          <h2 class="final-cta-title">Ready to enter the Ervelus?</h2>
           <p class="final-cta-subtitle">
-            Start transforming your images today. No credit card required.
+            Give ordinary images spectacular looks based on legendary genres now
           </p>
-          <button @click="navigateToGeneration" class="cta-primary large">
-            Get Started Free
+          <button @click="navigateToDashboard" class="cta-primary large">
+            Get Started
           </button>
         </div>
       </section>
@@ -224,7 +203,7 @@ import { ref, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue'
 import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue'
-import { 
+import {
   FireIcon,
   BeakerIcon,
   SparklesIcon as SparklesHeroIcon,
@@ -232,7 +211,11 @@ import {
   CubeIcon,
   CloudArrowUpIcon,
   SwatchIcon,
-  ArrowDownTrayIcon
+  ArrowDownTrayIcon,
+  ClockIcon,
+  GlobeAltIcon,
+  SparklesIcon,
+  ArrowTrendingUpIcon
 } from '@heroicons/vue/24/outline'
 
 const router = useRouter()
@@ -240,7 +223,6 @@ const sliderPosition = ref(50)
 let isDragging = false
 const selectedPreviewStyle = ref('dark-fantasy')
 
-// Preview styles
 const previewStyles = [
   { id: 'dark-fantasy', name: 'Dark Fantasy', icon: FireIcon },
   { id: 'gothic-horror', name: 'Gothic Horror', icon: BeakerIcon },
@@ -249,7 +231,6 @@ const previewStyles = [
   { id: 'anime', name: 'Anime', icon: SparklesHeroIcon }
 ]
 
-// Subscription tiers - Horizontal style
 const subscriptionTiers = [
   {
     id: 'free',
@@ -321,46 +302,50 @@ const subscriptionTiers = [
   }
 ]
 
-// Genres
 const genres = [
   {
-    id: 'dark-fantasy',
-    title: 'Epic Dark Fantasy',
-    description: 'Dragons, magic, and ancient powers',
+    id: 'fantasy',
+    title: 'Fantasy',
+    description: 'Epic adventures in magical worlds',
     icon: FireIcon
   },
   {
-    id: 'gothic-horror',
-    title: 'Gothic Horror',
-    description: 'Shadows, mysteries, and dark tales',
-    icon: BeakerIcon
-  },
-  {
-    id: 'mythic-scifi',
-    title: 'Mythic Sci-Fi',
-    description: 'Cosmic wonders and stellar myths',
-    icon: SparklesHeroIcon
-  },
-  {
-    id: 'steampunk-noir',
-    title: 'Steampunk Noir',
-    description: 'Gears, steam, and dark mechanics',
+    id: 'punkverse',
+    title: 'Punkverse',
+    description: 'Alternative worlds of technology and rebellion',
     icon: CogIcon
   },
   {
-    id: 'arcane-cyber',
-    title: 'Arcane Cyberpunk',
-    description: 'Digital magic and neon runes',
-    icon: CubeIcon
+    id: 'time-travel',
+    title: 'Time Travel',
+    description: 'Journey through time',
+    icon: ClockIcon
+  },
+  {
+    id: 'around-the-world',
+    title: 'Around the World',
+    description: 'Explore distant lands',
+    icon: GlobeAltIcon
+  },
+  {
+    id: 'events',
+    title: 'Events',
+    description: 'Celebrations and festivals',
+    icon: SparklesIcon
+  },
+  {
+    id: 'trending',
+    title: 'Trending',
+    description: 'Popular styles of the moment',
+    icon: ArrowTrendingUpIcon
   }
 ]
 
-// Steps
 const steps = [
   {
     id: 'upload',
     title: 'Upload Your Image',
-    description: 'Choose any photo from your collection',
+    description: 'Choose any photo from your gallery',
     icon: CloudArrowUpIcon
   },
   {
@@ -372,7 +357,7 @@ const steps = [
   {
     id: 'generate',
     title: 'Generate & Download',
-    description: 'Watch AI create your masterpiece',
+    description: 'Watch how we transform reality ',
     icon: ArrowDownTrayIcon
   }
 ]
@@ -396,18 +381,22 @@ const startDrag = (e) => {
   isDragging = true
   document.addEventListener('mousemove', handleDrag)
   document.addEventListener('mouseup', stopDrag)
+  document.addEventListener('touchmove', handleDrag)
+  document.addEventListener('touchend', stopDrag)
 }
 
 const handleDrag = (e) => {
   if (!isDragging) return
-  
+
   const sliderElement = document.querySelector('.comparison-frame')
   if (!sliderElement) return
-  
+
   const rect = sliderElement.getBoundingClientRect()
-  const x = e.clientX - rect.left
+  // Handle both mouse and touch events
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX
+  const x = clientX - rect.left
   const percentage = (x / rect.width) * 100
-  
+
   sliderPosition.value = Math.max(0, Math.min(100, percentage))
 }
 
@@ -415,27 +404,30 @@ const stopDrag = () => {
   isDragging = false
   document.removeEventListener('mousemove', handleDrag)
   document.removeEventListener('mouseup', stopDrag)
+  document.removeEventListener('touchmove', handleDrag)
+  document.removeEventListener('touchend', stopDrag)
 }
 
-const navigateToGeneration = () => {
-  router.push('/generation')
+const navigateToDashboard = () => {
+  router.push('/dashboard')
 }
 
 onUnmounted(() => {
   document.removeEventListener('mousemove', handleDrag)
   document.removeEventListener('mouseup', stopDrag)
+  document.removeEventListener('touchmove', handleDrag)
+  document.removeEventListener('touchend', stopDrag)
 })
 </script>
 
 <style scoped>
-/* Apple/Paddle Design System */
 .landing-wrapper {
   --color-bg: #000000;
   --color-surface: #1c1c1e;
   --color-text-primary: #ffffff;
   --color-text-secondary: #a1a1a6;
-  --color-accent: #0071e3;
-  --color-accent-hover: #0077ed;
+  --color-accent: #8b5cf6;
+  --color-accent-hover: #a78bfa;
   --spacing-xs: 8px;
   --spacing-sm: 16px;
   --spacing-md: 24px;
@@ -463,7 +455,6 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
-/* Typography - Apple San Francisco Style */
 .section-title {
   font-size: clamp(40px, 5vw, 64px);
   font-weight: 700;
@@ -542,7 +533,6 @@ onUnmounted(() => {
   margin-right: auto;
 }
 
-/* CTA Button - Apple Style */
 .cta-primary {
   display: inline-flex;
   align-items: center;
@@ -556,13 +546,13 @@ onUnmounted(() => {
   border-radius: 980px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 16px rgba(0, 113, 227, 0.3);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.5), 0 4px 16px rgba(139, 92, 246, 0.3);
 }
 
 .cta-primary:hover {
   background: var(--color-accent-hover);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 113, 227, 0.4);
+  box-shadow: 0 0 50px rgba(139, 92, 246, 0.6), 0 8px 24px rgba(139, 92, 246, 0.5);
 }
 
 .cta-primary.large {
@@ -580,7 +570,6 @@ onUnmounted(() => {
   transform: translateX(4px);
 }
 
-/* Hero Visual - Floating Cards */
 .hero-visual {
   position: absolute;
   inset: 0;
@@ -640,14 +629,10 @@ onUnmounted(() => {
   100% { transform: translateX(100%); }
 }
 
-/* Sections */
 section {
   position: relative;
   padding: var(--spacing-2xl) var(--spacing-md);
 }
-
-/* Comparison Section - Paddle Style */
-
 
 .style-pills {
   display: flex;
@@ -678,6 +663,7 @@ section {
   color: #fff;
   background: var(--color-accent);
   border-color: var(--color-accent);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
 }
 
 .comparison-container {
@@ -739,7 +725,6 @@ section {
   letter-spacing: 0.05em;
 }
 
-/* Style-specific gradients */
 .comparison-styled {
   color: #fff;
 }
@@ -749,7 +734,6 @@ section {
 .style-steampunk { background: linear-gradient(135deg, #b45309 0%, #1c1917 100%); }
 .style-anime { background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); }
 
-/* Slider Handle */
 .slider-handle-wrapper {
   position: absolute;
   top: 0;
@@ -813,7 +797,6 @@ section {
   height: 16px;
 }
 
-/* Pricing Section - Horizontal Cards */
 .section-styles {
   background: rgba(0, 0, 0, 0.1);
 }
@@ -846,11 +829,11 @@ section {
 
 .pricing-card-horizontal.featured {
   border-color: var(--color-accent);
-  box-shadow: 0 20px 40px rgba(0, 113, 227, 0.2);
+  box-shadow: 0 0 60px rgba(139, 92, 246, 0.3), 0 20px 40px rgba(139, 92, 246, 0.2);
 }
 
 .pricing-card-horizontal.featured::before {
-  content: 'Популярний';
+  content: 'Elder\'s Choice';
   position: absolute;
   top: -12px;
   left: var(--spacing-lg);
@@ -862,6 +845,7 @@ section {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-radius: 980px;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
 }
 
 .pricing-left {
@@ -919,8 +903,8 @@ section {
 
 .previous-styles-note {
   padding: var(--spacing-sm) var(--spacing-md);
-  background: rgba(0, 113, 227, 0.1);
-  border: 1px solid rgba(0, 113, 227, 0.3);
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.3);
   border-radius: var(--radius-sm);
   color: var(--color-accent);
   font-size: 14px;
@@ -969,7 +953,7 @@ section {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(0, 113, 227, 0.3),
+    rgba(139, 92, 246, 0.3),
     transparent
   );
   animation: shimmer-continuous 3s ease-in-out infinite;
@@ -992,12 +976,12 @@ section {
 @keyframes pulse-border {
   0%, 100% {
     border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 0 rgba(0, 113, 227, 0);
+    box-shadow: 0 0 0 rgba(139, 92, 246, 0);
   }
-  
+
   50% {
-    border-color: rgba(0, 113, 227, 0.3);
-    box-shadow: 0 0 15px rgba(0, 113, 227, 0.2);
+    border-color: rgba(139, 92, 246, 0.3);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
   }
 }
 
@@ -1005,7 +989,7 @@ section {
   background: rgba(255, 255, 255, 0.06);
   border-color: var(--color-accent);
   transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 8px 24px rgba(0, 113, 227, 0.2);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.4), 0 8px 24px rgba(139, 92, 246, 0.2);
 }
 
 .style-item:active {
@@ -1043,17 +1027,17 @@ section {
 }
 
 
-/* Genres Section */
 .section-genres {
   background: rgba(0, 0, 0, 0.1);
 }
 
 .genres-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--spacing-md);
-  max-width: 1200px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--spacing-sm);
+  max-width: 1400px;
   margin: 0 auto;
+  padding: 0 var(--spacing-sm);
 }
 
 .genre-card {
@@ -1062,9 +1046,10 @@ section {
   -webkit-backdrop-filter: blur(40px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   text-align: center;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 0;
 }
 
 .genre-card:hover {
@@ -1077,32 +1062,35 @@ section {
 }
 
 .genre-icon {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   color: var(--color-accent);
   margin: 0 auto;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.3));
 }
 
 .genre-card:hover .genre-icon {
   transform: scale(1.1) rotate(5deg);
+  filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.5));
 }
 
 .genre-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--color-text-primary);
-  margin: 0 0 var(--spacing-sm);
+  margin: 0 0 var(--spacing-xs);
+  word-wrap: break-word;
 }
 
 .genre-description {
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.4;
   color: var(--color-text-secondary);
   margin: 0;
+  word-wrap: break-word;
 }
 
-/* Steps Section */
 .section-steps {
   background: rgba(0, 0, 0, 0.2);
 }
@@ -1132,6 +1120,7 @@ section {
   color: #fff;
   background: var(--color-accent);
   border-radius: 50%;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
 }
 
 .step-icon-wrapper {
@@ -1223,7 +1212,28 @@ section {
     grid-template-columns: 1fr;
   }
 
-  .genres-grid,
+  .genres-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-xs);
+  }
+
+  .genre-card {
+    padding: var(--spacing-sm);
+  }
+
+  .genre-title {
+    font-size: 16px;
+  }
+
+  .genre-description {
+    font-size: 12px;
+  }
+
+  .genre-icon {
+    width: 32px;
+    height: 32px;
+  }
+
   .steps-container {
     grid-template-columns: 1fr;
   }
@@ -1245,6 +1255,29 @@ section {
 
   .comparison-frame {
     aspect-ratio: 4 / 3;
+  }
+
+  .genres-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-xs);
+    padding: 0 var(--spacing-xs);
+  }
+
+  .genre-card {
+    padding: var(--spacing-sm);
+  }
+
+  .genre-title {
+    font-size: 14px;
+  }
+
+  .genre-description {
+    font-size: 11px;
+  }
+
+  .genre-icon {
+    width: 28px;
+    height: 28px;
   }
 }
 </style>
