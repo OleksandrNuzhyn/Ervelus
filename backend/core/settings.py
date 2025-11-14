@@ -344,7 +344,7 @@ AUDITLOG_INCLUDE_ALL_MODELS = True
 
 AUDITLOG_EXCLUDE_TRACKING_MODELS = (
     "generations.GenerationRequest",
-    "rest_framework.authtoken.models.Token"
+    "authtoken.Token"
 )
 
 GDPR_LOG_ON_ANONYMISE = False
