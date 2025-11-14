@@ -1,6 +1,8 @@
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
+from dj_rest_auth.app_settings import api_settings
+from dj_rest_auth.models import get_token_model
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from agreements.permissions import HasAcceptedLatestAgreements
@@ -25,6 +27,10 @@ class GoogleLogin(SocialLoginView):
 
     def login(self):
         self.user = self.serializer.validated_data['user']
+        token_model = get_token_model()
+        
+        if token_model:
+            self.token = api_settings.TOKEN_CREATOR(token_model, self.user, self.serializer)
 
 
 @api_view(['GET'])
