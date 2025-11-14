@@ -176,6 +176,7 @@ REST_FRAMEWORK = {
 
 
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_SAMESITE = 'None'
@@ -343,6 +344,7 @@ AUDITLOG_INCLUDE_ALL_MODELS = True
 
 AUDITLOG_EXCLUDE_TRACKING_MODELS = (
     "generations.GenerationRequest",
+    "rest_framework.authtoken.models.Token"
 )
 
 GDPR_LOG_ON_ANONYMISE = False

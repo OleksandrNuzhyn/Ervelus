@@ -43,7 +43,13 @@ onMounted(async () => {
   success.value = false;
 
   try {
-    await api.post('/api/auth/registration/verify-email/', { key: token });
+    const response = await api.post('/api/auth/registration/verify-email/', { key: token });
+    const token = response.data.key;
+
+    if (token) {
+      localStorage.setItem('user-token', token);
+    }
+    
     isLoading.value = false;
     success.value = true;
     

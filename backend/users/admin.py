@@ -13,6 +13,7 @@ from .forms import EmailForm
 from django.conf import settings
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django_otp.plugins.otp_totp.admin import TOTPDeviceAdmin
+from rest_framework.authtoken.models import Token
 from core.admin_mixins import NoLogAdminMixin
 from allauth.account.models import EmailAddress
 from allauth.socialaccount.models import SocialAccount
@@ -29,6 +30,7 @@ admin.site.unregister(SocialAccount)
 admin.site.unregister(SocialApp)
 admin.site.unregister(SocialToken)
 admin.site.unregister(TOTPDevice)
+admin.site.unregister(Token)
 
 EmailAddress._meta.verbose_name = "Email Address"
 EmailAddress._meta.verbose_name_plural = "Email Addresses"

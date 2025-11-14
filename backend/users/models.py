@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from allauth.account.models import EmailAddress
 from allauth.socialaccount.models import SocialAccount
+from rest_framework.authtoken.models import Token
 from django.db import models
 from django.db.models import Q, Sum
 from django.db.models.functions import Coalesce
@@ -140,3 +141,17 @@ class SocialAccountPrivacyMeta:
 
 
 gdpr_assist.register(SocialAccount, SocialAccountPrivacyMeta)
+
+
+class TokenPrivacyMeta:
+    can_anonymise = False
+    search_fields = [
+        'user__email',
+    ]
+    export_fields = [
+        'key', 
+        'created'
+    ]
+
+
+gdpr_assist.register(Token, TokenPrivacyMeta)

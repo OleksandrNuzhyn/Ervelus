@@ -292,17 +292,13 @@ async function handleSubmit() {
   if (!validateForm()) return;
   isLoading.value = true;
   try {
-    const response = await api.post('/api/auth/registration/', {
+    await api.post('/api/auth/registration/', {
       email: email.value,
       password1: password1.value,
       password2: password2.value,
     });
-    const token = response.data.key;
-    if (token) {
-      localStorage.setItem('user-token', token);
-      waitingEmailForm.value = true;
-      startResendTimer();
-    }
+    waitingEmailForm.value = true;
+    startResendTimer();
   }
   catch (error) {
     errors.value = { email: '', password1: '', password2: '', api: '' };
