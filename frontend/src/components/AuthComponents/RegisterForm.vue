@@ -192,7 +192,9 @@ async function handleGoogleSuccess(response) {
   errors.value.api = '';
   const accessToken = response.access_token;
   try {
-    await api.post('/api/auth/google/', { access_token: accessToken });
+    const response = await api.post('/api/auth/google/', { access_token: accessToken });
+    const token = response.data.key;
+    localStorage.setItem('user-token', token);
     await authStore.checkAuth();
     router.push('/dashboard');
   } 
@@ -288,11 +290,13 @@ async function handleSubmit() {
   if (!validateForm()) return;
   isLoading.value = true;
   try {
-    await api.post('/api/auth/registration/', {
+    const response = await api.post('/api/auth/registration/', {
       email: email.value,
       password1: password1.value,
       password2: password2.value,
     });
+    const token = response.data.key;
+    localStorage.setItem('user-token', token);
     waitingEmailForm.value = true;
     startResendTimer();
   }

@@ -9,21 +9,13 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(
-  async (config) => {
-    const authStore = useAuthStore();
+  (config) => {
+    const token = localStorage.getItem('user-token');
     
-    const unsafeMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
-    if (unsafeMethods.includes(config.method.toUpperCase())) {
-      try {
-        const csrfToken = await authStore.fetchCsrfToken();
-        if (csrfToken) {
-          config.headers['X-CSRFToken'] = csrfToken;
-        }
-      }
-      catch (error) {
-        return Promise.reject(error);
-      }
+    if (token) {
+      config.headers['Authorization'] = `Token ${token}`;
     }
+    
     return config;
   },
   (error) => {
@@ -37,30 +29,18 @@ api.interceptors.response.use(
     const originalRequest = error.config;
     const authStore = useAuthStore();
 
-    if (error.response && (error.response.status === 401 || error.response.status === 403) && !originalRequest.is_retry) {
-      const requestUrl = error.request.responseURL || "";
-
-      if (requestUrl.endsWith('/api/auth/user/')) {
-        return Promise.reject(error);
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      const requestUrl = originalRequest.url || "";
+      
+      if (authStore.isAuthenticated && !requestUrl.endsWith('/api/auth/logout/')) {
+        toast.info("Your session has expired. Please sign in again");
+        authStore.user = null;
+        authStore.authChecked = true;
+        localStorage.removeItem('user-token');
+        const router = (await import('@/router')).default;
+        await router.push({ name: 'login' });
       }
-
-      originalRequest.is_retry = true;
-
-      try {
-        const csrfToken = await authStore.fetchCsrfToken(true);
-        originalRequest.headers['X-CSRFToken'] = csrfToken;
-        return api(originalRequest);
-      }
-      catch (retryError) {
-        if (retryError.response && (retryError.response.status === 401 || retryError.response.status === 403)) {
-            toast.info("Your session has expired. Please sign in again");
-            authStore.logout();
-            const router = (await import('@/router')).default;
-            await router.push({ name: 'login' });
-            return Promise.resolve();
-        }
-        return Promise.reject(retryError);
-      }
+      return Promise.resolve();
     }
 
     if (error.response && error.response.status === 428) {

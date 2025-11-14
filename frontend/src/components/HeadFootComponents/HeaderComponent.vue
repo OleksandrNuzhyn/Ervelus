@@ -1,118 +1,118 @@
 <template>
-    <header class="fixed inset-x-0 top-0 z-50 bg-black/30 backdrop-blur-sm">
-      <div class="max-w-screen mx-auto px-4 sm:px-6 lg:px-12">
-        <div class="flex items-center justify-between h-[70px]">
-          <router-link to="/" class="text-2xl font-bold text-gray-100 select-none">Ervelus</router-link>
-          <nav v-if="authStore.isAuthenticated" class="hidden md:flex items-center gap-15 font-thin text-gray-100">
-            <router-link to="/dashboard" class="hover:text-gray-400">Dashboard</router-link>
-            <router-link to="/gallery" class="hover:text-gray-400">Gallery</router-link>
-            <router-link to="/pricing" class="hover:text-gray-400">Pricing</router-link>
-            <SideBarComponent
-              ref="sideBar"
-              :credits="credits"
-              @open-change="handleBarChange"
-              @logout="handleLogout"
-            />
-          </nav>
-          <button v-if="authStore.isAuthenticated" @click="isBurgerOpen = !isBurgerOpen" class="md:hidden text-gray-200 hover:text-gray-50 focus:outline-none">
-            <svg v-if="!isBurgerOpen" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
-            </svg>
-            <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-          <div v-else class="flex items-center gap-15 font-thin text-gray-100">
-            <router-link to="/pricing" class="hidden md:block hover:text-gray-400">Pricing</router-link>
-            <router-link to="/contact-us" class="hidden md:block hover:text-gray-400">Contact us</router-link>
-            <router-link to="/register" class="border-2 border-white-100 rounded-full px-4 py-2 hover:text-gray-400 hover:border-gray-400  text-gray-100">Start now</router-link>
-          </div>
+  <header class="fixed inset-x-0 top-0 z-50 bg-black/30 backdrop-blur-sm">
+    <div class="max-w-screen mx-auto px-4 sm:px-6 lg:px-12">
+      <div class="flex items-center justify-between h-[70px]">
+        <router-link to="/" class="text-2xl font-bold text-gray-100 select-none">Ervelus</router-link>
+        <nav v-if="authStore.isAuthenticated" class="hidden md:flex items-center gap-15 font-thin text-gray-100">
+          <router-link to="/dashboard" class="hover:text-gray-400">Dashboard</router-link>
+          <router-link to="/gallery" class="hover:text-gray-400">Gallery</router-link>
+          <router-link to="/pricing" class="hover:text-gray-400">Pricing</router-link>
+          <SideBarComponent
+            ref="sideBar"
+            :credits="credits"
+            @open-change="handleBarChange"
+            @logout="handleLogout"
+          />
+        </nav>
+        <button v-if="authStore.isAuthenticated" @click="isBurgerOpen = !isBurgerOpen" class="md:hidden text-gray-200 hover:text-gray-50 focus:outline-none">
+          <svg v-if="!isBurgerOpen" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
+          </svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <div v-else class="flex items-center gap-15 font-thin text-gray-100">
+          <router-link to="/pricing" class="hidden md:block hover:text-gray-400">Pricing</router-link>
+          <router-link to="/contact-us" class="hidden md:block hover:text-gray-400">Contact us</router-link>
+          <router-link to="/register" class="border-2 border-white-100 rounded-full px-4 py-2 hover:text-gray-400 hover:border-gray-400  text-gray-100">Start now</router-link>
         </div>
       </div>
-      
-      <transition
-        enter-active-class="transition ease-out duration-200"
-        enter-from-class="transform opacity-0 -translate-y-4"
-        enter-to-class="transform opacity-100 translate-y-0"
-        leave-active-class="transition ease-in duration-150"
-        leave-from-class="transform opacity-100 translate-y-0"
-        leave-to-class="transform opacity-0 -translate-y-4">
-        <div v-if="isBurgerOpen" class="md:hidden bg-black/30 backdrop-blur-sm text-gray-200">
-          <div class="px-4 py-4 flex flex-col gap-6">
-              <div class="py-3 text-sm text-gray-400 flex items-center gap-2">
-                <div class="w-10 flex justify-center">
-                  <img src="@/assets/svg/coin.svg" class="h-10 w-10" />
-                </div>
-                <span>COINS: {{ credits }}</span>
-              </div>
-              <router-link to="/dashboard" class="hover:text-gray-50 flex items-center gap-2">
-                <div class="w-10 flex justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-                  </svg>
-                </div>
-                <span>Dashboard</span>
-              </router-link>
-              <router-link to="/gallery" class="hover:text-white flex items-center gap-2">
-                <div class="w-10 flex justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <span>Gallery</span>
-              </router-link>
-              <router-link to="/profile" class="hover:text-white flex items-center gap-2">
-                <div class="w-10 flex justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                  </svg>
-                </div>
-                <span>Profile</span>
-              </router-link>
-              <router-link to="/pricing" class="hover:text-gray-50 flex items-center gap-2">
-                <div class="w-10 flex justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-                <span>Pricing</span>
-              </router-link>
-              <router-link to="/contact-us" @click="isBarOpen = false" class="hover:text-white flex items-center gap-2">
-                <div class="w-10 flex justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                  </svg>
-                </div>
-                <span>Contact us</span>
-              </router-link>
-              <button @click="handleLogout" class="text-left hover:text-white flex items-center gap-2">
-                <div class="w-10 flex justify-center">
-                  <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20V9.75a5 5 0 00-10 0V20M2 20h20"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 12h8m0 0l-3-3m3 3l-3 3"></path></svg>
-                </div>
-                <span>Sign out</span>
-              </button>
-            </div>
-          </div>
-        </transition>
-    </header>
+    </div>
+    
     <transition
-      enter-active-class="transition-opacity ease-in-out duration-300"
-      enter-from-class="opacity-0"
-      enter-to-class="opacity-100"
-      leave-active-class="transition-opacity ease-in-out duration-200"
-      leave-from-class="opacity-100"
-      leave-to-class="opacity-0"
-    >
-      <div
-        v-if="isBarOpen || isBurgerOpen"
-        @click="closeSidebars"
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40">
-      </div>
-    </transition>
-  </template>
+      enter-active-class="transition ease-out duration-200"
+      enter-from-class="transform opacity-0 -translate-y-4"
+      enter-to-class="transform opacity-100 translate-y-0"
+      leave-active-class="transition ease-in duration-150"
+      leave-from-class="transform opacity-100 translate-y-0"
+      leave-to-class="transform opacity-0 -translate-y-4">
+      <div v-if="isBurgerOpen" class="md:hidden bg-black/30 backdrop-blur-sm text-gray-200">
+        <div class="px-4 py-4 flex flex-col gap-6">
+            <div class="py-3 text-sm text-gray-400 flex items-center gap-2">
+              <div class="w-10 flex justify-center">
+                <img src="@/assets/svg/coin.svg" class="h-10 w-10" />
+              </div>
+              <span>COINS: {{ credits }}</span>
+            </div>
+            <router-link to="/dashboard" class="hover:text-gray-50 flex items-center gap-2">
+              <div class="w-10 flex justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                </svg>
+              </div>
+              <span>Dashboard</span>
+            </router-link>
+            <router-link to="/gallery" class="hover:text-white flex items-center gap-2">
+              <div class="w-10 flex justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <span>Gallery</span>
+            </router-link>
+            <router-link to="/profile" class="hover:text-white flex items-center gap-2">
+              <div class="w-10 flex justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+              </div>
+              <span>Profile</span>
+            </router-link>
+            <router-link to="/pricing" class="hover:text-gray-50 flex items-center gap-2">
+              <div class="w-10 flex justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <span>Pricing</span>
+            </router-link>
+            <router-link to="/contact-us" @click="isBarOpen = false" class="hover:text-white flex items-center gap-2">
+              <div class="w-10 flex justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <span>Contact us</span>
+            </router-link>
+            <button @click="handleLogout" class="text-left hover:text-white flex items-center gap-2">
+              <div class="w-10 flex justify-center">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20V9.75a5 5 0 00-10 0V20M2 20h20"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 12h8m0 0l-3-3m3 3l-3 3"></path></svg>
+              </div>
+              <span>Sign out</span>
+            </button>
+          </div>
+        </div>
+      </transition>
+  </header>
+  <transition
+    enter-active-class="transition-opacity ease-in-out duration-300"
+    enter-from-class="opacity-0"
+    enter-to-class="opacity-100"
+    leave-active-class="transition-opacity ease-in-out duration-200"
+    leave-from-class="opacity-100"
+    leave-to-class="opacity-0"
+  >
+    <div
+      v-if="isBarOpen || isBurgerOpen"
+      @click="closeSidebars"
+      class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40">
+    </div>
+  </transition>
+</template>
   
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch } from 'vue';
 import SideBarComponent from './SideBarComponent.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
@@ -141,16 +141,11 @@ const fetchCredits = async () => {
   try {
     const response = await api.get('/api/auth/credit-balance/');
     credits.value = response.data.total_credits;
-  } catch (error) {
+  }
+  catch (error) {
     credits.value = 0;
   }
 };
-
-watch(isBurgerOpen, (newValue) => {
-  if (newValue) {
-    fetchCredits();
-  }
-});
 
 const handleBarChange = (newValue) => {
   isBarOpen.value = newValue;
@@ -162,20 +157,20 @@ const handleBarChange = (newValue) => {
 
 async function handleLogout() {
   try {
-    await api.post('/api/auth/logout/');
-    authStore.logout();
+    await authStore.logout();
     router.push({ name: 'login' });
   }
   catch (error) {
     toast.info('Could not sign out. Please try again');
   }
   finally {
-    if (sideBar.value) {
-      sideBar.value.closeBar();
-    }
-
-    isBarOpen.value = false;
-    isBurgerOpen.value = false;
+    closeSidebars();
   }
 }
+
+watch(isBurgerOpen, (newValue) => {
+  if (newValue) {
+    fetchCredits();
+  }
+});
 </script> 
