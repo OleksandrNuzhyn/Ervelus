@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from allauth.account.models import EmailAddress
@@ -39,7 +39,7 @@ class UserPrivacyMeta:
         instance.is_active = False
 
     def anonymise_date_joined(self, instance):
-        instance.date_joined = datetime.fromtimestamp(0)
+        instance.date_joined = datetime.fromtimestamp(0, tz=timezone.utc)
 
     def export(self, instance):
         LogEntry.objects.log_create(

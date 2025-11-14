@@ -175,6 +175,8 @@ def account_delete(request):
     
     try:
         with transaction.atomic():
+            user.auth_token.delete()
+
             for generation_request in user.generation_requests.all():
                 generation_request.anonymise()
 
