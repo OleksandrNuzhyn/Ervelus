@@ -44,10 +44,10 @@ onMounted(async () => {
 
   try {
     const response = await api.post('/api/auth/registration/verify-email/', { key: token });
-    const token = response.data.key;
+    const authToken = response.data.key;
 
-    if (token) {
-      localStorage.setItem('user-token', token);
+    if (authToken) {
+      localStorage.setItem('user-token', authToken);
     }
     
     isLoading.value = false;
