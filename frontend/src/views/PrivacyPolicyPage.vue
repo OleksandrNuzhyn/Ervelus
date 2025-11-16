@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col min-h-screen">
     <HeaderComponent />
-    <main class="flex-grow pt-20 pb-10 flex flex-col">
-      <div v-if="document.content" class="document-container">
+    <main class="flex-grow pt-15 pb-10 flex flex-col">
+      <div v-if="document.content" class="document-container" @click="handleContentClick">
         <div v-html="document.content" class="document-content"></div>
       </div>
       <div v-else-if="errorMessage" class="flex-grow flex flex-col items-center justify-center text-center">
@@ -26,6 +26,31 @@ const document = ref({
 });
 const errorMessage = ref(null);
 const isContentLoaded = ref(false);
+
+function handleContentClick(event) {
+  const anchor = event.target.closest('a');
+  const href = anchor?.getAttribute('href');
+
+  if (anchor && href?.startsWith('#')) {
+    event.preventDefault();
+    const elementId = href.substring(1);
+
+    if (elementId) {
+      const targetElement = window.document.getElementById(elementId);
+      
+      if (targetElement) {
+        const headerOffset = 75;
+        const elementPosition = targetElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }
+  }
+}
 
 async function getDocument() {
   try {

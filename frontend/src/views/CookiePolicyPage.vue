@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col min-h-screen">
     <HeaderComponent />
-    <main class="flex-grow pt-20 pb-10 flex flex-col">
+    <main class="flex-grow pt-15 pb-10 flex flex-col">
       <div v-if="document.content" class="document-container">
         <div v-html="document.content" class="document-content"></div>
       </div>
