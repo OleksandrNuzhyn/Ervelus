@@ -39,7 +39,7 @@
         <div class="flex flex-col items-center justify-center bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-lg p-4 h-[400px] md:h-[660px] lg:h-auto lg:flex-grow lg:min-h-0">
           <div v-if="isLoading" class="flex flex-col items-center justify-center">
             <img src="@/assets/svg/staff_logo.svg" class="wave-animation animation-pulse h-45 w-45 pointer-events-none select-none" />
-            <p class="text-gray-400 text-lg">Generating...</p>
+            <p class="text-gray-400 text-lg">Transforming...</p>
           </div>
           <div v-else-if="outputImageUrl" class="relative w-full h-full">
             <img 

@@ -109,7 +109,7 @@
                 <div class="pricing-price-horizontal">
                   <span class="price-currency-horizontal">$</span>
                   <span class="price-amount-horizontal">{{ tier.price }}</span>
-                  <span class="price-period-horizontal">/місяць</span>
+                  <span class="price-period-horizontal">/month</span>
                 </div>
               </div>
             </div>
@@ -480,7 +480,6 @@ onUnmounted(() => {
   margin-bottom: var(--spacing-xl);
 }
 
-/* Hero Section - Apple Style */
 .hero-apple {
   position: relative;
   min-height: 90vh;
@@ -503,7 +502,7 @@ onUnmounted(() => {
 .hero-title {
   font-size: clamp(48px, 6vw, 80px);
   font-weight: 700;
-  line-height: 1.05;
+  line-height: 1.3;
   letter-spacing: -0.03em;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-sm);
@@ -596,7 +595,7 @@ onUnmounted(() => {
 }
 
 .preview-card-2 {
-  top: 50%;
+  top: 45%;
   right: 8%;
   animation: float 8s ease-in-out infinite 1s;
 }
@@ -903,10 +902,9 @@ section {
 
 .previous-styles-note {
   padding: var(--spacing-sm) var(--spacing-md);
-  background: rgba(139, 92, 246, 0.1);
   border: 1px solid rgba(139, 92, 246, 0.3);
   border-radius: var(--radius-sm);
-  color: var(--color-accent);
+  color: var(--color-text-primary);
   font-size: 14px;
   font-weight: 500;
   text-align: center;
@@ -1175,7 +1173,10 @@ section {
   margin: 0 0 var(--spacing-lg);
 }
 
-/* Responsive */
+.section-final-cta .cta-primary {
+  margin-bottom: 150px;
+}
+
 @media (max-width: 768px) {
   section {
     padding: var(--spacing-xl) var(--spacing-sm);
