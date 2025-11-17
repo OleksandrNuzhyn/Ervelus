@@ -2,7 +2,7 @@
   <div class="flex flex-col min-h-screen">
     <HeaderComponent />
     <main class="flex-grow pt-15 pb-10 flex flex-col">
-      <div v-if="document.content" class="document-container" @click="handleContentClick">
+      <div v-if="document.content" class="document-container">
         <div v-html="document.content" class="document-content"></div>
       </div>
       <div v-else-if="errorMessage" class="flex-grow flex flex-col items-center justify-center text-center">
@@ -21,40 +21,15 @@ import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue
 import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue';
 
 const document = ref({
-  title: 'Terms of Service',
+  title: 'Refund Policy',
   content: ''
 });
 const errorMessage = ref(null);
 const isContentLoaded = ref(false);
 
-function handleContentClick(event) {
-  const anchor = event.target.closest('a');
-  const href = anchor?.getAttribute('href');
-
-  if (anchor && href?.startsWith('#')) {
-    event.preventDefault();
-    const elementId = href.substring(1);
-
-    if (elementId) {
-      const targetElement = window.document.getElementById(elementId);
-      
-      if (targetElement) {
-        const headerOffset = 75;
-        const elementPosition = targetElement.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-      }
-    }
-  }
-}
-
 async function getDocument() {
   try {
-    const response = await api.get('/api/agreements/terms_of_service/');
+    const response = await api.get('/api/agreements/refund_policy/');
     document.value.content = response.data.content;
   }
   catch (error) {
