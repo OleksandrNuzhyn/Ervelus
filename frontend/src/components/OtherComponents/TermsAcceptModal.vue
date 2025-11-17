@@ -36,6 +36,7 @@
             <div class="flex justify-center gap-4">
                 <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 hover:underline">Terms of Service</a>
                 <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 hover:underline">Privacy Policy</a>
+                <a href="/refund-policy" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 hover:underline">Refund Policy</a>
                 <a href="/cookie-policy" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 hover:underline">Cookie Policy</a>
             </div>
         </div>
