@@ -5,9 +5,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
     authChecked: false,
-    isMaintenanceMode: false,
-    csrfToken: null,
-    csrfPromise: null
+    isMaintenanceMode: false
   }),
   getters: {
     isAuthenticated: (state) => !!state.user,
@@ -16,27 +14,11 @@ export const useAuthStore = defineStore('auth', {
     setMaintenanceMode(status) {
       this.isMaintenanceMode = status;
     },
-    logout() {
+    async logout() {
+      await api.post('/api/auth/logout/');
       this.user = null;
       this.authChecked = true;
-    },
-    async fetchCsrfToken(force = false) {
-      if (this.csrfToken && !force) {
-        return this.csrfToken;
-      }
-      
-      if (!this.csrfPromise) {
-        this.csrfPromise = api.get('/api/auth/csrf-token/').then(response => {
-          this.csrfToken = response.data.csrf_token;
-          this.csrfPromise = null;
-          return this.csrfToken;
-        }).catch(error => {
-          this.csrfPromise = null;
-          throw error;
-        });
-      }
-
-      return this.csrfPromise;
+      localStorage.removeItem('user-token');
     },
     async checkAuth() {
       try {

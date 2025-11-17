@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="min-h-screen text-white">
-    <router-view v-if="!authStore.isMaintenanceMode && authStore.authChecked" />
+    <router-view v-if="!authStore.isMaintenanceMode" />
 
     <Transition name="fade" @after-enter="onLoaderFadedIn">
       <div v-if="isLoading || !authStore.authChecked || authStore.isMaintenanceMode" class="loader-overlay">

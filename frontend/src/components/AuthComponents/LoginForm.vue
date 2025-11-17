@@ -138,9 +138,13 @@ async function handleLoginSuccess(response) {
   errors.value.api = '';
   const accessToken = response.access_token;
   try {
-    await api.post('/api/auth/google/', { access_token: accessToken });
-    await authStore.checkAuth();
-    router.push('/dashboard');
+    const response = await api.post('/api/auth/google/', { access_token: accessToken });
+    const token = response.data.key;
+    if (token) {
+      localStorage.setItem('user-token', token);
+      await authStore.checkAuth();
+      router.push('/dashboard');
+    }
   } 
   catch (error) {
     if (error.response) {
@@ -189,13 +193,16 @@ async function handleSubmit() {
   isLoading.value = true;
 
   try {
-    await api.post('/api/auth/login/', {
+    const response = await api.post('/api/auth/login/', {
       email: email.value,
       password: password.value,
     });
-
-    await authStore.checkAuth();
-    router.push('/dashboard');
+    const token = response.data.key;
+    if (token) {
+      localStorage.setItem('user-token', token);
+      await authStore.checkAuth();
+      router.push('/dashboard');
+    }
   }
   catch (error) {
     errors.value = { email: '', password: '', api: '' };

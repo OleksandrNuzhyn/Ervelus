@@ -168,7 +168,9 @@ async function deleteAccount() {
     try {
       await api.delete('/api/auth/account/delete/');
       toast.info('Your account has been successfully deleted');
-      authStore.logout();
+      authStore.user = null;
+      authStore.authChecked = true;
+      localStorage.removeItem('user-token');
       router.push({ name: 'home' });
     }
     catch (error) {

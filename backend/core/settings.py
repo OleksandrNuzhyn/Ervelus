@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'solo',
 
     'rest_framework',
+    'rest_framework.authtoken',
 
     'dj_rest_auth',
     'dj_rest_auth.registration',
@@ -148,13 +149,15 @@ FRONTEND_URL = os.getenv("FRONTEND_URL")
 
 
 REST_AUTH = {
-    'TOKEN_MODEL': None,
-    'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer'
+    'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer',
+    'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
+    'SESSION_LOGIN': False,
+    'USE_JWT': False
 }
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -177,18 +180,15 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_AGE = 3888000
 
 
 
 CSRF_TRUSTED_ORIGINS = [
     'https://ervelus-web-service-281870812434.us-central1.run.app',
-    'https://ervelus.com',
-    'https://valiant-hexagon-471121-i7.web.app',
     'http://localhost:5173',
     'http://127.0.0.1:5173'
 ]
-CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SAMESITE = 'None'
 
@@ -344,6 +344,7 @@ AUDITLOG_INCLUDE_ALL_MODELS = True
 
 AUDITLOG_EXCLUDE_TRACKING_MODELS = (
     "generations.GenerationRequest",
+    "authtoken.Token"
 )
 
 GDPR_LOG_ON_ANONYMISE = False

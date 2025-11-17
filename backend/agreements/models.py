@@ -7,6 +7,7 @@ class TermsVersion(models.Model):
         TERMS_OF_SERVICE = 'terms_of_service', 'Terms of Service'
         PRIVACY_POLICY = 'privacy_policy', 'Privacy Policy'
         COOKIE_POLICY = 'cookie_policy', 'Cookie Policy'
+        REFUND_POLICY = 'refund_policy', 'Refund Policy'
         DMCA_POLICY = 'dmca_policy', 'DMCA Policy'
 
     class Meta:

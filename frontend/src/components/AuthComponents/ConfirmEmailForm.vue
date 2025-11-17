@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import api from '@/services/api';
@@ -30,9 +30,7 @@ const isLoading = ref(false);
 const success = ref(false);
 const error = ref(null);
 
-onMounted(async () => {
-  const { token } = route.params;
-
+async function verifyToken(token) {
   if (!token) {
     error.value = 'Verification token was not found in the URL';
     return;
@@ -43,7 +41,13 @@ onMounted(async () => {
   success.value = false;
 
   try {
-    await api.post('/api/auth/registration/verify-email/', { key: token });
+    const response = await api.post('/api/auth/registration/verify-email/', { key: token });
+    const authToken = response.data.key;
+
+    if (authToken) {
+      localStorage.setItem('user-token', authToken);
+    }
+    
     isLoading.value = false;
     success.value = true;
     
@@ -62,7 +66,17 @@ onMounted(async () => {
   finally {
     isLoading.value = false;
   }
-});
+};
+
+watch(
+  () => route.params.token,
+  async (newToken) => {
+    if (newToken) {
+      await verifyToken(newToken);
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped>

@@ -1,8 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from allauth.account.models import EmailAddress
 from allauth.socialaccount.models import SocialAccount
+from rest_framework.authtoken.models import Token
 from django.db import models
 from django.db.models import Q, Sum
 from django.db.models.functions import Coalesce
@@ -38,7 +39,7 @@ class UserPrivacyMeta:
         instance.is_active = False
 
     def anonymise_date_joined(self, instance):
-        instance.date_joined = datetime.fromtimestamp(0)
+        instance.date_joined = datetime.fromtimestamp(0, tz=timezone.utc)
 
     def export(self, instance):
         LogEntry.objects.log_create(
@@ -140,3 +141,17 @@ class SocialAccountPrivacyMeta:
 
 
 gdpr_assist.register(SocialAccount, SocialAccountPrivacyMeta)
+
+
+class TokenPrivacyMeta:
+    can_anonymise = False
+    search_fields = [
+        'user__email',
+    ]
+    export_fields = [
+        'key', 
+        'created'
+    ]
+
+
+gdpr_assist.register(Token, TokenPrivacyMeta)
