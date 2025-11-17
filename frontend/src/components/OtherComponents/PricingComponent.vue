@@ -191,6 +191,7 @@ onMounted(() => {
 @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;770&family=EB+Garamond&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Uncial+Antiqua&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Macondo+Swash+Caps&display=swap');
 .medieval{font-family:'MedievalSharp',cursive;}
 .heading-font{font-family: 'Cinzel Decorative', 'Uncial Antiqua', cursive;}
 .font-nothing-you-could-do{font-family: 'Nothing You Could Do', cursive;}
@@ -240,7 +241,7 @@ onMounted(() => {
 }
 
 .scribe-text {
-  font-family: 'Nothing You Could Do', cursive;
+  font-family: 'Macondo Swash Caps', cursive;
   color: #1A1A1A;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
