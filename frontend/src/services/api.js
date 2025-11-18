@@ -32,7 +32,17 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       const requestUrl = originalRequest.url || "";
       
-      if (authStore.isAuthenticated && !requestUrl.endsWith('/api/auth/logout/')) {
+      if (requestUrl.endsWith('/api/auth/user/')) {
+        if (localStorage.getItem('user-token')) {
+          toast.info("Your session has expired. Please sign in again");
+          authStore.user = null;
+          authStore.authChecked = true;
+          localStorage.removeItem('user-token');
+          const router = (await import('@/router')).default;
+          await router.push({ name: 'login' });
+        }
+      }
+      else if (authStore.isAuthenticated && !requestUrl.endsWith('/api/auth/logout/')) {
         toast.info("Your session has expired. Please sign in again");
         authStore.user = null;
         authStore.authChecked = true;

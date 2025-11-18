@@ -51,9 +51,7 @@
 
       <div class="parchment-wrapper fade-in-policy">
         <p class="main-text-font">
-          By continuing, you agree to our
-          <router-link to="/terms-of-service" class="parchment-link">Terms of Service</router-link>,
-          which includes our subscription and refund policies
+          Prices exclude VAT / Local taxes
         </p>
       </div>
     </div>
@@ -249,7 +247,7 @@ onMounted(() => {
 .parchment-wrapper {
   position: relative;
   z-index: 9;
-  max-width: 1050px;
+  max-width: 550px;
   margin: 1.4rem auto 0;
   padding: 1.3rem 1rem;
   background-image: url('@/assets/pricing_assets/paper.webp');
