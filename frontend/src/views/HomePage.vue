@@ -1,26 +1,49 @@
 <template>
   <div>
     <HeaderComponent />
+    <div class="noise-overlay"></div>
+    <div class="ambient-light"></div>
+
+    <!-- Global Animated Background -->
+    <div class="global-background">
+      <div class="glow-orb orb-1"></div>
+      <div class="glow-orb orb-2"></div>
+      <div class="glow-orb orb-3"></div>
+      <div class="grid-overlay"></div>
+    </div>
+
     <div class="landing-wrapper">
       <section class="hero-apple">
-        <div class="hero-content">
-          <h1 class="hero-title">
-            Unleash Your Fantasy
-          </h1>
-          <p class="hero-subtitle">
-            Countless Worlds In Your Pocket
-          </p>
-        </div>
-        
-        <div class="hero-visual">
-          <div class="preview-card preview-card-1">
-            <div class="card-shimmer"></div>
+        <div class="hero-container" @mousemove="handleGlobalMouseMove">
+          <div class="hero-content">
+            <div class="badge-pill">
+              <span class="badge-dot"></span>
+              <span>Inspired by well-known genres </span>
+            </div>
+            <h1 class="hero-title">
+              Unleash Your <br />
+              <span class="text-gradient">Digital Fantasy</span>
+            </h1>
+            <p class="hero-subtitle">
+              Turn reality into a digital legend. Powerful algorithms unlock gate to unknown worlds with just one touch
+            </p>
           </div>
-          <div class="preview-card preview-card-2">
-            <div class="card-shimmer"></div>
-          </div>
-          <div class="preview-card preview-card-3">
-            <div class="card-shimmer"></div>
+
+          <div class="hero-visual">
+            <div class="floating-cards">
+              <div class="card card-main tilt-card" ref="heroCard" @click="bringCardToFront('main')">
+                <div class="card-inner">
+                  <img src="@/assets/background_assets/side_background.webp" alt="AI Art Main" class="card-img" />
+                  <div class="card-shine"></div>
+                </div>
+              </div>
+              <div class="card card-floating card-1" @click="bringCardToFront('card1')">
+                <img src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop" alt="Cyberpunk" class="card-img" />
+              </div>
+              <div class="card card-floating card-2" @click="bringCardToFront('card2')">
+                <img src="https://images.unsplash.com/photo-1635322966219-b75ed372eb01?q=80&w=1964&auto=format&fit=crop" alt="Fantasy" class="card-img" />
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -91,9 +114,9 @@
 
       <section class="section-styles">
         <div class="section-header">
-          <h2 class="section-title">Choose your plan</h2>
+          <h2 class="section-title">Choose your destiny</h2>
           <p class="section-subtitle">
-            Access powerful AI styles tailored to your needs
+            Access powerful styles tailored to your needs
           </p>
         </div>
 
@@ -222,6 +245,7 @@ const router = useRouter()
 const sliderPosition = ref(50)
 let isDragging = false
 const selectedPreviewStyle = ref('dark-fantasy')
+const heroCard = ref(null)
 
 const previewStyles = [
   { id: 'dark-fantasy', name: 'Dark Fantasy', icon: FireIcon },
@@ -233,8 +257,8 @@ const previewStyles = [
 
 const subscriptionTiers = [
   {
-    id: 'free',
-    name: 'Безкоштовний',
+    id: 'amateur',
+    name: 'Amateur',
     price: 0,
     featured: false,
     includePrevious: false,
@@ -263,12 +287,12 @@ const subscriptionTiers = [
     ]
   },
   {
-    id: 'pro',
-    name: 'Professional',
+    id: 'journeyman',
+    name: 'Journeyman',
     price: 29,
     featured: true,
     includePrevious: true,
-    previousPlanName: 'Безкоштовний',
+    previousPlanName: 'Amateur',
     styles: [
       { id: 6, name: 'Темне фентезі', genre: 'Dark Fantasy' },
       { id: 7, name: 'Готичний жах', genre: 'Gothic Horror' },
@@ -283,12 +307,12 @@ const subscriptionTiers = [
     ]
   },
   {
-    id: 'enterprise',
-    name: 'Enterprise',
+    id: 'master',
+    name: 'Master',
     price: 99,
     featured: false,
     includePrevious: true,
-    previousPlanName: 'Professional',
+    previousPlanName: 'Journeyman',
     styles: [
       { id: 16, name: 'Гіперреалізм', genre: 'Реалізм' },
       { id: 17, name: 'Квантове мистецтво', genre: 'Sci-Fi' },
@@ -412,6 +436,46 @@ const navigateToDashboard = () => {
   router.push('/dashboard')
 }
 
+const handleGlobalMouseMove = (e) => {
+  // 3D Tilt for Hero Card
+  if (heroCard.value) {
+    const rect = heroCard.value.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+
+    const centerX = rect.width / 2
+    const centerY = rect.height / 2
+
+    const rotateX = ((y - centerY) / centerY) * -5 // Max 5deg rotation
+    const rotateY = ((x - centerX) / centerX) * 5
+
+    heroCard.value.style.transform = `translate(-50%, -50%) rotate(-5deg) perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
+
+    // Shine effect
+    const shine = heroCard.value.querySelector('.card-shine')
+    if (shine) {
+      shine.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.2), transparent 80%)`
+    }
+  }
+}
+
+const bringCardToFront = (cardId) => {
+  const cards = document.querySelectorAll('.floating-cards .card')
+  cards.forEach(card => {
+    card.style.zIndex = '1'
+  })
+
+  if (cardId === 'main' && heroCard.value) {
+    heroCard.value.style.zIndex = '10'
+  } else if (cardId === 'card1') {
+    const card1 = document.querySelector('.card-1')
+    if (card1) card1.style.zIndex = '10'
+  } else if (cardId === 'card2') {
+    const card2 = document.querySelector('.card-2')
+    if (card2) card2.style.zIndex = '10'
+  }
+}
+
 onUnmounted(() => {
   document.removeEventListener('mousemove', handleDrag)
   document.removeEventListener('mouseup', stopDrag)
@@ -438,21 +502,100 @@ onUnmounted(() => {
   --radius-md: 18px;
   --radius-lg: 24px;
 
-  background-image: url('@/assets/background_assets/side_background.webp');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  /* Прибрано фон, щоб було видно global-background */
+  /* background-color: #000000; */
+  /* background-image: linear-gradient(to bottom, #050505, #0a0a0c, #050505); */
+  background: transparent;
   position: relative;
+  z-index: 1;
   color: var(--color-text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .landing-wrapper::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%);
+  background: transparent;
   pointer-events: none;
+}
+
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+.ambient-light {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.05), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Global Background */
+.global-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+
+  /* Базовий чорний колір з градієнтом */
+  background-color: #000000;
+  background-image: linear-gradient(to bottom, #000000, #0a0a0c);
+}
+
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.4;
+  mix-blend-mode: screen;
+}
+
+.orb-1 {
+  width: 600px;
+  height: 600px;
+  background: #3b82f6;
+  top: -100px;
+  left: -100px;
+}
+
+.orb-2 {
+  width: 500px;
+  height: 500px;
+  background: #60a5fa;
+  bottom: -100px;
+  right: -100px;
+}
+
+.orb-3 {
+  width: 400px;
+  height: 400px;
+  background: rgba(255, 255, 255, 0.3);
+  top: 40%;
+  left: 40%;
+  opacity: 0.2;
+}
+
+.grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  mask-image: radial-gradient(circle at center, black 40%, transparent 90%);
 }
 
 .section-title {
@@ -484,19 +627,56 @@ onUnmounted(() => {
   position: relative;
   min-height: 90vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: var(--spacing-xl) var(--spacing-md);
   overflow: hidden;
 }
 
+.hero-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
 .hero-content {
   position: relative;
   z-index: 2;
-  text-align: center;
-  max-width: 980px;
-  margin: 0 auto;
+  text-align: left;
+  max-width: 600px;
+}
+
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 100px;
+  font-size: 14px;
+  color: var(--color-accent);
+  margin-bottom: 24px;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--color-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--color-accent);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
 }
 
 .hero-title {
@@ -506,20 +686,25 @@ onUnmounted(() => {
   letter-spacing: -0.03em;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-sm);
-  background: linear-gradient(180deg, #ffffff 0%, #a1a1a6 100%);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  color: transparent; /* Fallback */
+  filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.3));
+  padding-right: 0.1em;
+  display: inline-block;
 }
 
 .hero-subtitle {
-  font-size: clamp(32px, 4vw, 56px);
-  font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  font-size: clamp(18px, 2vw, 20px);
+  font-weight: 400;
+  line-height: 1.6;
   color: var(--color-text-secondary);
   margin: 0 0 var(--spacing-md);
+  max-width: 600px;
 }
 
 .hero-description {
@@ -570,62 +755,138 @@ onUnmounted(() => {
 }
 
 .hero-visual {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 600px;
   z-index: 1;
 }
 
-.preview-card {
+.floating-cards {
+  position: relative;
+  width: 100%;
+  height: 600px;
+  perspective: 1000px;
+}
+
+.card {
   position: absolute;
-  width: 280px;
-  height: 380px;
-  background: rgba(28, 28, 30, 0.5);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-lg);
+  border-radius: 24px;
   overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: filter 0.3s ease, box-shadow 0.3s ease;
 }
 
-.preview-card-1 {
-  top: 15%;
-  left: 5%;
-  animation: float 6s ease-in-out infinite;
+.card:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 30px 60px -12px rgba(139, 92, 246, 0.4);
 }
 
-.preview-card-2 {
-  top: 45%;
-  right: 8%;
-  animation: float 8s ease-in-out infinite 1s;
-}
-
-.preview-card-3 {
-  bottom: 10%;
-  left: 10%;
-  animation: float 7s ease-in-out infinite 2s;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
-}
-
-.card-shimmer {
+.card-img {
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.05),
-    transparent
-  );
-  animation: shimmer-anim 3s infinite;
+  object-fit: cover;
 }
 
-@keyframes shimmer-anim {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+.card-main {
+  width: 380px;
+  height: 500px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-5deg);
+  z-index: 2;
+  transition: transform 0.1s ease-out;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.6), transparent 50%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 24px;
+}
+
+.processing-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(139, 92, 246, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 100px;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.card-shine {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.card-floating {
+  width: 240px;
+  height: 320px;
+  z-index: 1;
+  filter: brightness(0.7);
+  transition: all 0.5s ease;
+}
+
+.card-floating:hover {
+  filter: brightness(1);
+  z-index: 3;
+}
+
+.card-1 {
+  top: 10%;
+  right: 0;
+  transform: rotate(10deg);
+  animation: float-right 8s ease-in-out infinite 1s;
+}
+
+.card-2 {
+  bottom: 10%;
+  left: 0;
+  transform: rotate(-10deg);
+  animation: float-left 7s ease-in-out infinite 2s;
+}
+
+@keyframes float-right {
+  0%, 100% { transform: translateY(0px) rotate(10deg); }
+  50% { transform: translateY(-20px) rotate(10deg); }
+}
+
+@keyframes float-left {
+  0%, 100% { transform: translateY(0px) rotate(-10deg); }
+  50% { transform: translateY(-20px) rotate(-10deg); }
 }
 
 section {
@@ -794,10 +1055,6 @@ section {
 .hint-icon {
   width: 16px;
   height: 16px;
-}
-
-.section-styles {
-  background: rgba(0, 0, 0, 0.1);
 }
 
 .pricing-list {
@@ -1024,11 +1281,6 @@ section {
   transform: translateX(4px);
 }
 
-
-.section-genres {
-  background: rgba(0, 0, 0, 0.1);
-}
-
 .genres-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -1089,10 +1341,6 @@ section {
   word-wrap: break-word;
 }
 
-.section-steps {
-  background: rgba(0, 0, 0, 0.2);
-}
-
 .steps-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -1146,9 +1394,7 @@ section {
   margin: 0;
 }
 
-/* Final CTA */
 .section-final-cta {
-  background: rgba(0, 0, 0, 0.2);
   padding: var(--spacing-2xl) var(--spacing-md);
 }
 
@@ -1177,12 +1423,70 @@ section {
   margin-bottom: 150px;
 }
 
+/* Footer */
+footer {
+  position: relative;
+  z-index: 2;
+}
+
+@media (min-width: 640px) and (max-width: 1024px) {
+  .hero-subtitle {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+}
+
+@media (max-width: 1024px) {
+  .hero-container {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .hero-subtitle {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-visual {
+    min-height: 400px;
+  }
+
+  .floating-cards {
+    height: 400px;
+  }
+
+  .card-main {
+    width: 280px;
+    height: 380px;
+  }
+
+  .card-floating {
+    width: 180px;
+    height: 240px;
+  }
+}
+
 @media (max-width: 768px) {
   section {
     padding: var(--spacing-xl) var(--spacing-sm);
   }
 
-  .preview-card {
+  .floating-cards {
+    display: none;
+  }
+
+  .hero-content {
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .hero-visual {
     display: none;
   }
 
@@ -1252,6 +1556,15 @@ section {
 @media (max-width: 480px) {
   .hero-apple {
     min-height: 70vh;
+  }
+
+  .hero-content {
+    padding: 0 var(--spacing-xs);
+  }
+
+  .badge-pill {
+    font-size: 12px;
+    padding: 4px 10px;
   }
 
   .comparison-frame {

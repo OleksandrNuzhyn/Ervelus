@@ -6,7 +6,7 @@
         <transition name="slide-fade">
           <StylePanel
             v-if="isStylePanelOpen"
-            class="absolute top-full mt-3 w-64/65 left-1/2 -translate-x-1/2 z-20"
+            class="absolute top-full mt-3 w-[calc(100%-1.5rem)] left-1/2 -translate-x-1/2 z-20"
             :styles="filteredStyles"
             :selected-style-id="selectedStyleId"
             @style-selected="handleStyleSelect"
@@ -108,19 +108,10 @@ const handleOpenStylePanel = () => {
 
 <style scoped>
 .slide-fade-enter-active {
-  transition: all 0.3s ease-out;
-}
-
-.slide-fade-leave-active {
-  transition: all 0.3s ease-out;
+  transition: opacity 0.4s ease-in-out;
 }
 
 .slide-fade-enter-from {
-  transform: translateY(-100px);
-  opacity: 0;
-}
-.slide-fade-leave-to {
-  transform: translateY(-100px);
-  opacity: 0;
+  opacity: 0.5;
 }
 </style>
