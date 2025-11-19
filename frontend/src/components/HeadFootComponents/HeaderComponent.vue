@@ -3,7 +3,7 @@
     <div class="max-w-screen mx-auto px-4 sm:px-6 lg:px-12">
       <div class="flex items-center justify-between h-[70px]">
         <router-link to="/" class="flex items-center gap-3 text-2xl font-bold text-gray-100 select-none">
-          <img src="/favicon.svg" alt="Ervelus Logo" class="h-8 w-8" />
+          <img src="/favicon.svg" alt="Ervelus Logo" class="h-10 w-10" />
           <span>Ervelus</span>
         </router-link>
         <nav v-if="authStore.isAuthenticated" class="hidden md:flex items-center gap-15 font-thin text-gray-100">
@@ -29,7 +29,7 @@
           <router-link to="/pricing" class="hidden md:block hover:text-gray-400">Pricing</router-link>
           <router-link to="/contact-us" class="hidden md:block hover:text-gray-400">Contact us</router-link>
           <div class="flex items-center gap-5">
-            <router-link to="/register" class="rounded-full px-4 py-2 text-gray-100 transition-all duration-300" style="background: #8b5cf6; box-shadow: 0 0 30px rgba(139, 92, 246, 0.5), 0 4px 16px rgba(139, 92, 246, 0.3);">Enter Ervelus</router-link>
+            <router-link to="/register" class="rounded-full px-4 py-2 text-gray-100 transition-all duration-300" style="background: #8b5cf6; box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);">Enter Ervelus</router-link>
             <button @click="isGuestBurgerOpen = !isGuestBurgerOpen" class="md:hidden text-gray-200 hover:text-gray-50 focus:outline-none">
               <svg v-if="!isGuestBurgerOpen" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
@@ -60,47 +60,47 @@
             </div>
             <router-link to="/dashboard" class="hover:text-gray-50 flex items-center gap-2">
               <div class="w-10 flex justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
               </div>
               <span>Dashboard</span>
             </router-link>
             <router-link to="/gallery" class="hover:text-white flex items-center gap-2">
               <div class="w-10 flex justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
               </div>
               <span>Gallery</span>
             </router-link>
             <router-link to="/profile" class="hover:text-white flex items-center gap-2">
               <div class="w-10 flex justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
               </div>
               <span>Profile</span>
             </router-link>
             <router-link to="/pricing" class="hover:text-gray-50 flex items-center gap-2">
               <div class="w-10 flex justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
               </div>
               <span>Pricing</span>
             </router-link>
             <router-link to="/contact-us" @click="isBarOpen = false" class="hover:text-white flex items-center gap-2">
               <div class="w-10 flex justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"/>
                 </svg>
               </div>
               <span>Contact us</span>
             </router-link>
             <button @click="handleLogout" class="text-left hover:text-white flex items-center gap-2">
               <div class="w-10 flex justify-center">
-                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20V9.75a5 5 0 00-10 0V20M2 20h20"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 12h8m0 0l-3-3m3 3l-3 3"></path></svg>
+                <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20V9.75a5 5 0 00-10 0V20M2 20h20"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 12h8m0 0l-3-3m3 3l-3 3"></path></svg>
               </div>
               <span>Sign out</span>
             </button>
