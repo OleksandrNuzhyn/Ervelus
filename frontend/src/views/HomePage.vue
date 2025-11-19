@@ -869,19 +869,24 @@ onUnmounted(() => {
   top: 10%;
   right: 0;
   transform: rotate(10deg);
-  animation: float 8s ease-in-out infinite 1s;
+  animation: float-right 8s ease-in-out infinite 1s;
 }
 
 .card-2 {
   bottom: 10%;
   left: 0;
   transform: rotate(-10deg);
-  animation: float 7s ease-in-out infinite 2s;
+  animation: float-left 7s ease-in-out infinite 2s;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+@keyframes float-right {
+  0%, 100% { transform: translateY(0px) rotate(10deg); }
+  50% { transform: translateY(-20px) rotate(10deg); }
+}
+
+@keyframes float-left {
+  0%, 100% { transform: translateY(0px) rotate(-10deg); }
+  50% { transform: translateY(-20px) rotate(-10deg); }
 }
 
 section {
