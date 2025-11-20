@@ -24,7 +24,6 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import CategoryStrip from './CategoryStrip.vue';
@@ -87,6 +86,7 @@ function handleGenreSelect(genreId) {
   selectedGenreId.value = genreId;
   isStylePanelOpen.value = true;
 }
+
 function handleStyleSelect(styleId) {
   selectedStyleId.value = styleId;
   isStylePanelOpen.value = false;
@@ -103,7 +103,6 @@ function handleOpenStylePanel() {
     }
     isStylePanelOpen.value = true;
 }
-
 </script>
 
 <style scoped>

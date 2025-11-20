@@ -62,9 +62,7 @@ function getSpriteClass() {
 }
 </script>
 
-
 <style scoped>
-
 .bg-dark_fantasy_1 {
   width: 180px; 
   height: 180px;
@@ -99,4 +97,4 @@ function getSpriteClass() {
   background: url('@/assets/style_sprites/sprite_test.png') -10px -10px;
   background-repeat: no-repeat;
 }
-</style> 
+</style>

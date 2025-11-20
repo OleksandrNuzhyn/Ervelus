@@ -53,8 +53,6 @@
   </div>
 </template>
 
-
-
 <script setup>
 import { onMounted, ref, watch, nextTick} from 'vue';
 
@@ -141,4 +139,4 @@ onMounted(() => {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
-</style> 
+</style>

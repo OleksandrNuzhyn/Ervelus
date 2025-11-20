@@ -217,4 +217,4 @@ watch(isBurgerOpen, (newValue) => {
     fetchCredits();
   }
 });
-</script> 
+</script>

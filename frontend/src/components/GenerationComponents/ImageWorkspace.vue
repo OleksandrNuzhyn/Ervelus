@@ -76,7 +76,6 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref, watch, onUnmounted, computed } from 'vue';
 import api from '@/services/api';
@@ -186,11 +185,13 @@ async function deleteLongRunningRequest(id) {
       await api.delete(`/api/generations/generation-requests/delete/${id}/`);
       toast.info("The generation request was cancelled because it took too long to complete.");
     }
-  } catch (err) {
+  }
+  catch (err) {
     if (err.response && [400, 404].includes(err.response.status)) {
       toast.info("Could not cancel the generation request. It might have already been completed or cancelled.");
     }
-  } finally {
+  }
+  finally {
     isLoading.value = false;
     stopPolling();
     currentGenerationId.value = null;
@@ -239,7 +240,8 @@ async function pollForResult() {
       pollAttempt++;
       pollingTimeoutId = setTimeout(pollForResult, nextInterval);
     }
-  } catch (err) {
+  }
+  catch (err) {
     const errorMessage = err.response?.data?.detail || 'An unexpected error occurred while checking generation status.';
     toast.info(errorMessage);
     isLoading.value = false;
@@ -351,8 +353,8 @@ async function handleGenerate() {
     }
 
     startPolling();
-
-  } catch (err) {
+  }
+  catch (err) {
     isLoading.value = false;
     if (err.response && err.response.status === 400) {
         toast.info(getErrorMessage(err, 'create'));
@@ -435,7 +437,8 @@ async function downloadOutputImage() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  } catch (err) {
+  }
+  catch (err) {
     if (err.response && [400, 404].includes(err.response.status)) {
       toast.info(getErrorMessage(err, 'download'));
     }
@@ -484,5 +487,4 @@ async function downloadOutputImage() {
     word-break: break-word;
   }
 }
-
 </style>

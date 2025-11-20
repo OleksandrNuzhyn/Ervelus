@@ -22,8 +22,7 @@
       </div>
     </div>
   </template>
-  
-  
+
 <script setup>
 import StyleCard from './StyleCard.vue';
 
@@ -44,6 +43,7 @@ const emit = defineEmits(['style-selected','close']);
 function onStyleSelected(styleId) {
   emit('style-selected', styleId);
 }
+
 function handleClose() {
   emit('close');
 }

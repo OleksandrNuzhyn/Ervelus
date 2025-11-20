@@ -83,7 +83,6 @@ import { useAuthStore } from '@/stores/auth';
 import api from '@/services/api';
 import isEmail from 'validator/lib/isEmail';
 
-
 const email = ref('');
 const message = ref('');
 const submitting = ref(false);
@@ -92,7 +91,6 @@ const errorMessage = ref('');
 
 const emailError = ref('');
 const messageError = ref('');
-
 
 onMounted(() => {
   const authStore = useAuthStore();
@@ -185,12 +183,11 @@ function toggleFaq(selectedIndex) {
   if (currentlyOpenIndex !== -1) {
     faqs.value[currentlyOpenIndex].isOpen = false;
     faqs.value[selectedIndex].isOpen = true;
-  } else {
+  }
+  else {
     faqs.value[selectedIndex].isOpen = true;
   }
 }
-
-
 
 function validate() {
   emailError.value = '';
@@ -250,7 +247,7 @@ async function onSubmit() {
     submitting.value = false;
   }
 }
-</script> 
+</script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
@@ -278,4 +275,4 @@ async function onSubmit() {
   -webkit-text-fill-color: #F3F4F6 !important;
   border: 1px solid #374151 !important;
 }
-</style> 
+</style>
