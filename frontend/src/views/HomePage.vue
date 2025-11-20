@@ -4,7 +4,6 @@
     <div class="noise-overlay"></div>
     <div class="ambient-light"></div>
 
-    <!-- Global Animated Background -->
     <div class="global-background">
       <div class="glow-orb orb-1"></div>
       <div class="glow-orb orb-2"></div>
