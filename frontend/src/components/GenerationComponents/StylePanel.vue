@@ -41,10 +41,10 @@ defineProps({
 
 const emit = defineEmits(['style-selected','close']);
 
-const onStyleSelected = (styleId) => {
+function onStyleSelected(styleId) {
   emit('style-selected', styleId);
-};
-const handleClose = ()=>{
+}
+function handleClose() {
   emit('close');
 }
 </script>

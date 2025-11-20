@@ -174,7 +174,7 @@ const faqs = ref([
   },
 ]);
 
-const toggleFaq = (selectedIndex) => {
+function toggleFaq(selectedIndex) {
   const currentlyOpenIndex = faqs.value.findIndex(faq => faq.isOpen);
 
   if (currentlyOpenIndex === selectedIndex) {
@@ -188,7 +188,7 @@ const toggleFaq = (selectedIndex) => {
   } else {
     faqs.value[selectedIndex].isOpen = true;
   }
-};
+}
 
 
 

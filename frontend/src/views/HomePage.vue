@@ -386,22 +386,21 @@ const steps = [
   }
 ]
 
-// Functions
-const getCurrentStyleIcon = () => {
+function getCurrentStyleIcon() {
   const style = previewStyles.find(s => s.id === selectedPreviewStyle.value)
   return style ? style.icon : FireIcon
 }
 
-const getCurrentStyleName = () => {
+function getCurrentStyleName() {
   const style = previewStyles.find(s => s.id === selectedPreviewStyle.value)
   return style ? style.name : 'Dark Fantasy'
 }
 
-const getStyleClass = (styleId) => {
+function getStyleClass(styleId) {
   return `style-${styleId}`
 }
 
-const startDrag = (e) => {
+function startDrag(e) {
   isDragging = true
   document.addEventListener('mousemove', handleDrag)
   document.addEventListener('mouseup', stopDrag)
@@ -409,14 +408,13 @@ const startDrag = (e) => {
   document.addEventListener('touchend', stopDrag)
 }
 
-const handleDrag = (e) => {
+function handleDrag(e) {
   if (!isDragging) return
 
   const sliderElement = document.querySelector('.comparison-frame')
   if (!sliderElement) return
 
   const rect = sliderElement.getBoundingClientRect()
-  // Handle both mouse and touch events
   const clientX = e.touches ? e.touches[0].clientX : e.clientX
   const x = clientX - rect.left
   const percentage = (x / rect.width) * 100
@@ -424,7 +422,7 @@ const handleDrag = (e) => {
   sliderPosition.value = Math.max(0, Math.min(100, percentage))
 }
 
-const stopDrag = () => {
+function stopDrag() {
   isDragging = false
   document.removeEventListener('mousemove', handleDrag)
   document.removeEventListener('mouseup', stopDrag)
@@ -432,12 +430,11 @@ const stopDrag = () => {
   document.removeEventListener('touchend', stopDrag)
 }
 
-const navigateToDashboard = () => {
+function navigateToDashboard() {
   router.push('/dashboard')
 }
 
-const handleGlobalMouseMove = (e) => {
-  // 3D Tilt for Hero Card
+function handleGlobalMouseMove(e) {
   if (heroCard.value) {
     const rect = heroCard.value.getBoundingClientRect()
     const x = e.clientX - rect.left
@@ -459,7 +456,7 @@ const handleGlobalMouseMove = (e) => {
   }
 }
 
-const bringCardToFront = (cardId) => {
+function bringCardToFront(cardId) {
   const cards = document.querySelectorAll('.floating-cards .card')
   cards.forEach(card => {
     card.style.zIndex = '1'

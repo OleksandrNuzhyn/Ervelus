@@ -72,15 +72,15 @@ const props = defineProps({
 
 const emit = defineEmits(['category-selected']);
 
-const selectCategory = (categoryId) => {
+function selectCategory(categoryId) {
   emit('category-selected', categoryId);
-};
+}
 
 const scrollContainer = ref(null);
 const showArrow = ref(false);
 const showLeftArrow = ref(false);
 
-const checkScroll = () => {
+function checkScroll() {
   const el = scrollContainer.value;
   if (el) {
     const isScrollable = el.scrollWidth > el.clientWidth;
@@ -88,23 +88,23 @@ const checkScroll = () => {
     showArrow.value = isScrollable && !isScrolledToEnd;
     showLeftArrow.value = isScrollable && el.scrollLeft > 0;
   }
-};
+}
 
-const scrollLeft = () => {
+function scrollLeft() {
   const el = scrollContainer.value;
   if (el) {
     const scrollAmount = window.innerWidth >= 768 ? 264 : 136;
     el.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
   }
-};
+}
 
-const scrollRight = () => {
+function scrollRight() {
   const el = scrollContainer.value;
   if (el) {
     const scrollAmount = window.innerWidth >= 768 ? 264 : 136;
     el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
   }
-};
+}
 
 onMounted(() => {
   const elemento = scrollContainer.value;

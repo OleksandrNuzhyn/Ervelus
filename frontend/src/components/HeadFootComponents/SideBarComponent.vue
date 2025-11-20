@@ -81,23 +81,23 @@ const { credits } = toRefs(props);
 const isBarOpen = ref(false);
 const profileBar = ref(null);
 
-const toggleBar = () => {
+function toggleBar() {
     isBarOpen.value = !isBarOpen.value;
-};
+}
 
-const closeBar = () => {
+function closeBar() {
     if (!isBarOpen.value) {
         return;
     }
 
     isBarOpen.value = false;
-};
+}
 
-const handleClickOutside = (event) => {
+function handleClickOutside(event) {
     if (profileBar.value && !profileBar.value.contains(event.target)) {
         closeBar();
     }
-};
+}
 
 onMounted(() => {
     document.addEventListener('mousedown', handleClickOutside);
@@ -111,10 +111,10 @@ watch(isBarOpen, (newValue) => {
     emit('open-change', newValue);
 });
 
-const onLogout = () => {
+function onLogout() {
     closeBar();
     emit('logout');
-};
+}
 
 defineExpose({
     closeBar,
