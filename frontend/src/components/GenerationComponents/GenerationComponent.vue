@@ -1,4 +1,4 @@
-    <template>
+<template>
   <div class="relative">
     <div class="w-full">
       <div class="relative">
@@ -23,7 +23,6 @@
     />
   </div>
 </template>
-
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
@@ -83,27 +82,27 @@ const selectedStyleName = computed(() => {
   return sel ? sel.name : null;
 });
 
-const handleGenreSelect=(genreId)=>{
+function handleGenreSelect(genreId) {
   selectedGenreId.value = genreId;
   isStylePanelOpen.value = true;
-};
-const handleStyleSelect=(styleId)=>{
-  selectedStyleId.value=styleId;
-  isStylePanelOpen.value=false;
-};
+}
 
-const handleClosePanel=()=>{
-  isStylePanelOpen.value=false;
-  selectedGenreId.value=null;
-};
+function handleStyleSelect(styleId) {
+  selectedStyleId.value = styleId;
+  isStylePanelOpen.value = false;
+}
 
-const handleOpenStylePanel = () => {
+function handleClosePanel() {
+  isStylePanelOpen.value = false;
+  selectedGenreId.value = null;
+}
+
+function handleOpenStylePanel() {
     if (!selectedGenreId.value) {
       selectedGenreId.value = genres.value[0].id;
     }
     isStylePanelOpen.value = true;
-};
-
+}
 </script>
 
 <style scoped>

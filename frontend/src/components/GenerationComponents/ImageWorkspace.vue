@@ -76,20 +76,19 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref, watch, onUnmounted, computed } from 'vue';
 import api from '@/services/api';
 import { toast } from '@/services/toast';
 
-const urlToFile = async (url, filename) => {
+async function urlToFile(url, filename) {
     const response = await fetch(url);
     if (!response.ok) {
         throw new Error(`Failed to fetch image from URL: ${response.statusText}`);
     }
     const blob = await response.blob();
     return new File([blob], filename, { type: blob.type || 'image/jpeg' });
-};
+}
 
 const props = defineProps({
   selectedStyleName: {
@@ -166,7 +165,7 @@ watch(outputImageUrl, (newVal) => {
   }
 });
 
-const stopPolling = () => {
+function stopPolling() {
   if (pollingTimeoutId) {
     clearTimeout(pollingTimeoutId);
     pollingTimeoutId = null;
@@ -175,9 +174,9 @@ const stopPolling = () => {
     clearTimeout(cancellationTimeoutId);
     cancellationTimeoutId = null;
   }
-};
+}
 
-const deleteLongRunningRequest = async (id) => {
+async function deleteLongRunningRequest(id) {
   try {
     const finalCheckResponse = await api.get('/api/generations/generation-requests/latest/');
     const finalCheckLatest = finalCheckResponse.data;
@@ -186,18 +185,20 @@ const deleteLongRunningRequest = async (id) => {
       await api.delete(`/api/generations/generation-requests/delete/${id}/`);
       toast.info("The generation request was cancelled because it took too long to complete.");
     }
-  } catch (err) {
+  }
+  catch (err) {
     if (err.response && [400, 404].includes(err.response.status)) {
       toast.info("Could not cancel the generation request. It might have already been completed or cancelled.");
     }
-  } finally {
+  }
+  finally {
     isLoading.value = false;
     stopPolling();
     currentGenerationId.value = null;
   }
-};
+}
 
-const pollForResult = async () => {
+async function pollForResult() {
   if (pollAttempt >= POLL_INTERVALS_MS.length) {
     return;
   }
@@ -205,7 +206,7 @@ const pollForResult = async () => {
   try {
     const response = await api.get('/api/generations/generation-requests/latest/');
     const latest = response.data;
-    
+
     if (latest && !latest.is_visible) {
       const nextInterval = POLL_INTERVALS_MS[pollAttempt];
       pollAttempt++;
@@ -239,16 +240,17 @@ const pollForResult = async () => {
       pollAttempt++;
       pollingTimeoutId = setTimeout(pollForResult, nextInterval);
     }
-  } catch (err) {
+  }
+  catch (err) {
     const errorMessage = err.response?.data?.detail || 'An unexpected error occurred while checking generation status.';
     toast.info(errorMessage);
     isLoading.value = false;
     stopPolling();
     currentGenerationId.value = null;
   }
-};
+}
 
-const startPolling = (createdAt = null) => {
+function startPolling(createdAt = null) {
   stopPolling();
   pollAttempt = 0;
   pollForResult();
@@ -267,7 +269,7 @@ const startPolling = (createdAt = null) => {
       deleteLongRunningRequest(currentGenerationId.value);
     }
   }, timeoutDuration);
-};
+}
 
 onUnmounted(() => {
   stopPolling();
@@ -292,13 +294,13 @@ const isButtonDisabled = computed(() => {
   return isLoading.value;
 });
 
-const handleButtonClick = () => {
+function handleButtonClick() {
   if (!isLoading.value) {
     handleGenerate();
   }
-};
+}
 
-const getErrorMessage = (err, endpoint) => {
+function getErrorMessage(err, endpoint) {
   if (!err.response) {
     return null;
   }
@@ -309,20 +311,20 @@ const getErrorMessage = (err, endpoint) => {
   if (status === 400) {
     if (endpoint === 'create') {
       return serverError || data?.non_field_errors?.[0] || 'Could not create request. Please try again later.';
-    } 
+    }
     else if (endpoint === 'download') {
       return serverError || 'Could not download the image. Please try again later.';
     }
-  } 
+  }
   else if (status === 404) {
     if (endpoint === 'download') {
       return serverError || 'File for download not found. Please try again later.';
     }
   }
   return null;
-};
+}
 
-const handleGenerate = async () => {
+async function handleGenerate() {
   if (isLoading.value) return;
   if ((!inputImageFile.value && !inputImageUrl.value) || !props.selectedStyleId) {
     toast.info('Choose your picture and destiny');
@@ -337,7 +339,7 @@ const handleGenerate = async () => {
     if (!fileToUpload && inputImageUrl.value) {
         fileToUpload = await urlToFile(inputImageUrl.value, 'reloaded-image.jpeg');
     }
-    
+
     const formData = new FormData();
     formData.append('chosen_style', props.selectedStyleId);
     formData.append('input_image', fileToUpload);
@@ -345,32 +347,32 @@ const handleGenerate = async () => {
     const response = await api.post('/api/generations/generation-requests/create/', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
-    
+
     if (response.data && response.data.id) {
         currentGenerationId.value = response.data.id;
     }
-    
-    startPolling();
 
-  } catch (err) {
+    startPolling();
+  }
+  catch (err) {
     isLoading.value = false;
     if (err.response && err.response.status === 400) {
         toast.info(getErrorMessage(err, 'create'));
     }
   }
-};
+}
 
-const triggerFileInput = () => {
+function triggerFileInput() {
   fileInput.value?.click();
-};
+}
 
-const onFileSelected = (event) => {
+function onFileSelected(event) {
   const target = event.target;
   const file = target.files?.[0];
   handleFile(file);
-};
+}
 
-const handleFile = (file) => {
+function handleFile(file) {
   if (!file) {
     return;
   }
@@ -390,38 +392,38 @@ const handleFile = (file) => {
     inputImageUrl.value = event.target?.result;
   };
   reader.readAsDataURL(file);
-};
+}
 
-const onDragEnter = (event) => {
+function onDragEnter(event) {
   event.preventDefault();
   isDragging.value = true;
-};
+}
 
-const onDragOver = (event) => {
-  event.preventDefault(); 
-};
+function onDragOver(event) {
+  event.preventDefault();
+}
 
-const onDragLeave = (event) => {
+function onDragLeave(event) {
   event.preventDefault();
   isDragging.value = false;
-};
+}
 
-const onDrop = (event) => {
+function onDrop(event) {
   event.preventDefault();
   isDragging.value = false;
   const file = event.dataTransfer.files[0];
   handleFile(file);
-};
+}
 
-const onInputImageLoad = () => {
+function onInputImageLoad() {
   inputImageLoaded.value = true;
-};
+}
 
-const onOutputImageLoad = () => {
+function onOutputImageLoad() {
   outputImageLoaded.value = true;
-};
+}
 
-const downloadOutputImage = async () => {
+async function downloadOutputImage() {
   if (!completedGenerationId.value) {
     toast.info("Cannot download image. Please try again later.");
     return;
@@ -435,12 +437,13 @@ const downloadOutputImage = async () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  } catch (err) {
+  }
+  catch (err) {
     if (err.response && [400, 404].includes(err.response.status)) {
       toast.info(getErrorMessage(err, 'download'));
     }
   }
-};
+}
 </script>
 
 <style scoped>
@@ -484,5 +487,4 @@ const downloadOutputImage = async () => {
     word-break: break-word;
   }
 }
-
 </style>

@@ -42,29 +42,27 @@ const props = defineProps({
 
 const emit = defineEmits(['select-style']);
 
-const selectStyle = () => {
+function selectStyle() {
   if (props.styleData.is_available !== false) {
     emit('select-style', props.styleData.id);
   }
-};
+}
 
-const getSpriteClass = () => {
+function getSpriteClass() {
   if (props.styleData.name) {
     const className = props.styleData.name
       .toLowerCase()
       .replace(/\s+/g, '_')
       .replace(/[^a-z0-9_]/g, '');
     const cssClass = `bg-${className}`;
-        
+
     return cssClass;
   }
   return '';
-};
+}
 </script>
 
-
 <style scoped>
-
 .bg-dark_fantasy_1 {
   width: 180px; 
   height: 180px;
@@ -99,4 +97,4 @@ const getSpriteClass = () => {
   background: url('@/assets/style_sprites/sprite_test.png') -10px -10px;
   background-repeat: no-repeat;
 }
-</style> 
+</style>

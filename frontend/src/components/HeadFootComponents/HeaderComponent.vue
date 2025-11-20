@@ -170,7 +170,7 @@ const sideBar = ref(null);
 const authStore = useAuthStore();
 const router = useRouter();
 
-const closeSidebars = () => {
+function closeSidebars() {
   if (sideBar.value) {
     sideBar.value.closeBar();
   }
@@ -178,9 +178,9 @@ const closeSidebars = () => {
   isBarOpen.value = false;
   isBurgerOpen.value = false;
   isGuestBurgerOpen.value = false;
-};
+}
 
-const fetchCredits = async () => {
+async function fetchCredits() {
   if (!authStore.isAuthenticated) return;
   try {
     const response = await api.get('/api/auth/credit-balance/');
@@ -189,15 +189,15 @@ const fetchCredits = async () => {
   catch (error) {
     credits.value = 0;
   }
-};
+}
 
-const handleBarChange = (newValue) => {
+function handleBarChange(newValue) {
   isBarOpen.value = newValue;
 
   if (newValue) {
     fetchCredits();
   }
-};
+}
 
 async function handleLogout() {
   try {
@@ -217,4 +217,4 @@ watch(isBurgerOpen, (newValue) => {
     fetchCredits();
   }
 });
-</script> 
+</script>

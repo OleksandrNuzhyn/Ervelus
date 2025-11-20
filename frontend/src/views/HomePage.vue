@@ -4,7 +4,6 @@
     <div class="noise-overlay"></div>
     <div class="ambient-light"></div>
 
-    <!-- Global Animated Background -->
     <div class="global-background">
       <div class="glow-orb orb-1"></div>
       <div class="glow-orb orb-2"></div>
@@ -386,22 +385,21 @@ const steps = [
   }
 ]
 
-// Functions
-const getCurrentStyleIcon = () => {
+function getCurrentStyleIcon() {
   const style = previewStyles.find(s => s.id === selectedPreviewStyle.value)
   return style ? style.icon : FireIcon
 }
 
-const getCurrentStyleName = () => {
+function getCurrentStyleName() {
   const style = previewStyles.find(s => s.id === selectedPreviewStyle.value)
   return style ? style.name : 'Dark Fantasy'
 }
 
-const getStyleClass = (styleId) => {
+function getStyleClass(styleId) {
   return `style-${styleId}`
 }
 
-const startDrag = (e) => {
+function startDrag(e) {
   isDragging = true
   document.addEventListener('mousemove', handleDrag)
   document.addEventListener('mouseup', stopDrag)
@@ -409,14 +407,13 @@ const startDrag = (e) => {
   document.addEventListener('touchend', stopDrag)
 }
 
-const handleDrag = (e) => {
+function handleDrag(e) {
   if (!isDragging) return
 
   const sliderElement = document.querySelector('.comparison-frame')
   if (!sliderElement) return
 
   const rect = sliderElement.getBoundingClientRect()
-  // Handle both mouse and touch events
   const clientX = e.touches ? e.touches[0].clientX : e.clientX
   const x = clientX - rect.left
   const percentage = (x / rect.width) * 100
@@ -424,7 +421,7 @@ const handleDrag = (e) => {
   sliderPosition.value = Math.max(0, Math.min(100, percentage))
 }
 
-const stopDrag = () => {
+function stopDrag() {
   isDragging = false
   document.removeEventListener('mousemove', handleDrag)
   document.removeEventListener('mouseup', stopDrag)
@@ -432,12 +429,11 @@ const stopDrag = () => {
   document.removeEventListener('touchend', stopDrag)
 }
 
-const navigateToDashboard = () => {
+function navigateToDashboard() {
   router.push('/dashboard')
 }
 
-const handleGlobalMouseMove = (e) => {
-  // 3D Tilt for Hero Card
+function handleGlobalMouseMove(e) {
   if (heroCard.value) {
     const rect = heroCard.value.getBoundingClientRect()
     const x = e.clientX - rect.left
@@ -446,12 +442,11 @@ const handleGlobalMouseMove = (e) => {
     const centerX = rect.width / 2
     const centerY = rect.height / 2
 
-    const rotateX = ((y - centerY) / centerY) * -5 // Max 5deg rotation
+    const rotateX = ((y - centerY) / centerY) * -5
     const rotateY = ((x - centerX) / centerX) * 5
 
     heroCard.value.style.transform = `translate(-50%, -50%) rotate(-5deg) perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
 
-    // Shine effect
     const shine = heroCard.value.querySelector('.card-shine')
     if (shine) {
       shine.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.2), transparent 80%)`
@@ -459,7 +454,7 @@ const handleGlobalMouseMove = (e) => {
   }
 }
 
-const bringCardToFront = (cardId) => {
+function bringCardToFront(cardId) {
   const cards = document.querySelectorAll('.floating-cards .card')
   cards.forEach(card => {
     card.style.zIndex = '1'
@@ -467,10 +462,12 @@ const bringCardToFront = (cardId) => {
 
   if (cardId === 'main' && heroCard.value) {
     heroCard.value.style.zIndex = '10'
-  } else if (cardId === 'card1') {
+  }
+  else if (cardId === 'card1') {
     const card1 = document.querySelector('.card-1')
     if (card1) card1.style.zIndex = '10'
-  } else if (cardId === 'card2') {
+  }
+  else if (cardId === 'card2') {
     const card2 = document.querySelector('.card-2')
     if (card2) card2.style.zIndex = '10'
   }
@@ -501,10 +498,6 @@ onUnmounted(() => {
   --radius-sm: 12px;
   --radius-md: 18px;
   --radius-lg: 24px;
-
-  /* Прибрано фон, щоб було видно global-background */
-  /* background-color: #000000; */
-  /* background-image: linear-gradient(to bottom, #050505, #0a0a0c, #050505); */
   background: transparent;
   position: relative;
   z-index: 1;
@@ -542,7 +535,6 @@ onUnmounted(() => {
   z-index: 0;
 }
 
-/* Global Background */
 .global-background {
   position: fixed;
   inset: 0;
@@ -550,7 +542,6 @@ onUnmounted(() => {
   overflow: hidden;
   pointer-events: none;
 
-  /* Базовий чорний колір з градієнтом */
   background-color: #000000;
   background-image: linear-gradient(to bottom, #000000, #0a0a0c);
 }
@@ -1423,7 +1414,6 @@ section {
   margin-bottom: 150px;
 }
 
-/* Footer */
 footer {
   position: relative;
   z-index: 2;
