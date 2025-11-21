@@ -1,10 +1,9 @@
 <template>
-  <section class="relative mx-auto max-w-[1370px] px-4 pt-12 pb-3 h-full flex flex-col">
+  <section class="relative mx-auto max-w-[1370px] px-4 pt-12 pb-3 min-h-full flex flex-col">
     <div id="gallery-top"></div>
     
     <div class="flex-grow mb-2"
       :class="{
-        'overflow-y-auto': galleryItems.length > 0,
         'flex items-center justify-center': !isLoading && !galleryItems.length
       }">
       <transition-group
@@ -140,15 +139,7 @@ async function getPage(p) {
       const tempItems = results.map(request => ({ ...request, requestLoaded: false }));
       galleryItems.value = tempItems;
       
-      const staggerMs = 75;
-      for (const request of galleryItems.value) {
-        const urlsToLoad = [request.input_thumb_signed_url, request.output_thumb_signed_url].filter(Boolean);
-        if (urlsToLoad.length > 0) {
-          await preloadRequest(urlsToLoad);
-        }
-        request.requestLoaded = true;
-        await new Promise(resolve => setTimeout(resolve, staggerMs));
-      }
+      animateGalleryItems(galleryItems.value);
     }
   }
   catch {
@@ -158,6 +149,18 @@ async function getPage(p) {
     pageCount.value = 1
     isLoading.value = false;
     toast.info('Failed to load gallery');
+  }
+}
+
+async function animateGalleryItems(items) {
+  const staggerMs = 75;
+  for (const request of items) {
+    const urlsToLoad = [request.input_thumb_signed_url, request.output_thumb_signed_url].filter(Boolean);
+    if (urlsToLoad.length > 0) {
+      await preloadRequest(urlsToLoad);
+    }
+    request.requestLoaded = true;
+    await new Promise(resolve => setTimeout(resolve, staggerMs));
   }
 }
 
@@ -231,10 +234,7 @@ async function changePage(p) {
 
   await getPage(p);
 
-  const element = document.getElementById('gallery-top')
-  if (element) {
-    element.scrollIntoView({ behavior: 'instant', block: 'start' })
-  }
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 function openModal(request) {

@@ -1,6 +1,6 @@
 <template>
   <div class="mt-0 p-3 lg:flex lg:flex-col lg:min-h-[calc(100vh-9rem)]">
-    <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 items-start lg:items-stretch lg:flex-grow">
+    <div class="flex flex-col lg:grid lg:grid-cols-2 gap-7 lg:gap-8 items-start lg:items-stretch lg:flex-grow">
       <div class="z-9 flex flex-col items-center w-full">
         <div class="bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-lg p-4 h-[400px] md:h-[660px] w-full flex flex-col items-center justify-center lg:h-auto lg:flex-grow lg:min-h-0">
           <div v-if="!inputImageUrl" @click="triggerFileInput"
@@ -59,7 +59,7 @@
             <p>The result of the generation will appear here</p>
           </div>
         </div>
-        <div class="mt-7 lg:mt-4 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-8 sm:gap-5 md:gap-6 lg:gap-10">
+        <div class="mt-7 mb-4 lg:mt-4 lg:mb-0 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-8 sm:gap-5 md:gap-6 lg:gap-10">
           <button 
             @click="handleButtonClick"
             :disabled="isButtonDisabled"
