@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import Q
 from django.conf import settings
 from django.utils import timezone
+from auditlog.registry import auditlog
 
 
 class UserSubscription(models.Model):
@@ -79,3 +80,6 @@ class UserSubscription(models.Model):
     
     def __str__(self):
         return f'{self.plan.name} - {self.user.email}'
+
+
+auditlog.register(UserSubscription)
