@@ -71,17 +71,7 @@ def get_user_data_for_retention(user):
     
     log_entries_query = Q(actor=user)
 
-    objects_to_check = [
-        user,
-        *user.subscriptions.all(),
-    ]
-
-    if hasattr(user, 'profile'):
-        objects_to_check.append(user.profile)
-
-    for obj in objects_to_check:
-        if obj is None:
-            continue
+    for obj in user.subscriptions.all():
         ct = ContentType.objects.get_for_model(obj)
         log_entries_query |= Q(content_type=ct, object_pk=str(obj.pk))
 

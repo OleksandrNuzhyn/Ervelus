@@ -340,11 +340,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUDITLOG_INCLUDE_ALL_MODELS = True
-
-AUDITLOG_EXCLUDE_TRACKING_MODELS = (
-    "generations.GenerationRequest",
-    "authtoken.Token"
-)
+AUDITLOG_INCLUDE_ALL_MODELS = False
 
 GDPR_LOG_ON_ANONYMISE = False

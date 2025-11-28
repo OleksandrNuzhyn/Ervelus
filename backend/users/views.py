@@ -105,23 +105,9 @@ def account_delete(request):
             return Response(status=400)
     
     related_objects_ids = []
-    objects_to_check = [user]
-
-    try:
-        objects_to_check.extend(user.subscriptions.all())
-        objects_to_check.extend(user.agreements.all())
-        objects_to_check.extend(user.emailaddress_set.all())
-        objects_to_check.extend(user.socialaccount_set.all())
-
-        if hasattr(user, 'profile'):
-            objects_to_check.append(user.profile)
-    except Exception as e:
-        logger.error(f"Could not fully collect related objects in delete request", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)
-        return Response(status=400)
-
-    for obj in objects_to_check:
-        if obj:
-            related_objects_ids.append((ContentType.objects.get_for_model(obj), str(obj.pk)))
+    
+    for obj in user.subscriptions.all():
+        related_objects_ids.append((ContentType.objects.get_for_model(obj), str(obj.pk)))
 
     LogEntry.objects.log_create(
         instance=user,

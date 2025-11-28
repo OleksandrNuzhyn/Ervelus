@@ -34,7 +34,7 @@ class GenerationRequest(models.Model):
 
         def export(self, instance):
             return {
-                'chosen_style_name': instance.chosen_style.name,
+                'chosen_style_name': instance.chosen_style.name if instance.chosen_style else None,
                 'input_thumb_url': instance.input_thumb_url,
                 'input_large_url': instance.input_large_url,
                 'output_thumb_url': instance.output_thumb_url,
@@ -49,7 +49,7 @@ class GenerationRequest(models.Model):
             }
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='generation_requests')
-    chosen_style = models.ForeignKey('products.Style', on_delete=models.PROTECT, related_name='generation_requests')
+    chosen_style = models.ForeignKey('products.Style', on_delete=models.SET_NULL, null=True, blank=True, related_name='generation_requests')
     input_thumb_url = models.URLField(max_length=1024, null=True, blank=True)
     input_large_url = models.URLField(max_length=1024, null=True, blank=True)
     output_thumb_url = models.URLField(max_length=1024, null=True, blank=True)
@@ -63,4 +63,4 @@ class GenerationRequest(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.chosen_style.name} - {self.user.email if self.user else 'No User'}"
+        return f"{self.chosen_style.name if self.chosen_style else 'Deleted Style'} - {self.user.email if self.user else 'No User'}"

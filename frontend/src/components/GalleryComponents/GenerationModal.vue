@@ -44,8 +44,8 @@
                   <div class="flex-shrink-0 flex h-20 items-center justify-between px-6 pb-2">
                     <div class="flex items-center justify-between w-full">
                       <div class="text-left">
-                        <p v-if="currentStyleName" class="font-semibold text-zinc-300 truncate" :title="currentStyleName">
-                          {{ currentStyleName }}
+                        <p class="font-semibold text-zinc-300 truncate" :title="currentStyleName || 'Deleted Style'">
+                          {{ currentStyleName || 'Deleted Style' }}
                         </p>
                         <p v-if="currentFormattedDate" class="text-sm text-zinc-400">{{ currentFormattedDate }}</p>
                       </div>
