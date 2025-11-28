@@ -134,13 +134,21 @@ let cancellationTimeoutId = null;
 let pollAttempt = 0;
 
 watch(() => props.latestGenerationData, (latest) => {
-  
+
   if (latest && latest.status === 'processing') {
     isLoading.value = true;
     currentGenerationId.value = latest.id;
     inputImageUrl.value = null;
     outputImageUrl.value = null;
     startPolling(latest.created_at);
+  }
+  if (latest && !latest.is_visible) {
+    const createdAt = new Date(latest.created_at).getTime();
+    const age = Date.now() - createdAt;
+    const fiveMinutes = 5 * 60 * 1000;
+    if (age > fiveMinutes) {
+      deleteLongRunningRequest(latest.id);
+    }
   }
 }, { immediate: true });
 
