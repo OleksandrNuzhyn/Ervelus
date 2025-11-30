@@ -130,17 +130,37 @@ const POLL_INTERVALS_MS = [
 ];
 
 let pollingTimeoutId = null;
-let cancellationTimeoutId = null; 
+let cancellationTimeoutId = null;
+let deletionTimeoutId = null;
 let pollAttempt = 0;
 
 watch(() => props.latestGenerationData, (latest) => {
-  
+  if (deletionTimeoutId) {
+    clearTimeout(deletionTimeoutId);
+    deletionTimeoutId = null;
+  }
+
   if (latest && latest.status === 'processing') {
     isLoading.value = true;
     currentGenerationId.value = latest.id;
     inputImageUrl.value = null;
     outputImageUrl.value = null;
     startPolling(latest.created_at);
+  }
+  if (latest && !latest.is_visible) {
+    const createdAt = new Date(latest.created_at).getTime();
+    const age = Date.now() - createdAt;
+    const fiveMinutes = 5 * 60 * 1000;
+
+    if (age > fiveMinutes) {
+      deleteLongRunningRequest(latest.id);
+    } 
+    else {
+      const remainingTime = fiveMinutes - age;
+      deletionTimeoutId = setTimeout(() => {
+        deleteLongRunningRequest(latest.id);
+      }, remainingTime);
+    }
   }
 }, { immediate: true });
 
@@ -174,6 +194,10 @@ function stopPolling() {
     clearTimeout(cancellationTimeoutId);
     cancellationTimeoutId = null;
   }
+  if (deletionTimeoutId) {
+    clearTimeout(deletionTimeoutId);
+    deletionTimeoutId = null;
+  }
 }
 
 async function deleteLongRunningRequest(id) {
@@ -181,9 +205,15 @@ async function deleteLongRunningRequest(id) {
     const finalCheckResponse = await api.get('/api/generations/generation-requests/latest/');
     const finalCheckLatest = finalCheckResponse.data;
 
-    if (finalCheckLatest && finalCheckLatest.id === id && !finalCheckLatest.is_visible) {
-      await api.delete(`/api/generations/generation-requests/delete/${id}/`);
-      toast.info("The generation request was cancelled because it took too long to complete.");
+    if (finalCheckLatest && finalCheckLatest.id === id) {
+      if (!finalCheckLatest.is_visible) {
+        await api.delete(`/api/generations/generation-requests/delete/${id}/`);
+        toast.info("The generation request was cancelled because it took too long to complete.");
+      } 
+      else if (finalCheckLatest.status === 'completed' && finalCheckLatest.output_large_signed_url) {
+        outputImageUrl.value = finalCheckLatest.output_large_signed_url;
+        completedGenerationId.value = finalCheckLatest.id;
+      }
     }
   }
   catch (err) {
@@ -273,6 +303,9 @@ function startPolling(createdAt = null) {
 
 onUnmounted(() => {
   stopPolling();
+  if (deletionTimeoutId) {
+    clearTimeout(deletionTimeoutId);
+  }
 });
 
 const styleButtonText = computed(() => {
