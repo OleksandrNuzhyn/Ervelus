@@ -95,7 +95,7 @@ def get_user_data_for_retention(user):
 
 def upload_user_data_for_retention_to_gcs(user, user_data_for_retention):
     file_name = f"user_data/{user.email}_{timezone.now().strftime('%Y%m%d%H%M%S')}.json"
-    bucket_name = settings.GCP_STORAGE_BUCKET_NAME
+    bucket_name = settings.GCP_COMPLIANCE_BUCKET_NAME
     bucket = gcs_sync_storage_client.bucket(bucket_name)
     blob = bucket.blob(file_name)
 

@@ -13,7 +13,7 @@ const pinia = createPinia()
 app.use(pinia)
 app.use(router)
 app.use(GoogleSignInPlugin, {
-  clientId: '281870812434-c175ecrljg0b8fr5sg30olverjkri2d0.apps.googleusercontent.com'
+  clientId: '324377414272-g7rqnvo9n7lb5ugsb9q1a15u0lul0255.apps.googleusercontent.com'
 });
 
 app.mount('#app')
