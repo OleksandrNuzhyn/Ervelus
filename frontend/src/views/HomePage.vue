@@ -254,7 +254,7 @@ const subscriptionTiers = [
       { id: 1, name: 'Gothic Fantasy', genre: 'Fantasy' },
       { id: 2, name: 'Light Fantasy', genre: 'Fantasy' },
       { id: 3, name: 'Steampunk', genre: 'Punkverse' },
-      { id: 4, name: 'SolarPunk', genre: 'Punkverse' },
+      { id: 4, name: 'Solarpunk', genre: 'Punkverse' },
       { id: 5, name: 'Dieselpunk', genre: 'Punkverse' },
       { id: 6, name: 'Stone Age', genre: 'Time Travel' },
       { id: 7, name: 'Ancient Greece', genre: 'Time Travel' },
@@ -298,7 +298,7 @@ const subscriptionTiers = [
     styles: [
       { id: 26, name: 'Grimdark Fantasy', genre: 'Fantasy' },
       { id: 27, name: 'Venice Canals', genre: 'Around The World' },
-      { id: 28, name: 'Chinise New Year', genre: 'Fantasy' },
+      { id: 28, name: 'Chinise New Year', genre: 'Events' },
       { id: 29, name: 'Dark Cinematic', genre: 'Trending' },
       { id: 30, name: 'Yacht Chillin\'', genre: 'Trending' }
     ]
