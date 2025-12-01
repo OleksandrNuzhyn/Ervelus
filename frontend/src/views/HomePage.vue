@@ -32,21 +32,21 @@
             <div class="floating-cards">
               <div class="card card-main tilt-card" ref="heroCard" @click="bringCardToFront('main')">
                 <div class="card-inner">
-                  <img src="@/assets/background_assets/side_background.webp" alt="AI Art Main" class="card-img" />
+                  <img src="@/assets/home_page/dark-fantasy_flying.jpeg" alt="AI Art Main" class="card-img" />
                   <div class="card-shine"></div>
                 </div>
               </div>
               <div class="card card-floating card-1" @click="bringCardToFront('card1')">
-                <img src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop" alt="Cyberpunk" class="card-img" />
+                <img src="@/assets/home_page/light-fantasy_flying.jpeg" alt="Cyberpunk" class="card-img" />
               </div>
               <div class="card card-floating card-2" @click="bringCardToFront('card2')">
-                <img src="https://images.unsplash.com/photo-1635322966219-b75ed372eb01?q=80&w=1964&auto=format&fit=crop" alt="Fantasy" class="card-img" />
+                <img src="@/assets/home_page/wild-west_flying.jpeg" alt="Fantasy" class="card-img" />
               </div>
             </div>
           </div>
         </div>
       </section>
-  
+
       <section class="section-comparison">
         <div class="section-header">
           <h2 class="section-title">See the transformation</h2>
@@ -56,12 +56,8 @@
         </div>
 
         <div class="style-pills">
-          <button
-            v-for="style in previewStyles"
-            :key="style.id"
-            @click="selectedPreviewStyle = style.id"
-            :class="['style-pill', { active: selectedPreviewStyle === style.id }]"
-          >
+          <button v-for="style in previewStyles" :key="style.id" @click="selectedPreviewStyle = style.id"
+            :class="['style-pill', { active: selectedPreviewStyle === style.id }]">
             {{ style.name }}
           </button>
         </div>
@@ -69,33 +65,21 @@
         <div class="comparison-container">
           <div class="comparison-frame">
             <div class="comparison-side before-side">
-              <div class="comparison-placeholder">
-                <svg class="placeholder-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                </svg>
-                <span class="comparison-label">Original</span>
-              </div>
+              <img :src="originalImg" class="comparison-img" alt="Original Photo" />
+              <span class="comparison-label overlay-label">Original</span>
             </div>
 
-            <div 
-              class="comparison-side after-side"
-              :style="{ 'clip-path': `inset(0 ${100 - sliderPosition}% 0 0)` }"
-            >
-              <div class="comparison-styled" :class="getStyleClass(selectedPreviewStyle)">
-                <component :is="getCurrentStyleIcon()" class="styled-icon" />
-                <span class="comparison-label">{{ getCurrentStyleName() }}</span>
-              </div>
+            <div class="comparison-side after-side" :style="{ 'clip-path': `inset(0 ${100 - sliderPosition}% 0 0)` }">
+              <img :src="getStyledImageUrl()" class="comparison-img" alt="Styled Result" />
+              <span class="comparison-label overlay-label">{{ getCurrentStyleName() }}</span>
             </div>
 
-            <div
-              class="slider-handle-wrapper"
-              :style="{ left: `${sliderPosition}%` }"
-              @mousedown.prevent="startDrag"
-              @touchstart.prevent="startDrag"
-            >
+            <div class="slider-handle-wrapper" :style="{ left: `${sliderPosition}%` }" @mousedown.prevent="startDrag"
+              @touchstart.prevent="startDrag">
               <div class="slider-handle">
                 <svg class="slider-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 9l4-4 4 4m0 6l-4 4-4-4">
+                  </path>
                 </svg>
               </div>
               <div class="slider-line"></div>
@@ -104,7 +88,8 @@
 
           <p class="comparison-hint">
             <svg class="hint-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
             </svg>
             Drag to compare
           </p>
@@ -120,11 +105,8 @@
         </div>
 
         <div class="pricing-list">
-          <div 
-            v-for="tier in subscriptionTiers"
-            :key="tier.id"
-            :class="['pricing-card-horizontal', { featured: tier.featured }]"
-          >
+          <div v-for="tier in subscriptionTiers" :key="tier.id"
+            :class="['pricing-card-horizontal', { featured: tier.featured }]">
             <div class="pricing-left">
               <div class="pricing-header-horizontal">
                 <h3 class="pricing-name-horizontal">{{ tier.name }}</h3>
@@ -140,14 +122,10 @@
               <div v-if="tier.includePrevious" class="previous-styles-note">
                 + All styles from the "{{ tier.previousPlanName }}" plan
               </div>
-              
+
               <div class="styles-grid">
-                <div 
-                  v-for="(style, index) in tier.styles"
-                  :key="style.id"
-                  class="style-item"
-                  :style="{ 'animation-delay': `${index * 0.1}s` }"
-                >
+                <div v-for="(style, index) in tier.styles" :key="style.id" class="style-item"
+                  :style="{ 'animation-delay': `${index * 0.1}s` }">
                   <div class="style-name">{{ style.name }}</div>
                   <div class="style-genre">{{ style.genre }}</div>
                 </div>
@@ -166,11 +144,7 @@
         </div>
 
         <div class="genres-grid">
-          <div 
-            v-for="genre in genres"
-            :key="genre.id"
-            class="genre-card"
-          >
+          <div v-for="genre in genres" :key="genre.id" class="genre-card">
             <div class="genre-icon-wrapper">
               <component :is="genre.icon" class="genre-icon" />
             </div>
@@ -189,11 +163,7 @@
         </div>
 
         <div class="steps-container">
-          <div 
-            v-for="(step, index) in steps"
-            :key="step.id"
-            class="step-item"
-          >
+          <div v-for="(step, index) in steps" :key="step.id" class="step-item">
             <div class="step-number">{{ index + 1 }}</div>
             <div class="step-icon-wrapper">
               <component :is="step.icon" class="step-icon" />
@@ -223,6 +193,12 @@
 <script setup>
 import { ref, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import originalImg from '@/assets/home_page/original.jpg'
+import darkFantasyResult from '@/assets/home_page/dark-fantasy_result.jpeg'
+import lightFantasyResult from '@/assets/home_page/light-fantasy_result.jpeg'
+import ancientGreeceResult from '@/assets/home_page/ancient-greece_result.jpeg'
+import gildedResult from '@/assets/home_page/gilded-result.jpeg'
+import medievalResult from '@/assets/home_page/medieval-result.jpeg'
 import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue'
 import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue'
 import {
@@ -248,79 +224,83 @@ const heroCard = ref(null)
 
 const previewStyles = [
   { id: 'dark-fantasy', name: 'Dark Fantasy', icon: FireIcon },
-  { id: 'gothic-horror', name: 'Gothic Horror', icon: BeakerIcon },
-  { id: 'cyberpunk', name: 'Cyberpunk', icon: CubeIcon },
-  { id: 'steampunk', name: 'Steampunk', icon: CogIcon },
-  { id: 'anime', name: 'Anime', icon: SparklesHeroIcon }
+  { id: 'light-fantasy', name: 'Light Fantasy', icon: SparklesHeroIcon },
+  { id: 'ancient-greece', name: 'Ancient Greece', icon: GlobeAltIcon },
+  { id: 'gilded', name: 'The Gilded Age', icon: SparklesIcon },
+  { id: 'medieval', name: 'Medieval', icon: CubeIcon }
 ]
+
+const styleImages = {
+  'dark-fantasy': darkFantasyResult,
+  'light-fantasy': lightFantasyResult,
+  'ancient-greece': ancientGreeceResult,
+  'gilded': gildedResult,
+  'medieval': medievalResult
+}
+
+function getStyledImageUrl() {
+  return styleImages[selectedPreviewStyle.value] || styleImages['dark-fantasy']
+}
 
 const subscriptionTiers = [
   {
     id: 'amateur',
     name: 'Amateur',
-    price: 0,
+    price: 6,
     featured: false,
     includePrevious: false,
     previousPlanName: null,
     styles: [
-      { id: 1, name: 'Класичний портрет', genre: 'Класика' },
-      { id: 2, name: 'Вінтаж', genre: 'Ретро' },
-      { id: 3, name: 'Чорно-білий', genre: 'Монохром' },
-      { id: 4, name: 'Акварель', genre: 'Мистецтво' },
-      { id: 4, name: 'Акварель', genre: 'Мистецтво' },
-      { id: 4, name: 'Акварель', genre: 'Мистецтво' },
-      { id: 4, name: 'Акварель', genre: 'Мистецтво' },
-      { id: 4, name: 'Акварель', genre: 'Мистецтво' },
-      { id: 4, name: 'Акварель', genre: 'Мистецтво' },
-      { id: 4, name: 'Акварель', genre: 'Мистецтво' },
-      { id: 4, name: 'Акварель', genre: 'Мистецтво' },
-      { id: 4, name: 'Акварель', genre: 'Мистецтво' },
-      { id: 4, name: 'Акварель', genre: 'Мистецтво' },
-      { id: 4, name: 'Акварель', genre: 'Мистецтво' },
-      { id: 4, name: 'Акварель', genre: 'Мистецтво' },
-      { id: 4, name: 'Акварель', genre: 'Мистецтво' },
-      { id: 4, name: 'Акварель', genre: 'Мистецтво' },
-      { id: 4, name: 'Акварель', genre: 'Мистецтво' },
-      { id: 4, name: 'Акварель', genre: 'Мистецтво' },
-      { id: 5, name: 'Ескіз', genre: 'Графіка' }
+      { id: 1, name: 'Gothic Fantasy', genre: 'Fantasy' },
+      { id: 2, name: 'Light Fantasy', genre: 'Fantasy' },
+      { id: 3, name: 'Steampunk', genre: 'Punkverse' },
+      { id: 4, name: 'SolarPunk', genre: 'Punkverse' },
+      { id: 5, name: 'Dieselpunk', genre: 'Punkverse' },
+      { id: 6, name: 'Stone Age', genre: 'Time Travel' },
+      { id: 7, name: 'Ancient Greece', genre: 'Time Travel' },
+      { id: 8, name: 'Wonders of Giza', genre: 'Around The World' },
+      { id: 9, name: 'Japanese Spring', genre: 'Around The World' },
+      { id: 10, name: 'Parisian Dream', genre: 'Around The World' },
+      { id: 11, name: 'Merry Christmas', genre: 'Events' },
+      { id: 12, name: 'Rio de Janeiro Carnival', genre: 'Events' }
     ]
   },
   {
     id: 'journeyman',
     name: 'Journeyman',
-    price: 29,
+    price: 10,
     featured: true,
     includePrevious: true,
     previousPlanName: 'Amateur',
     styles: [
-      { id: 6, name: 'Темне фентезі', genre: 'Dark Fantasy' },
-      { id: 7, name: 'Готичний жах', genre: 'Gothic Horror' },
-      { id: 8, name: 'Кіберпанк', genre: 'Sci-Fi' },
-      { id: 9, name: 'Стімпанк', genre: 'Steampunk Noir' },
-      { id: 10, name: 'Аніме', genre: 'Anime' },
-      { id: 11, name: 'Олійний живопис', genre: 'Мистецтво' },
-      { id: 12, name: 'Поп-арт', genre: 'Сучасне' },
-      { id: 13, name: 'Імпресіонізм', genre: 'Класика' },
-      { id: 14, name: 'Коміксний', genre: 'Графіка' },
-      { id: 15, name: 'Піксель-арт', genre: 'Ретро' }
+      { id: 13, name: 'Dark Fantasy', genre: 'Fantasy' },
+      { id: 14, name: 'Adventure Fantasy', genre: 'Fantasy' },
+      { id: 15, name: 'Cyberpunk', genre: 'Punkverse' },
+      { id: 16, name: 'Atompunk', genre: 'Punkverse' },
+      { id: 17, name: 'The Gilded Age', genre: 'Time Travel' },
+      { id: 18, name: 'Wild West', genre: 'Time Travel' },
+      { id: 19, name: 'Medieval Realism', genre: 'Time Travel' },
+      { id: 20, name: 'Pripyat Gloom', genre: 'Around The World' },
+      { id: 21, name: 'Valentine\'s Day', genre: 'Events' },
+      { id: 22, name: 'Halloween', genre: 'Events' },
+      { id: 23, name: 'Hong Kong Urban', genre: 'Trending' },
+      { id: 24, name: 'Tokyo Drive', genre: 'Trending' },
+      { id: 25, name: 'Diplomatic Elevator', genre: 'Trending' }
     ]
   },
   {
     id: 'master',
     name: 'Master',
-    price: 99,
+    price: 15,
     featured: false,
     includePrevious: true,
     previousPlanName: 'Journeyman',
     styles: [
-      { id: 16, name: 'Гіперреалізм', genre: 'Реалізм' },
-      { id: 17, name: 'Квантове мистецтво', genre: 'Sci-Fi' },
-      { id: 18, name: 'Божественне світло', genre: 'Mythic' },
-      { id: 19, name: 'Неонова ніч', genre: 'Cyberpunk' },
-      { id: 20, name: 'Космічна одіссея', genre: 'Sci-Fi' },
-      { id: 21, name: 'Драконячий гнів', genre: 'Dark Fantasy' },
-      { id: 22, name: 'Магічні руни', genre: 'Arcane' },
-      { id: 23, name: 'Кастомний AI', genre: 'Custom' }
+      { id: 26, name: 'Grimdark Fantasy', genre: 'Fantasy' },
+      { id: 27, name: 'Venice Canals', genre: 'Around The World' },
+      { id: 28, name: 'Chinise New Year', genre: 'Fantasy' },
+      { id: 29, name: 'Dark Cinematic', genre: 'Trending' },
+      { id: 30, name: 'Yacht Chillin\'', genre: 'Trending' }
     ]
   }
 ]
@@ -665,9 +645,17 @@ onUnmounted(() => {
 }
 
 @keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7); }
-  70% { box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+  }
 }
 
 .hero-title {
@@ -802,7 +790,7 @@ onUnmounted(() => {
 .card-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.6), transparent 50%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent 50%);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -833,7 +821,9 @@ onUnmounted(() => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .card-shine {
@@ -871,13 +861,27 @@ onUnmounted(() => {
 }
 
 @keyframes float-right {
-  0%, 100% { transform: translateY(0px) rotate(10deg); }
-  50% { transform: translateY(-20px) rotate(10deg); }
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(10deg);
+  }
+
+  50% {
+    transform: translateY(-20px) rotate(10deg);
+  }
 }
 
 @keyframes float-left {
-  0%, 100% { transform: translateY(0px) rotate(-10deg); }
-  50% { transform: translateY(-20px) rotate(-10deg); }
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(-10deg);
+  }
+
+  50% {
+    transform: translateY(-20px) rotate(-10deg);
+  }
 }
 
 section {
@@ -939,6 +943,7 @@ section {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  z-index: 1;
 }
 
 .before-side {
@@ -947,17 +952,6 @@ section {
 
 .after-side {
   transition: clip-path 0.1s linear;
-}
-
-.comparison-placeholder,
-.comparison-styled {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-md);
 }
 
 .placeholder-icon,
@@ -976,14 +970,29 @@ section {
   letter-spacing: 0.05em;
 }
 
-.comparison-styled {
-  color: #fff;
+.comparison-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
 }
-.style-dark-fantasy { background: linear-gradient(135deg, #4c1d95 0%, #1e1b4b 100%); }
-.style-gothic-horror { background: linear-gradient(135deg, #7f1d1d 0%, #000000 100%); }
-.style-cyberpunk { background: linear-gradient(135deg, #06b6d4 0%, #7c3aed 100%); }
-.style-steampunk { background: linear-gradient(135deg, #b45309 0%, #1c1917 100%); }
-.style-anime { background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); }
+
+.overlay-label {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
 
 .slider-handle-wrapper {
   position: absolute;
@@ -1170,7 +1179,7 @@ section {
     opacity: 0;
     transform: translateY(10px);
   }
-  
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1196,12 +1205,10 @@ section {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(139, 92, 246, 0.3),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(139, 92, 246, 0.3),
+      transparent);
   animation: shimmer-continuous 3s ease-in-out infinite;
 }
 
@@ -1209,18 +1216,20 @@ section {
   0% {
     left: -100%;
   }
-  
+
   50% {
     left: 100%;
   }
-  
+
   100% {
     left: 100%;
   }
 }
 
 @keyframes pulse-border {
-  0%, 100% {
+
+  0%,
+  100% {
     border-color: rgba(255, 255, 255, 0.08);
     box-shadow: 0 0 0 rgba(139, 92, 246, 0);
   }
