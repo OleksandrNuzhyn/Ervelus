@@ -13,7 +13,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([AllowAny])
 def subscription_eligibility_check(request):
     serializer = SubscriptionEligibilityCheckSerializer(data=request.data)
