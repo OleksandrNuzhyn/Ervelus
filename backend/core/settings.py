@@ -16,9 +16,8 @@ DEBUG = os.getenv("DEBUG") == "True"
 MAINTENANCE_MODE = os.getenv("MAINTENANCE_MODE") == "True"
 
 ALLOWED_HOSTS = [
-    'ervelus-web-service-281870812434.us-central1.run.app',
-    'ervelus-generations-service-281870812434.us-central1.run.app',
-    'backend.ervelus.com',
+    'ervelus-web-service-324377414272.us-central1.run.app',
+    'ervelus-generations-service-324377414272.us-central1.run.app',
     'localhost',
     '127.0.0.1'
 ]
@@ -184,7 +183,7 @@ SESSION_COOKIE_SAMESITE = 'None'
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://ervelus-web-service-281870812434.us-central1.run.app',
+    'https://ervelus-web-service-324377414272.us-central1.run.app',
     'http://localhost:5173',
     'http://127.0.0.1:5173'
 ]
@@ -196,7 +195,8 @@ CSRF_COOKIE_SAMESITE = 'None'
 
 CORS_ALLOWED_ORIGINS = [
     'https://ervelus.com',
-    'https://valiant-hexagon-471121-i7.web.app',
+    'https://credible-cosine-479914-k2.web.app',
+    'https://credible-cosine-479914-k2.firebaseapp.com',
     'http://localhost:5173',
     'http://127.0.0.1:5173'
 ]

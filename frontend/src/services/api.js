@@ -4,7 +4,7 @@ import { show } from '@/services/terms';
 import { toast } from './toast';
 
 const api = axios.create({
-  baseURL: 'https://ervelus-web-service-281870812434.us-central1.run.app',
+  baseURL: 'https://ervelus-web-service-324377414272.us-central1.run.app',
   withCredentials: true
 });
 
