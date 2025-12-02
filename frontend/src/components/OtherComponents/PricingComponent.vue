@@ -142,7 +142,7 @@ async function buy(plan) {
   modalTitle.value = '';
 
   try {
-    await api.get('/api/subscriptions/subscription-eligibility/', { plan_id: plan.id });
+    await api.get('/api/subscriptions/subscription-eligibility/', { params: { plan_id: plan.id } });
     window.Paddle.Checkout.open({
       items: [
         { priceId: plan.paddle_price_id, quantity: 1 }
