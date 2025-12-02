@@ -22,7 +22,7 @@ if settings.DEBUG:
         path('api/agreements/', include('agreements.urls'))
     ]
 else:
-    admin.site.__class__ = OTPAdminSite
+    #admin.site.__class__ = OTPAdminSite
     
     if settings.SERVICE_NAME == 'ervelus-web-service':
         urlpatterns += [
