@@ -127,46 +127,42 @@ async def generate_output_image(prompt, input_image_bytes):
     image = Image.open(BytesIO(input_image_bytes))
     genai_client = genai.Client()
 
-    try:
-        response = await genai_client.aio.models.generate_content(
-            model="gemini-2.5-flash-image",
-            contents = [prompt, image],
-            config=types.GenerateContentConfig(
-                safety_settings=[
-                    {
-                        "category": HarmCategory.HARM_CATEGORY_HARASSMENT,
-                        "threshold": HarmBlockThreshold.BLOCK_NONE
-                    },
-                    {
-                        "category": HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-                        "threshold": HarmBlockThreshold.BLOCK_NONE
-                    },
-                    {
-                        "category": HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-                        "threshold": HarmBlockThreshold.BLOCK_NONE
-                    },
-                    {
-                        "category": HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-                        "threshold": HarmBlockThreshold.BLOCK_NONE
-                    }
-                ]
-            )
+    response = await genai_client.aio.models.generate_content(
+        model="gemini-2.5-flash-image",
+        contents = [prompt, image],
+        config=types.GenerateContentConfig(
+            safety_settings=[
+                {
+                    "category": HarmCategory.HARM_CATEGORY_HARASSMENT,
+                    "threshold": HarmBlockThreshold.BLOCK_NONE
+                },
+                {
+                    "category": HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+                    "threshold": HarmBlockThreshold.BLOCK_NONE
+                },
+                {
+                    "category": HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+                    "threshold": HarmBlockThreshold.BLOCK_NONE
+                },
+                {
+                    "category": HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                    "threshold": HarmBlockThreshold.BLOCK_NONE
+                }
+            ]
         )
+    )
+
+    if not response.candidates or not response.candidates[0].content:
+        raise ContentBlockedError()
+
+    output_image_bytes = None
     
-        if not response.candidates or not response.candidates[0].content:
-            raise ContentBlockedError()
+    for part in response.candidates[0].content.parts:
+        if part.inline_data:
+            output_image_bytes = part.inline_data.data
+            break
 
-        output_image_bytes = None
-        
-        for part in response.candidates[0].content.parts:
-            if part.inline_data:
-                output_image_bytes = part.inline_data.data
-                break
-
-        return output_image_bytes
-    finally:
-        if genai_client._api_client._aiohttp_session:
-            await genai_client._api_client._aiohttp_session.close()
+    return output_image_bytes
 
 async def handle_update_after_resize(generation_request_id, update_data):
     try:
