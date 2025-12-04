@@ -26,6 +26,7 @@ from tenacity import retry, wait_random_exponential, retry_if_exception, stop_af
 
 GCS_KEY_PATH = os.path.join(settings.BASE_DIR, 'core', 'gcs_key.json')
 logger = logging.getLogger(__name__)
+genai_client = None
 gcs_sync_storage_client = gcs_sync_storage.Client.from_service_account_json(GCS_KEY_PATH)
 
 def generate_signed_gcs_url(gcs_img_url, expires_in_seconds, response_disposition=None):
@@ -122,10 +123,20 @@ def is_retryable_error(error):
         return True
     return False
 
+
+
+def get_genai_client():
+    global genai_client
+    
+    if genai_client is None:
+        genai_client = genai.Client()
+
+    return genai_client
+
 @retry(wait=wait_random_exponential(min=5, max=60), stop=stop_after_delay(240), retry=retry_if_exception(is_retryable_error))
 async def generate_output_image(prompt, input_image_bytes):
     image = Image.open(BytesIO(input_image_bytes))
-    genai_client = genai.Client()
+    genai_client = get_genai_client()
 
     response = await genai_client.aio.models.generate_content(
         model="gemini-2.5-flash-image",
