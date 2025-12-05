@@ -63,38 +63,215 @@ function getSpriteClass() {
 </script>
 
 <style scoped>
-.bg-dark_fantasy_1 {
+.bg-dark_fantasy {
   width: 180px; 
   height: 180px;
-  background: url('@/assets/style_sprites/sprite_test.png') -10px -10px;
+  background: url('@/assets/style_sprites/fantasy.png') -209px -10px;
   background-repeat: no-repeat;
 }
 
-.bg-temich {
+.bg-light_fantasy {
   width: 180px; 
   height: 180px;
-  background: url('@/assets/style_sprites/sprite_test.png') -210px -10px;
+  background: url('@/assets/style_sprites/fantasy.png') -410px -10px;
   background-repeat: no-repeat;
 }
 
-.bg-celestial {
+.bg-gothic_fantasy {
   width: 180px; 
   height: 180px;
-  background: url('@/assets/style_sprites/sprite_test.png') -210px -10px;
+  background: url('@/assets/style_sprites/fantasy.png') -10px -210px;
   background-repeat: no-repeat;
 }
 
-.bg-ukraine {
+.bg-grimdark_fantasy {
   width: 180px; 
   height: 180px;
-  background: url('@/assets/style_sprites/sprite_test.png') -10px -10px;
+  background: url('@/assets/style_sprites/fantasy.png') -210px -210px;
+  background-repeat: no-repeat;
+}
+
+.bg-adventure_fantasy {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/fantasy.png') -10px -10px;
+  background-repeat: no-repeat;
+}
+
+
+.bg-stone_age {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/time_travel.png') -410px -10px;
+  background-repeat: no-repeat;
+}
+
+.bg-ancient_greece {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/time_travel.png') -10px -10px;
+  background-repeat: no-repeat;
+}
+
+.bg-medieval_realism {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/time_travel.png') -210px -10px;
+  background-repeat: no-repeat;
+}
+
+.bg-the_gilded_age {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/time_travel.png') -210px -210px;
+  background-repeat: no-repeat;
+}
+
+.bg-wild_west {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/time_travel.png') -10px -210px;
+  background-repeat: no-repeat;
+}
+
+
+.bg-wonders_of_giza {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/around_the_world.png') -410px -10px;
+  background-repeat: no-repeat;
+}
+
+.bg-parisian_dream {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/around_the_world.png') -210px -10px;
+  background-repeat: no-repeat;
+}
+
+.bg-pripyat_gloom {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/around_the_world.png') -10px -210px;
+  background-repeat: no-repeat;
+}
+
+.bg-venice_canals {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/around_the_world.png') -210px -210px;
+  background-repeat: no-repeat;
+}
+
+.bg-japanese_spring {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/around_the_world.png') -10px -10px;
   background-repeat: no-repeat;
 }
 
 .bg-steampunk {
   width: 180px; 
   height: 180px;
-  background: url('@/assets/style_sprites/sprite_test.png') -10px -10px;
+  background: url('@/assets/style_sprites/punkverse.png') -410px -10px;
+  background-repeat: no-repeat;
+}
+
+.bg-cyberpunk {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/punkverse.png') -210px -10px;
+  background-repeat: no-repeat;
+}
+
+.bg-atompunk {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/punkverse.png') -10px -10px;
+  background-repeat: no-repeat;
+}
+
+.bg-solarpunk {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/punkverse.png') -210px -210px;
+  background-repeat: no-repeat;
+}
+
+.bg-dieselpunk {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/punkverse.png') -10px -210px;
+  background-repeat: no-repeat;
+}
+
+.bg-carnival_in_rio_de_janeiro {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/events.png') -10px -10px;
+  background-repeat: no-repeat;
+}
+
+.bg-chinise_new_year {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/events.png') -210px -10px;
+  background-repeat: no-repeat;
+}
+
+.bg-halloween {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/events.png') -10px -210px;
+  background-repeat: no-repeat;
+}
+
+.bg-merry_christmas {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/events.png') -210px -210px;
+  background-repeat: no-repeat;
+}
+
+.bg-valentines_day {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/events.png') -410px -10px;
+  background-repeat: no-repeat;
+}
+
+.bg-dark_cinematic {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/trending.png') -10px -10px;
+  background-repeat: no-repeat;
+}
+
+.bg-diplomatic_elevator {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/trending.png') -210px -10px;
+  background-repeat: no-repeat;
+}
+
+.bg-hong_kong_urban {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/trending.png') -10px -210px;
+  background-repeat: no-repeat;
+}
+
+.bg-tokyo_drive {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/trending.png') -210px -210px;
+  background-repeat: no-repeat;
+}
+
+.bg-yacht_chillin {
+  width: 180px; 
+  height: 180px;
+  background: url('@/assets/style_sprites/trending.png') -410px -10px;
   background-repeat: no-repeat;
 }
 </style>
