@@ -32,15 +32,15 @@
             <div class="floating-cards">
               <div class="card card-main tilt-card" ref="heroCard" @click="bringCardToFront('main')">
                 <div class="card-inner">
-                  <img src="@/assets/home_page/dark-fantasy_flying.jpeg" alt="AI Art Main" class="card-img" />
+                  <img src="@/assets/home_page/dark-fantasy_flying.webp" alt="AI Art Main" class="card-img" />
                   <div class="card-shine"></div>
                 </div>
               </div>
               <div class="card card-floating card-1" @click="bringCardToFront('card1')">
-                <img src="@/assets/home_page/light-fantasy_flying.jpeg" alt="Cyberpunk" class="card-img" />
+                <img src="@/assets/home_page/light-fantasy_flying.webp" alt="Cyberpunk" class="card-img" />
               </div>
               <div class="card card-floating card-2" @click="bringCardToFront('card2')">
-                <img src="@/assets/home_page/wild-west_flying.jpeg" alt="Fantasy" class="card-img" />
+                <img src="@/assets/home_page/wild-west_flying.webp" alt="Fantasy" class="card-img" />
               </div>
             </div>
           </div>
@@ -193,17 +193,16 @@
 <script setup>
 import { ref, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import originalImg from '@/assets/home_page/original.jpg'
-import darkFantasyResult from '@/assets/home_page/dark-fantasy_result.jpeg'
-import lightFantasyResult from '@/assets/home_page/light-fantasy_result.jpeg'
-import ancientGreeceResult from '@/assets/home_page/ancient-greece_result.jpeg'
-import gildedResult from '@/assets/home_page/gilded-result.jpeg'
-import medievalResult from '@/assets/home_page/medieval-result.jpeg'
+import originalImg from '@/assets/home_page/original.webp'
+import darkFantasyResult from '@/assets/home_page/dark-fantasy_result.webp'
+import lightFantasyResult from '@/assets/home_page/light-fantasy_result.webp'
+import ancientGreeceResult from '@/assets/home_page/ancient-greece_result.webp'
+import gildedResult from '@/assets/home_page/gilded-result.webp'
+import medievalResult from '@/assets/home_page/medieval-result.webp'
 import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue'
 import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue'
 import {
   FireIcon,
-  BeakerIcon,
   SparklesIcon as SparklesHeroIcon,
   CogIcon,
   CubeIcon,
