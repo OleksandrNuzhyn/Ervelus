@@ -131,29 +131,12 @@ async function buy(plan) {
     showLoginModal.value = true;
     return;
   }
-  if (!window.Paddle) {
-    return;
-  }
-  if (!plan.paddle_price_id) {
-    return;
-  }
 
   message.value = '';
   modalTitle.value = '';
 
   try {
     await api.post('/api/subscriptions/subscription-eligibility/', { plan_id: plan.id });
-    window.Paddle.Checkout.open({
-      items: [
-        { priceId: plan.paddle_price_id, quantity: 1 }
-      ],
-      customer: {
-        email: auth.user.email
-      },
-      customData: {
-        user_id: auth.user.pk
-      }
-    });
   }
   catch (error) {
     if (error.response) {
