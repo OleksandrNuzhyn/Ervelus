@@ -1,7 +1,7 @@
 <template>
   <div v-if="!isLoading">
     <div class="w-full max-w-screen-2xl mx-auto px-2 pb-8">
-      <div :class="['grid grid-cols-1 gap-7 justify-items-center mt-4 plans-grid', grid_col_num]">
+      <div :class="['grid grid-cols-1 gap-7 justify-items-center mt-8 plans-grid', grid_col_num]">
         <div 
           v-for="(plan, index) in plans"
           :key="plan.name"
@@ -47,12 +47,6 @@
 
           </div>
         </div>
-      </div>
-
-      <div class="parchment-wrapper fade-in-policy">
-        <p class="main-text-font">
-          Prices exclude VAT / Local taxes
-        </p>
       </div>
     </div>
 
