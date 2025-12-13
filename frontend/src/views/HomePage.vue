@@ -172,6 +172,20 @@
             <p class="step-description">{{ step.description }}</p>
           </div>
         </div>
+
+      </section>
+
+      <section class="section-product-demo">
+        <div class="section-header">
+          <h2 class="section-title">Product Demo</h2>
+          <p class="section-subtitle">
+            How it works
+          </p>
+        </div>
+
+        <div class="video-container">
+          <video ref="demoVideo" :src="ervelusDemoVideo" muted loop playsinline preload="none" class="steps-video"></video>
+        </div>
       </section>
 
       <section class="section-final-cta">
@@ -191,7 +205,7 @@
 </template>
 
 <script setup>
-import { ref, onUnmounted } from 'vue'
+import { ref, onUnmounted, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import originalImg from '@/assets/home_page/original.webp'
 import darkFantasyResult from '@/assets/home_page/dark-fantasy_result.webp'
@@ -199,6 +213,7 @@ import lightFantasyResult from '@/assets/home_page/light-fantasy_result.webp'
 import ancientGreeceResult from '@/assets/home_page/ancient-greece_result.webp'
 import gildedResult from '@/assets/home_page/gilded-result.webp'
 import medievalResult from '@/assets/home_page/medieval-result.webp'
+import ervelusDemoVideo from '@/assets/home_page/Ervelus Demo.mp4'
 import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue'
 import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue'
 import {
@@ -452,7 +467,30 @@ function bringCardToFront(cardId) {
   }
 }
 
+const demoVideo = ref(null)
+let videoObserver = null
+
+onMounted(() => {
+  videoObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && demoVideo.value) {
+        demoVideo.value.play().catch(() => {
+        })
+      } else if (demoVideo.value) {
+        demoVideo.value.pause()
+      }
+    })
+  }, { threshold: 0.5 })
+
+  if (demoVideo.value) {
+    videoObserver.observe(demoVideo.value)
+  }
+})
+
 onUnmounted(() => {
+  if (videoObserver) {
+    videoObserver.disconnect()
+  }
   document.removeEventListener('mousemove', handleDrag)
   document.removeEventListener('mouseup', stopDrag)
   document.removeEventListener('touchmove', handleDrag)
@@ -601,6 +639,20 @@ onUnmounted(() => {
   justify-content: center;
   padding: var(--spacing-xl) var(--spacing-md);
   overflow: hidden;
+}
+
+.video-container {
+  max-width: 1000px;
+  margin: var(--spacing-xl) auto 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.steps-video {
+  width: 100%;
+  display: block;
 }
 
 .hero-container {
