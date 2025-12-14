@@ -16,7 +16,8 @@ const routes = [
   { path: '/contact-us', name: 'contact-us', component: () => import('@/views/ContactUsPage.vue'), meta: { title: 'Contact Us - Ervelus' } },
   { path: '/dashboard', name: 'dashboard', component: () => import('@/views/GenerationPage.vue'), meta: { requiresAuth: true, title: 'Dashboard - Ervelus' } },
   { path: '/gallery', name: 'gallery', component: () => import('@/views/GalleryPage.vue'), meta: { requiresAuth: true, title: 'Gallery - Ervelus' } },
-  { path: '/profile', name: 'profile', component: () => import('@/views/ProfilePage.vue'), meta: { requiresAuth: true, title: 'Profile - Ervelus' } }
+  { path: '/profile', name: 'profile', component: () => import('@/views/ProfilePage.vue'), meta: { requiresAuth: true, title: 'Profile - Ervelus' } },
+  { path: '/about-us', name: 'about-us', component: () => import('@/views/AboutUsPage.vue'), meta: { title: 'About Us - Ervelus' } }
 ];
 
 const router = createRouter({
