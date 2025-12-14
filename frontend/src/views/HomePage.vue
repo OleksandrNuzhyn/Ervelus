@@ -184,7 +184,7 @@
         </div>
 
         <div class="video-container">
-          <video ref="demoVideo" :src="ervelusDemoVideo" muted loop playsinline preload="none" class="steps-video"></video>
+          <video ref="demoVideo" :src="ervelusDemoVideo" :poster="posterImg" muted loop playsinline preload="none" class="steps-video"></video>
         </div>
       </section>
 
@@ -214,6 +214,7 @@ import ancientGreeceResult from '@/assets/home_page/ancient-greece_result.webp'
 import gildedResult from '@/assets/home_page/gilded-result.webp'
 import medievalResult from '@/assets/home_page/medieval-result.webp'
 import ervelusDemoVideo from '@/assets/home_page/Ervelus Demo.mp4'
+import posterImg from '@/assets/home_page/poster.webp'
 import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue'
 import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue'
 import {
