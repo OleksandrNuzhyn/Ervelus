@@ -22,9 +22,10 @@ class UserSubscriptionListSerializer(serializers.ModelSerializer):
             'start_time', 
             'end_time', 
             'status', 
-            'remaining_credits'
+            'remaining_credits',
+            'is_auto_renew'
         ]
 
 
-class SubscriptionEligibilityCheckSerializer(serializers.Serializer):
+class CreateOrderSerializer(serializers.Serializer):
     plan_id = serializers.IntegerField()

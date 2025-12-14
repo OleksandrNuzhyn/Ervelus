@@ -25,7 +25,6 @@ class SubscriptionPlan(models.Model):
     name = models.CharField(max_length=50, unique=True)
     description = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=8, decimal_places=2, db_index=True)
-    paddle_price_id = models.CharField(max_length=255, unique=True)
     features = models.JSONField(default=list)
     unlocked_styles = models.ManyToManyField(Style)
     generations_count = models.IntegerField()

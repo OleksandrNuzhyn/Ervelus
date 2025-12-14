@@ -267,7 +267,7 @@ async def handle_generation_process(generation_request_id, input_image_url):
 
         debit_subscription = await UserSubscription.objects.filter(
             user_id=user_id,
-            status=UserSubscription.SubscriptionStatus.ACTIVE,
+            end_time__gt=timezone.now(),
             remaining_credits__gt=0
         ).order_by('end_time').afirst()
 

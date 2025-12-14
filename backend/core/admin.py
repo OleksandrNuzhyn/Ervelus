@@ -155,4 +155,4 @@ class CustomPersonalDataAdmin(PersonalDataAdmin):
 
 @admin.register(ApplicationConfig)
 class ApplicationConfigAdmin(SingletonModelAdmin):
-    readonly_fields = ('reserved_for_spend',)
+    pass

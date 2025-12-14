@@ -138,9 +138,9 @@ class UserAdmin(NoLogAdminMixin, BaseUserAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(NoLogAdminMixin, admin.ModelAdmin):
-    list_display = ('id', 'user__email', 'paddle_customer_id', 'total_credits')
+    list_display = ('id', 'user__email', 'total_credits')
     list_select_related = ('user',)
-    search_fields = ('user__email', 'paddle_customer_id')
+    search_fields = ('user__email',)
     readonly_fields = ('user',)
 
     def get_queryset(self, request):

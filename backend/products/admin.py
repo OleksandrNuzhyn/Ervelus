@@ -63,7 +63,7 @@ class StyleAdmin(StatisticsAdminMixin, admin.ModelAdmin):
 class SubscriptionPlanAdmin(StatisticsAdminMixin, admin.ModelAdmin):
     list_display = ('id', 'name', 'price', 'generations_count', 'is_active', 'product_price')
     list_filter = ('is_active',)
-    search_fields = ('name', 'description', 'paddle_price_id', 'features')
+    search_fields = ('name', 'description', 'features')
     filter_horizontal = ('unlocked_styles',)
     ordering = ('-id',)
     change_list_template = 'admin/products/subscriptionplan/change_list.html'

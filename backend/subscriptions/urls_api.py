@@ -3,6 +3,7 @@ from . import views
 
 
 urlpatterns = [
+    path('create-order/', views.create_order, name='create-order'),
     path('user-subscriptions/', views.user_subscription_list, name='user-subscription-list'),
-    path('subscription-eligibility/', views.subscription_eligibility_check, name='subscription-eligibility-check')
+    path('cancel-subscription/<int:id>/', views.cancel_subscription, name='cancel-subscription')
 ]

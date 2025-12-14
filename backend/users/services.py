@@ -3,7 +3,6 @@ from django.conf import settings
 from generations.services import gcs_sync_storage_client
 from django.contrib.auth import get_user_model
 from auditlog.models import LogEntry
-from .models import UserProfile
 from agreements.models import UserAgreement
 from subscriptions.models import UserSubscription
 from django.core.serializers.json import DjangoJSONEncoder
@@ -17,51 +16,16 @@ import json
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
-def get_user_uncancelled_paddle_subscriptions(customer_id):
-    url = f"{settings.PADDLE_API_BASE_URL.rstrip('/')}/subscriptions?customer_id={customer_id}&status=active,past_due&scheduled_change_action=pause,resume,none"
-    headers = {
-        "Authorization": f"Bearer {settings.PADDLE_API_KEY}",
-        "Content-Type": "application/json",
-    }
-    
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-    uncancelled_subscriptions = response.json().get('data', [])
-    
-    return uncancelled_subscriptions
-
-def create_customer_portal_session(customer_id):
-    url = f"{settings.PADDLE_API_BASE_URL.rstrip('/')}/customers/{customer_id}/portal-sessions"
-    headers = {
-        'Authorization': f"Bearer {settings.PADDLE_API_KEY}",
-        'Content-Type': 'application/json'
-    }
-
-    response = requests.post(url, headers=headers)
-    response.raise_for_status()
-    response_data = response.json()
-    
-    return response_data.get('data', {}).get('urls', {}).get('general', {}).get('overview')
-
-
-
 def get_user_data_for_retention(user):
     user_data = {
         "user": {
             "id": user.id, 
             "email": user.email
         },
-        "profile": None,
         "agreements": [],
         "subscriptions": [],
         "audit_records": []
     }
-
-    try:
-        profile = UserProfile.objects.get(user=user)
-        user_data["profile"] = {"paddle_customer_id": profile.paddle_customer_id}
-    except UserProfile.DoesNotExist:
-        pass
 
     agreements = UserAgreement.objects.filter(user=user)
     user_data["agreements"] = list(agreements.values())
@@ -109,18 +73,6 @@ def remove_user_from_mailgun_list(user):
     auth = ('api', settings.MAILGUN_API_KEY)
     
     response = requests.delete(url, auth=auth)
-    response.raise_for_status()
-
-def archive_paddle_customer(user):
-    customer_id = user.profile.paddle_customer_id
-    url = f"{settings.PADDLE_API_BASE_URL.rstrip('/')}/customers/{customer_id}"
-    headers = {
-        "Authorization": f"Bearer {settings.PADDLE_API_KEY}",
-        "Content-Type": "application/json",
-    }
-    data = {"status": "archived"}
-
-    response = requests.patch(url, headers=headers, json=data)
     response.raise_for_status()
 
 def schedule_user_images_deletion(user):

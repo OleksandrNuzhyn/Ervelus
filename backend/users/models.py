@@ -73,7 +73,7 @@ class UserProfileCreditQuerySet(models.QuerySet):
             total_credits=Coalesce(
                 Sum(
                     'user__subscriptions__remaining_credits',
-                    filter=Q(user__subscriptions__status='active')
+                    filter=Q(user__subscriptions__end_time__gt=datetime.now(timezone.utc))
                 ),
                 0
             )
@@ -93,18 +93,7 @@ class UserProfile(models.Model):
         verbose_name = 'User Profile'
         verbose_name_plural = 'User Profiles'
 
-    class PrivacyMeta:
-        can_anonymise = False
-        search_fields = [
-            'user__email',
-        ]
-        export_fields = [
-            'paddle_customer_id',
-        ]
-
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='profile')
-    paddle_customer_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
-
     objects = UserProfileCreditManager()
 
     def __str__(self):

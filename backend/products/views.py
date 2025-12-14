@@ -1,4 +1,5 @@
 from rest_framework.response import Response
+from django.utils import timezone
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import AllowAny
 from .models import SubscriptionPlan, Style
@@ -15,7 +16,6 @@ def subscription_plan_list(request):
         'name', 
         'description',
         'price',
-        'paddle_price_id',
         'features',
         'is_active'
     )
@@ -29,7 +29,7 @@ def subscription_plan_list(request):
 def available_style_list(request):
     best_plan_id_subquery = UserSubscription.objects.filter(
         user=request.user,
-        status=UserSubscription.SubscriptionStatus.ACTIVE
+        end_time__gt=timezone.now()
     ).order_by('-plan__price').values('plan_id')[:1]
 
     available_styles_subquery = SubscriptionPlan.unlocked_styles.through.objects.filter(

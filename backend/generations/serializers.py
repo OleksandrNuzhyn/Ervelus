@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.utils import timezone
 from subscriptions.models import UserSubscription
 from .models import GenerationRequest
 from . import services
@@ -28,7 +29,7 @@ class GenerationRequestCreateSerializer(serializers.ModelSerializer):
 
         active_user_subscriptions = list(
             user.subscriptions.filter(
-                status=UserSubscription.SubscriptionStatus.ACTIVE
+                end_time__gt=timezone.now()
             ).select_related('plan').prefetch_related('plan__unlocked_styles')
         )
 

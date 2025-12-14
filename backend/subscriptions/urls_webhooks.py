@@ -3,6 +3,6 @@ from . import webhooks
 
 
 urlpatterns = [
-    path('paddle/', webhooks.paddle_handler, name='paddle-handler'),
+    path('wayforpay/', webhooks.wayforpay_handler, name='wayforpay-handler'),
     path('tasks/', webhooks.tasks_handler, name='tasks-handler')
 ]

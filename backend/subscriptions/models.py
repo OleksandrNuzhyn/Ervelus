@@ -1,28 +1,18 @@
 from django.db import models
-from django.db.models import Q
 from django.conf import settings
 from django.utils import timezone
 from auditlog.registry import auditlog
 
 
 class UserSubscription(models.Model):
-    class SubscriptionStatus(models.TextChoices):
-        ACTIVE = 'active'
-        PAST_DUE = 'past_due'
-        CANCELED = 'canceled'
-
     class Meta:
         verbose_name = 'User Subscription'
         verbose_name_plural = 'User Subscriptions'
         indexes = [
-            models.Index(fields=['user', 'status'], name='user_status_idx'),
-            models.Index(
-                fields=['user', 'end_time'],
-                name='user_active_credits_end_idx',
-                condition=Q(status='active', remaining_credits__gt=0),
-            )
+            models.Index(fields=['user', 'end_time', 'remaining_credits'], name='user_end_time_credits_idx'),
+            models.Index(fields=['user', 'is_auto_renew'], name='user_auto_renew_idx')
         ]
-
+        
     class PrivacyMeta:
         can_anonymise = False
         search_fields = [
@@ -42,41 +32,33 @@ class UserSubscription(models.Model):
                 'plan_generations_count': plan.generations_count,
                 'start_time': instance.start_time,
                 'end_time': instance.end_time,
-                'status': instance.status,
-                'cancels_at': instance.cancels_at,
-                'paddle_subscription_id': instance.paddle_subscription_id,
-                'remaining_credits': instance.remaining_credits,
+                'is_auto_renew': instance.is_auto_renew,
+                'rec_token': instance.rec_token,
+                'order_reference': instance.order_reference,
+                'remaining_credits': instance.remaining_credits
             }
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='subscriptions')
     plan = models.ForeignKey('products.SubscriptionPlan', on_delete=models.PROTECT, related_name='user_subscriptions')
     start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    status = models.CharField(max_length=20, choices=SubscriptionStatus.choices, default=SubscriptionStatus.ACTIVE, db_index=True)
-    cancels_at = models.DateTimeField(null=True, blank=True)
-    paddle_subscription_id = models.CharField(max_length=255, unique=True)
+    end_time = models.DateTimeField(db_index=True)
+    is_auto_renew = models.BooleanField(default=True)
+    rec_token = models.CharField(max_length=255, null=True, blank=True)
+    order_reference = models.CharField(max_length=255, unique=True)
     remaining_credits = models.IntegerField()
     
     @property
     def display_status(self):
         now = timezone.now()
-    
-        if self.status == self.SubscriptionStatus.ACTIVE:
-            if not self.cancels_at:
-                return "Active"
-            
-            if self.cancels_at > now:
-                return f"Active until {self.cancels_at.strftime('%B %d, %Y')}"
-            
-            return "Cancellation Processing"
         
-        if self.status == self.SubscriptionStatus.PAST_DUE:
-            return f"Update your payment method by {self.end_time.strftime('%B %d, %Y')}"
+        if self.end_time > now:
+            if self.is_auto_renew:
+                return f"Active"
+            return f"Active until {self.end_time.strftime('%B %d, %Y')}"
+        elif self.is_auto_renew:
+            return "Past Due"
             
-        if self.status == self.SubscriptionStatus.CANCELED:
-            return "Canceled"
-            
-        return "Unknown"
+        return "Canceled"
     
     def __str__(self):
         return f'{self.plan.name} - {self.user.email}'

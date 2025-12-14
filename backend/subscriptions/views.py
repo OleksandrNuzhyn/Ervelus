@@ -1,22 +1,25 @@
 from rest_framework.decorators import api_view, permission_classes
-from django.conf import settings
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import UserSubscription
-from .serializers import UserSubscriptionListSerializer, SubscriptionEligibilityCheckSerializer
+from .serializers import UserSubscriptionListSerializer, CreateOrderSerializer
 from products.models import SubscriptionPlan
 from core.models import ApplicationConfig
 from agreements.permissions import HasAcceptedLatestAgreements
-from django.db.models import Count
-import requests
+from django.db.models import Count, Sum
+from datetime import datetime, timezone
+from django.conf import settings
 import logging
+import hmac
+import hashlib
+import time
 
 logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
-def subscription_eligibility_check(request):
-    serializer = SubscriptionEligibilityCheckSerializer(data=request.data)
+@permission_classes([IsAuthenticated])
+def create_order(request):
+    serializer = CreateOrderSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     plan_id = serializer.validated_data['plan_id']
 
@@ -24,14 +27,58 @@ def subscription_eligibility_check(request):
         plan = SubscriptionPlan.objects.get(pk=plan_id, is_active=True)
     except SubscriptionPlan.DoesNotExist:
         return Response(status=404)
+    
+    budget_usage = UserSubscription.objects.filter(
+        end_time__gt=datetime.now(timezone.utc)
+    ).aggregate(
+        total_cost=Sum('plan__product_price')
+    )['total_cost'] or 0
 
+    potential_spend = budget_usage + plan.product_price
     config = ApplicationConfig.get_solo()
 
-    potential_spend = config.reserved_for_spend + plan.product_price
     if potential_spend >= config.hard_budget:
         return Response(status=400)
 
-    return Response(status=200)
+    merchant_account = settings.WAYFORPAY_MERCHANT_ACCOUNT
+    merchant_domain_name = settings.WAYFORPAY_MERCHANT_DOMAIN
+    merchant_secret_key = settings.WAYFORPAY_SECRET_KEY
+
+    user_id = request.user.id
+    client_email = request.user.email
+    readable_time = datetime.now(timezone.utc).strftime("%Y-%m-%d-%H-%M-%S-%f")
+    order_reference = f"{user_id}_{plan_id}_{readable_time}"
+    order_date = str(int(time.time()))
+    amount = str(plan.price)
+    currency = "USD"
+    product_name = plan.name
+    product_count = str(1)
+    product_price = str(plan.price)
+
+    string_for_sign = f"{merchant_account};{merchant_domain_name};{order_reference};{order_date};{amount};{currency};{product_name};{product_count};{product_price}"
+    
+    merchant_signature = hmac.new(
+        merchant_secret_key.encode('utf-8'),
+        string_for_sign.encode('utf-8'),
+        hashlib.md5
+    ).hexdigest()
+
+    return Response({
+        'merchantAccount': merchant_account,
+        'merchantDomainName': merchant_domain_name,
+        'merchantSignature': merchant_signature,
+        'orderReference': order_reference,
+        'orderDate': order_date,
+        'amount': amount,
+        'currency': currency,
+        'productName': product_name,
+        'productCount': product_count,
+        'productPrice': product_price,
+        'clientEmail': client_email,
+        'regularBehavior': 'preset',
+        'regularMode': 'monthly',
+        'language': 'EN'
+    }, status=200)
 
 @api_view(['GET'])
 @permission_classes([HasAcceptedLatestAgreements])
@@ -43,27 +90,19 @@ def user_subscription_list(request):
     ).order_by('start_time')
 
     serializer = UserSubscriptionListSerializer(user_subscriptions, many=True)
-    profile = request.user.profile
-    portal_url = None
+    return Response({'subscriptions': serializer.data}, status=200)
 
+@api_view(['POST'])
+@permission_classes([HasAcceptedLatestAgreements])
+def cancel_subscription(request, id):
     try:
-        if profile.paddle_customer_id:
-            paddle_customer_id = profile.paddle_customer_id
-            url = f"{settings.PADDLE_API_BASE_URL.rstrip('/')}/customers/{paddle_customer_id}/portal-sessions"
-            headers = {
-                "Authorization": f"Bearer {settings.PADDLE_API_KEY}",
-                "Content-Type": "application/json",
-            }
-
-            response = requests.post(url, headers=headers)
-            response.raise_for_status()
-
-            response_data = response.json()
-            portal_url = response_data['data']['urls']['general']['overview']
-    except requests.RequestException as e:
-        logger.error("Failed to create customer portal session due to HTTP error", extra={'user_id': request.user.id, 'error': str(e)}, exc_info=True)
-    except Exception as e:
-        logger.error("Failed to create customer portal session due to unknown error", extra={'user_id': request.user.id, 'error': str(e)}, exc_info=True)
-        portal_url = None
-
-    return Response({'subscriptions': serializer.data, 'portal_url': portal_url}, status=200)
+        subscription = UserSubscription.objects.get(id=id, user=request.user)
+    except UserSubscription.DoesNotExist:
+        return Response(status=404)
+    
+    success = services.cancel_subscription(subscription)
+    
+    if success:
+        return Response(status=200)
+    
+    return Response(status=400)
