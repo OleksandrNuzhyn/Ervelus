@@ -44,7 +44,6 @@
                 Unavailable
               </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -120,6 +119,21 @@ async function getSubscriptionPlans() {
   }
 }
 
+function loadWayForPayWidget() {
+  return new Promise((resolve, reject) => {
+    if (window.Wayforpay) {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://secure.wayforpay.com/server/pay-widget.js';
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Failed to load payment widget'));
+    document.body.appendChild(script);
+  });
+}
+
 async function buy(plan) {
   if (!auth.isAuthenticated) {
     showLoginModal.value = true;
@@ -130,7 +144,20 @@ async function buy(plan) {
   modalTitle.value = '';
 
   try {
-    await api.post('/api/subscriptions/subscription-eligibility/', { plan_id: plan.id });
+    const response = await api.post('/api/subscriptions/create-order/', { plan_id: plan.id });
+    
+    await loadWayForPayWidget();
+    const wayforpay = new window.Wayforpay();
+    
+    wayforpay.run(response.data,
+      function (response) {}, 
+      function (response) {
+          message.value = `Payment declined. Reason: ${response.reason || 'Unknown'}`;
+          modalTitle.value = 'Payment Failed';
+          showEligibilityModal.value = true;
+      }, 
+      function (response) {}
+    );
   }
   catch (error) {
     if (error.response) {
@@ -149,7 +176,7 @@ async function buy(plan) {
       showEligibilityModal.value = true;
     }
     else {
-      message.value = 'Network error or no response from server';
+      message.value = error.message || 'Network error or no response from server';
       modalTitle.value = 'Error';
       showEligibilityModal.value = true;
     }
