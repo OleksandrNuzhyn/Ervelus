@@ -57,12 +57,12 @@
                       
                       <div class="mt-8">
                         <div class="flex justify-center">
-                          <a v-if="portalUrl" :href="portalUrl" target="_blank" rel="noopener noreferrer" class="manage-button">
-                            Manage Subscription
-                          </a>
-                          <span v-else class="manage-button opacity-50 cursor-not-allowed">
-                            Manage Subscription
-                          </span>
+                          <button v-if="sub.is_auto_renew" @click="cancelSubscription(sub.id)" class="manage-button">
+                            Cancel Subscription
+                          </button>
+                          <button v-else disabled class="manage-button opacity-50 cursor-not-allowed">
+                            Canceled
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -101,10 +101,10 @@
       <div v-if="showConfirmModal" class="fixed inset-0 flex items-center justify-center z-50 confirm-modal-overlay" @click.self="handleCancel">
         <div class="modal-content-card p-8 w-11/12 max-w-md shadow-lg flex flex-col gap-5 text-gray-200 relative">
           <div class="pb-2">
-            <h3 class="medieval text-2xl text-center text-gray-100">Delete Account</h3>
+            <h3 class="medieval text-2xl text-center text-gray-100">{{ modalTitle }}</h3>
           </div>
           <div class="text-center">
-            <p class="text-gray-300 text-base m-0 leading-relaxed">Are you sure you want to delete your account? This action cannot be undone</p>
+            <p class="text-gray-300 text-base m-0 leading-relaxed">{{ modalMessage }}</p>
           </div>
           <div class="flex justify-center gap-4 pt-4">
             <button @click="handleConfirm" class="manage-button small-manage-button">
@@ -128,10 +128,11 @@ const authStore = useAuthStore();
 const router = useRouter();
 
 const subscriptions = ref([]);
-const portalUrl = ref('');
 const isLoading = ref(true);
 const errorMessage = ref('');
 const showConfirmModal = ref(false);
+const modalTitle = ref('');
+const modalMessage = ref('');
 const displayEmail = ref(null);
 let confirmActionResolve = null;
 
@@ -146,7 +147,6 @@ async function getProfileData() {
   try {
     const response = await api.get('/api/subscriptions/user-subscriptions/');
     subscriptions.value = response.data?.subscriptions || [];
-    portalUrl.value = response.data?.portal_url || '';
   }
   catch (error) {
     errorMessage.value = 'Could not load your subscription data. Please try again later';
@@ -156,8 +156,38 @@ async function getProfileData() {
   }
 }
 
+async function cancelSubscription(subscriptionId) {
+  errorMessage.value = '';
+  modalTitle.value = 'Cancel Subscription';
+  modalMessage.value = 'Are you sure you want to cancel your subscription? This action will turn off auto-renewal';
+  showConfirmModal.value = true;
+
+  const confirmed = await new Promise(resolve => {
+    confirmActionResolve = resolve;
+  });
+
+  if (confirmed) {
+    try {
+      await api.post(`/api/subscriptions/cancel-subscription/${subscriptionId}/`);
+      
+      const subscription = subscriptions.value.find(s => s.id === subscriptionId);
+      if (subscription) {
+        subscription.is_auto_renew = false;
+      }
+    }
+    catch (error) {
+      errorMessage.value = 'Failed to cancel subscription. Please contact support';
+    }
+    finally {
+      confirmActionResolve = null;
+    }
+  }
+}
+
 async function deleteAccount() {
   errorMessage.value = '';
+  modalTitle.value = 'Delete Account';
+  modalMessage.value = 'Are you sure you want to delete your account? This action cannot be undone';
   showConfirmModal.value = true;
 
   const confirmed = await new Promise(resolve => {
@@ -174,7 +204,7 @@ async function deleteAccount() {
       router.push({ name: 'home' });
     }
     catch (error) {
-      if (error.response && error.response.status === 400 && error.response.data && error.response.data.detail) {
+      if (error.response && error.response.data && error.response.data.detail) {
         errorMessage.value = error.response.data.detail;
       }
       else {
@@ -295,7 +325,7 @@ onMounted(() => {
   cursor: pointer;
 }
 
-.manage-button:hover {
+.manage-button:not(:disabled):hover {
   background: rgba(129, 180, 253, 0.1);
   color: #81b4fd;
   border-color: rgba(129, 180, 253, 0.4);

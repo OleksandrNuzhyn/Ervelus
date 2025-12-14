@@ -1,8 +1,8 @@
 <template>
   <div class="w-full max-w-2xl mx-auto px-4 md:px-8 pt-5 pb-10">
     <h1 class="text-3xl font-bold medieval text-center text-gray-200 mb-6">Contact Us</h1>
-    <a href="https://discord.gg/VBchSTAb" target="_blank"
-      class="block w-full mb-6 form-container-card hover:bg-white/5 transition-all transform hover:-translate-y-1 group border border-[#5865F2]/30 hover:border-[#5865F2]/60 !p-4 no-underline">
+    <a href="https://discord.gg/9vYGBFnFKJ" target="_blank"
+      class="block w-full mb-6 form-container-card transition-colors duration-300 group border border-[#5865F2]/30 hover:!border-[#5865F2] hover:!bg-[#5865F2]/20 !p-4 no-underline">
       <div class="flex items-center justify-center gap-4">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
           class="text-[#5865F2] flex-shrink-0">

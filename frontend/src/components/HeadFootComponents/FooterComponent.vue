@@ -1,7 +1,7 @@
 <template>
-  <footer class="border-t border-white/10 bg-black/30 text-gray-400 pt-8 pb-4">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-12 mb-12">
+  <footer class="border-t border-white/10 bg-black/30 text-gray-400 pt-12 pb-16">
+    <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
         <div class="col-span-1 md:col-span-5">
           <div class="flex items-center gap-2 mb-4">
             <img src="/favicon.svg" alt="Ervelus Logo" class="h-8 w-8" />
@@ -18,7 +18,7 @@
             <li><router-link to="/contact-us" class="hover:text-white transition-colors duration-200">Contact
                 Us</router-link></li>
             <li>
-              <a href="https://discord.gg/VBchSTAb" target="_blank" rel="noopener noreferrer"
+              <a href="https://discord.gg/9vYGBFnFKJ" target="_blank" rel="noopener noreferrer"
                 class="flex items-center gap-2 hover:text-white transition-colors duration-200 group">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"
                   class="text-gray-400 group-hover:text-[#5865F2] transition-colors duration-200">
@@ -45,8 +45,6 @@
           </ul>
         </div>
       </div>
-
-
     </div>
   </footer>
 </template>

@@ -9,7 +9,6 @@
       </div>
 
       <div class="content-container">
-
         <section class="hero-section">
           <h1 class="hero-title">
             We are <span class="text-accent">Ervelus</span>
@@ -20,7 +19,6 @@
         </section>
 
         <section class="bento-grid">
-
           <article class="bento-item item-why">
             <div class="item-header">
               <EyeIcon class="item-icon" />
@@ -95,9 +93,7 @@
 
             </div>
           </article>
-
         </section>
-
       </div>
     </div>
     <FooterComponent />
@@ -131,7 +127,6 @@ import {
   overflow-x: hidden;
 }
 
-/* Background */
 .global-background {
   position: fixed;
   inset: 0;
@@ -144,7 +139,6 @@ import {
   border-radius: 50%;
   filter: blur(150px);
   opacity: 0.15;
-  /* More subtle */
 }
 
 .orb-1 {
@@ -174,7 +168,6 @@ import {
   opacity: 0.5;
 }
 
-/* Content */
 .content-container {
   position: relative;
   z-index: 1;
@@ -183,7 +176,6 @@ import {
   padding: 160px 24px 120px;
 }
 
-/* Hero */
 .hero-section {
   margin-bottom: 100px;
   max-width: 900px;
@@ -209,7 +201,6 @@ import {
   line-height: 1.4;
 }
 
-/* Bento Grid */
 .bento-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -222,7 +213,6 @@ import {
   border: 1px solid var(--color-border);
   padding: 40px;
   border-radius: 24px;
-  /* Defined corners, sturdy look */
   transition: border-color 0.3s ease, transform 0.3s ease;
 }
 
@@ -231,7 +221,6 @@ import {
   transform: translateY(-4px);
 }
 
-/* Item Specifics */
 .item-why {
   grid-column: span 2;
 }

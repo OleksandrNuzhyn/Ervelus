@@ -22,9 +22,6 @@
           </button>
           <div v-if="errorMessage" class="text-center text-red-400 text-sm mt-8">
             <p class="mb-4">{{ errorMessage }}</p>
-            <a v-if="portalUrl" :href="portalUrl" target="_blank" rel="noopener noreferrer" class="manage-button">
-              Manage Subscription
-            </a>
           </div>
         </div>
         <p class="text-xs text-gray-500 mt-10 text-center">
@@ -55,9 +52,6 @@
 
         <div v-if="errorMessage" class="text-center text-red-400 text-sm">
           <p class="mb-4">{{ errorMessage }}</p>
-          <a v-if="portalUrl" :href="portalUrl" target="_blank" rel="noopener noreferrer" class="manage-button">
-            Manage Subscription
-          </a>
         </div>
 
         <div class="flex justify-center gap-4 pt-2">
@@ -87,7 +81,7 @@ const router = useRouter();
 const hasAgreed = ref(false);
 const showConfirmDeleteModal = ref(false);
 const errorMessage = ref('');
-const portalUrl = ref('');
+
 let confirmActionResolve = null;
 
 const documentTypes = computed(() => {
@@ -106,7 +100,6 @@ const documentTypes = computed(() => {
 
 async function acceptTerms() {
   errorMessage.value = '';
-  portalUrl.value = '';
   
   try {
     const acceptancePromises = requiredAgreements.value.map(agreement =>
@@ -120,20 +113,16 @@ async function acceptTerms() {
   catch (error) {
     if (error.response?.data) {
       const data = error.response.data;
-      errorMessage.value = data.message || data.detail || 'An unexpected error occurred.';
-      if (data.details && data.details.portal_url) {
-        portalUrl.value = data.details.portal_url;
-      }
-    } else {
+      errorMessage.value = data.message || data.detail || 'An unexpected error occurred';
+    }
+    else {
       errorMessage.value = 'An error occurred while accepting the terms. Please try again';
-      toast.info(errorMessage.value);
     }
   }
 }
 
 async function deleteAccount() {
   errorMessage.value = '';
-  portalUrl.value = '';
   showConfirmDeleteModal.value = true;
 
   const confirmed = await new Promise(resolve => {
@@ -151,12 +140,8 @@ async function deleteAccount() {
       router.push({ name: 'home' });
     }
     catch (error) {
-      portalUrl.value = '';
-      if (error.response?.status === 400 && error.response.data?.detail) {
+      if (error.response && error.response.data && error.response.data.detail) {
         errorMessage.value = error.response.data.detail;
-        if (error.response.data.portal_url) {
-          portalUrl.value = error.response.data.portal_url;
-        }
       }
       else {
         errorMessage.value = 'An unexpected error occurred while deleting your account';
