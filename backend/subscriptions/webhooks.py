@@ -95,11 +95,11 @@ def tasks_handler(request):
         if status == 'approved':
             services.create_or_renew_subscription(data)
         elif status in ['inprocessing', 'waitingauthcomplete'] or 'antifraud' in status:
-            logger.info("Transaction is processing, holding or antifraud check", extra={"order_reference": data.get('orderReference')})
+            logger.info("Transaction is processing, holding or antifraud check", extra={"order_reference": data.get('orderReference'), "status": status})
         elif status in ['refunded', 'voided', 'refundinprocessing']:
-            logger.info("Refund process", extra={"order_reference": data.get('orderReference')})
+            logger.info("Refund process", extra={"order_reference": data.get('orderReference'), "status": status})
         elif status in ['declined', 'expired']:
-            logger.info("Transaction failed", extra={"order_reference": data.get('orderReference')})
+            logger.info("Transaction failed", extra={"order_reference": data.get('orderReference'), "status": status})
         else:
             logger.error("Unhandled transaction status", extra={"order_reference": data.get('orderReference'), "status": status})
     except DatabaseError as e:
