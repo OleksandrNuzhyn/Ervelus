@@ -11,6 +11,7 @@ import logging
 import hmac
 import hashlib
 import time
+import json
 
 logger = logging.getLogger(__name__)
 tasks_client = tasks_v2.CloudTasksClient()
@@ -19,7 +20,7 @@ tasks_client = tasks_v2.CloudTasksClient()
 @authentication_classes([])
 @permission_classes([AllowAny])
 def wayforpay_handler(request):
-    data = request.data
+    data = json.loads(request.body.decode('utf-8'))
     merchant_secret_key = settings.WAYFORPAY_SECRET_KEY
     received_signature = data.get('merchantSignature')
     string_for_sign = f"{data.get('merchantAccount', '')};{data.get('orderReference', '')};{data.get('amount', '')};{data.get('currency', '')};{data.get('authCode', '')};{data.get('cardPan', '')};{data.get('transactionStatus', '')};{data.get('reasonCode', '')}"
