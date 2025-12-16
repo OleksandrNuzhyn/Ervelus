@@ -90,6 +90,7 @@ def tasks_handler(request):
 
     try:
         data = request.data
+        logger.info("Task processing started", extra={'data': data})
         status = data.get('transactionStatus').lower()
         
         if status == 'approved':
