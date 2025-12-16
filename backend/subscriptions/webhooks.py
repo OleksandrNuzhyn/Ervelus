@@ -32,34 +32,33 @@ def wayforpay_handler(request):
     ).hexdigest()
 
     if received_signature != expected_signature:
-        logger.error("Invalid WayForPay signature", extra={'received': received_signature, 'expected': expected_signature, 'data': data})
-        return Response(status=403)
+        logger.error("Invalid WayForPay signature", extra={'data': data})
+    else:
+        try:
+            target_url = f"{settings.WEB_WORKER_URL.rstrip('/')}/webhooks/subscriptions/tasks/"
 
-    try:
-        target_url = f"{settings.WEB_WORKER_URL.rstrip('/')}/webhooks/subscriptions/tasks/"
+            queue_path = tasks_client.queue_path(
+                settings.GCP_PROJECT_ID,
+                settings.GCP_TASKS_LOCATION,
+                settings.GCP_TASKS_WAYFORPAY_EVENTS_QUEUE_ID
+            )
 
-        queue_path = tasks_client.queue_path(
-            settings.GCP_PROJECT_ID,
-            settings.GCP_TASKS_LOCATION,
-            settings.GCP_TASKS_WAYFORPAY_EVENTS_QUEUE_ID
-        )
-
-        task = {
-            'http_request': {
-                'url': target_url,
-                'http_method': HttpMethod.POST,
-                'headers': {
-                    'Content-Type': 'application/json',
-                    'X-Task-Secret': settings.GCP_TASKS_SECRET_KEY,
+            task = {
+                'http_request': {
+                    'url': target_url,
+                    'http_method': HttpMethod.POST,
+                    'headers': {
+                        'Content-Type': 'application/json',
+                        'X-Task-Secret': settings.GCP_TASKS_SECRET_KEY,
+                    },
+                    'body': request.body
                 },
-                'body': request.body
-            },
-            'dispatch_deadline': duration_pb2.Duration(seconds=60)
-        }
+                'dispatch_deadline': duration_pb2.Duration(seconds=60)
+            }
 
-        tasks_client.create_task(request={'parent': queue_path, 'task': task})
-    except Exception:
-        return Response(status=400)
+            tasks_client.create_task(request={'parent': queue_path, 'task': task})
+        except Exception:
+            return Response(status=400)
 
     order_reference = data.get('orderReference')
     status = 'accept'
@@ -90,7 +89,6 @@ def tasks_handler(request):
 
     try:
         data = request.data
-        logger.info("Task processing started", extra={'data': data})
         status = data.get('transactionStatus').lower()
         
         if status == 'approved':

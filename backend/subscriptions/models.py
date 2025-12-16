@@ -33,7 +33,6 @@ class UserSubscription(models.Model):
                 'start_time': instance.start_time,
                 'end_time': instance.end_time,
                 'is_auto_renew': instance.is_auto_renew,
-                'rec_token': instance.rec_token,
                 'order_reference': instance.order_reference,
                 'remaining_credits': instance.remaining_credits
             }
@@ -43,7 +42,6 @@ class UserSubscription(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(db_index=True)
     is_auto_renew = models.BooleanField(default=True)
-    rec_token = models.CharField(max_length=255, null=True, blank=True)
     order_reference = models.CharField(max_length=255, unique=True)
     remaining_credits = models.IntegerField()
     

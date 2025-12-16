@@ -12,8 +12,6 @@ logger = logging.getLogger(__name__)
 
 def create_or_renew_subscription(data):
     order_reference = data.get('orderReference')
-    rec_token = data.get('recToken')
-
     order_parts = order_reference.split('_')
     user_id = int(order_parts[0])
     plan_id = int(order_parts[1])
@@ -46,7 +44,6 @@ def create_or_renew_subscription(data):
     if subscription:
         plan = subscription.plan
         subscription.end_time = end_time
-        subscription.rec_token = rec_token
         subscription.remaining_credits = plan.generations_count
         subscription.save()
     else:
@@ -65,7 +62,6 @@ def create_or_renew_subscription(data):
             start_time=now,
             end_time=end_time,
             is_auto_renew=True,
-            rec_token=rec_token,
             order_reference=order_reference,
             remaining_credits=plan.generations_count
         )

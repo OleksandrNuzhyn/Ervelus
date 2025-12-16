@@ -27,7 +27,7 @@ class UserSubscriptionAdmin(NoLogAdminMixin, admin.ModelAdmin):
     list_display = ("id", "user__email", "plan__name", "is_auto_renew", "remaining_credits", "start_time_formatted", "end_time_formatted")
     list_select_related = ("user", "plan")
     list_filter = ("plan__name", "is_auto_renew", 'start_time', 'end_time')
-    search_fields = ("user__email", "plan__name", "rec_token", "order_reference")
+    search_fields = ("user__email", "plan__name", "order_reference")
     ordering = ("-id",)
     raw_id_fields = ("user", "plan")
     actions = [cancel_subscription_action]
