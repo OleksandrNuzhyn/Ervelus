@@ -32,7 +32,7 @@ def wayforpay_handler(request):
     ).hexdigest()
 
     if received_signature != expected_signature:
-        logger.error("Invalid WayForPay signature", extra={'received': received_signature, 'expected': expected_signature})
+        logger.error("Invalid WayForPay signature", extra={'received': received_signature, 'expected': expected_signature, 'data': data})
         return Response(status=403)
 
     try:

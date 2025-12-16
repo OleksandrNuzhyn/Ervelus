@@ -9,6 +9,7 @@ from agreements.permissions import HasAcceptedLatestAgreements
 from django.db.models import Count, Sum
 from datetime import datetime, timezone
 from django.conf import settings
+from . import services
 import logging
 import hmac
 import hashlib
