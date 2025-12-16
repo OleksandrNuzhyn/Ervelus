@@ -88,13 +88,16 @@ def get_subscription_end_time(order_reference, subscription):
         if data.get('reasonCode') == 4100:
             return data.get('nextPaymentDate')
         
-        logger.error("Failed to fetch nextPaymentDate", extra={"reason": data.get('reason'), "subscription_id": subscription.id})
+        subscription_id = subscription.id if subscription else None
+        logger.error("Failed to fetch nextPaymentDate", extra={"reason": data.get('reason'), "subscription_id": subscription_id})
         return None
     except requests.RequestException as e:
-        logger.error("Network error while fetching subscription nextPaymentDate", extra={"subscription_id": subscription.id, "error": str(e)})
+        subscription_id = subscription.id if subscription else None
+        logger.error("Network error while fetching subscription nextPaymentDate", extra={"subscription_id": subscription_id, "error": str(e)})
         return None
     except Exception as e:
-        logger.error("Error occurred while fetching subscription nextPaymentDate", extra={"subscription_id": subscription.id, "error": str(e)})
+        subscription_id = subscription.id if subscription else None
+        logger.error("Error occurred while fetching subscription nextPaymentDate", extra={"subscription_id": subscription_id, "error": str(e)})
         return None
 
 def cancel_subscription(subscription):
