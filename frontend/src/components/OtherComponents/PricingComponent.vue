@@ -152,11 +152,7 @@ async function buy(plan) {
     const wayforpay = new window.Wayforpay();
     
     wayforpay.run(response.data,
-      function (response) {
-        setTimeout(() => {
-          router.push({ name: 'dashboard' });
-        }, 2000);
-      },
+      function (response) {},
       function (response) {},
       function (response) {}
     );
