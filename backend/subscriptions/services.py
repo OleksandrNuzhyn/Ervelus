@@ -1,6 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
-from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from .models import UserSubscription
@@ -30,7 +29,7 @@ def create_or_renew_subscription(data):
     except UserSubscription.DoesNotExist:
         subscription = None
     
-    now = timezone.now()
+    now = datetime.now(timezone.utc)
     end_time_timestamp = get_subscription_end_time(order_reference, subscription)
     
     if end_time_timestamp:
