@@ -71,13 +71,13 @@ def create_order(request):
         'orderDate': order_date,
         'amount': amount,
         'currency': currency,
-        'productName': product_name,
-        'productCount': product_count,
-        'productPrice': product_price,
+        'productName': [product_name],
+        'productCount': [product_count],
+        'productPrice': [product_price],
         'clientEmail': client_email,
         'regularBehavior': 'preset',
         'regularMode': 'monthly',
-        'regularOn': 1,
+        'regularCount': '48',
         'language': 'EN'
     }, status=200)
 

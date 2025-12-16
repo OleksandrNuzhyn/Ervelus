@@ -72,10 +72,12 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth.js';
 import api from '@/services/api';
 
 const auth = useAuthStore();
+const router = useRouter();
 const plans = ref([]);
 const showLoginModal = ref(false);
 const showEligibilityModal = ref(false);
@@ -150,12 +152,12 @@ async function buy(plan) {
     const wayforpay = new window.Wayforpay();
     
     wayforpay.run(response.data,
-      function (response) {}, 
       function (response) {
-          message.value = `Payment declined. Reason: ${response.reason || 'Unknown'}`;
-          modalTitle.value = 'Payment Failed';
-          showEligibilityModal.value = true;
-      }, 
+        setTimeout(() => {
+          router.push({ name: 'dashboard' });
+        }, 2000);
+      },
+      function (response) {},
       function (response) {}
     );
   }
