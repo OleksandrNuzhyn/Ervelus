@@ -10,13 +10,13 @@
           @mouseleave="handleMouseLeave"
         >
           <div class="flex flex-col h-full p-8 text-center">
-            <h2 class="text-5xl scribe-text font-bold mt-7 mb-4" style="text-shadow: 0px 0px 3px rgba(0, 0, 0, 1), 0 0 45px rgba(255, 255, 255, 0.8);">{{ plan.name }}</h2>
+            <h2 class="text-5xl scribe-title font-bold mt-7 mb-4" style="text-shadow: 0px 0px 3px rgba(0, 0, 0, 1), 0 0 45px rgba(255, 255, 255, 0.8);">{{ plan.name }}</h2>
 
             <div class="mb-4">
-              <span class="text-5xl font-bold scribe-text">
+              <span class="text-5xl font-bold scribe-title">
                 ${{ formatPrice(plan.price) }}
               </span>
-              <span class="text-2xl scribe-text">/month</span>
+              <span class="text-2xl scribe-title">/month</span>
               <p class="mt-4 text-2xl scribe-text">{{ plan.description }}</p>
             </div>
 
@@ -28,7 +28,7 @@
               <li v-for="feature in plan.features" :key="feature" class="flex items-center justify-center">
                 <div class="flex-shrink-0">
                   <svg class="h-4 w-4 feature-icon-shadow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M12 2L3 5v6c0 5.25 3.75 10.5 9 12 5.25-1.5 9-6.75 9-12V5l-9-3z" fill="#211F1D"/>
+                    <path d="M12 2L3 5v6c0 5.25 3.75 10.5 9 12 5.25-1.5 9-6.75 9-12V5l-9-3z" class="shield-path"/>
                   </svg>
                 </div>
                 <p class="ml-3 text-3xl scribe-text">{{ feature }}</p>
@@ -242,8 +242,18 @@ onMounted(() => {
 
 .scribe-text {
   font-family: 'Macondo Swash Caps', cursive;
+  color: #000000;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.scribe-title {
+  font-family: 'Macondo Swash Caps', cursive;
   color: #1A1A1A;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.shield-path {
+  fill: #0e0e0e;
 }
 
 .parchment-wrapper {
