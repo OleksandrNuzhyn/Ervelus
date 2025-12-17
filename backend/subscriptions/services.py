@@ -11,7 +11,7 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 def create_or_renew_subscription(data):
-    order_reference = data.get('orderReference')
+    order_reference = data.get('orderReference', '').split('_WFPREG')[0]
     order_parts = order_reference.split('_')
     user_id = int(order_parts[0])
     plan_id = int(order_parts[1])

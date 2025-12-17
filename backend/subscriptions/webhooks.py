@@ -93,7 +93,7 @@ def tasks_handler(request):
         
         if status == 'approved':
             services.create_or_renew_subscription(data)
-        elif status in ['inprocessing', 'waitingauthcomplete'] or 'antifraud' in status:
+        elif status in ['inprocessing', 'waitingauthcomplete', 'pending'] or 'antifraud' in status:
             logger.info("Transaction is processing, holding or antifraud check", extra={"order_reference": data.get('orderReference'), "status": status})
         elif status in ['refunded', 'voided', 'refundinprocessing']:
             logger.info("Refund process", extra={"order_reference": data.get('orderReference'), "status": status})
