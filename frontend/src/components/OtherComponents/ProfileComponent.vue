@@ -60,7 +60,7 @@
                           <button v-if="sub.is_auto_renew" @click="cancelSubscription(sub.id)" class="manage-button">
                             Cancel Subscription
                           </button>
-                          <button v-else disabled class="manage-button opacity-50 cursor-not-allowed">
+                          <button v-else disabled class="manage-button canceled-state cursor-not-allowed">
                             Canceled
                           </button>
                         </div>
@@ -81,7 +81,7 @@
                 </div>
               </div>
 
-              <div class="mt-8 text-center">
+              <div class="my-8 text-center">
                 <p class="text-sm text-gray-400">{{ displayEmail }}</p>
 
                 <div v-if="errorMessage" class="mt-4 text-red-400 text-sm">
@@ -329,6 +329,13 @@ onMounted(() => {
   background: rgba(129, 180, 253, 0.1);
   color: #81b4fd;
   border-color: rgba(129, 180, 253, 0.4);
+}
+
+.canceled-state {
+  color: rgba(248, 113, 113, 0.7);
+  border-color: rgba(248, 113, 113, 0.2);
+  background: rgba(248, 113, 113, 0.03);
+  cursor: not-allowed;
 }
 
 .delete-button-subtle {
