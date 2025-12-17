@@ -18,7 +18,7 @@
             <li><router-link to="/contact-us" class="hover:text-white transition-colors duration-200">Contact
                 Us</router-link></li>
             <li>
-              <a href="https://discord.gg/9vYGBFnFKJ" target="_blank" rel="noopener noreferrer"
+              <a href="https://discord.gg/38NV8t57th" target="_blank" rel="noopener noreferrer"
                 class="flex items-center gap-2 hover:text-white transition-colors duration-200 group">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"
                   class="text-gray-400 group-hover:text-[#5865F2] transition-colors duration-200">
