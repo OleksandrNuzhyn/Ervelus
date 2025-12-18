@@ -17,14 +17,14 @@
                 ${{ formatPrice(plan.price) }}
               </span>
               <span class="text-2xl scribe-title">/month</span>
-              <p class="mt-4 text-2xl scribe-text">{{ plan.description }}</p>
+              <p class="mt-4 text-2xl scribe-title" style="text-shadow: 0px 0px 3px rgba(0, 0, 0, 1), 0 0 45px rgba(255, 255, 255, 0.8);">{{ plan.description }}</p>
             </div>
 
             <div class="separator">
               <div class="separator-diamond"></div>
             </div>
 
-            <ul class="space-y-4 flex-1">
+            <ul class="space-y-4 flex-1 mt-2">
               <li v-for="feature in plan.features" :key="feature" class="flex items-center justify-center">
                 <div class="flex-shrink-0">
                   <svg class="h-4 w-4 feature-icon-shadow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
