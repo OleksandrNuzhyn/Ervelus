@@ -1536,24 +1536,41 @@ footer {
     padding: var(--spacing-xl) var(--spacing-sm);
   }
 
+  .hero-apple {
+    min-height: auto;
+    padding-top: 120px;
+    padding-bottom: 60px;
+    align-items: flex-start;
+  }
+
   .card-floating {
     display: none;
   }
 
+  .hero-container {
+    gap: var(--spacing-lg);
+  }
+
   .hero-content {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: 0;
+  }
+
+  .hero-visual {
+    min-height: auto;
+    margin-top: 40px;
   }
 
   .floating-cards {
-    height: 380px;
+    height: 390px;
   }
 
   .card-main {
-    width: 260px;
-    height: 360px;
+    width: 280px;
+    height: 390px;
     transform: translate(-50%, -50%) !important;
     animation: none !important;
     transition: none !important;
+    box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.5);
   }
 
   .pricing-card-horizontal {
