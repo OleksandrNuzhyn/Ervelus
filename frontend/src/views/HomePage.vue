@@ -26,6 +26,9 @@
             <p class="hero-subtitle">
               Turn reality into a digital legend. Powerful algorithms unlock gate to unknown worlds with just one touch
             </p>
+            <button @click="navigateToDashboard" class="cta-primary large hero-cta">
+              Get Started
+            </button>
           </div>
 
           <div class="hero-visual">
@@ -773,6 +776,10 @@ onUnmounted(() => {
 .cta-primary.large {
   padding: 18px 36px;
   font-size: 19px;
+}
+
+.hero-cta {
+  margin-top: var(--spacing-lg);
 }
 
 .cta-arrow {
@@ -1529,16 +1536,24 @@ footer {
     padding: var(--spacing-xl) var(--spacing-sm);
   }
 
-  .floating-cards {
+  .card-floating {
     display: none;
   }
 
   .hero-content {
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
   }
 
-  .hero-visual {
-    display: none;
+  .floating-cards {
+    height: 380px;
+  }
+
+  .card-main {
+    width: 260px;
+    height: 360px;
+    transform: translate(-50%, -50%) !important;
+    animation: none !important;
+    transition: none !important;
   }
 
   .pricing-card-horizontal {
