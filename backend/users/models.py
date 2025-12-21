@@ -5,7 +5,7 @@ from allauth.account.models import EmailAddress
 from allauth.socialaccount.models import SocialAccount
 from rest_framework.authtoken.models import Token
 from django.db import models
-from django.db.models import Q, Sum
+from django.db.models import Q, Sum, F
 from django.db.models.functions import Coalesce
 from django.conf import settings
 from auditlog.models import LogEntry
@@ -70,13 +70,12 @@ gdpr_assist.register(User, UserPrivacyMeta, gdpr_default_manager_name="gdpr_obje
 class UserProfileCreditQuerySet(models.QuerySet):
     def annotate_total_credits(self):
         return self.annotate(
-            total_credits=Coalesce(
-                Sum(
-                    'user__subscriptions__remaining_credits',
-                    filter=Q(user__subscriptions__end_time__gt=datetime.now(timezone.utc))
-                ),
-                0
+            subscription_credits=Sum(
+                'user__subscriptions__remaining_credits',
+                filter=Q(user__subscriptions__end_time__gt=datetime.now(timezone.utc))
             )
+        ).annotate(
+            total_credits=Coalesce(F('subscription_credits'), 0) + Coalesce(F('free_credits'), 0)
         )
 
 
@@ -93,7 +92,17 @@ class UserProfile(models.Model):
         verbose_name = 'User Profile'
         verbose_name_plural = 'User Profiles'
 
+    class PrivacyMeta:
+        can_anonymise = False
+        search_fields = [
+            'user__email',
+        ]
+        export_fields = [
+            'free_credits',
+        ]
+
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='profile')
+    free_credits = models.IntegerField(default=3)
     objects = UserProfileCreditManager()
 
     def __str__(self):

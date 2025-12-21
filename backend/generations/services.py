@@ -11,6 +11,7 @@ from django.conf import settings
 from urllib.parse import urlparse
 from django.utils import timezone
 from django.db import connections
+from users.models import UserProfile
 from django.utils.text import slugify
 from .models import GenerationRequest
 from asgiref.sync import sync_to_async
@@ -275,7 +276,13 @@ async def handle_generation_process(generation_request_id, input_image_url):
             debit_subscription.remaining_credits -= 1
             await save_without_auditlog(debit_subscription)
         else:
-            logger.error("Credit not debited, no active subscription found", extra={'generation_request_id': generation_request_id})
+            user_profile = await UserProfile.objects.aget(user_id=user_id)
+
+            if user_profile.free_credits > 0:
+                user_profile.free_credits -= 1
+                await user_profile.asave(update_fields=['free_credits'])
+            else:
+                logger.error("Credit not debited, no active subscription and no free credits found", extra={'generation_request_id': generation_request_id})
 
         generation_request_status = GenerationRequest.GenerationStatus.COMPLETED
     except GenerationRequest.DoesNotExist:

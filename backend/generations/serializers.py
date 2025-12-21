@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from django.utils import timezone
-from subscriptions.models import UserSubscription
 from .models import GenerationRequest
 from . import services
 
@@ -25,27 +24,23 @@ class GenerationRequestCreateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         user = self.context['request'].user
-        chosen_style = data['chosen_style']
-
+        
         active_user_subscriptions = list(
             user.subscriptions.filter(
                 end_time__gt=timezone.now()
-            ).select_related('plan').prefetch_related('plan__unlocked_styles')
+            )
         )
+        
+        has_subscription_credits = sum(sub.remaining_credits for sub in active_user_subscriptions) > 0
+        has_free_credits = user.profile.free_credits > 0
 
-        if not active_user_subscriptions:
-            raise serializers.ValidationError("You don't have an active subscription")
-
-        total_credits = sum(sub.remaining_credits for sub in active_user_subscriptions)
-        if total_credits == 0:
-            raise serializers.ValidationError("All credits on active subscriptions have been used")
-
-        best_user_subscription = max(active_user_subscriptions, key=lambda sub: sub.plan.price)
-
-        if chosen_style not in best_user_subscription.plan.unlocked_styles.all():
-            raise serializers.ValidationError(f"The style '{chosen_style.name}' isn't available in your best subscription plan")
-
-        return data
+        if has_subscription_credits or has_free_credits:
+            return data
+        
+        if active_user_subscriptions:
+            raise serializers.ValidationError("All active subscriptions and free credits have been used")
+        else:
+            raise serializers.ValidationError("You don't have an active subscription or free credits")
 
 
 class GenerationRequestListSerializer(serializers.ModelSerializer):

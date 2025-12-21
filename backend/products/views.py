@@ -3,7 +3,7 @@ from django.utils import timezone
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import AllowAny
 from .models import SubscriptionPlan, Style
-from django.db.models import Exists, OuterRef, Subquery
+from django.db.models import Exists, OuterRef
 from .serializers import StyleSerializer
 from subscriptions.models import UserSubscription
 from agreements.permissions import HasAcceptedLatestAgreements
@@ -27,21 +27,22 @@ def subscription_plan_list(request):
 @api_view(['GET'])
 @permission_classes([HasAcceptedLatestAgreements])
 def available_style_list(request):
-    best_plan_id_subquery = UserSubscription.objects.filter(
+    target_plan_id = UserSubscription.objects.filter(
         user=request.user,
         end_time__gt=timezone.now()
-    ).order_by('-plan__price').values('plan_id')[:1]
+    ).order_by('-plan__price').values_list('plan_id', flat=True).first()
+
+    if not target_plan_id:
+        target_plan_id = SubscriptionPlan.objects.order_by('price').values_list('id', flat=True).first()
 
     available_styles_subquery = SubscriptionPlan.unlocked_styles.through.objects.filter(
         style_id=OuterRef('pk'),
-        subscriptionplan_id=Subquery(best_plan_id_subquery)
+        subscriptionplan_id=target_plan_id
     )
 
     styles_queryset = Style.objects.annotate(
         is_available=Exists(available_styles_subquery)
     ).select_related('genre').all()
 
-    styles_list = list(styles_queryset)
-    serializer = StyleSerializer(styles_list, many=True)
-
+    serializer = StyleSerializer(styles_queryset, many=True)
     return Response(serializer.data, status=200)
