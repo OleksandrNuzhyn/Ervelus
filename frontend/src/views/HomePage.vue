@@ -15,19 +15,19 @@
       <section class="hero-apple">
         <div class="hero-container" @mousemove="handleGlobalMouseMove">
           <div class="hero-content">
-            <div class="badge-pill">
-              <span class="badge-dot"></span>
-              <span>Inspired by well-known genres </span>
+            <div class="badge-pill badge-free-trial">
+              <span class="badge-dot pulse"></span>
+              <span class="badge-shimmer">Start with 3 Free Generations — No Credit Card Required</span>
             </div>
             <h1 class="hero-title">
               Unleash Your <br />
               <span class="text-gradient">Digital Fantasy</span>
             </h1>
             <p class="hero-subtitle">
-              Turn reality into a digital legend. Powerful algorithms unlock gate to unknown worlds with just one touch
+              Turn reality into a digital legend. Powerful algorithms transform ordinary photos into extraordinary art.
             </p>
             <button @click="navigateToDashboard" class="cta-primary large hero-cta">
-              Get Started
+              Claim 3 Free Credits
             </button>
           </div>
 
@@ -114,9 +114,14 @@
               <div class="pricing-header-horizontal">
                 <h3 class="pricing-name-horizontal">{{ tier.name }}</h3>
                 <div class="pricing-price-horizontal">
-                  <span class="price-currency-horizontal">$</span>
-                  <span class="price-amount-horizontal">{{ tier.price }}</span>
-                  <span class="price-period-horizontal">/month</span>
+                  <template v-if="tier.id === 'free'">
+                    <span class="price-free">3 Credits</span>
+                  </template>
+                  <template v-else>
+                    <span class="price-currency-horizontal">$</span>
+                    <span class="price-amount-horizontal">{{ tier.price }}</span>
+                    <span class="price-period-horizontal">/month</span>
+                  </template>
                 </div>
               </div>
             </div>
@@ -127,7 +132,8 @@
               </div>
 
               <div class="styles-grid">
-                <div v-for="(style, index) in tier.styles" :key="style.id" class="style-item"
+                <div v-for="(style, index) in tier.styles" :key="style.id" 
+                  :class="['style-item', { 'style-description': style.id === 'desc' }]"
                   :style="{ 'animation-delay': `${index * 0.1}s` }">
                   <div class="style-name">{{ style.name }}</div>
                   <div class="style-genre">{{ style.genre }}</div>
@@ -193,12 +199,12 @@
 
       <section class="section-final-cta">
         <div class="final-cta-content">
-          <h2 class="final-cta-title">Ready to enter the Ervelus?</h2>
+          <h2 class="final-cta-title">Ready to Start Your Legend?</h2>
           <p class="final-cta-subtitle">
-            Give ordinary images spectacular looks based on legendary genres now
+            Access 30+ premium styles and transform your photos in seconds. No credit card required.
           </p>
-          <button @click="navigateToDashboard" class="cta-primary large">
-            Get Started
+          <button @click="navigateToDashboard" class="cta-primary large cta-final-pulse">
+            Claim 3 Free Credits
           </button>
         </div>
       </section>
@@ -261,6 +267,17 @@ function getStyledImageUrl() {
 }
 
 const subscriptionTiers = [
+  {
+    id: 'free',
+    name: 'Free Plan',
+    price: 'Free',
+    featured: false,
+    includePrevious: false,
+    previousPlanName: null,
+    styles: [
+      { id: 'desc', name: 'Try any style with 3 free credits', genre: 'Full access to 30+ premium styles' }
+    ]
+  },
   {
     id: 'amateur',
     name: 'Amateur',
@@ -365,20 +382,20 @@ const genres = [
 const steps = [
   {
     id: 'upload',
-    title: 'Upload Your Image',
-    description: 'Choose any photo from your gallery',
+    title: 'Quick Sign-Up',
+    description: 'Get 3 free credits instantly with Google login. No credit card required.',
     icon: CloudArrowUpIcon
   },
   {
     id: 'style',
     title: 'Choose Your Style',
-    description: 'Select from our legendary genres',
+    description: 'Select from 30+ legendary AI styles across all genres',
     icon: SwatchIcon
   },
   {
     id: 'generate',
-    title: 'Generate & Download',
-    description: 'Watch how we transform reality ',
+    title: 'Transform & Download',
+    description: 'Watch AI magic in seconds. Download your masterpiece instantly',
     icon: ArrowDownTrayIcon
   }
 ]
@@ -679,7 +696,7 @@ onUnmounted(() => {
 .badge-pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   padding: 6px 12px;
   background: rgba(139, 92, 246, 0.1);
   border: 1px solid rgba(139, 92, 246, 0.2);
@@ -1209,11 +1226,22 @@ section {
   color: var(--color-text-secondary);
 }
 
+.price-free {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-accent);
+}
+
 .pricing-right {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+}
+
+.pricing-card-horizontal:first-child .pricing-right {
+  justify-content: center;
 }
 
 .previous-styles-note {
@@ -1338,6 +1366,20 @@ section {
 .style-item:hover .style-genre {
   color: rgba(255, 255, 255, 0.8);
   transform: translateX(4px);
+}
+
+.style-description {
+  grid-column: 1 / -1;
+  text-align: center;
+}
+
+.style-description .style-name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.style-description .style-genre {
+  font-size: 12px;
 }
 
 .genres-grid {
@@ -1586,7 +1628,7 @@ footer {
   .pricing-left {
     min-width: auto;
     text-align: center;
-  }
+}
 
   .pricing-header-horizontal {
     align-items: center;
@@ -1675,6 +1717,147 @@ footer {
   .genre-icon {
     width: 28px;
     height: 28px;
+  }
+}
+
+.badge-dot.pulse {
+  background: #8b5cf6;
+  box-shadow: 0 0 0 rgba(139, 92, 246, 0.4);
+  animation: pulse-enhanced 2s infinite;
+}
+
+@keyframes pulse-enhanced {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+  }
+}
+
+.badge-free-trial {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.1));
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.2), 0 4px 16px rgba(139, 92, 246, 0.1);
+  animation: badge-glow 3s ease-in-out infinite;
+}
+
+@keyframes badge-glow {
+  0%, 100% {
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.2), 0 4px 16px rgba(139, 92, 246, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(139, 92, 246, 0.4), 0 4px 20px rgba(139, 92, 246, 0.2);
+  }
+}
+
+.badge-shimmer {
+  background: linear-gradient(
+    90deg,
+    #fff 0%,
+    #a78bfa 50%,
+    #fff 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer-text 3s linear infinite;
+  font-weight: 600;
+}
+
+@keyframes shimmer-text {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
+}
+
+.free-highlight {
+  color: #a78bfa;
+  font-weight: 700;
+  text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+  position: relative;
+  display: inline-block;
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 30px rgba(139, 92, 246, 0.8), 0 0 40px rgba(139, 92, 246, 0.4);
+  }
+}
+
+.free-highlight-dark {
+  color: #a78bfa;
+  font-weight: 700;
+  background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  display: inline-block;
+  text-shadow: none;
+}
+
+.cta-final-pulse {
+  animation: cta-breathe 2.5s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-final-pulse::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.cta-final-pulse:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+@keyframes cta-breathe {
+  0%, 100% {
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.5), 0 4px 16px rgba(139, 92, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 50px rgba(139, 92, 246, 0.7), 0 8px 32px rgba(139, 92, 246, 0.5), 0 0 80px rgba(139, 92, 246, 0.3);
+  }
+}
+
+@media (max-width: 768px) {
+  .badge-shimmer {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .badge-free-trial {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+  
+  .badge-shimmer {
+    font-size: 11px;
   }
 }
 </style>
