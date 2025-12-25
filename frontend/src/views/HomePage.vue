@@ -17,7 +17,7 @@
           <div class="hero-content">
             <div class="badge-pill badge-free-trial">
               <span class="badge-dot pulse"></span>
-              <span class="badge-shimmer">Start with 3 Free Generations — No Credit Card Required</span>
+              <span class="badge-shimmer">Start with 5 Free Generations — No Credit Card Required</span>
             </div>
             <h1 class="hero-title">
               Unleash Your <br />
@@ -27,7 +27,7 @@
               Turn reality into a digital legend. Powerful algorithms transform ordinary photos into extraordinary art.
             </p>
             <button @click="navigateToDashboard" class="cta-primary large hero-cta">
-              Claim 3 Free Credits
+              Claim 5 Free Credits
             </button>
           </div>
 
@@ -115,7 +115,7 @@
                 <h3 class="pricing-name-horizontal">{{ tier.name }}</h3>
                 <div class="pricing-price-horizontal">
                   <template v-if="tier.id === 'free'">
-                    <span class="price-free">3 Credits</span>
+                    <span class="price-free">5 Credits</span>
                   </template>
                   <template v-else>
                     <span class="price-currency-horizontal">$</span>
@@ -201,10 +201,10 @@
         <div class="final-cta-content">
           <h2 class="final-cta-title">Ready to Start Your Legend?</h2>
           <p class="final-cta-subtitle">
-            Access 30+ premium styles and transform your photos in seconds. No credit card required.
+            Access 30+ premium styles and transform your photos in seconds. No credit card required
           </p>
           <button @click="navigateToDashboard" class="cta-primary large cta-final-pulse">
-            Claim 3 Free Credits
+            Claim 5 Free Credits
           </button>
         </div>
       </section>
@@ -275,7 +275,7 @@ const subscriptionTiers = [
     includePrevious: false,
     previousPlanName: null,
     styles: [
-      { id: 'desc', name: 'Try any style with 3 free credits', genre: 'Full access to 30+ premium styles' }
+      { id: 'desc', name: 'Try any style with 5 free credits', genre: 'Full access to 30+ premium styles' }
     ]
   },
   {
@@ -382,8 +382,8 @@ const genres = [
 const steps = [
   {
     id: 'upload',
-    title: 'Quick Sign-Up',
-    description: 'Get 3 free credits instantly with Google login. No credit card required.',
+    title: 'Upload Your Photo',
+    description: 'Upload any photo you want to transform into a digital masterpiece',
     icon: CloudArrowUpIcon
   },
   {
