@@ -102,7 +102,7 @@ class UserProfile(models.Model):
         ]
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='profile')
-    free_credits = models.IntegerField(default=3)
+    free_credits = models.IntegerField(default=5)
     objects = UserProfileCreditManager()
 
     def __str__(self):
