@@ -204,7 +204,11 @@ async function handleGoogleSuccess(response) {
     const token = response.data.key;
     if (token) {
       localStorage.setItem('user-token', token);
-      window.gtag('event', 'user_sign_up', { 'method': 'google' });
+
+      if (response.data.is_registration) {
+        window.gtag('event', 'user_sign_up', { 'method': 'google' });
+      }
+
       await authStore.checkAuth();
       router.push('/dashboard');
     }

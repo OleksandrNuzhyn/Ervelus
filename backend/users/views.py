@@ -1,4 +1,6 @@
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.account.signals import user_signed_up
+from django.dispatch import receiver
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView, VerifyEmailView
 from dj_rest_auth.app_settings import api_settings
@@ -21,10 +23,19 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+@receiver(user_signed_up)
+def user_signed_up_handler(request, user, **kwargs):
+    request.is_registration = True
+
 
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
     client_class = OAuth2Client
+
+    def get_response(self):
+        response = super().get_response()
+        response.data['is_registration'] = getattr(self.request, 'is_registration', False)
+        return response
 
     def login(self):
         self.user = self.serializer.validated_data['user']
