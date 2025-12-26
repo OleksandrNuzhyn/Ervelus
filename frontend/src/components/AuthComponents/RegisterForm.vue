@@ -204,6 +204,7 @@ async function handleGoogleSuccess(response) {
     const token = response.data.key;
     if (token) {
       localStorage.setItem('user-token', token);
+      window.gtag('event', 'user_sign_up', { 'method': 'google' });
       await authStore.checkAuth();
       router.push('/dashboard');
     }
@@ -305,6 +306,8 @@ async function handleSubmit() {
       password1: password1.value,
       password2: password2.value,
     });
+    
+    window.gtag('event', 'user_sign_up', { 'method': 'email' });
     waitingEmailForm.value = true;
     startResendTimer();
   }
