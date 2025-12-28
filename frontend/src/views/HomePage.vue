@@ -16,18 +16,17 @@
         <div class="hero-container" @mousemove="handleGlobalMouseMove">
           <div class="hero-content">
             <div class="badge-pill badge-free-trial">
-              <span class="badge-dot pulse"></span>
-              <span class="badge-shimmer">Start with 5 Free Generations — No Credit Card Required</span>
+              <span class="badge-shimmer">5 Free Generations Included • No Credit Card</span>
             </div>
             <h1 class="hero-title">
-              Unleash Your <br />
-              <span class="text-gradient">Digital Fantasy</span>
+              Transform Your Photos <br />
+              <span class="text-gradient">into AI Art</span>
             </h1>
             <p class="hero-subtitle">
-              Turn reality into a digital legend. Powerful algorithms transform ordinary photos into extraordinary art.
+              Create professional art instantly. Choose from 30+ styles
             </p>
             <button @click="navigateToDashboard" class="cta-primary large hero-cta">
-              Claim 5 Free Credits
+              Try for free
             </button>
           </div>
 
@@ -52,9 +51,9 @@
 
       <section class="section-comparison">
         <div class="section-header">
-          <h2 class="section-title">See the transformation</h2>
+          <h2 class="section-title">See the Difference</h2>
           <p class="section-subtitle">
-            Experience the power of AI. Drag to compare original and styled versions
+            Drag the slider to compare original photo and AI result
           </p>
         </div>
 
@@ -101,7 +100,7 @@
 
       <section class="section-styles">
         <div class="section-header">
-          <h2 class="section-title">Choose your destiny</h2>
+          <h2 class="section-title">Unlock Premium Styles</h2>
           <p class="section-subtitle">
             Access powerful styles tailored to your needs
           </p>
@@ -115,7 +114,7 @@
                 <h3 class="pricing-name-horizontal">{{ tier.name }}</h3>
                 <div class="pricing-price-horizontal">
                   <template v-if="tier.id === 'free'">
-                    <span class="price-free">5 Credits</span>
+                    <span class="price-free">5 Generations</span>
                   </template>
                   <template v-else>
                     <span class="price-currency-horizontal">$</span>
@@ -204,7 +203,7 @@
             Access 30+ premium styles and transform your photos in seconds. No credit card required
           </p>
           <button @click="navigateToDashboard" class="cta-primary large cta-final-pulse">
-            Claim 5 Free Credits
+            Try for free
           </button>
         </div>
       </section>
@@ -275,7 +274,7 @@ const subscriptionTiers = [
     includePrevious: false,
     previousPlanName: null,
     styles: [
-      { id: 'desc', name: 'Try any style with 5 free credits', genre: 'Full access to 30+ premium styles' }
+      { id: 'desc', name: 'Create professional art from your photos', genre: 'Full access to 30+ premium styles' }
     ]
   },
   {
@@ -400,18 +399,9 @@ const steps = [
   }
 ]
 
-function getCurrentStyleIcon() {
-  const style = previewStyles.find(s => s.id === selectedPreviewStyle.value)
-  return style ? style.icon : FireIcon
-}
-
 function getCurrentStyleName() {
   const style = previewStyles.find(s => s.id === selectedPreviewStyle.value)
   return style ? style.name : 'Dark Fantasy'
-}
-
-function getStyleClass(styleId) {
-  return `style-${styleId}`
 }
 
 function startDrag(e) {
@@ -731,7 +721,7 @@ onUnmounted(() => {
 }
 
 .hero-title {
-  font-size: clamp(48px, 6vw, 80px);
+  font-size: clamp(48px, 3.1vw, 60px);
   font-weight: 700;
   line-height: 1.3;
   letter-spacing: -0.03em;
@@ -1681,10 +1671,32 @@ footer {
 @media (max-width: 480px) {
   .hero-apple {
     min-height: 70vh;
+    padding-top: 100px;
   }
 
   .hero-content {
     padding: 0 var(--spacing-xs);
+  }
+
+  .hero-title {
+    font-size: 34px;
+    line-height: 1.1;
+  }
+
+  .hero-subtitle {
+    font-size: 13px;
+    line-height: 1.6;
+    opacity: 0.75;
+    font-weight: 300;
+    max-width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (max-width: 380px) {
+    .hero-title {
+      font-size: 28px;
+    }
   }
 
   .badge-pill {
