@@ -15,34 +15,54 @@
       <section class="hero-apple">
         <div class="hero-container" @mousemove="handleGlobalMouseMove">
           <div class="hero-content">
+            <div class="v-spacer"></div>
+            
             <div class="badge-pill badge-free-trial">
               <span class="badge-shimmer">5 Free Generations Included • No Credit Card</span>
             </div>
-            <h1 class="hero-title">
-              Transform Your Photos <br />
-              <span class="text-gradient">into AI Art</span>
-            </h1>
-            <p class="hero-subtitle">
-              Create professional art instantly. Choose from 30+ styles
-            </p>
-            <button @click="navigateToDashboard" class="cta-primary large hero-cta">
+            
+            <div class="v-spacer"></div>
+
+            <div class="hero-text-group">
+              <h1 class="hero-title">
+                Transform Your Photos <br />
+                <span class="text-gradient">into AI Art</span>
+              </h1>
+
+              <p class="hero-subtitle">
+                Create professional art instantly. Choose from 30+ styles
+              </p>
+            </div>
+
+            <div class="v-spacer"></div>
+
+            <div class="hero-visual-mobile md:hidden">
+              <div class="floating-cards-mobile">
+                <div class="card-m card-1"><img src="@/assets/home_page/paris-flying.webp" alt="1" /></div>
+                <div class="card-m card-2"><img src="@/assets/home_page/elevator-flying.webp" alt="2" /></div>
+                <div class="card-m card-3"><img src="@/assets/home_page/urban-flying.webp" alt="3" /></div>
+              </div>
+            </div>
+
+            <div class="v-spacer"></div>
+
+            <button @click="handleTryFree" class="cta-primary large hero-cta">
               Try for free
             </button>
           </div>
-
-          <div class="hero-visual">
+          <div class="hero-visual hidden md:block">
             <div class="floating-cards">
               <div class="card card-main tilt-card" ref="heroCard" @click="bringCardToFront('main')">
                 <div class="card-inner">
-                  <img src="@/assets/home_page/dark-fantasy_flying.webp" alt="AI Art Main" class="card-img" />
+                  <img src="@/assets/home_page/paris-flying.webp" alt="AI Art Main" class="card-img" />
                   <div class="card-shine"></div>
                 </div>
               </div>
               <div class="card card-floating card-1" @click="bringCardToFront('card1')">
-                <img src="@/assets/home_page/light-fantasy_flying.webp" alt="Cyberpunk" class="card-img" />
+                <img src="@/assets/home_page/urban-flying.webp" alt="Urban" class="card-img" />
               </div>
               <div class="card card-floating card-2" @click="bringCardToFront('card2')">
-                <img src="@/assets/home_page/wild-west_flying.webp" alt="Fantasy" class="card-img" />
+                <img src="@/assets/home_page/elevator-flying.webp" alt="Elevator" class="card-img" />
               </div>
             </div>
           </div>
@@ -67,12 +87,12 @@
         <div class="comparison-container">
           <div class="comparison-frame">
             <div class="comparison-side before-side">
-              <img :src="originalImg" class="comparison-img" alt="Original Photo" />
+              <img :src="originalImg" class="comparison-img" alt="Original Photo" loading="lazy" />
               <span class="comparison-label overlay-label">Original</span>
             </div>
 
             <div class="comparison-side after-side" :style="{ 'clip-path': `inset(0 ${100 - sliderPosition}% 0 0)` }">
-              <img :src="getStyledImageUrl()" class="comparison-img" alt="Styled Result" />
+              <img :src="getStyledImageUrl()" class="comparison-img" alt="Styled Result" loading="lazy" />
               <span class="comparison-label overlay-label">{{ getCurrentStyleName() }}</span>
             </div>
 
@@ -102,7 +122,7 @@
         <div class="section-header">
           <h2 class="section-title">Unlock Premium Styles</h2>
           <p class="section-subtitle">
-            Access powerful styles tailored to your needs
+            Access powerful tools tailored to your needs
           </p>
         </div>
 
@@ -145,9 +165,9 @@
 
       <section class="section-genres">
         <div class="section-header">
-          <h2 class="section-title">Legendary genres</h2>
+          <h2 class="section-title">Explore Art Genres</h2>
           <p class="section-subtitle">
-            From dark medieval fantasies to futuristic cyberpunk dreams
+            From dark medieval fantasies to futuristic cyberpunk
           </p>
         </div>
 
@@ -164,9 +184,9 @@
 
       <section class="section-steps">
         <div class="section-header">
-          <h2 class="section-title">Everything you need for magic</h2>
+          <h2 class="section-title">How it Works</h2>
           <p class="section-subtitle">
-            Just in three simple steps
+            Transform your photos in three simple steps
           </p>
         </div>
 
@@ -185,9 +205,9 @@
 
       <section class="section-product-demo">
         <div class="section-header">
-          <h2 class="section-title">Product Demo</h2>
+          <h2 class="section-title">See It in Action</h2>
           <p class="section-subtitle">
-            How it works
+            Watch the real-time generation process
           </p>
         </div>
 
@@ -197,14 +217,22 @@
       </section>
 
       <section class="section-final-cta">
-        <div class="final-cta-content">
-          <h2 class="final-cta-title">Ready to Start Your Legend?</h2>
-          <p class="final-cta-subtitle">
-            Access 30+ premium styles and transform your photos in seconds. No credit card required
-          </p>
-          <button @click="navigateToDashboard" class="cta-primary large cta-final-pulse">
-            Try for free
-          </button>
+        <div class="final-cta-bg-glow"></div>
+        <div class="final-cta-card">
+          <div class="final-cta-content">
+            <h2 class="final-cta-title">
+              Create Your First <br />
+              <span class="text-gradient">Art Today</span>
+            </h2>
+            <p class="final-cta-subtitle">
+              Start creating in seconds. 5 free generations included
+            </p>
+            <div class="final-cta-action">
+              <button @click="handleTryFree" class="cta-primary large cta-final-pulse">
+                Try for free
+              </button>
+            </div>
+          </div>
         </div>
       </section>
     </div>
@@ -382,19 +410,19 @@ const steps = [
   {
     id: 'upload',
     title: 'Upload Your Photo',
-    description: 'Upload any photo you want to transform into a digital masterpiece',
+    description: 'Upload a selfie, portrait, or any image from your gallery',
     icon: CloudArrowUpIcon
   },
   {
     id: 'style',
     title: 'Choose Your Style',
-    description: 'Select from 30+ legendary AI styles across all genres',
+    description: 'Choose from 30+ professional filters',
     icon: SwatchIcon
   },
   {
     id: 'generate',
     title: 'Transform & Download',
-    description: 'Watch AI magic in seconds. Download your masterpiece instantly',
+    description: 'Download high-quality art instantly. Ready to share',
     icon: ArrowDownTrayIcon
   }
 ]
@@ -434,8 +462,8 @@ function stopDrag() {
   document.removeEventListener('touchend', stopDrag)
 }
 
-function navigateToDashboard() {
-  router.push('/dashboard')
+function handleTryFree() {
+  router.push('/register')
 }
 
 function handleGlobalMouseMove(e) {
@@ -741,9 +769,9 @@ onUnmounted(() => {
 
 .hero-subtitle {
   font-size: clamp(18px, 2vw, 20px);
-  font-weight: 400;
+  font-weight: 300;
   line-height: 1.6;
-  color: var(--color-text-secondary);
+  color: rgba(255, 255, 255, 0.75);
   margin: 0 0 var(--spacing-md);
   max-width: 600px;
 }
@@ -1486,32 +1514,83 @@ section {
 }
 
 .section-final-cta {
-  padding: var(--spacing-2xl) var(--spacing-md);
+  padding: 120px var(--spacing-md);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.final-cta-bg-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 1000px;
+  height: 600px;
+  background: radial-gradient(circle at center, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.final-cta-card {
+  position: relative;
+  z-index: 1;
+  background: radial-gradient(100% 100% at 50% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: none;
+  padding: 100px 32px;
+  border-radius: 48px;
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 
+    0 40px 80px -20px rgba(0, 0, 0, 0.6),
+    0 0 60px rgba(139, 92, 246, 0.1);
+}
+
+.final-cta-card::after {
+  display: none;
 }
 
 .final-cta-content {
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto;
+  width: 100%;
 }
 
 .final-cta-title {
-  font-size: clamp(36px, 5vw, 56px);
-  font-weight: 700;
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 800;
   line-height: 1.1;
-  color: var(--color-text-primary);
-  margin: 0 0 var(--spacing-md);
+  color: #fff;
+  margin: 0 0 20px;
+  letter-spacing: -0.02em;
 }
 
 .final-cta-subtitle {
-  font-size: clamp(18px, 2vw, 21px);
-  line-height: 1.5;
-  color: var(--color-text-secondary);
-  margin: 0 0 var(--spacing-lg);
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 70px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.final-cta-action {
+  display: flex;
+  justify-content: center;
 }
 
 .section-final-cta .cta-primary {
-  margin-bottom: 150px;
+  margin-bottom: 0;
+  padding: 18px 48px;
+  font-size: 18px;
 }
 
 footer {
@@ -1539,9 +1618,210 @@ footer {
     text-align: center;
   }
 
-  .hero-subtitle {
-    margin-left: auto;
-    margin-right: auto;
+  @media (max-width: 768px) {
+    .hero-apple {
+      height: 100dvh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .hero-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 0 var(--spacing-sm);
+    }
+
+    .hero-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding-top: 70px;
+      padding-bottom: 30px;
+    }
+
+    .v-spacer {
+      flex: 1;
+      width: 100%;
+      min-height: 10px;
+    }
+
+    .v-spacer:nth-child(1) {
+      flex: 0.9;
+    }
+
+    .v-spacer:nth-child(3) {
+      flex: 0.2;
+    }
+
+    .v-spacer:nth-child(5),
+    .v-spacer:nth-child(7) {
+      flex: 2.5;
+    }
+
+    .hero-text-group {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      z-index: 10;
+    }
+
+    .badge-pill {
+      margin: 0;
+      display: inline-flex;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.02) !important;
+      border: 1px solid rgba(255, 255, 255, 0.05) !important;
+      padding: 5px 16px;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+      animation: shimmerBorder 10s infinite ease-in-out;
+    }
+
+    @keyframes shimmerBorder {
+      0%, 100% { 
+        border-color: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0); 
+      }
+      50% { 
+        border-color: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.12);
+      }
+    }
+
+    .badge-shimmer {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.75);
+      text-transform: none;
+      letter-spacing: normal;
+      font-weight: 400;
+      background: none;
+      -webkit-text-fill-color: initial;
+      animation: none;
+    }
+
+    .hero-title {
+      font-size: clamp(26px, 7.5vw, 32px);
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .hero-visual {
+      display: none !important;
+    }
+
+    .hero-visual-mobile {
+      flex: 0 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 35vh;
+      min-height: 160px;
+      max-height: 45vh;
+      width: 100%;
+      position: relative;
+    }
+
+    .floating-cards-mobile {
+      position: relative;
+      height: 100%;
+      width: 100%;
+    }
+
+    .card-m {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 25vh;
+      height: 34vh;
+      max-width: 240px;
+      max-height: 320px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .card-m img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @keyframes heroCycle {
+      0%, 28% { z-index: 10; transform: translate(-50%, -50%) scale(1); opacity: 1; filter: blur(0); }
+      33.33%, 61.33% { z-index: 5; transform: translate(-20%, -55%) scale(0.85) rotate(6deg); opacity: 0.6; filter: blur(3px); }
+      66.66%, 94.66% { z-index: 1; transform: translate(-80%, -55%) scale(0.85) rotate(-6deg); opacity: 0.6; filter: blur(3px); }
+      100% { z-index: 10; transform: translate(-50%, -50%) scale(1); opacity: 1; filter: blur(0); }
+    }
+
+    .card-1 { animation: heroCycle 6s infinite 0s; }
+    .card-2 { animation: heroCycle 6s infinite -2s; }
+    .card-3 { animation: heroCycle 6s infinite -4s; }
+
+    .hero-subtitle {
+      font-size: 13.5px;
+      color: rgba(255, 255, 255, 0.82);
+      margin-bottom: 0;
+      display: block;
+      font-weight: 300;
+      text-align: center;
+      max-width: 240px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.4;
+      text-wrap: balance;
+    }
+
+    .hero-cta {
+      width: 100%;
+      max-width: 280px;
+      margin: 0 !important;
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 768px) and (max-height: 700px) {
+    .hero-content {
+      padding-top: 60px;
+      padding-bottom: 20px;
+    }
+
+    .v-spacer:first-child {
+      flex: 0.4;
+      min-height: 2px;
+    }
+
+    .hero-visual-mobile {
+      min-height: 140px; 
+      height: 25vh;
+    }
+
+    .card-m {
+      width: 150px;
+      height: 200px;
+    }
+
+    .hero-title {
+      font-size: 26px;
+      margin-bottom: 4px;
+    }
+    
+    .v-spacer {
+      min-height: 8px; 
+    }
   }
 
   .hero-visual {
@@ -1757,7 +2037,7 @@ footer {
   background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.1));
   border: 1px solid rgba(139, 92, 246, 0.3);
   box-shadow: 0 0 30px rgba(139, 92, 246, 0.2), 0 4px 16px rgba(139, 92, 246, 0.1);
-  animation: badge-glow 3s ease-in-out infinite;
+  animation: badge-glow 7s ease-in-out infinite;
 }
 
 @keyframes badge-glow {
@@ -1780,7 +2060,7 @@ footer {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: shimmer-text 3s linear infinite;
+  animation: shimmer-text 7s linear infinite;
   font-weight: 600;
 }
 
