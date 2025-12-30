@@ -30,3 +30,11 @@ class CustomScopedRateThrottle(ScopedRateThrottle):
         self.num_requests, self.duration = self.parse_rate(self.rate)
 
         return super(ScopedRateThrottle, self).allow_request(request, view)
+
+    def get_ident(self, request):
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+
+        if x_forwarded_for:
+            return x_forwarded_for.split(',')[0].strip()
+
+        return super().get_ident(request)

@@ -84,7 +84,7 @@ def wayforpay_handler(request):
 def tasks_handler(request):
     incoming_secret = request.headers.get('X-Task-Secret')
     if not incoming_secret or incoming_secret != settings.GCP_TASKS_SECRET_KEY:
-        logger.error("Unauthorized task attempt", extra={'remote_addr': request.META.get('REMOTE_ADDR')})
+        logger.error("Unauthorized task attempt", extra={'remote_addr': request.META.get('HTTP_X_FORWARDED_FOR').split(',')[0].strip()})
         return Response(status=401)
 
     try:

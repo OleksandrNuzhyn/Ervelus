@@ -38,9 +38,9 @@ class GenerationRequestCreateSerializer(serializers.ModelSerializer):
             return data
         
         if active_user_subscriptions:
-            raise serializers.ValidationError("All active subscriptions and free credits have been used")
+            raise serializers.ValidationError("All active subscriptions and free generations have been used")
         else:
-            raise serializers.ValidationError("You don't have an active subscription or free credits")
+            raise serializers.ValidationError("You don't have an active subscription or free generations")
 
 
 class GenerationRequestListSerializer(serializers.ModelSerializer):

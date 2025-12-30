@@ -2,7 +2,7 @@
   <div class="mt-0 p-3 lg:flex lg:flex-col lg:min-h-[calc(100vh-9rem)]">
     <div class="flex flex-col lg:grid lg:grid-cols-2 gap-7 lg:gap-8 items-start lg:items-stretch lg:flex-grow">
       <div class="z-9 flex flex-col items-center w-full">
-        <div class="bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-lg p-4 h-[400px] md:h-[660px] w-full flex flex-col items-center justify-center lg:h-auto lg:flex-grow lg:min-h-0">
+        <div class="bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl p-4 h-[400px] md:h-[660px] w-full flex flex-col items-center justify-center lg:h-auto lg:flex-grow lg:min-h-0">
           <div v-if="!inputImageUrl" @click="triggerFileInput"
                @dragenter.prevent="onDragEnter"
                @dragover.prevent="onDragOver"
@@ -19,7 +19,7 @@
             <img 
               :src="inputImageUrl" 
               alt="Input" 
-              class="absolute inset-0 w-full h-full object-contain rounded-lg transition-opacity duration-500 ease-in-out"
+              class="absolute inset-0 w-full h-full object-contain rounded-xl transition-opacity duration-500 ease-in-out"
               :style="{ opacity: inputImageLoaded ? 1 : 0 }"
               @load="onInputImageLoad"
             />
@@ -36,7 +36,7 @@
       </div>
 
       <div class="flex flex-col w-full">
-        <div class="flex flex-col items-center justify-center bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-lg p-4 h-[400px] md:h-[660px] lg:h-auto lg:flex-grow lg:min-h-0">
+        <div class="flex flex-col items-center justify-center bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl p-4 h-[400px] md:h-[660px] lg:h-auto lg:flex-grow lg:min-h-0">
           <div v-if="isLoading" class="flex flex-col items-center justify-center">
             <img src="@/assets/svg/staff_logo.svg" class="wave-animation animation-pulse h-45 w-45 pointer-events-none select-none" />
             <p class="text-gray-400 text-lg">Transforming...</p>
@@ -45,7 +45,7 @@
             <img 
               :src="outputImageUrl" 
               alt="Output" 
-              class="absolute inset-0 w-full h-full object-contain rounded-lg transition-opacity duration-500 ease-in-out"
+              class="absolute inset-0 w-full h-full object-contain rounded-xl transition-opacity duration-500 ease-in-out"
               :style="{ opacity: outputImageLoaded ? 1 : 0 }"
               @load="onOutputImageLoad"
             />
@@ -73,6 +73,39 @@
         </div>
       </div>
     </div>
+
+    <transition name="modal-fade">
+      <div v-if="showGenerationsModal" class="fixed inset-0 flex items-center justify-center z-[100] confirm-modal-overlay" @click.self="showGenerationsModal = false">
+        <div class="modal-content-card p-10 w-11/12 max-w-lg shadow-2xl flex flex-col gap-6 text-gray-200 relative border-gradient-animated">
+          <div class="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 p-4 rounded-full border border-gray-700 shadow-xl">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          
+          <div class="pt-4 text-center">
+            <h3 class="medieval text-3xl text-gray-100 mb-2">Magical Energy Depleted</h3>
+            <div class="h-1 w-20 bg-purple-500/50 mx-auto rounded-full mb-4"></div>
+          </div>
+          
+          <div class="text-center px-4">
+            <p class="text-gray-300 text-lg leading-relaxed">
+              Your legend is just beginning! You've used all your available generations. 
+              Upgrade now to unlock <span class="text-purple-400 font-semibold">30+ premium styles</span> and continue your journey.
+            </p>
+          </div>
+          
+          <div class="flex flex-col gap-3 pt-4">
+            <router-link to="/pricing" class="pricing-button text-center">
+              Get More Generations
+            </router-link>
+            <button @click="showGenerationsModal = false" class="text-sm text-gray-500 hover:text-gray-400 transition-colors">
+              Maybe later
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -121,6 +154,7 @@ const isDragging = ref(false);
 const inputImageLoaded = ref(false);
 const outputImageLoaded = ref(false);
 const completedGenerationId = ref(null);
+const showGenerationsModal = ref(false);
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE_BYTES = 7 * 1024 * 1024;
@@ -390,7 +424,13 @@ async function handleGenerate() {
   catch (err) {
     isLoading.value = false;
     if (err.response && err.response.status === 400) {
-        toast.info(getErrorMessage(err, 'create'));
+        const message = getErrorMessage(err, 'create');
+        if (message && message.includes('generations')) {
+            showGenerationsModal.value = true;
+        }
+        else {
+            toast.info(message);
+        }
     }
   }
 }
@@ -480,6 +520,8 @@ async function downloadOutputImage() {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+
 @keyframes wave {
   0%, 100% { transform: rotate(35deg)}
   25% { transform: rotate(50deg)}
@@ -519,5 +561,55 @@ async function downloadOutputImage() {
     line-height: 1.4;
     word-break: break-word;
   }
+}
+
+.modal-fade-enter-active, .modal-fade-leave-active {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-out;
+}
+
+.modal-fade-enter-from {
+  opacity: 0;
+  transform: scale(0.95) translateY(10px);
+}
+
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+.modal-content-card {
+  background: rgba(13, 13, 18, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  will-change: backdrop-filter, transform;
+}
+
+.confirm-modal-overlay {
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+}
+
+.pricing-button {
+  display: block;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+}
+
+.pricing-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+  filter: brightness(1.1);
+}
+
+.medieval {
+  font-family: 'MedievalSharp', cursive;
 }
 </style>

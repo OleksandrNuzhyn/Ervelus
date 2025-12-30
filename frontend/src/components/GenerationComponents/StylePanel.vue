@@ -32,7 +32,7 @@ defineProps({
     required: true,
   },
   selectedStyleId: {
-    type: String,
+    type: [String, Number],
     required: false,
     default: null
   },
