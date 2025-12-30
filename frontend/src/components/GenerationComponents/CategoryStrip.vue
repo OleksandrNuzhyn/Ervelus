@@ -7,22 +7,20 @@
     </div>
     
     <div class="relative flex-grow bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl overflow-hidden">
-      <div v-show="showLeftArrow" class="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-black/60 to-transparent z-10 pointer-events-none transition-opacity duration-300"></div>
-      <div v-show="showArrow" class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-black/60 to-transparent z-10 pointer-events-none transition-opacity duration-300"></div>
+      <div 
+        class="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-black/90 via-black/20 to-transparent z-10 pointer-events-none transition-all duration-[2000ms] ease-in-out"
+        :class="showLeftArrow ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'"
+      ></div>
+      <div 
+        class="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-black/90 via-black/20 to-transparent z-10 pointer-events-none transition-all duration-[2000ms] ease-in-out"
+        :class="showArrow ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'"
+      ></div>
 
       <div ref="scrollContainer" 
-        class="py-2 px-4 md:py-3 overflow-x-auto no-scrollbar min-h-[52px] md:min-h-[60px] flex items-center scroll-smooth"
+        class="py-2 px-4 md:py-3 overflow-x-auto no-scrollbar min-h-[52px] md:min-h-[60px] flex items-center scroll-smooth mask-fade"
         :style="{
-          'mask-image': `linear-gradient(to right, 
-            ${showLeftArrow ? 'transparent' : 'black'} 0%, 
-            black ${showLeftArrow ? '64px' : '0px'}, 
-            black ${showArrow ? 'calc(100% - 64px)' : '100%'}, 
-            ${showArrow ? 'transparent' : 'black'} 100%)`,
-          '-webkit-mask-image': `linear-gradient(to right, 
-            ${showLeftArrow ? 'transparent' : 'black'} 0%, 
-            black ${showLeftArrow ? '64px' : '0px'}, 
-            black ${showArrow ? 'calc(100% - 64px)' : '100%'}, 
-            ${showArrow ? 'transparent' : 'black'} 100%)`
+          '--mask-left': showLeftArrow ? '48px' : '0px',
+          '--mask-right': showArrow ? '48px' : '0px'
         }"
       >
         <div class="flex items-center space-x-2 md:space-x-12" :class="isScrollable ? 'justify-start' : 'justify-center w-full'">
@@ -121,5 +119,23 @@ onBeforeUnmount(() => {
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+.mask-fade {
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black var(--mask-left, 0px),
+    black calc(100% - var(--mask-right, 0px)),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black var(--mask-left, 0px),
+    black calc(100% - var(--mask-right, 0px)),
+    transparent 100%
+  );
+  transition: mask-image 2s ease-in-out, -webkit-mask-image 2s ease-in-out;
 }
 </style>

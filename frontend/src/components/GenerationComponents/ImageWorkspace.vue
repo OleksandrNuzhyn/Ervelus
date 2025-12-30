@@ -56,7 +56,7 @@
             </button>
           </div>
           <div v-else class="text-center text-gray-400">
-            <p>The result of the generation will appear here</p>
+            <p>Result will appear here</p>
           </div>
         </div>
         <div class="mt-7 mb-4 lg:mt-4 lg:mb-0 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-8 sm:gap-5 md:gap-6 lg:gap-10">
@@ -76,32 +76,17 @@
 
     <transition name="modal-fade">
       <div v-if="showGenerationsModal" class="fixed inset-0 flex items-center justify-center z-[100] confirm-modal-overlay" @click.self="showGenerationsModal = false">
-        <div class="modal-content-card p-10 w-11/12 max-w-lg shadow-2xl flex flex-col gap-6 text-gray-200 relative border-gradient-animated">
-          <div class="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 p-4 rounded-full border border-gray-700 shadow-xl">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          
-          <div class="pt-4 text-center">
-            <h3 class="medieval text-3xl text-gray-100 mb-2">Magical Energy Depleted</h3>
-            <div class="h-1 w-20 bg-purple-500/50 mx-auto rounded-full mb-4"></div>
-          </div>
-          
-          <div class="text-center px-4">
-            <p class="text-gray-300 text-lg leading-relaxed">
-              Your legend is just beginning! You've used all your available generations. 
-              Upgrade now to unlock <span class="text-purple-400 font-semibold">30+ premium styles</span> and continue your journey.
+        <div class="modal-content-card p-10 w-11/12 max-w-md shadow-2xl flex flex-col gap-6 text-gray-200 relative">
+          <div class="text-center">
+            <h3 class="medieval text-3xl text-gray-100 mb-2">Ready for More?</h3>
+            <p class="text-gray-300 text-lg mt-4">
+              Get more generations and keep creating!
             </p>
           </div>
-          
-          <div class="flex flex-col gap-3 pt-4">
-            <router-link to="/pricing" class="pricing-button text-center">
-              Get More Generations
+          <div class="flex justify-center pt-2">
+            <router-link to="/pricing" class="manage-button generations-primary-button">
+              Get More
             </router-link>
-            <button @click="showGenerationsModal = false" class="text-sm text-gray-500 hover:text-gray-400 transition-colors">
-              Maybe later
-            </button>
           </div>
         </div>
       </div>
@@ -535,26 +520,6 @@ async function downloadOutputImage() {
   animation: wave 1.6s ease-in-out infinite;
 }
 
-.border-gradient-animated {
-  border: 2px solid #3A1078;
-  animation: borderGradient 3s ease-in-out infinite;
-}
-
-@keyframes borderGradient {
-  0%, 100% { 
-    border-color: #3A1078;
-  }
-  25% { 
-    border-color: #4E31AA;
-  }
-  50% { 
-    border-color: #3795BD;
-  }
-  75% { 
-    border-color: #4E31AA;
-  }
-}
-
 @media (max-width: 380px) { 
   .modal-text {
     font-size: 1rem;
@@ -577,36 +542,53 @@ async function downloadOutputImage() {
 }
 
 .modal-content-card {
-  background: rgba(13, 13, 18, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 24px;
+  background: rgba(24, 24, 24, 0.5);
+  border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   will-change: backdrop-filter, transform;
+  transform: translateZ(0);
 }
 
 .confirm-modal-overlay {
-  background-color: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(8px);
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(15px);
 }
 
-.pricing-button {
-  display: block;
-  width: 100%;
-  padding: 1rem 1.5rem;
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-  color: white;
-  font-weight: 700;
-  font-size: 1.1rem;
-  border-radius: 12px;
+.manage-button {
+  display: inline-block;
+  width: auto;
+  min-width: 200px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 9999px;
+  padding: 1rem 2.5rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #9ca3af;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+  cursor: pointer;
 }
 
-.pricing-button:hover {
+.generations-primary-button {
+  background: #8b5cf6 !important; 
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+}
+
+.generations-primary-button:hover {
+  background: #7c3aed !important;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
-  filter: brightness(1.1);
+  box-shadow: 0 6px 25px rgba(139, 92, 246, 0.4);
+  color: white !important;
+}
+
+.small-manage-button {
+  min-width: 0;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
 }
 
 .medieval {

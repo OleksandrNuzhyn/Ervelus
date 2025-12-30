@@ -51,9 +51,9 @@
       leave-to-class="transform opacity-0 -translate-y-4">
       <div v-if="isBurgerOpen" class="md:hidden bg-black/30 backdrop-blur-sm text-gray-200">
         <div class="px-4 py-4 flex flex-col gap-6">
-          <div class="py-3 text-sm text-gray-400 flex items-center gap-2">
+          <div class="flex items-center gap-2 text-gray-100">
             <div class="w-10 flex justify-center">
-              <img src="@/assets/svg/coin.svg" class="h-10 w-10" />
+              <img src="@/assets/svg/coin.svg" class="h-10 w-10" style="filter: brightness(0) invert(1);" />
             </div>
             <span>Coins: {{ credits }}</span>
           </div>

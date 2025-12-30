@@ -29,7 +29,7 @@
             leave-to-class="transform translate-x-full">
             <div v-if="isBarOpen" class="fixed right-0 top-18 h-[calc(100vh-4rem)] py-2 w-80 bg-[#202b32]/30 backdrop-blur-xl z-100 flex flex-col transform-gpu">
                 <div class="px-3 py-4 text-sm text-gray-400 flex items-center justify-between">
-                    <span>COINS: {{ credits }}</span>
+                    <span>Coins: {{ credits }}</span>
                     <img src="@/assets/svg/coin.svg" class="h-9 w-9 mr-1" />
                 </div>
                 <router-link to="/profile" class="px-4 py-4 text-sm text-gray-400 hover:text-white flex items-center justify-between" @click="closeBar">
