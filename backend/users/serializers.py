@@ -40,7 +40,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         if len(latest_documents_version_to_accept) != len(required_document_types):
             raise serializers.ValidationError("We are unable to complete your registration at this time")
 
-        ip_address = request.META.get('REMOTE_ADDR')
+        ip_address = request.META.get('HTTP_X_FORWARDED_FOR').split(',')[0].strip()
         user_agent = request.META.get('HTTP_USER_AGENT')
         context = {"source": "registration_form", "method": "checkbox"}
 

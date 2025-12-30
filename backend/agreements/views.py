@@ -17,7 +17,7 @@ def accept_user_document_version_client_side(request):
     except TermsVersion.DoesNotExist:
         return Response({'detail': 'Not found'}, status=404)
 
-    ip_address = request.META.get('REMOTE_ADDR')
+    ip_address = request.META.get('HTTP_X_FORWARDED_FOR').split(',')[0].strip()
     user_agent = request.META.get('HTTP_USER_AGENT')
     context = {"source": "terms_update_modal", "method": "checkbox"}
 
