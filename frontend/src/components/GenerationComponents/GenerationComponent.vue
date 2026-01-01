@@ -69,11 +69,21 @@ onMounted(async () => {
     }
   }
   else if (styles.value.length > 0) {
-    const randomIndex = Math.floor(Math.random() * styles.value.length);
-    const randomStyle = styles.value[randomIndex];
-    selectedStyleId.value = randomStyle.id;
-    if (randomStyle.genre && randomStyle.genre.name) {
-      selectedGenreId.value = randomStyle.genre.name;
+    const parisianDreamStyle = styles.value.find(s => s.name.toLowerCase() === 'parisian dream');
+    
+    if (parisianDreamStyle) {
+      selectedStyleId.value = parisianDreamStyle.id;
+      if (parisianDreamStyle.genre && parisianDreamStyle.genre.name) {
+        selectedGenreId.value = parisianDreamStyle.genre.name;
+      }
+    }
+    else {
+      const randomIndex = Math.floor(Math.random() * styles.value.length);
+      const randomStyle = styles.value[randomIndex];
+      selectedStyleId.value = randomStyle.id;
+      if (randomStyle.genre && randomStyle.genre.name) {
+        selectedGenreId.value = randomStyle.genre.name;
+      }
     }
   }
 });
