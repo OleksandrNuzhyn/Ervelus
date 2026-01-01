@@ -68,6 +68,14 @@ onMounted(async () => {
       }
     }
   }
+  else if (styles.value.length > 0) {
+    const randomIndex = Math.floor(Math.random() * styles.value.length);
+    const randomStyle = styles.value[randomIndex];
+    selectedStyleId.value = randomStyle.id;
+    if (randomStyle.genre && randomStyle.genre.name) {
+      selectedGenreId.value = randomStyle.genre.name;
+    }
+  }
 });
 
 const filteredStyles = computed(() => {
@@ -89,19 +97,23 @@ function handleGenreSelect(genreId) {
 
 function handleStyleSelect(styleId) {
   selectedStyleId.value = styleId;
+  const selectedStyle = styles.value.find(s => s.id === styleId);
+  if (selectedStyle && selectedStyle.genre) {
+    selectedGenreId.value = selectedStyle.genre.name;
+  }
   isStylePanelOpen.value = false;
 }
 
 function handleClosePanel() {
   isStylePanelOpen.value = false;
-  selectedGenreId.value = null;
+  const style = styles.value.find(s => s.id === selectedStyleId.value);
+  if (style && style.genre) {
+    selectedGenreId.value = style.genre.name;
+  }
 }
 
 function handleOpenStylePanel() {
-    if (!selectedGenreId.value) {
-      selectedGenreId.value = genres.value[0].id;
-    }
-    isStylePanelOpen.value = true;
+  isStylePanelOpen.value = true;
 }
 </script>
 

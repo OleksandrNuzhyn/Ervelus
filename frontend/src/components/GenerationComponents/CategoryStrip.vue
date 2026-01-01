@@ -8,19 +8,19 @@
     
     <div class="relative flex-grow bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl overflow-hidden">
       <div 
-        class="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-black/90 via-black/20 to-transparent z-10 pointer-events-none transition-all duration-[2000ms] ease-in-out"
+        class="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-black/50 via-black/15 to-transparent z-10 pointer-events-none transition-all duration-[2000ms] ease-in-out"
         :class="showLeftArrow ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'"
       ></div>
       <div 
-        class="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-black/90 via-black/20 to-transparent z-10 pointer-events-none transition-all duration-[2000ms] ease-in-out"
+        class="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-black/50 via-black/15 to-transparent z-10 pointer-events-none transition-all duration-[2000ms] ease-in-out"
         :class="showArrow ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'"
       ></div>
 
       <div ref="scrollContainer" 
         class="py-2 px-4 md:py-3 overflow-x-auto no-scrollbar min-h-[52px] md:min-h-[60px] flex items-center scroll-smooth mask-fade"
         :style="{
-          '--mask-left': showLeftArrow ? '48px' : '0px',
-          '--mask-right': showArrow ? '48px' : '0px'
+          '--mask-left': showLeftArrow ? '64px' : '0px',
+          '--mask-right': showArrow ? '64px' : '0px'
         }"
       >
         <div class="flex items-center space-x-2 md:space-x-12" :class="isScrollable ? 'justify-start' : 'justify-center w-full'">
@@ -82,6 +82,25 @@ function scrollRight() {
   }
 }
 
+function scrollToSelected() {
+  nextTick(() => {
+    const el = scrollContainer.value;
+    if (!el) return;
+    
+    const selectedBtn = el.querySelector('button.bg-white\\/10');
+    if (selectedBtn) {
+      const elCenter = el.clientWidth / 2;
+      const btnCenter = selectedBtn.offsetLeft + (selectedBtn.clientWidth / 2);
+      const targetPos = btnCenter - elCenter;
+      
+      el.scrollTo({
+        left: targetPos,
+        behavior: 'smooth'
+      });
+    }
+  });
+}
+
 let resizeObserver = null;
 
 onMounted(() => {
@@ -98,12 +117,24 @@ onMounted(() => {
   });
   resizeObserver = new ResizeObserver(() => {
     checkScroll();
+    scrollToSelected();
   });
   resizeObserver.observe(el);
   watch(() => props.categories, () => {
-    nextTick(checkScroll);
+    nextTick(() => {
+      checkScroll();
+      scrollToSelected();
+    });
   }, { deep: true, immediate: true });
-  nextTick(checkScroll);
+  
+  watch(() => props.selectedCategoryId, () => {
+    scrollToSelected();
+  });
+
+  nextTick(() => {
+    checkScroll();
+    scrollToSelected();
+  });
 });
 
 onBeforeUnmount(() => {
@@ -125,15 +156,19 @@ onBeforeUnmount(() => {
   mask-image: linear-gradient(
     to right,
     transparent 0%,
+    rgba(0,0,0,0.4) calc(var(--mask-left, 0px) / 2),
     black var(--mask-left, 0px),
     black calc(100% - var(--mask-right, 0px)),
+    rgba(0,0,0,0.4) calc(100% - (var(--mask-right, 0px) / 2)),
     transparent 100%
   );
   -webkit-mask-image: linear-gradient(
     to right,
     transparent 0%,
+    rgba(0,0,0,0.4) calc(var(--mask-left, 0px) / 2),
     black var(--mask-left, 0px),
     black calc(100% - var(--mask-right, 0px)),
+    rgba(0,0,0,0.4) calc(100% - (var(--mask-right, 0px) / 2)),
     transparent 100%
   );
   transition: mask-image 2s ease-in-out, -webkit-mask-image 2s ease-in-out;
