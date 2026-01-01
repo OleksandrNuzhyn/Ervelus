@@ -1,10 +1,10 @@
 <template>
-  <div :class="['flex flex-col px-3 pt-3 gap-3 lg:min-h-[calc(100vh-9rem)] relative overflow-hidden', 
-    hasStartedTransform ? 'pb-21 lg:pb-3' : 'pb-3']">
-    <div class="flex-grow flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-6 pb-0 overflow-visible">
-      <div class="flex flex-col gap-3 lg:shrink overflow-visible">
-        <div class="relative w-full lg:flex-grow lg:flex lg:flex-col overflow-visible">
-          <div :class="['bg-black/30 backdrop-blur-[7px] shadow-[0_0_1.5px_rgba(0,0,0,0.8)] rounded-xl p-4 flex flex-col items-center justify-center transition-all duration-500 h-[38vh] md:h-[600px] lg:h-auto lg:flex-grow lg:min-h-0 overflow-visible', 
+  <div :class="['flex flex-col px-3 pt-2 gap-3 relative overflow-hidden transition-all duration-500', 
+    !hasStartedTransform ? 'h-[calc(100dvh-8.5rem)] lg:h-auto lg:min-h-[calc(100vh-9rem)] pb-2' : 'pb-21 lg:pb-3 lg:min-h-[calc(100vh-9rem)]']">
+    <div :class="['flex-grow flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-6 pb-0 overflow-visible min-h-0', !hasStartedTransform ? 'h-full' : '']">
+      <div :class="['flex flex-col lg:shrink overflow-visible gap-3 min-h-0', !hasStartedTransform ? 'flex-1 justify-between' : '']">
+        <div :class="['relative w-full flex flex-col lg:flex-grow overflow-visible min-h-0', !hasStartedTransform ? 'flex-1' : '']">
+          <div :class="[!hasStartedTransform ? 'flex-1' : 'h-[38vh] md:h-[600px]', 'bg-black/30 backdrop-blur-[7px] shadow-[0_0_1.5px_rgba(0,0,0,0.8)] rounded-xl p-4 flex flex-col items-center justify-center transition-all duration-500 w-full lg:h-auto lg:flex-grow lg:min-h-0 overflow-visible', 
             inputImageUrl ? 'border-gray-600/30' : 'border-transparent']">
             
             <div v-if="!inputImageUrl" @click="triggerFileInput"
@@ -84,8 +84,7 @@
       </div>
     </div>
 
-    <div :class="['lg:hidden shrink-0 transition-all duration-500', 
-      hasStartedTransform ? 'fixed bottom-0 left-0 right-0 z-50 px-7 pb-3 pt-4 bg-gradient-to-t from-black/60 to-transparent' : '']">
+    <div :class="['lg:hidden shrink-0 transition-all duration-500', !hasStartedTransform ? 'static bg-none p-0' : 'fixed bottom-0 left-0 right-0 z-50 px-7 pb-3 pt-4 bg-gradient-to-t from-black/60 to-transparent']">
       <button 
         @click="handleButtonClick"
         :disabled="isButtonDisabled"
@@ -408,9 +407,6 @@ async function handleGenerate() {
   hasStartedTransform.value = true;
   isLoading.value = true;
 
-  nextTick(() => {
-    outputSection.value?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
   outputImageUrl.value = null;
   completedGenerationId.value = null;
 
