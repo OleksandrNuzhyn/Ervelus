@@ -31,13 +31,14 @@
           </div>
         </div>
 
-        <button @click="onOpenStylePanel" class="w-full bg-white/[0.06] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] rounded-xl min-h-[56px] lg:min-h-[80px] py-3.5 lg:py-6 mt-0 flex items-center justify-center relative text-lg md:text-2xl font-semibold cursor-pointer hover:bg-white/[0.12] active:scale-[0.98] transition-all duration-300 text-white px-4 group overflow-visible">
-          <div class="flex items-center gap-2">
-            <span class="opacity-80 font-medium whitespace-nowrap group-hover:opacity-100 transition-opacity">Style:</span>
-            <span class="truncate font-bold">{{ props.selectedStyleName }}</span>
+        <button @click="onOpenStylePanel" class="w-full bg-white/[0.06] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] rounded-xl min-h-[56px] lg:min-h-[80px] py-3.5 lg:py-6 mt-0 flex items-center justify-center relative cursor-pointer hover:bg-white/[0.12] active:scale-[0.98] transition-all duration-300 px-4 group overflow-visible">
+          <div class="flex items-center gap-4">
+            <span class="text-white/50 font-medium text-lg md:text-2xl">Style</span>
+            <div class="w-[1px] h-5 md:h-7 bg-white/20 shrink-0 relative top-[1px]"></div>
+            <span class="font-bold text-white text-lg md:text-2xl tracking-wide">{{ props.selectedStyleName }}</span>
           </div>
-          <svg class="absolute right-5 top-[54%] -translate-y-1/2 w-4 h-4 md:w-6 md:h-6 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+          <svg class="absolute right-5 top-[calc(50%+1.2px)] -translate-y-1/2 w-5 h-5 text-white/30 group-hover:text-white/60 transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
           </svg>
         </button>
       </div>
@@ -400,8 +401,12 @@ function getErrorMessage(err, endpoint) {
 
 async function handleGenerate() {
   if (isLoading.value) return;
-  if ((!inputImageFile.value && !inputImageUrl.value) || !props.selectedStyleId) {
-    toast.info('Choose your photo and style');
+  if (!inputImageFile.value && !inputImageUrl.value) {
+    triggerFileInput();
+    return;
+  }
+  
+  if (!props.selectedStyleId) {
     return;
   }
   hasStartedTransform.value = true;
