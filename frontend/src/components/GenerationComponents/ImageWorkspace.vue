@@ -11,11 +11,11 @@
                  class="cursor-pointer w-full h-full flex flex-col items-center justify-center relative group/btn">
               
               <div class="mb-4">
-                <svg class="w-16 h-16 md:w-24 md:h-24 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <svg class="w-16 h-16 md:w-24 md:h-24 text-white/30" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                 </svg>
               </div>
-              <p class="text-lg text-gray-400">Click to upload image</p>
+              <p class="text-base md:text-2xl font-semibold text-white/50 tracking-wide">Click to upload image</p>
               <input type="file" ref="fileInput" @change="onFileSelected" class="hidden" accept="image/jpeg, image/png, image/webp" />
             </div>
 
@@ -32,12 +32,12 @@
         </div>
 
         <button @click="onOpenStylePanel" class="w-full bg-white/[0.06] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] rounded-xl min-h-[56px] lg:min-h-[80px] py-3.5 lg:py-6 mt-0 flex items-center justify-center relative cursor-pointer hover:bg-white/[0.12] active:scale-[0.98] transition-all duration-300 px-4 group overflow-visible">
-          <div class="flex items-center gap-4">
-            <span class="text-white/50 font-medium text-lg md:text-2xl">Style</span>
-            <div class="w-[1px] h-5 md:h-7 bg-white/20 shrink-0 relative top-[1px]"></div>
-            <span class="font-bold text-white text-lg md:text-2xl tracking-wide">{{ props.selectedStyleName }}</span>
+          <div class="flex items-center gap-2 md:gap-4 px-10 w-full justify-center min-w-0">
+            <span class="text-white/50 font-medium text-base md:text-2xl shrink-0">Style</span>
+            <div class="w-[1px] h-4 md:h-7 bg-white/20 shrink-0 relative top-[1px]"></div>
+            <span class="font-bold text-white text-base md:text-2xl tracking-wide truncate">{{ props.selectedStyleName }}</span>
           </div>
-          <svg class="absolute right-5 top-[calc(50%+1.2px)] -translate-y-1/2 w-5 h-5 text-white/30 group-hover:text-white/60 transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <svg class="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 group-hover:text-white/60 transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
           </svg>
         </button>
