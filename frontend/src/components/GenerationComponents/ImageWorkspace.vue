@@ -75,13 +75,12 @@
             @click="handleButtonClick"
             :disabled="isButtonDisabled"
             :class="[
-              'w-full bg-[#3d3d3d] rounded-xl min-h-[80px] py-6 text-center text-2xl font-bold text-white cursor-pointer transition-all duration-500 relative overflow-hidden',
-              isButtonDisabled ? 'cursor-not-allowed' : 'hover:bg-[#4a4a4a] active:scale-[0.98]',
-              (isLoading || inputImageUrl) ? 'shadow-[0_0_20px_rgba(255,255,255,0.1)]' : ''
+              'w-full bg-[#3d3d3d] rounded-xl min-h-[80px] py-6 text-center text-2xl font-bold text-white cursor-pointer transition-all duration-500 relative overflow-hidden shadow-[0_0_20px_rgba(255,255,255,0.1)]',
+              isButtonDisabled ? 'cursor-not-allowed' : 'hover:bg-[#4a4a4a] active:scale-[0.98]'
             ]"
           >
-            <div v-if="inputImageUrl && !isLoading" class="absolute inset-0 w-full h-full shimmer-effect pointer-events-none"></div>
-            <span class="relative z-10" :class="{ 'wave-animation inline-block': isLoading }">{{ buttonText }}</span>
+            <div v-if="!isLoading" class="absolute inset-0 w-full h-full shimmer-effect pointer-events-none"></div>
+            <span class="relative z-10" :class="{ 'text-shimmer inline-block': isLoading }">{{ buttonText }}</span>
           </button>
         </div>
       </div>
@@ -92,13 +91,12 @@
         @click="handleButtonClick"
         :disabled="isButtonDisabled"
         :class="[
-          'w-full bg-[#3d3d3d] rounded-xl min-h-[58px] py-4 text-center text-xl font-bold text-white cursor-pointer transition-all duration-500 relative overflow-hidden',
-          isButtonDisabled ? 'cursor-not-allowed' : 'hover:bg-[#4a4a4a] active:scale-[0.98]',
-          (isLoading || inputImageUrl) ? 'shadow-[0_0_20px_rgba(255,255,255,0.1)]' : ''
+          'w-full bg-[#3d3d3d] rounded-xl min-h-[58px] py-4 text-center text-xl font-bold text-white cursor-pointer transition-all duration-500 relative overflow-hidden shadow-[0_0_20px_rgba(255,255,255,0.1)]',
+          isButtonDisabled ? 'cursor-not-allowed' : 'hover:bg-[#4a4a4a] active:scale-[0.98]'
         ]"
       >
-        <div v-if="inputImageUrl && !isLoading" class="absolute inset-0 w-full h-full shimmer-effect pointer-events-none"></div>
-        <span class="relative z-10" :class="{ 'wave-animation inline-block': isLoading }">{{ buttonText }}</span>
+        <div v-if="!isLoading" class="absolute inset-0 w-full h-full shimmer-effect pointer-events-none"></div>
+        <span class="relative z-10" :class="{ 'text-shimmer inline-block': isLoading }">{{ buttonText }}</span>
       </button>
     </div>
 
@@ -551,7 +549,7 @@ async function downloadOutputImage() {
   100% { background-position: -200% center; }
 }
 
-.wave-animation {
+.text-shimmer {
   background: linear-gradient(
     90deg, 
     rgba(255,255,255,1) 0%, 
@@ -565,6 +563,19 @@ async function downloadOutputImage() {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: shimmerText 4s linear infinite;
+}
+
+@keyframes wave {
+  0%, 100% { transform: rotate(35deg)}
+  25% { transform: rotate(50deg)}
+  75% { transform: rotate(40deg)}
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.wave-animation {
+  animation: wave 2.5s ease-in-out infinite;
 }
 
 .no-scrollbar::-webkit-scrollbar {
