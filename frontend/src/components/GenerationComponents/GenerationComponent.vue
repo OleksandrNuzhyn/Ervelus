@@ -6,10 +6,13 @@
         <transition name="slide-fade">
           <StylePanel
             v-if="isStylePanelOpen"
-            class="absolute top-full mt-3 w-full left-0 z-20"
+            class="absolute top-full mt-2 w-full left-0 z-20"
             :styles="filteredStyles"
             :selected-style-id="selectedStyleId"
+            :current-genre-name="selectedGenreId"
             @style-selected="handleStyleSelect"
+            @next-genre="handleNextGenre"
+            @prev-genre="handlePrevGenre"
             @close="handleClosePanel" />
         </transition>
       </div>
@@ -124,6 +127,20 @@ function handleClosePanel() {
 
 function handleOpenStylePanel() {
   isStylePanelOpen.value = true;
+}
+
+function handleNextGenre() {
+  if (genres.value.length === 0) return;
+  const currentIndex = genres.value.findIndex(g => g.id === selectedGenreId.value);
+  const nextIndex = (currentIndex + 1) % genres.value.length;
+  selectedGenreId.value = genres.value[nextIndex].id;
+}
+
+function handlePrevGenre() {
+  if (genres.value.length === 0) return;
+  const currentIndex = genres.value.findIndex(g => g.id === selectedGenreId.value);
+  const prevIndex = (currentIndex - 1 + genres.value.length) % genres.value.length;
+  selectedGenreId.value = genres.value[prevIndex].id;
 }
 </script>
 

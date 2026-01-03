@@ -284,12 +284,13 @@ onMounted(() => {
 }
 
 .subscription-display-card {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(36, 36, 36, 0.45);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
   will-change: backdrop-filter, transform;
   transform: translateZ(0);
   border-radius: 20px;
   padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
   min-height: 585px;
   display: flex;

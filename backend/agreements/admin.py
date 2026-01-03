@@ -14,12 +14,6 @@ class TermsVersionAdmin(admin.ModelAdmin):
     @admin.display(ordering='published_at', description='published at')
     def published_at_formatted(self, obj):
         return timezone.localtime(obj.published_at).strftime('%d.%m.%Y %H:%M:%S')
-    
-    def get_readonly_fields(self, request, obj=None):
-        if obj:
-            return ('document_type', 'version', 'published_at_formatted', 'content')
-        else:
-            return ()
 
 
 @admin.register(UserAgreement)
