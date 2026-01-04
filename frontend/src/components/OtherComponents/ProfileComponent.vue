@@ -428,13 +428,13 @@ onMounted(() => {
 }
 
 .fade-enter-active {
-  transition: opacity 0.6s ease-out, transform 0.7s ease-out;
-  will-change: opacity, transform;
+  transition: transform 0.7s ease-out;
+  will-change: transform;
   transform: translateZ(0);
 }
 
 .fade-enter-from {
-  opacity: 0;
+  /* No opacity change, only slide */
   transform: translateY(20px) translateZ(0);
 }
 
@@ -443,7 +443,6 @@ onMounted(() => {
     transition: none !important;
   }
   .fade-enter-from {
-    opacity: 1 !important;
     transform: none !important;
   }
 }
