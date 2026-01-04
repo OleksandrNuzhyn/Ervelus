@@ -83,6 +83,12 @@ async function handleSubmit() {
   transform: translateZ(0);
 }
 
+@media (max-width: 640px) {
+  .form-container {
+    padding: 1.5rem;
+  }
+}
+
 .manage-button {
   display: inline-block;
   width: auto;

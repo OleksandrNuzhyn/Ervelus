@@ -41,6 +41,6 @@ onMounted(() => {
   background-image: url('@/assets/background_assets/register.webp');
   min-height: max(100vh, calc(100vw * 23 / 48));
   background-size: cover;
-  background-position: left top;
+  background-position: center center;
 }
 </style>

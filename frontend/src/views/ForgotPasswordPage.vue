@@ -1,6 +1,6 @@
 <template>
   <div class="background-container flex items-center justify-center">
-    <div class="w-full max-w-sm">
+    <div class="w-full max-w-sm px-4">
       <ForgotPasswordForm />
     </div>
   </div>

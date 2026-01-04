@@ -6,7 +6,7 @@ from .models import PromoCode, PromoCodeUsage
 
 @admin.register(PromoCode)
 class PromoCodeAdmin(admin.ModelAdmin):
-    list_display = ('code', 'max_usages', 'current_usages', 'is_active')
+    list_display = ('id', 'code', 'max_usages', 'current_usages', 'is_active')
     list_filter = ('is_active',)
     search_fields = ('code', 'description')
     ordering = ('-id',)
@@ -14,7 +14,7 @@ class PromoCodeAdmin(admin.ModelAdmin):
 
 @admin.register(PromoCodeUsage)
 class PromoCodeUsageAdmin(NoLogAdminMixin, admin.ModelAdmin):
-    list_display = ('user__email', 'promo_code', 'used_at_formatted')
+    list_display = ('id', 'user__email', 'promo_code', 'used_at_formatted')
     list_select_related = ('user', 'promo_code')
     list_filter = ('promo_code',)
     search_fields = ('user__email',)
@@ -24,3 +24,9 @@ class PromoCodeUsageAdmin(NoLogAdminMixin, admin.ModelAdmin):
     @admin.display(ordering='used_at', description='used at')
     def used_at_formatted(self, obj):
         return timezone.localtime(obj.used_at).strftime('%d.%m.%Y %H:%M:%S')
+    
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return ('used_at_formatted',)
+        else:
+            return ()

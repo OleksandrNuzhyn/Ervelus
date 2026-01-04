@@ -4,7 +4,7 @@
 
     <Transition name="fade" @after-enter="onLoaderFadedIn">
       <div v-if="isLoading || !authStore.authChecked || authStore.isMaintenanceMode" class="loader-overlay">
-        <div class="stars-loader"></div>
+        <div v-if="showStars" class="stars-loader"></div>
         <div v-if="authStore.isMaintenanceMode" class="maintenance-content">
           <Transition name="fade-box" appear>
             <div class="maintenance-box">
@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import TermsAcceptModal from '@/components/OtherComponents/TermsAcceptModal.vue';
@@ -29,6 +29,7 @@ import TermsAcceptModal from '@/components/OtherComponents/TermsAcceptModal.vue'
 const router = useRouter();
 const authStore = useAuthStore();
 const isLoading = ref(false);
+const showStars = ref(true);
 let resolveNavigation = null;
 
 function onLoaderFadedIn() {
@@ -53,6 +54,12 @@ router.beforeEach(async (to, from) => {
 
 router.afterEach(() => {
   isLoading.value = false;
+});
+
+onMounted(() => {
+  if (window.innerWidth < 1024) {
+    showStars.value = false;
+  }
 });
 </script>
 

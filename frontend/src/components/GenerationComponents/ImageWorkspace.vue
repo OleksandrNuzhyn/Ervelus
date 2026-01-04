@@ -22,9 +22,10 @@
             <div v-else class="relative w-full h-full flex items-center justify-center">
               <img :src="inputImageUrl" alt="Input" class="max-w-full max-h-full rounded-xl transition-opacity duration-500" :style="{ opacity: inputImageLoaded ? 1 : 0 }" @load="onInputImageLoad" />
               <button @click="inputImageUrl = null; outputImageUrl = null; inputImageLoaded = false" 
-                class="absolute right-2 top-2 p-1.5 rounded-full bg-black/10 backdrop-blur-sm text-white/70 hover:text-white hover:bg-black/30 transition-all duration-300 z-20 shadow-sm">
-                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                class="absolute right-2 top-2 p-2 text-white hover:text-white/80 transition-all duration-300 z-20"
+                :style="{ filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.6)) drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
@@ -55,8 +56,9 @@
           <div v-else-if="outputImageUrl" class="relative w-full h-full flex items-center justify-center">
             <img :src="outputImageUrl" alt="Output" class="max-w-full max-h-full rounded-xl transition-opacity duration-500" :style="{ opacity: outputImageLoaded ? 1 : 0 }" @load="onOutputImageLoad" />
             <button @click="downloadOutputImage" 
-              class="absolute right-2 top-2 p-1.5 rounded-full bg-black/10 backdrop-blur-sm text-white/70 hover:text-white hover:bg-black/30 transition-all duration-300 z-20 shadow-sm">
-              <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              class="absolute right-2 top-2 p-2 text-white hover:text-white/80 transition-all duration-300 z-20"
+              :style="{ filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.6)) drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }">
+              <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
               </svg>
             </button>

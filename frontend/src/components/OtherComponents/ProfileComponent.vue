@@ -183,7 +183,7 @@ async function applyPromoCode() {
   isSubmittingPromo.value = true;
   try {
     const response = await api.post('/api/marketing/promo-codes/', { code: promoCode.value });
-    showAlert('Success!', `Promo code applied! You received ${response.data.credits_count} generations`);
+    showAlert('Success', `Promo code applied! You received ${response.data.credits_count} generations`);
     promoCode.value = '';
   }
   catch (error) {
@@ -436,6 +436,16 @@ onMounted(() => {
 .fade-enter-from {
   opacity: 0;
   transform: translateY(20px) translateZ(0);
+}
+
+@media (max-width: 1024px) {
+  .fade-enter-active {
+    transition: none !important;
+  }
+  .fade-enter-from {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 .modal-content-card {
