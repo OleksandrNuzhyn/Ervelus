@@ -1,10 +1,10 @@
 <template>
   <div :class="['flex flex-col px-3 pt-2 gap-3 relative overflow-hidden', 
-    !hasStartedTransform ? 'h-[calc(100dvh-8.5rem)] lg:h-auto lg:min-h-[calc(100vh-9rem)] pb-2' : 'pb-21 lg:pb-3 lg:min-h-[calc(100vh-9rem)]']">
-    <div :class="['flex-grow flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-6 pb-0 overflow-visible min-h-0', !hasStartedTransform ? 'h-full' : '']">
-      <div :class="['flex flex-col lg:shrink overflow-visible gap-3 min-h-0', !hasStartedTransform ? 'flex-1 justify-between' : '']">
-        <div :class="['relative w-full flex flex-col lg:flex-grow overflow-visible min-h-0', !hasStartedTransform ? 'flex-1' : '']">
-          <div :class="[!hasStartedTransform ? 'flex-1' : 'h-[38vh] md:h-[600px]', 'bg-black/30 backdrop-blur-[7px] shadow-[0_0_1.5px_rgba(0,0,0,0.8)] rounded-xl p-4 flex flex-col items-center justify-center w-full lg:h-auto lg:flex-grow lg:min-h-0 overflow-visible', 
+    !hasStartedTransform ? 'h-[calc(100dvh-8.5rem)] lg:h-[calc(100vh-9rem)] pb-2' : 'pb-21 lg:pb-2 lg:h-[calc(100vh-9rem)]']">
+    <div :class="['flex-grow flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-6 pb-0 overflow-visible min-h-0 lg:h-full', !hasStartedTransform ? 'h-full' : '']">
+      <div :class="['flex flex-col lg:shrink overflow-visible gap-3 min-h-0 lg:justify-between', !hasStartedTransform ? 'flex-1 justify-between' : '']">
+        <div :class="['relative w-full flex flex-col lg:flex-grow overflow-visible min-h-0 lg:flex-1', !hasStartedTransform ? 'flex-1' : '']">
+          <div :class="[!hasStartedTransform ? 'flex-1' : 'h-[38vh] md:h-[600px]', 'bg-black/30 backdrop-blur-[7px] shadow-[0_0_1.5px_rgba(0,0,0,0.8)] rounded-xl p-4 flex flex-col items-center justify-center w-full lg:h-full lg:flex-grow lg:min-h-0 overflow-visible', 
             inputImageUrl ? 'border-gray-600/30' : 'border-transparent']">
             
             <div v-if="!inputImageUrl" @click="triggerFileInput"
@@ -45,7 +45,7 @@
       </div>
 
       <div ref="outputSection" :class="['flex-col w-full h-full lg:shrink gap-3 overflow-hidden', hasStartedTransform ? 'flex' : 'hidden lg:flex']">
-        <div :class="['relative bg-black/30 backdrop-blur-[7px] shadow-[0_0_1.5px_rgba(0,0,0,0.8)] rounded-xl p-4 flex flex-col items-center justify-center h-[38vh] md:h-[600px] lg:h-auto lg:flex-grow lg:min-h-0',
+        <div :class="['relative bg-black/30 backdrop-blur-[7px] shadow-[0_0_1.5px_rgba(0,0,0,0.8)] rounded-xl p-4 flex flex-col items-center justify-center h-[38vh] md:h-[600px] lg:h-full lg:flex-grow lg:min-h-0',
           outputImageUrl || isLoading ? 'border-gray-600/30' : 'border-transparent',
           !hasStartedTransform ? 'max-lg:hidden' : '']">
           
