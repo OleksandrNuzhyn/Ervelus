@@ -1,5 +1,4 @@
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import UserSubscription
 from .serializers import UserSubscriptionListSerializer, CreateOrderSerializer
@@ -18,7 +17,7 @@ import time
 logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([HasAcceptedLatestAgreements])
 def create_order(request):
     serializer = CreateOrderSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)

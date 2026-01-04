@@ -22,7 +22,7 @@
             <div v-else class="relative w-full h-full flex items-center justify-center">
               <img :src="inputImageUrl" alt="Input" class="max-w-full max-h-full rounded-xl transition-opacity duration-500" :style="{ opacity: inputImageLoaded ? 1 : 0 }" @load="onInputImageLoad" />
               <button @click="inputImageUrl = null; outputImageUrl = null; inputImageLoaded = false" 
-                class="absolute right-0 top-0 text-white/60 hover:text-white bg-transparent p-2 transition-colors z-20">
+                class="absolute right-2 top-2 p-1.5 rounded-full bg-black/10 backdrop-blur-sm text-white/70 hover:text-white hover:bg-black/30 transition-all duration-300 z-20 shadow-sm">
                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -55,7 +55,7 @@
           <div v-else-if="outputImageUrl" class="relative w-full h-full flex items-center justify-center">
             <img :src="outputImageUrl" alt="Output" class="max-w-full max-h-full rounded-xl transition-opacity duration-500" :style="{ opacity: outputImageLoaded ? 1 : 0 }" @load="onOutputImageLoad" />
             <button @click="downloadOutputImage" 
-              class="absolute right-0 top-0 text-white/60 hover:text-white bg-transparent p-2 transition-colors z-20">
+              class="absolute right-2 top-2 p-1.5 rounded-full bg-black/10 backdrop-blur-sm text-white/70 hover:text-white hover:bg-black/30 transition-all duration-300 z-20 shadow-sm">
               <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
               </svg>
@@ -63,10 +63,10 @@
           </div>
 
           <div v-else class="flex flex-col items-center justify-center space-y-4">
-            <svg class="w-12 h-12 text-white/20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <svg class="w-16 h-16 md:w-24 md:h-24 text-white/30" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
             </svg>
-            <p class="text-lg md:text-xl font-medium text-white/30 tracking-tight">Final Result</p>
+            <p class="text-lg md:text-2xl font-semibold text-white/50 tracking-wide">Final Result</p>
           </div>
         </div>
 

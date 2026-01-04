@@ -57,7 +57,8 @@ INSTALLED_APPS = [
     'products',
     'subscriptions',
     'generations',
-    'agreements'
+    'agreements',
+    'marketing'
 ]
 
 SITE_ID = 1

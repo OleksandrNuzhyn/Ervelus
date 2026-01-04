@@ -19,7 +19,8 @@ if settings.DEBUG:
         path('api/subscriptions/', include('subscriptions.urls_api')),
         path('api/products/', include('products.urls')),
         path('api/generations/', include('generations.urls_api')),
-        path('api/agreements/', include('agreements.urls'))
+        path('api/agreements/', include('agreements.urls')),
+        path('api/marketing/', include('marketing.urls'))
     ]
 else:
     admin.site.__class__ = OTPAdminSite
@@ -35,7 +36,8 @@ else:
             path('api/subscriptions/', include('subscriptions.urls_api')),
             path('api/products/', include('products.urls')),
             path('api/generations/', include('generations.urls_api')),
-            path('api/agreements/', include('agreements.urls'))
+            path('api/agreements/', include('agreements.urls')),
+            path('api/marketing/', include('marketing.urls'))
         ]
     elif settings.SERVICE_NAME == 'ervelus-generations-service':
         urlpatterns += [

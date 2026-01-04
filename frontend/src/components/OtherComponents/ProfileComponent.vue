@@ -3,13 +3,37 @@
     <transition name="fade">
       <div v-if="!isLoading" class="flex-grow flex flex-col w-full max-w-[1850px] mx-auto space-y-8">
         <div class="py-2 flex-grow flex flex-col items-center">
-          <div class="w-full max-w-2xl pt-5">
+          <div class="w-full max-w-2xl pt-8">
             <div class="relative z-10 flex flex-col h-full">
-              <h2 class="text-3xl font-semibold text-gray-200 mb-6 medieval text-center">Subscriptions</h2>
-              
+
+              <div class="mb-8 flex justify-center">
+                <div class="subscription-display-card !min-h-0 py-14 px-10 w-full max-w-2xl flex flex-col items-center">
+                  <h3 class="medieval text-2xl font-bold text-gray-200 mb-10 tracking-wide">Promo Code</h3>
+                  
+                  <div class="flex flex-col sm:flex-row items-center justify-center gap-10 sm:gap-4 w-full max-w-lg">
+                    <input 
+                      v-model="promoCode" 
+                      placeholder="Enter code" 
+                      @keyup.enter="applyPromoCode"
+                      class="w-full h-[52px] bg-transparent border border-white/10 rounded-full px-8 text-white text-lg placeholder:text-white/10 focus:outline-none focus:border-white/30 transition-all font-light flex items-center"
+                    />
+                    
+                    <button 
+                      @click="applyPromoCode" 
+                      :disabled="!promoCode || isSubmittingPromo"
+                      class="manage-button !h-[52px] flex items-center justify-center !min-w-[160px] !py-0 !text-base transition-all duration-300 !border-white/10"
+                      :class="!promoCode ? '!text-white/10 !cursor-not-allowed grayscale' : 'opacity-100 activate-button-hover shadow-[0_0_12px_rgba(129,180,253,0.07)]'"
+                    >
+                      Activate
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               <div v-if="subscriptions.length > 0" class="space-y-6 pb-6">
                 <div v-for="sub in subscriptions" :key="sub.id" class="subscription-display-card">
                   <div class="relative z-10 flex flex-col h-full">
+                    <h3 class="medieval text-2xl font-semibold text-gray-200 mb-6 text-center">Subscription</h3>
                     <div>
                       <div class="flex justify-between items-baseline">
                         <h3 class="text-2xl font-bold text-gray-100 medieval">{{ sub.plan_name }}</h3>
@@ -75,7 +99,7 @@
                   <div class="relative z-10 flex flex-col h-full justify-center items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     <h3 class="text-lg text-gray-300">No Subscriptions Found</h3>
-                    <p class="max-w-xs mt-2 text-sm text-gray-500">No subscription plans. View our pricing options</p>
+                    <p class="max-w-xs mt-2 text-sm text-gray-500">No subscription plans. View our pricing</p>
                     <router-link to="/pricing" class="manage-button mt-8">View Plans</router-link>
                   </div>
                 </div>
@@ -83,10 +107,6 @@
 
               <div class="my-8 text-center">
                 <p class="text-sm text-gray-400">{{ displayEmail }}</p>
-
-                <div v-if="errorMessage" class="mt-4 text-red-400 text-sm">
-                  <p>{{ errorMessage }}</p>
-                </div>
 
                 <button @click="deleteAccount" class="delete-button-subtle mt-4">
                   Delete Account
@@ -98,18 +118,20 @@
       </div>
     </transition>
     <transition name="modal-fade">
-      <div v-if="showConfirmModal" class="fixed inset-0 flex items-center justify-center z-50 confirm-modal-overlay" @click.self="handleCancel">
-        <div class="modal-content-card p-8 w-11/12 max-w-md shadow-lg flex flex-col gap-5 text-gray-200 relative">
-          <div class="pb-2">
-            <h3 class="medieval text-2xl text-center text-gray-100">{{ modalTitle }}</h3>
-          </div>
+      <div v-if="showModal" class="fixed inset-0 flex items-center justify-center z-50 confirm-modal-overlay" @click.self="handleModalBackdrop">
+        <div class="modal-content-card p-10 w-11/12 max-w-md shadow-2xl flex flex-col gap-6 text-gray-200 relative">
           <div class="text-center">
-            <p class="text-gray-300 text-base m-0 leading-relaxed">{{ modalMessage }}</p>
+            <h3 class="medieval text-3xl text-gray-100 mb-2">{{ modalTitle }}</h3>
+            <p class="text-gray-300 text-lg mt-4 leading-relaxed">{{ modalMessage }}</p>
           </div>
           <div class="flex justify-center gap-4 pt-4">
-            <button @click="handleConfirm" class="manage-button small-manage-button">
-              Confirm
-            </button>
+            <template v-if="isConfirmMode">
+              <button @click="handleConfirm(false)" class="manage-button !min-w-[140px] py-3 activate-button-hover">Cancel</button>
+              <button @click="handleConfirm(true)" class="manage-button !min-w-[140px] py-3 activate-button-hover">Confirm</button>
+            </template>
+            <template v-else>
+              <button @click="showModal = false" class="manage-button !min-w-[140px] py-3 activate-button-hover">Got it</button>
+            </template>
           </div>
         </div>
       </div>
@@ -122,23 +144,59 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '@/services/api';
 import { useAuthStore } from '@/stores/auth';
-import { toast } from '@/services/toast';
 
 const authStore = useAuthStore();
 const router = useRouter();
 
 const subscriptions = ref([]);
 const isLoading = ref(true);
-const errorMessage = ref('');
-const showConfirmModal = ref(false);
+const promoCode = ref('');
+const isSubmittingPromo = ref(false);
+
+const showModal = ref(false);
 const modalTitle = ref('');
 const modalMessage = ref('');
+const isConfirmMode = ref(false);
 const displayEmail = ref(null);
 let confirmActionResolve = null;
 
+function showAlert(title, message) {
+  modalTitle.value = title;
+  modalMessage.value = message;
+  isConfirmMode.value = false;
+  showModal.value = true;
+}
+
+async function showConfirm(title, message) {
+  modalTitle.value = title;
+  modalMessage.value = message;
+  isConfirmMode.value = true;
+  showModal.value = true;
+  return new Promise(resolve => {
+    confirmActionResolve = resolve;
+  });
+}
+
+async function applyPromoCode() {
+  if (!promoCode.value || isSubmittingPromo.value) return;
+  
+  isSubmittingPromo.value = true;
+  try {
+    const response = await api.post('/api/marketing/promo-codes/', { code: promoCode.value });
+    showAlert('Success!', `Promo code applied! You received ${response.data.credits_count} generations`);
+    promoCode.value = '';
+  }
+  catch (error) {
+    const msg = error.response?.data?.detail || 'Failed to apply promo code. Please check the code and try again';
+    showAlert('Promo Error', msg);
+  }
+  finally {
+    isSubmittingPromo.value = false;
+  }
+}
+
 async function getProfileData() {
   isLoading.value = true;
-  errorMessage.value = '';
 
   if (authStore.user?.email) {
     displayEmail.value = authStore.user.email;
@@ -149,7 +207,7 @@ async function getProfileData() {
     subscriptions.value = response.data?.subscriptions || [];
   }
   catch (error) {
-    errorMessage.value = 'Could not load your subscription data. Please try again later';
+    showAlert('Connection Lost', 'Could not load your subscription data. Please try again later');
   }
   finally {
     isLoading.value = false;
@@ -157,77 +215,61 @@ async function getProfileData() {
 }
 
 async function cancelSubscription(subscriptionId) {
-  errorMessage.value = '';
-  modalTitle.value = 'Cancel Subscription';
-  modalMessage.value = 'Are you sure you want to cancel your subscription? This action will turn off auto-renewal';
-  showConfirmModal.value = true;
-
-  const confirmed = await new Promise(resolve => {
-    confirmActionResolve = resolve;
-  });
+  const confirmed = await showConfirm(
+    'Cancel Subscription', 
+    'Are you sure you want to cancel your subscription? This action will turn off auto-renewal'
+  );
 
   if (confirmed) {
     try {
       await api.post(`/api/subscriptions/cancel-subscription/${subscriptionId}/`);
-      
       const subscription = subscriptions.value.find(s => s.id === subscriptionId);
       if (subscription) {
         subscription.is_auto_renew = false;
       }
+      showAlert('Canceled', 'Auto-renewal has been successfully turned off.');
     }
     catch (error) {
-      errorMessage.value = 'Failed to cancel subscription. Please contact support';
-    }
-    finally {
-      confirmActionResolve = null;
+       showAlert('Error', 'Failed to cancel subscription. Please contact support');
     }
   }
 }
 
 async function deleteAccount() {
-  errorMessage.value = '';
-  modalTitle.value = 'Delete Account';
-  modalMessage.value = 'Are you sure you want to delete your account? This action cannot be undone';
-  showConfirmModal.value = true;
-
-  const confirmed = await new Promise(resolve => {
-    confirmActionResolve = resolve;
-  });
+  const confirmed = await showConfirm(
+    'Delete Account',
+    'Are you sure you want to delete your account? This action cannot be undone'
+  );
 
   if (confirmed) {
     try {
       await api.delete('/api/auth/account/delete/');
-      toast.info('Your account has been successfully deleted');
       authStore.user = null;
       authStore.authChecked = true;
       localStorage.removeItem('user-token');
       router.push({ name: 'home' });
+      // Note: alert won't be seen as we redirect, but we can use toast if needed
     }
     catch (error) {
-      if (error.response && error.response.data && error.response.data.detail) {
-        errorMessage.value = error.response.data.detail;
-      }
-      else {
-        errorMessage.value = 'An unexpected error occurred while deleting your account';
-      }
-    }
-    finally {
-      confirmActionResolve = null;
+      const msg = error.response?.data?.detail || 'An unexpected error occurred while deleting your account';
+      showAlert('Error', msg);
     }
   }
 }
 
-function handleConfirm() {
+function handleConfirm(val) {
   if (confirmActionResolve) {
-    confirmActionResolve(true);
-    showConfirmModal.value = false;
+    confirmActionResolve(val);
+    confirmActionResolve = null;
   }
+  showModal.value = false;
 }
 
-function handleCancel() {
-  if (confirmActionResolve) {
-    confirmActionResolve(false);
-    showConfirmModal.value = false;
+function handleModalBackdrop() {
+  if (isConfirmMode.value) {
+    handleConfirm(false);
+  } else {
+    showModal.value = false;
   }
 }
 
@@ -284,13 +326,15 @@ onMounted(() => {
 }
 
 .subscription-display-card {
-  background: rgba(36, 36, 36, 0.45);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   will-change: backdrop-filter, transform;
   transform: translateZ(0);
-  border-radius: 20px;
-  padding: 2rem;
+  border-radius: 24px;
+  padding: 2.5rem;
   position: relative;
   min-height: 585px;
   display: flex;
@@ -330,6 +374,14 @@ onMounted(() => {
   background: rgba(129, 180, 253, 0.1);
   color: #81b4fd;
   border-color: rgba(129, 180, 253, 0.4);
+  box-shadow: 0 0 15px rgba(129, 180, 253, 0.15);
+}
+
+.activate-button-hover:hover {
+  background: rgba(129, 180, 253, 0.15) !important;
+  color: #81b4fd !important;
+  border-color: rgba(129, 180, 253, 0.4) !important;
+  box-shadow: 0 0 12px rgba(129, 180, 253, 0.1);
 }
 
 .canceled-state {

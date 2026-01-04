@@ -165,6 +165,9 @@ def account_delete(request):
 
             for agreement in user.agreements.all():
                 agreement.anonymise()
+
+            for promo_code_usage in user.promo_code_usages.all():
+                promo_code_usage.anonymise()
                 
             user.socialaccount_set.all().delete()
             user.emailaddress_set.all().delete()
