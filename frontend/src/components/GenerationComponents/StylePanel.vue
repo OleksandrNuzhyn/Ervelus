@@ -30,11 +30,11 @@
           class="w-full h-full overflow-y-auto no-scrollbar mask-fade-vertical" 
           id="masked-scroll-container"
           :style="{
-            '--mask-top': canScrollUp ? '96px' : '0px',
-            '--mask-bottom': canScrollDown ? '96px' : '0px'
+            '--mask-top': canScrollUp ? '48px' : '0px',
+            '--mask-bottom': canScrollDown ? '48px' : '0px'
           }"
         >
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-2 pt-1 px-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-2 pt-1 md:pb-8 md:pt-8 px-4">
             <StyleCard
               v-for="style in styles"
               :key="style.id"
@@ -80,7 +80,6 @@ function checkScroll() {
   if (!el) return;
   
   canScrollUp.value = el.scrollTop > 10;
-  // Use a small buffer (10px) to ensure we show/hide correctly near edges
   canScrollDown.value = el.scrollTop + el.clientHeight < el.scrollHeight - 10;
 }
 
@@ -95,19 +94,12 @@ function handleClose() {
 onMounted(() => {
   nextTick(() => {
     checkScroll();
-    // Re-check just in case styles load dynamically
     setTimeout(checkScroll, 500);
   });
 });
 </script>
 
 <style scoped>
-#masked-scroll-container {
-  /* The mask is now handled by the gradient divs */
-  /* -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 1%); */
-  /* mask-image: linear-gradient(to bottom, transparent 0%, black 1%); */
-}
-
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

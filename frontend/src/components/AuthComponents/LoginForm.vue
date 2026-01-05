@@ -52,7 +52,6 @@
             id="email"
             type="email"
             v-model="email"
-            placeholder="casualtraveller@example.com"
             required
             minlength="5"
             maxlength="254"
@@ -153,7 +152,7 @@ async function handleLoginSuccess(response) {
       localStorage.setItem('user-token', token);
 
       if (response.data.is_registration) {
-        window.gtag('event', 'user_sign_up', { 'method': 'google' });
+        window.gtag('event', 'user_sign_up');
       }
 
       await authStore.checkAuth();

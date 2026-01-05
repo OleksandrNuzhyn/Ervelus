@@ -11,11 +11,8 @@
       <div class="content-container">
         <section class="hero-section">
           <h1 class="hero-title">
-            We are <span class="text-accent">Ervelus</span>
+            <span class="text-gradient-white">We are</span> <span class="text-accent">Ervelus</span>
           </h1>
-          <p class="hero-subtitle">
-            Unleash your fantasy
-          </p>
         </section>
 
         <section class="bento-grid">
@@ -60,18 +57,14 @@
                     <h3 class="member-name">Oleksandr Nuzhyn</h3>
                     <div class="member-role">Founder & Lead Architect</div>
                   </div>
-                  <p class="member-bio">
-                    Software Engineering student at NTUU "KPI" (Kyiv).
-                    <span class="bio-highlight">Role:</span> Architected the secure, scalable RESTful backend using
-                    Python
-                    (Django).
-                    Managed the entire infrastructure deployment on Google Cloud Platform (Cloud Run, Cloud SQL) and
-                    implemented AI models.
-                    <br><span class="bio-highlight">Focus:</span> Cloud Architecture, Backend Logic, System Deployment.
-                  </p>
+                  <div class="member-bio">
+                    <p>Software Engineering student at NTUU "KPI" (Kyiv).</p>
+                    <p><span class="bio-label">Role:</span> Architected the secure, scalable backend and managed the infrastructure.</p>
+                    <p><span class="bio-label">Focus:</span> System Architecture, API Engineering, System Deployment.</p>
+                  </div>
                 </div>
               </div>
-
+              
               <div class="team-member">
                 <div class="member-avatar">ND</div>
                 <div class="member-content">
@@ -79,15 +72,11 @@
                     <h3 class="member-name">Nikita Dakhno</h3>
                     <div class="member-role">Co-Founder & Frontend Engineer</div>
                   </div>
-                  <p class="member-bio">
-                    Computer Science student at TUKE (Slovakia).
-                    <span class="bio-highlight">Role:</span> Designed and developed the responsive client-side
-                    application
-                    using Vue.js.
-                    Responsible for the complete UI/UX design and collaborates on prompt engineering logic to ensure
-                    high-quality artistic outputs.
-                    <br><span class="bio-highlight">Focus:</span> Frontend Development, User Experience, Prompt Logic.
-                  </p>
+                  <div class="member-bio">
+                    <p>Computer Science student at TUKE (Slovakia).</p>
+                    <p><span class="bio-label">Role:</span> Designed the UI/UX and developed the client-side application.</p>
+                    <p><span class="bio-label">Focus:</span> UI/UX Design, Frontend Engineering, AI Prompt Logic.</p>
+                  </div>
                 </div>
               </div>
 
@@ -173,24 +162,36 @@ import {
   z-index: 1;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 160px 24px 120px;
+  padding: 120px 24px 120px;
 }
 
 .hero-section {
-  margin-bottom: 100px;
+  margin-bottom: 40px;
   max-width: 900px;
 }
 
 .hero-title {
-  font-size: clamp(64px, 10vw, 120px);
+  font-size: clamp(48px, 10vw, 120px);
   font-weight: 800;
   line-height: 0.95;
   letter-spacing: -0.04em;
   margin: 0 0 32px;
+  white-space: nowrap;
+}
+
+.text-gradient-white {
+  background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.3));
+  padding-right: 0.05em;
+  display: inline;
 }
 
 .text-accent {
-  color: var(--color-accent);
+  color: #fff;
+  text-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
 }
 
 .hero-subtitle {
@@ -209,16 +210,23 @@ import {
 }
 
 .bento-item {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  
   padding: 40px;
   border-radius: 24px;
-  transition: border-color 0.3s ease, transform 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
 }
 
 .bento-item:hover {
-  border-color: var(--color-accent);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(139, 92, 246, 0.5);
   transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(139, 92, 246, 0.2);
 }
 
 .item-why {
@@ -236,7 +244,6 @@ import {
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: linear-gradient(135deg, var(--color-surface) 0%, #1a1a20 100%);
 }
 
 .item-team {
@@ -257,10 +264,11 @@ import {
 }
 
 .item-title {
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+  color: #fff;
 }
 
 .item-text {
@@ -294,14 +302,14 @@ import {
 
 .team-member {
   display: flex;
-  gap: 16px;
+  gap: 20px;
   align-items: flex-start;
 }
 
 .member-content {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .member-header {
@@ -311,19 +319,20 @@ import {
 }
 
 .member-avatar {
-  min-width: 48px;
-  width: 48px;
-  height: 48px;
+  min-width: 52px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
-  background: rgba(139, 92, 246, 0.1);
-  color: var(--color-accent);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.05));
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 18px;
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  font-size: 19px;
+  border: 1px solid rgba(139, 92, 246, 0.3);
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .member-name {
@@ -335,20 +344,29 @@ import {
 
 .member-role {
   font-size: 14px;
-  color: var(--color-accent);
-  font-weight: 500;
+  color: #a78bfa;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .member-bio {
   font-size: 15px;
   line-height: 1.6;
-  color: var(--color-text-secondary);
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.member-bio p {
   margin: 0;
 }
 
-.bio-highlight {
+.bio-label {
   color: #fff;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 14px;
+  margin-right: 4px;
 }
 
 @media (max-width: 768px) {
@@ -371,7 +389,7 @@ import {
   }
 
   .hero-title {
-    font-size: 56px;
+    font-size: clamp(32px, 12vw, 56px);
   }
 }
 </style>

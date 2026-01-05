@@ -1,26 +1,35 @@
 <template>
   <div class="form-container">
-      <form @submit.prevent="handleSubmit" class="flex flex-col gap-6 text-gray-200" novalidate>
-        <div class="text-center">
-          <h2 class="medieval text-2xl text-gray-100 mb-1">{{ sent ? 'Success' : 'Forgot Password' }}</h2>
-          <p class="text-gray-300 text-base m-0 leading-relaxed">
-            {{ sent ? 'Link sent! Check your inbox' : 'Enter email, and we will grant you mercy' }}
+      <form @submit.prevent="handleSubmit" class="space-y-6" novalidate>
+        <div class="text-center mb-8">
+          <h2 class="text-2xl font-bold text-white mb-2">{{ sent ? 'Success' : 'Forgot Password' }}</h2>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            {{ sent ? 'Link sent. Check your inbox' : 'Enter your email to reset' }}
           </p>
         </div>
 
-        <div v-if="!sent" class="flex flex-col items-center">
-          <input id="fp-email" type="email" v-model="email" placeholder="lostsoul@example.com"
-          class="w-full max-w-[280px] px-0 py-2 text-gray-200 bg-transparent !important border-b border-white/20 focus:border-white/50 focus:outline-none transition-all duration-300 text-center placeholder:text-gray-500 font-light"
-          required />
-          <p v-if="error" class="mt-2 text-sm text-rose-400 text-center">{{ error }}</p>
+        <div v-if="!sent">
+          <label for="fp-email" class="block text-sm font-semibold text-gray-200">Email</label>
+          <input 
+            id="fp-email" 
+            type="email" 
+            v-model="email" 
+            class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+            required 
+          />
+          <p v-if="error" class="mt-2 text-sm text-red-400">{{ error }}</p>
         </div>
 
-        <div class="flex justify-center pt-4">
-          <button v-if="!sent" type="submit" :disabled="isLoading" class="manage-button">
+        <div class="pt-2">
+          <button v-if="!sent" type="submit" :disabled="isLoading" class="w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md disabled:opacity-40 disabled:cursor-not-allowed bg-gray-400 border border-gray-500 shadow-lg hover:bg-gray-500 hover:text-gray-900">
             <span v-if="isLoading">Sending…</span>
             <span v-else>Send reset link</span>
           </button>
-          <router-link v-else to="/login" class="manage-button">Back to Entrance</router-link>
+          <router-link v-else to="/login" class="w-full py-3 inline-block text-center font-bold text-gray-800 transition duration-300 rounded-md bg-gray-400 border border-gray-500 shadow-lg hover:bg-gray-500 hover:text-gray-900">Back to Sign In</router-link>
+        </div>
+
+        <div v-if="!sent" class="text-center">
+          <router-link to="/login" class="text-sm text-sky-200 hover:text-sky-100">Back to Sign In</router-link>
         </div>
       </form>
   </div>
@@ -66,55 +75,18 @@ async function handleSubmit() {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
-
-.medieval {
-  font-family: 'MedievalSharp', cursive;
-}
-
 .form-container {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  height: 100%;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: rgba(10, 10, 10, 0.3) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   padding: 2rem;
-  width: 100%;
-  max-width: 400px;
-  will-change: backdrop-filter, transform;
-  transform: translateZ(0);
-}
-
-@media (max-width: 640px) {
-  .form-container {
-    padding: 1.5rem;
-  }
-}
-
-.manage-button {
-  display: inline-block;
-  width: auto;
-  min-width: 250px;
-  text-align: center;
-  font-weight: 500;
-  font-size: 0.875rem;
-  border-radius: 9999px;
-  padding: 0.9rem 2.25rem;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #9ca3af;
-  transition: all 0.2s ease-in-out;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.manage-button:not(:disabled):hover {
-  background: rgba(129, 180, 253, 0.1);
-  color: #81b4fd;
-  border-color: rgba(129, 180, 253, 0.4);
-}
-
-.manage-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  font-family: 'Manrope', sans-serif;
+  color: #e5e7eb;
 }
 
 input:-webkit-autofill,
@@ -122,7 +94,8 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   -webkit-text-fill-color: #e5e7eb !important;
-  -webkit-box-shadow: 0 0 0px 1000px rgba(20, 20, 20, 0.95) inset !important;
+  -webkit-box-shadow: 0 0 0px 1000px #374151 inset !important;
   transition: background-color 5000s ease-in-out 0s;
+  font-family: 'Manrope', sans-serif;
 }
 </style>

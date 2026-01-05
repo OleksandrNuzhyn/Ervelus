@@ -217,15 +217,20 @@
       </section>
 
       <section class="section-final-cta">
-        <div class="final-cta-bg-glow"></div>
         <div class="final-cta-card">
+          <div class="card-glow-bg">
+            <div class="orb-float cta-orb-1"></div>
+            <div class="orb-float cta-orb-2"></div>
+            <div class="orb-float cta-orb-3"></div>
+          </div>
+          
           <div class="final-cta-content">
             <h2 class="final-cta-title">
-              Create Your First <br />
-              <span class="text-gradient">Art Today</span>
+              Ready to create something <br />
+              <span class="text-gradient-gold">extraordinary?</span>
             </h2>
             <p class="final-cta-subtitle">
-              Start creating in seconds. 5 free generations included
+              Start for free with 5 generations included
             </p>
             <div class="final-cta-action">
               <button @click="handleTryFree" class="cta-primary large cta-final-pulse">
@@ -1516,68 +1521,128 @@ section {
 .section-final-cta {
   padding: 120px var(--spacing-md);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.final-cta-bg-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  max-width: 1000px;
-  height: 600px;
-  background: radial-gradient(circle at center, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
-  z-index: 0;
-  pointer-events: none;
+@media (max-width: 768px) {
+  .section-final-cta {
+    padding: 80px var(--spacing-sm);
+  }
 }
 
 .final-cta-card {
   position: relative;
-  z-index: 1;
-  background: radial-gradient(100% 100% at 50% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: none;
-  padding: 100px 32px;
-  border-radius: 48px;
   width: 100%;
-  max-width: 900px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  max-width: 1000px;
+  border-radius: 40px;
+  padding: 80px 40px;
   text-align: center;
+  overflow: hidden;
+  
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  
   box-shadow: 
-    0 40px 80px -20px rgba(0, 0, 0, 0.6),
-    0 0 60px rgba(139, 92, 246, 0.1);
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 20px 50px -10px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  
+  transition: transform 0.5s ease;
 }
 
-.final-cta-card::after {
-  display: none;
+.final-cta-card:hover {
+  transform: translateY(-2px);
+}
+
+.card-glow-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.orb-float {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.4;
+  animation: float-orb 10s infinite ease-in-out alternate;
+}
+
+.cta-orb-1 {
+  width: 400px;
+  height: 400px;
+  background: #4c1d95;
+  top: -100px;
+  left: -50px;
+  animation-delay: 0s;
+}
+
+.cta-orb-2 {
+  width: 500px;
+  height: 500px;
+  background: #0f172a;
+  bottom: -150px;
+  right: -100px;
+  animation-delay: -5s;
+}
+
+.cta-orb-3 {
+  width: 300px;
+  height: 300px;
+  background: rgba(139, 92, 246, 0.15);
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: float-orb 15s infinite ease-in-out alternate-reverse;
+}
+
+@keyframes float-orb {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(20px, -20px) scale(1.1); }
+  100% { transform: translate(-20px, 20px) scale(0.95); }
 }
 
 .final-cta-content {
-  width: 100%;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .final-cta-title {
-  font-size: clamp(32px, 5vw, 56px);
+  font-size: clamp(36px, 6vw, 64px);
   font-weight: 800;
   line-height: 1.1;
   color: #fff;
-  margin: 0 0 20px;
+  margin: 0 0 24px;
   letter-spacing: -0.02em;
 }
 
+.text-gradient-gold {
+  background: linear-gradient(135deg, #fff 0%, #c4b5fd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.4));
+  padding-right: 0.1em;
+  padding-bottom: 0.15em;
+  margin-bottom: -0.15em;
+  display: inline-block;
+}
+
 .final-cta-subtitle {
-  font-size: clamp(16px, 1.8vw, 19px);
+  font-size: clamp(16px, 1.8vw, 20px);
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 70px;
-  max-width: 500px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 48px;
+  max-width: 600px;
   margin-left: auto;
   margin-right: auto;
 }

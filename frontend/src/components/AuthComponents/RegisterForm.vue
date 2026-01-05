@@ -53,7 +53,6 @@
           id="reg-email"
           type="email"
           v-model="email"
-          placeholder="casualtraveller@example.com"
           required
           minlength="5"
           maxlength="254"
@@ -124,11 +123,11 @@
     >
       <h2 class="text-2xl font-bold">Confirm your Email</h2>
       <p class="text-gray-400">
-        We've sent a confirmation link to <strong>{{ email }}</strong>. Please check your inbox and spam folder.
+        We've sent a confirmation link to <strong>{{ email }}</strong>. Please check your inbox and spam folder
       </p>
       
       <p v-if="canResend" class="text-green-400 text-sm">
-        Didn't get the email? You can try sending it again.
+        Didn't get the email? You can try sending it again
       </p>
 
       <button
@@ -205,7 +204,7 @@ async function handleGoogleSuccess(response) {
       localStorage.setItem('user-token', token);
 
       if (response.data.is_registration) {
-        window.gtag('event', 'user_sign_up', { 'method': 'google' });
+        window.gtag('event', 'user_sign_up');
       }
 
       await authStore.checkAuth();
@@ -310,7 +309,7 @@ async function handleSubmit() {
       password2: password2.value,
     });
     
-    window.gtag('event', 'user_sign_up', { 'method': 'email' });
+    window.gtag('event', 'user_sign_up');
     waitingEmailForm.value = true;
     startResendTimer();
   }

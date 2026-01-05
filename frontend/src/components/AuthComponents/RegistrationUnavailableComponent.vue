@@ -1,16 +1,20 @@
 <template>
-  <div class="form-container space-y-6 text-center">
-    <h2 class="text-3xl font-bold text-white">Registration is currently unavailable</h2>
-    <p class="mt-2 text-gray-300">
-      We apologize for the inconvenience. Our registration process is temporarily closed.
-      Please check back later or log in if you already have an account
-    </p>
-    <router-link
-      to="/login"
-      class="block w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md bg-white/60 backdrop-blur-md border border-white/20 shadow-lg hover:bg-white/20 hover:text-white"
-    >
-      Log in
-    </router-link>
+  <div class="form-container space-y-8 text-center">
+    <div class="space-y-4">
+      <h2 class="text-3xl font-bold text-white">Registration is currently unavailable</h2>
+      <p class="text-gray-400 text-sm leading-relaxed max-w-sm mx-auto">
+        We apologize for the inconvenience. Our registration process is temporarily closed
+      </p>
+    </div>
+
+    <div class="pt-4">
+      <router-link
+        to="/login"
+        class="block w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md bg-gray-400 border border-gray-500 shadow-lg hover:bg-gray-500 hover:text-gray-900"
+      >
+        Sign In
+      </router-link>
+    </div>
   </div>
 </template>
 
@@ -27,7 +31,5 @@
   padding: 2rem;
   font-family: 'Manrope', sans-serif;
   color: #e5e7eb;
-  mask-image: radial-gradient(ellipse at center, black 50%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse at center, black 65%, transparent 100%);
 }
 </style>

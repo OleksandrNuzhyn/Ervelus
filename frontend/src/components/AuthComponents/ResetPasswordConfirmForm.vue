@@ -1,37 +1,51 @@
 <template>
   <div class="form-container">
-    <form @submit.prevent="handleSubmit" class="flex flex-col gap-6 text-gray-200" novalidate>
-      <div class="text-center">
-        <h2 class="medieval text-2xl text-gray-100 mb-1">Set new password</h2>
-        <p class="text-gray-300 text-base m-0 leading-relaxed">Enter your new password twice to set it</p>
+    <form @submit.prevent="handleSubmit" class="space-y-6" novalidate>
+      <div class="text-center mb-8">
+        <h2 class="text-2xl font-bold text-white mb-2">Set new password</h2>
+        <p class="text-gray-400 text-sm leading-relaxed">Enter your new password</p>
       </div>
   
-      <div class="flex flex-col items-center gap-4 w-full">
-        <div class="flex items-center justify-center w-full translate-x-5">
-          <div class="relative w-full max-w-[250px]">
-            <input id="new1" :type="password1FieldType" v-model="password1" placeholder="New password" required minlength="8" autocomplete="new-password" class="w-full px-0 py-2 text-gray-200 bg-transparent !important border-b border-white/20 focus:border-white/50 focus:outline-none transition-all duration-300 text-center placeholder:text-gray-500 font-light" />
+      <div class="space-y-4">
+        <div>
+          <label for="new1" class="block text-sm font-semibold text-gray-200">New Password</label>
+          <div class="relative">
+            <input 
+              id="new1" 
+              :type="password1FieldType" 
+              v-model="password1" 
+              required 
+              minlength="8" 
+              autocomplete="new-password" 
+              class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 pr-14" 
+            />
+            <img :src="password1Icon" @click="togglePassword1Visibility" draggable="false" class="select-none absolute right-1 top-1/2 -translate-y-1/2 mt-1 h-10 w-16 cursor-pointer transition-all duration-300" :class="showPassword1 ? 'opacity-100 glowing-eye' : 'opacity-35'" alt="Toggle password visibility" />
           </div>
-          <div class="w-10 ml-2 flex justify-start">
-            <img :src="password1Icon" @click="togglePassword1Visibility" draggable="false" class="select-none h-8 w-12 cursor-pointer transition-all duration-300" :class="showPassword1 ? 'opacity-100 glowing-eye' : 'opacity-35'" alt="Toggle password visibility" />
-          </div>
+          <p v-if="errors.password1" class="mt-1 text-sm text-red-400">{{ errors.password1 }}</p>
         </div>
-        <p v-if="errors.password1" class="text-xs text-rose-400 text-center -mt-2">{{ errors.password1 }}</p>
 
-        <div class="flex items-center justify-center w-full translate-x-5">
-          <div class="relative w-full max-w-[250px]">
-            <input id="new2" :type="password2FieldType" v-model="password2" placeholder="Repeat new password" required minlength="8" autocomplete="new-password" class="w-full px-0 py-2 text-gray-200 bg-transparent !important border-b border-white/20 focus:border-white/50 focus:outline-none transition-all duration-300 text-center placeholder:text-gray-500 font-light" />
+        <div>
+          <label for="new2" class="block text-sm font-semibold text-gray-200">Confirm New Password</label>
+          <div class="relative">
+            <input 
+              id="new2" 
+              :type="password2FieldType" 
+              v-model="password2" 
+              required 
+              minlength="8" 
+              autocomplete="new-password" 
+              class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 pr-14" 
+            />
+            <img :src="password2Icon" @click="togglePassword2Visibility" draggable="false" class="select-none absolute right-1 top-1/2 -translate-y-1/2 mt-1 h-10 w-16 cursor-pointer transition-all duration-300" :class="showPassword2 ? 'opacity-100 glowing-eye' : 'opacity-35'" alt="Toggle password visibility" />
           </div>
-          <div class="w-10 ml-2 flex justify-start">
-            <img :src="password2Icon" @click="togglePassword2Visibility" draggable="false" class="select-none h-8 w-12 cursor-pointer transition-all duration-300" :class="showPassword2 ? 'opacity-100 glowing-eye' : 'opacity-35'" alt="Toggle password visibility" />
-          </div>
+          <p v-if="errors.password2" class="mt-1 text-sm text-red-400">{{ errors.password2 }}</p>
         </div>
-        <p v-if="errors.password2" class="text-xs text-rose-400 text-center -mt-2">{{ errors.password2 }}</p>
       </div>
 
-      <p v-if="errors.api" class="text-sm text-rose-400 text-center">{{ errors.api }}</p>
+      <p v-if="errors.api" class="text-sm text-red-400 text-center">{{ errors.api }}</p>
 
-      <div class="flex justify-center pt-4">
-        <button type="submit" :disabled="isLoading" class="manage-button">
+      <div class="pt-2">
+        <button type="submit" :disabled="isLoading" class="w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md disabled:opacity-40 disabled:cursor-not-allowed bg-gray-400 border border-gray-500 shadow-lg hover:bg-gray-500 hover:text-gray-900">
           <span v-if="isLoading">Setting…</span>
           <span v-else>Set password</span>
         </button>
@@ -150,48 +164,17 @@ async function handleSubmit() {
 }
 
 .form-container {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  height: 100%;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: rgba(10, 10, 10, 0.3) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   padding: 2rem;
-  width: 100%;
-  max-width: 440px;
-  will-change: backdrop-filter, transform;
-  transform: translateZ(0);
-}
-
-@media (max-width: 640px) {
-  .form-container {
-    padding: 1.5rem;
-  }
-}
-
-.manage-button {
-  display: inline-block;
-  width: auto;
-  min-width: 250px;
-  text-align: center;
-  font-weight: 500;
-  font-size: 0.875rem;
-  border-radius: 9999px;
-  padding: 0.9rem 2.25rem;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #9ca3af;
-  transition: all 0.2s ease-in-out;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.manage-button:not(:disabled):hover {
-  background: rgba(129, 180, 253, 0.1);
-  color: #81b4fd;
-  border-color: rgba(129, 180, 253, 0.4);
-}
-
-.manage-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  font-family: 'Manrope', sans-serif;
+  color: #e5e7eb;
 }
 
 .glowing-eye {
@@ -212,8 +195,9 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   -webkit-text-fill-color: #e5e7eb !important;
-  -webkit-box-shadow: 0 0 0px 1000px rgba(20, 20, 20, 0.95) inset !important;
+  -webkit-box-shadow: 0 0 0px 1000px #374151 inset !important;
   transition: background-color 5000s ease-in-out 0s;
+  font-family: 'Manrope', sans-serif;
 }
 
 input[type="password"]::-ms-reveal {

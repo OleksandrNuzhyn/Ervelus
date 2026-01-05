@@ -81,6 +81,8 @@ watch(
 
 <style scoped>
 .form-container {
+  height: 100%;
+  margin-left: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -90,7 +92,5 @@ watch(
   padding: 2rem;
   font-family: 'Manrope', sans-serif;
   color: #e5e7eb;
-  border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 </style>

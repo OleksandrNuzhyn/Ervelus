@@ -27,7 +27,7 @@
             leave-active-class="transition ease-in duration-200"
             leave-from-class="transform translate-x-0"
             leave-to-class="transform translate-x-full">
-            <div v-if="isBarOpen" class="fixed right-0 top-18 h-[calc(100vh-4rem)] py-2 w-80 bg-[#202b32]/30 backdrop-blur-xl z-100 flex flex-col transform-gpu">
+            <div v-if="isBarOpen" class="fixed right-0 top-[70px] h-[calc(100vh-70px)] py-2 w-80 sidebar-bg z-100 flex flex-col transform-gpu border-l border-white/[0.03] premium-shadow">
                 <div class="px-3 py-4 text-sm text-gray-400 flex items-center justify-between">
                     <span>Coins: {{ credits }}</span>
                     <img src="@/assets/svg/coin.svg" class="h-9 w-9 mr-1" />
@@ -120,3 +120,14 @@ defineExpose({
     closeBar,
 });
 </script>
+
+<style scoped>
+.sidebar-bg {
+    background-color: rgb(2, 2, 2);
+}
+
+.premium-shadow {
+    box-shadow: -20px 0 50px -10px rgba(0, 0, 0, 0.8), 
+                -10px 0 20px -5px rgba(0, 0, 0, 0.5);
+}
+</style>
