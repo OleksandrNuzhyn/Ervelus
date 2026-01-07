@@ -10,6 +10,7 @@
           <router-link to="/dashboard" class="hover:text-gray-400">Dashboard</router-link>
           <router-link to="/gallery" class="hover:text-gray-400">Gallery</router-link>
           <router-link to="/pricing" class="hover:text-gray-400">Pricing</router-link>
+          <SocialRewardButton />
           <SideBarComponent
             ref="sideBar"
             :credits="credits"
@@ -17,14 +18,17 @@
             @logout="handleLogout"
           />
         </nav>
-        <button v-if="authStore.isAuthenticated" @click="isBurgerOpen = !isBurgerOpen" class="md:hidden text-gray-200 hover:text-gray-50 focus:outline-none">
-          <svg v-if="!isBurgerOpen" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
-          </svg>
-          <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+        <div v-if="authStore.isAuthenticated" class="md:hidden flex items-center gap-3">
+          <SocialRewardButton />
+          <button @click="isBurgerOpen = !isBurgerOpen" class="text-gray-200 hover:text-gray-50 focus:outline-none">
+            <svg v-if="!isBurgerOpen" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
         <div v-else class="flex items-center gap-15 font-thin text-gray-100">
           <router-link to="/login" class="hidden md:block hover:text-gray-400">Sign In</router-link>
           <router-link to="/pricing" class="hidden md:block hover:text-gray-400">Pricing</router-link>
@@ -163,6 +167,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import SideBarComponent from './SideBarComponent.vue';
+import SocialRewardButton from './SocialRewardButton.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import api from '@/services/api';

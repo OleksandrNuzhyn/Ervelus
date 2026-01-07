@@ -6,7 +6,7 @@ from .models import PromoCode, PromoCodeUsage
 
 @admin.register(PromoCode)
 class PromoCodeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'code', 'max_usages', 'current_usages', 'is_active')
+    list_display = ('id', 'code', 'current_usages', 'max_usages', 'is_active')
     list_filter = ('is_active',)
     search_fields = ('code', 'description')
     ordering = ('-id',)

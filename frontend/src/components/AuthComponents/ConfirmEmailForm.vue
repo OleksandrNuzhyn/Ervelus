@@ -55,7 +55,7 @@ async function verifyToken(token) {
     
     setTimeout(() => {
       router.push('/dashboard');
-    }, 2500);
+    }, 1000);
 
   } 
   catch (err) {
