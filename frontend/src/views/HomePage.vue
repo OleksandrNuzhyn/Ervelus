@@ -248,6 +248,7 @@
 <script setup>
 import { ref, onUnmounted, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import originalImg from '@/assets/home_page/original.webp'
 import darkFantasyResult from '@/assets/home_page/dark-fantasy_result.webp'
 import lightFantasyResult from '@/assets/home_page/light-fantasy_result.webp'
@@ -273,6 +274,7 @@ import {
 } from '@heroicons/vue/24/outline'
 
 const router = useRouter()
+const authStore = useAuthStore()
 const sliderPosition = ref(50)
 let isDragging = false
 const selectedPreviewStyle = ref('dark-fantasy')
@@ -515,6 +517,11 @@ const demoVideo = ref(null)
 let videoObserver = null
 
 onMounted(() => {
+  if (authStore.isAuthenticated && !window.history.state?.back) {
+    router.push('/dashboard')
+    return
+  }
+
   videoObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting && demoVideo.value) {

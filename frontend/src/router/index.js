@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
 const routes = [
-  { path: '/', name: 'home', component: () => import('@/views/HomePage.vue'), meta: { guest: true, title: 'Ervelus - Transform Your Photos into AI Art' } },
+  { path: '/', name: 'home', component: () => import('@/views/HomePage.vue'), meta: { title: 'Ervelus - Transform Your Photos into AI Art' } },
   { path: '/login', name: 'login', component: () => import('@/views/LoginPage.vue'), meta: { guest: true, title: 'Login - Ervelus' } },
   { path: '/register', name: 'register', component: () => import('@/views/RegisterPage.vue'), meta: { guest: true, title: 'Register - Ervelus' } },
   { path: '/forgot-password', name: 'forgot-password', component: () => import('@/views/ForgotPasswordPage.vue'), meta: { title: 'Forgot Password - Ervelus' } },
@@ -35,10 +35,6 @@ router.beforeEach(async (to, from) => {
   }
 
   if (authStore.isAuthenticated && to.meta.guest) {
-    if (to.name === 'home' && from.name) {
-      return;
-    }
-
     return { name: 'dashboard' };
   }
 
