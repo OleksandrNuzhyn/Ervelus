@@ -18,19 +18,19 @@
             <div class="v-spacer"></div>
             
             <div class="badge-pill badge-free-trial">
-              <span class="badge-shimmer">5 Free Generations Included • No Credit Card</span>
+              <span class="badge-shimmer">{{ $t('home.badge') }}</span>
             </div>
             
             <div class="v-spacer"></div>
 
             <div class="hero-text-group">
               <h1 class="hero-title">
-                Transform Your Photos <br />
-                <span class="text-gradient">into AI Art</span>
+                {{ $t('home.hero_title_1') }} <br />
+                <span class="text-gradient">{{ $t('home.hero_title_2') }}</span>
               </h1>
 
               <p class="hero-subtitle">
-                Create professional art instantly. Choose from 30+ styles
+                {{ $t('home.hero_subtitle') }}
               </p>
             </div>
 
@@ -47,7 +47,7 @@
             <div class="v-spacer"></div>
 
             <button @click="handleTryFree" class="cta-primary large hero-cta">
-              Try for free
+              {{ $t('home.cta_free') }}
             </button>
           </div>
           <div class="hero-visual hidden md:block">
@@ -71,9 +71,9 @@
 
       <section class="section-comparison">
         <div class="section-header">
-          <h2 class="section-title">See the Difference</h2>
+          <h2 class="section-title">{{ $t('home.compare_title') }}</h2>
           <p class="section-subtitle">
-            Drag the slider to compare original photo and AI result
+            {{ $t('home.compare_subtitle') }}
           </p>
         </div>
 
@@ -88,7 +88,7 @@
           <div class="comparison-frame">
             <div class="comparison-side before-side">
               <img :src="originalImg" class="comparison-img" alt="Original Photo" loading="lazy" />
-              <span class="comparison-label overlay-label">Original</span>
+              <span class="comparison-label overlay-label">{{ $t('home.original') }}</span>
             </div>
 
             <div class="comparison-side after-side" :style="{ 'clip-path': `inset(0 ${100 - sliderPosition}% 0 0)` }">
@@ -113,49 +113,65 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
             </svg>
-            Drag to compare
+            {{ $t('home.drag_hint') }}
           </p>
         </div>
       </section>
 
       <section class="section-styles">
         <div class="section-header">
-          <h2 class="section-title">Unlock Premium Styles</h2>
+          <h2 class="section-title">{{ $t('home.styles_title') }}</h2>
           <p class="section-subtitle">
-            Access powerful tools tailored to your needs
+            {{ $t('home.styles_subtitle') }}
           </p>
         </div>
 
         <div class="pricing-list">
           <div v-for="tier in subscriptionTiers" :key="tier.id"
             :class="['pricing-card-horizontal', { featured: tier.featured }]">
+            <div v-if="tier.featured" class="featured-badge">{{ $t('home.elders_choice') }}</div>
             <div class="pricing-left">
               <div class="pricing-header-horizontal">
                 <h3 class="pricing-name-horizontal">{{ tier.name }}</h3>
                 <div class="pricing-price-horizontal">
                   <template v-if="tier.id === 'free'">
-                    <span class="price-free">5 Generations</span>
+                    <span class="price-free">{{ tier.price }}</span>
                   </template>
                   <template v-else>
                     <span class="price-currency-horizontal">$</span>
                     <span class="price-amount-horizontal">{{ tier.price }}</span>
-                    <span class="price-period-horizontal">/month</span>
+                    <span class="price-period-horizontal">{{ $t('home.per_month') }}</span>
                   </template>
                 </div>
               </div>
             </div>
 
-            <div class="pricing-right">
-              <div v-if="tier.includePrevious" class="previous-styles-note">
-                + All styles from the "{{ tier.previousPlanName }}" plan
-              </div>
+            <div class="pricing-right" :class="{ 'free-plan-adjust': tier.id === 'free' }">
+              <button v-if="tier.id !== 'free'" class="style-toggle-btn" @click="toggleTier(tier.id)" :class="{ active: expandedTiers[tier.id] }">
+                <span class="toggle-text">
+                  {{ expandedTiers[tier.id] ? $t('home.hide_styles') : $t('home.show_styles', { count: tier.styles.length }) }}
+                </span>
+                <ChevronDownIcon class="toggle-icon" />
+              </button>
 
-              <div class="styles-grid">
-                <div v-for="(style, index) in tier.styles" :key="style.id" 
-                  :class="['style-item', { 'style-description': style.id === 'desc' }]"
-                  :style="{ 'animation-delay': `${index * 0.1}s` }">
-                  <div class="style-name">{{ style.name }}</div>
-                  <div class="style-genre">{{ style.genre }}</div>
+              <div class="styles-collapsible" :class="{ expanded: expandedTiers[tier.id] || tier.id === 'free' }">
+                <div class="styles-content-wrapper">
+                  <div v-if="tier.includePrevious" class="previous-styles-note">
+                    <i18n-t keypath="home.plus_all_from">
+                      <template #plan>
+                        <span class="plan-badge-shimmer">{{ tier.previousPlanName }}</span>
+                      </template>
+                    </i18n-t>
+                  </div>
+
+                  <div class="styles-grid">
+                    <div v-for="(style, index) in tier.styles" :key="style.id" 
+                      :class="['style-item', { 'style-description': style.id === 'desc' }]"
+                      :style="{ 'animation-delay': `${index * 0.1}s` }">
+                      <div class="style-name">{{ style.name }}</div>
+                      <div class="style-genre">{{ style.genre }}</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -165,9 +181,9 @@
 
       <section class="section-genres">
         <div class="section-header">
-          <h2 class="section-title">Explore Art Genres</h2>
+          <h2 class="section-title">{{ $t('home.genres_title') }}</h2>
           <p class="section-subtitle">
-            From dark medieval fantasies to futuristic cyberpunk
+            {{ $t('home.genres_subtitle') }}
           </p>
         </div>
 
@@ -184,9 +200,9 @@
 
       <section class="section-steps">
         <div class="section-header">
-          <h2 class="section-title">How it Works</h2>
+          <h2 class="section-title">{{ $t('home.how_title') }}</h2>
           <p class="section-subtitle">
-            Transform your photos in three simple steps
+            {{ $t('home.how_subtitle') }}
           </p>
         </div>
 
@@ -205,9 +221,9 @@
 
       <section class="section-product-demo">
         <div class="section-header">
-          <h2 class="section-title">See It in Action</h2>
+          <h2 class="section-title">{{ $t('home.demo_title') }}</h2>
           <p class="section-subtitle">
-            Watch the real-time generation process
+            {{ $t('home.demo_subtitle') }}
           </p>
         </div>
 
@@ -226,15 +242,12 @@
           
           <div class="final-cta-content">
             <h2 class="final-cta-title">
-              Ready to create something <br />
-              <span class="text-gradient-gold">extraordinary?</span>
+              {{ $t('home.final_title_1') }}
+              <span class="text-gradient-gold">{{ $t('home.final_title_2') }}</span>
             </h2>
-            <p class="final-cta-subtitle">
-              Start for free with 5 generations included
-            </p>
             <div class="final-cta-action">
               <button @click="handleTryFree" class="cta-primary large cta-final-pulse">
-                Try for free
+                {{ $t('home.final_cta') }}
               </button>
             </div>
           </div>
@@ -246,8 +259,9 @@
 </template>
 
 <script setup>
-import { ref, onUnmounted, onMounted } from 'vue'
+import { ref, onUnmounted, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import originalImg from '@/assets/home_page/original.webp'
 import darkFantasyResult from '@/assets/home_page/dark-fantasy_result.webp'
@@ -270,14 +284,21 @@ import {
   ClockIcon,
   GlobeAltIcon,
   SparklesIcon,
-  ArrowTrendingUpIcon
+  ArrowTrendingUpIcon,
+  ChevronDownIcon
 } from '@heroicons/vue/24/outline'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { t } = useI18n()
 const sliderPosition = ref(50)
 let isDragging = false
+const expandedTiers = ref({})
 const selectedPreviewStyle = ref('dark-fantasy')
+
+const toggleTier = (id) => {
+  expandedTiers.value[id] = !expandedTiers.value[id]
+}
 const heroCard = ref(null)
 
 const previewStyles = [
@@ -300,21 +321,21 @@ function getStyledImageUrl() {
   return styleImages[selectedPreviewStyle.value] || styleImages['dark-fantasy']
 }
 
-const subscriptionTiers = [
+const subscriptionTiers = computed(() => [
   {
     id: 'free',
-    name: 'Free Plan',
-    price: 'Free',
+    name: t('home.plan_free'),
+    price: t('home.genes_included'),
     featured: false,
     includePrevious: false,
     previousPlanName: null,
     styles: [
-      { id: 'desc', name: 'Create professional art from your photos', genre: 'Full access to 30+ premium styles' }
+      { id: 'desc', name: t('home.desc_style_name'), genre: t('home.desc_style_genre') }
     ]
   },
   {
     id: 'amateur',
-    name: 'Amateur',
+    name: t('home.plan_amateur'),
     price: 6,
     featured: false,
     includePrevious: false,
@@ -336,11 +357,11 @@ const subscriptionTiers = [
   },
   {
     id: 'journeyman',
-    name: 'Journeyman',
+    name: t('home.plan_journeyman'),
     price: 10,
     featured: true,
     includePrevious: true,
-    previousPlanName: 'Amateur',
+    previousPlanName: t('home.plan_amateur'),
     styles: [
       { id: 13, name: 'Dark Fantasy', genre: 'Fantasy' },
       { id: 14, name: 'Adventure Fantasy', genre: 'Fantasy' },
@@ -359,11 +380,11 @@ const subscriptionTiers = [
   },
   {
     id: 'master',
-    name: 'Master',
+    name: t('home.plan_master'),
     price: 15,
     featured: false,
     includePrevious: true,
-    previousPlanName: 'Journeyman',
+    previousPlanName: t('home.plan_journeyman'),
     styles: [
       { id: 26, name: 'Grimdark Fantasy', genre: 'Fantasy' },
       { id: 27, name: 'Venice Canals', genre: 'Around The World' },
@@ -372,67 +393,67 @@ const subscriptionTiers = [
       { id: 30, name: 'Yacht Chillin\'', genre: 'Trending' }
     ]
   }
-]
+])
 
-const genres = [
+const genres = computed(() => [
   {
     id: 'fantasy',
     title: 'Fantasy',
-    description: 'Epic adventures in magical worlds',
+    description: t('home.genre_fantasy'),
     icon: FireIcon
   },
   {
     id: 'punkverse',
     title: 'Punkverse',
-    description: 'Alternative worlds of technology and rebellion',
+    description: t('home.genre_punkverse'),
     icon: CogIcon
   },
   {
     id: 'time-travel',
     title: 'Time Travel',
-    description: 'Journey through time',
+    description: t('home.genre_timetravel'),
     icon: ClockIcon
   },
   {
     id: 'around-the-world',
     title: 'Around the World',
-    description: 'Explore distant lands',
+    description: t('home.genre_world'),
     icon: GlobeAltIcon
   },
   {
     id: 'events',
     title: 'Events',
-    description: 'Celebrations and festivals',
+    description: t('home.genre_events'),
     icon: SparklesIcon
   },
   {
     id: 'trending',
     title: 'Trending',
-    description: 'Popular styles of the moment',
+    description: t('home.genre_trending'),
     icon: ArrowTrendingUpIcon
   }
-]
+])
 
-const steps = [
+const steps = computed(() => [
   {
     id: 'upload',
-    title: 'Upload Your Photo',
-    description: 'Upload a selfie, portrait, or any image from your gallery',
+    title: t('home.step_1_title'),
+    description: t('home.step_1_desc'),
     icon: CloudArrowUpIcon
   },
   {
     id: 'style',
-    title: 'Choose Your Style',
-    description: 'Choose from 30+ professional filters',
+    title: t('home.step_2_title'),
+    description: t('home.step_2_desc'),
     icon: SwatchIcon
   },
   {
     id: 'generate',
-    title: 'Transform & Download',
-    description: 'Download high-quality art instantly. Ready to share',
+    title: t('home.step_3_title'),
+    description: t('home.step_3_desc'),
     icon: ArrowDownTrayIcon
   }
-]
+])
 
 function getCurrentStyleName() {
   const style = previewStyles.find(s => s.id === selectedPreviewStyle.value)
@@ -548,6 +569,12 @@ onUnmounted(() => {
   document.removeEventListener('touchend', stopDrag)
 })
 </script>
+
+<style>
+html, body {
+  overscroll-behavior-y: none;
+}
+</style>
 
 <style scoped>
 .landing-wrapper {
@@ -1194,8 +1221,7 @@ section {
   box-shadow: 0 0 60px rgba(139, 92, 246, 0.3), 0 20px 40px rgba(139, 92, 246, 0.2);
 }
 
-.pricing-card-horizontal.featured::before {
-  content: 'Elder\'s Choice';
+.featured-badge {
   position: absolute;
   top: -12px;
   left: var(--spacing-lg);
@@ -1206,8 +1232,8 @@ section {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-radius: 980px;
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+  border-radius: 100px;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
 }
 
 .pricing-left {
@@ -1282,6 +1308,27 @@ section {
   font-size: 14px;
   font-weight: 500;
   text-align: center;
+  background: rgba(139, 92, 246, 0.05);
+}
+
+.plan-badge-shimmer {
+  display: inline-block;
+  font-weight: 700;
+  
+  /* Shimmer text effect */
+  background-image: linear-gradient(
+    90deg,
+    #fff 0%,
+    #a78bfa 50%,
+    #fff 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer-text 5s linear infinite;
+  
+  vertical-align: baseline;
 }
 
 .styles-grid {
@@ -1967,6 +2014,10 @@ footer {
     transform: translateX(-50%);
   }
 
+  .style-toggle-btn {
+    display: flex !important;
+  }
+
   .pricing-left {
     min-width: auto;
     text-align: center;
@@ -1982,6 +2033,25 @@ footer {
 
   .styles-grid {
     grid-template-columns: 1fr;
+  }
+
+  .style-toggle-btn {
+    display: flex;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .styles-collapsible {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .styles-collapsible.expanded {
+    grid-template-rows: 1fr;
+  }
+
+  .styles-content-wrapper {
+    overflow: hidden;
   }
 
   .genres-grid {
@@ -2222,6 +2292,122 @@ footer {
   
   .badge-shimmer {
     font-size: 11px;
+  }
+}
+
+
+.style-toggle-btn {
+  display: none;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 0;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  color: var(--color-text-primary);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: var(--spacing-sm);
+  animation: pulse-border 3s ease-in-out infinite;
+}
+
+.style-toggle-btn:not(.active)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(139, 92, 246, 0.2),
+    transparent
+  );
+  animation: shimmer-continuous 3s ease-in-out infinite;
+}
+
+.style-toggle-btn:hover {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: rgba(139, 92, 246, 0.4);
+  transform: translateY(-1px);
+}
+
+.style-toggle-btn.active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+  margin-bottom: var(--spacing-md);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.toggle-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.8;
+  transition: transform 0.3s ease;
+  margin-top: 2px;
+}
+
+.style-toggle-btn.active .toggle-icon {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+.previous-styles-note {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  background: rgba(139, 92, 246, 0.05);
+  margin-bottom: var(--spacing-md);
+}
+
+@media (max-width: 768px) {
+  .pricing-card-horizontal {
+    padding-bottom: 16px;
+    height: auto !important;
+  }
+
+  .style-toggle-btn {
+    margin-bottom: 0 !important;
+  }
+
+  .pricing-right {
+    flex: 0 0 auto;
+  }
+
+  .styles-grid {
+    padding-bottom: 0;
+  }
+
+  .styles-collapsible.expanded {
+    margin-bottom: 24px;
+  }
+
+  .previous-styles-note {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0;
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+  }
+}
+
+@media (min-width: 769px) {
+  .styles-collapsible {
+    display: block !important;
+    grid-template-rows: unset !important;
   }
 }
 </style>
