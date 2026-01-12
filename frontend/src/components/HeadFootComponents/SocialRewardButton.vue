@@ -237,11 +237,17 @@ watch(isExpanded, (newVal) => {
   text-align: center;
 }
 
-.promo-inner-content::before,
+.promo-inner-content::before {
+  content: '';
+  flex-grow: 1;
+  min-height: 40px;
+  width: 100%;
+}
+
 .promo-inner-content::after {
   content: '';
   flex-grow: 1;
-  min-height: 120px;
+  min-height: 80px;
   width: 100%;
 }
 
@@ -416,9 +422,9 @@ watch(isExpanded, (newVal) => {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 18px 56px;
-  font-size: 17px;
-  font-weight: 800;
+  padding: 18px 48px;
+  font-size: 16px;
+  font-weight: 700;
   color: #000;
   background: #fff;
   border: none;
@@ -426,12 +432,11 @@ watch(isExpanded, (newVal) => {
   text-decoration: none;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+  white-space: nowrap;
   flex-shrink: 0;
-  width: 100%;
-  max-width: 320px;
+  width: auto;
+  min-width: fit-content;
 }
 
 .discord-button:hover {
