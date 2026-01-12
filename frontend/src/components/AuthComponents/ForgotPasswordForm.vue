@@ -2,14 +2,14 @@
   <div class="form-container">
       <form @submit.prevent="handleSubmit" class="space-y-6" novalidate>
         <div class="text-center mb-8">
-          <h2 class="text-2xl font-bold text-white mb-2">{{ sent ? 'Success' : 'Forgot Password' }}</h2>
+          <h2 class="text-2xl font-bold text-white mb-2">{{ sent ? $t('auth.success') : $t('auth.forgot_password_title') }}</h2>
           <p class="text-gray-400 text-sm leading-relaxed">
-            {{ sent ? 'Link sent. Check your inbox' : 'Enter your email to reset' }}
+            {{ sent ? $t('auth.link_sent') : $t('auth.enter_email_reset') }}
           </p>
         </div>
 
         <div v-if="!sent">
-          <label for="fp-email" class="block text-sm font-semibold text-gray-200">Email</label>
+          <label for="fp-email" class="block text-sm font-semibold text-gray-200">{{ $t('auth.email_label') }}</label>
           <input 
             id="fp-email" 
             type="email" 
@@ -22,14 +22,14 @@
 
         <div class="pt-2">
           <button v-if="!sent" type="submit" :disabled="isLoading" class="w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md disabled:opacity-40 disabled:cursor-not-allowed bg-gray-400 border border-gray-500 shadow-lg hover:bg-gray-500 hover:text-gray-900">
-            <span v-if="isLoading">Sending…</span>
-            <span v-else>Send reset link</span>
+            <span v-if="isLoading">{{ $t('auth.sending') }}</span>
+            <span v-else>{{ $t('auth.send_reset_link') }}</span>
           </button>
-          <router-link v-else to="/login" class="w-full py-3 inline-block text-center font-bold text-gray-800 transition duration-300 rounded-md bg-gray-400 border border-gray-500 shadow-lg hover:bg-gray-500 hover:text-gray-900">Back to Sign In</router-link>
+          <router-link v-else to="/login" class="w-full py-3 inline-block text-center font-bold text-gray-800 transition duration-300 rounded-md bg-gray-400 border border-gray-500 shadow-lg hover:bg-gray-500 hover:text-gray-900">{{ $t('auth.back_to_login') }}</router-link>
         </div>
 
         <div v-if="!sent" class="text-center">
-          <router-link to="/login" class="text-sm text-sky-200 hover:text-sky-100">Back to Sign In</router-link>
+          <router-link to="/login" class="text-sm text-sky-200 hover:text-sky-100">{{ $t('auth.back_to_login') }}</router-link>
         </div>
       </form>
   </div>
@@ -37,9 +37,11 @@
 
 <script setup>
 import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import api from '@/services/api';
 import isEmail from 'validator/lib/isEmail';
 
+const { t } = useI18n();
 const email = ref('');
 const isLoading = ref(false);
 const error = ref('');
@@ -53,7 +55,7 @@ watch(email, () => {
 async function handleSubmit() {
   error.value = '';
   if (!isEmail(email.value)) {
-    error.value = 'Invalid email format';
+    error.value = t('auth.error_email_format');
     return;
   }
   isLoading.value = true;
@@ -65,7 +67,7 @@ async function handleSubmit() {
     if (error.response && error.response.data && error.response.data.detail) {
       error.value = error.response.data.detail;
     } else {
-      error.value = 'An error occurred. Please try again';
+      error.value = t('auth.error_generic');
     }
   }
   finally {

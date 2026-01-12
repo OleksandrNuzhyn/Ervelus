@@ -15,7 +15,7 @@
         </div>
 
         <div class="text-center mb-10">
-          <h2 class="text-3xl font-bold text-white">Entrance to the Ervelus</h2>
+          <h2 class="text-3xl font-bold text-white">{{ $t('auth.login_title') }}</h2>
         </div>
 
         <div>
@@ -31,23 +31,23 @@
               <path d="M11.016 28.596C10.536 27.108 10.272 25.548 10.272 23.988C10.272 22.428 10.536 20.868 11.016 19.38L3.012 13.308C1.128 17.1 0 21.396 0 23.988C0 26.58 1.128 30.876 3.012 34.668L11.016 28.596Z" fill="#FBBC05"/>
               <path d="M24.48 9.36C28.116 9.36 31.32 10.608 33.72 12.876L40.944 5.652C36.636 1.956 31.068 0 24.48 0C15.192 0 7.032 5.34 3.012 13.308L11.016 19.38C12.792 13.644 18.156 9.36 24.48 9.36Z" fill="#EA4335"/>
             </svg>
-            <span v-if="isGoogleLoading">Please wait...</span>
-            <span v-else>Sign in with Google</span>
+            <span v-if="isGoogleLoading">{{ $t('auth.please_wait') }}</span>
+            <span v-else>{{ $t('auth.google_signin') }}</span>
           </button>
           <p class="text-sm text-center text-gray-400 mt-4 mb-2">
-            By continuing, you agree to our
-            <router-link to="/terms-of-service" target="_blank" class="text-sky-200 hover:text-sky-100 hover:underline">Terms</router-link> & <router-link to="/privacy-policy" target="_blank" class="text-sky-200 hover:text-sky-100 hover:underline">Privacy</router-link>
+            {{ $t('auth.agreement_prefix') }}
+            <router-link to="/terms-of-service" target="_blank" class="text-sky-200 hover:text-sky-100 hover:underline">{{ $t('auth.terms') }}</router-link> {{ $t('auth.and') }} <router-link to="/privacy-policy" target="_blank" class="text-sky-200 hover:text-sky-100 hover:underline">{{ $t('auth.privacy') }}</router-link>
           </p>
         </div>
 
         <div class="relative flex items-center py-2 mt-4 mb-2">
             <div class="flex-grow border-t border-gray-600"></div>
-            <span class="flex-shrink mx-4 text-gray-400">Or continue with</span>
+            <span class="flex-shrink mx-4 text-gray-400">{{ $t('auth.or_continue') }}</span>
             <div class="flex-grow border-t border-gray-600"></div>
         </div>
   
         <div>
-          <label for="email" class="block text-sm font-semibold text-gray-200">Email</label>
+          <label for="email" class="block text-sm font-semibold text-gray-200">{{ $t('auth.email_label') }}</label>
           <input 
             id="email"
             type="email"
@@ -56,13 +56,13 @@
             minlength="5"
             maxlength="254"
             inputmode="email"
-            class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
+            class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
           />
           <p v-if="errors.email" class="mt-1 text-sm text-red-400">{{ errors.email }}</p>
         </div>
   
         <div>
-          <label for="password" class="block text-sm font-semibold text-gray-200">Password</label>
+          <label for="password" class="block text-sm font-semibold text-gray-200">{{ $t('auth.password_label') }}</label>
           <div class="relative">
             <input 
               id="password"
@@ -71,7 +71,7 @@
               required
               minlength="8"
               autocomplete="current-password"
-              class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 pr-12"
+              class="w-full px-4 py-2 mt-2 text-gray-200 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 pr-12"
             />
             <img :src="passwordIcon" @click="togglePasswordVisibility" draggable="false" class="select-none absolute right-1 top-1/2 -translate-y-1/2 mt-1 h-10 w-16 cursor-pointer transition-all duration-300" :class="showPassword ? 'opacity-100 glowing-eye' : 'opacity-35'" alt="Toggle password visibility" />
           </div>
@@ -86,18 +86,18 @@
             :disabled="isLoading"
             class="w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-gray-400 border border-gray-500 shadow-lg hover:bg-gray-500 hover:text-gray-900"
           >
-            <span v-if="isLoading">Uncovering the truth...</span>
-            <span v-else>Sign In</span>
+            <span v-if="isLoading">{{ $t('auth.logging_in') }}</span>
+            <span v-else>{{ $t('auth.sign_in') }}</span>
           </button>
         </div>
         
         <div class="space-y-4 mt-3">
           <div class="text-right">
-            <router-link to="/forgot-password" draggable="false" class="text-sm text-gray-400 hover:text-gray-200">Lost the keyword?</router-link>
+            <router-link to="/forgot-password" draggable="false" class="text-sm text-gray-400 hover:text-gray-200">{{ $t('auth.forgot_password') }}</router-link>
           </div>
           <div class="text-center">
-            <span class="text-sm text-gray-400">Don't have an account? </span>
-            <router-link to="/register" draggable="false" class="text-sm text-sky-200 hover:text-sky-100">Register here</router-link>
+            <span class="text-sm text-gray-400">{{ $t('auth.no_account') }} </span>
+            <router-link to="/register" draggable="false" class="text-sm text-sky-200 hover:text-sky-100 ml-1">{{ $t('auth.register_link') }}</router-link>
           </div>
         </div>
       </form>
@@ -110,10 +110,12 @@ import { useTokenClient } from "vue3-google-signin";
 import isEmail from 'validator/lib/isEmail';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import api from '@/services/api';
 import eye_of_sauron from '@/assets/svg/geralt_closed.svg';
 import eye_of_sauron_looking from '@/assets/svg/geralt_looking.svg';
 
+const { t } = useI18n();
 const email = ref('');
 const password = ref('');
 const isLoading = ref(false);
@@ -161,7 +163,7 @@ async function handleLoginSuccess(response) {
   } 
   catch (error) {
     if (error.response) {
-      errors.value.api = error.response?.data?.detail || 'Google sign-in failed';
+      errors.value.api = error.response?.data?.detail || t('auth.error_google_failed');
     }
   } 
   finally {
@@ -170,7 +172,7 @@ async function handleLoginSuccess(response) {
 }
 
 function handleLoginError() {
-  errors.value.api = 'Google sign-in failed';
+  errors.value.api = t('auth.error_google_failed');
 }
 
 function validateForm() {
@@ -178,20 +180,20 @@ function validateForm() {
 
   let isValid = true;
   if (!email.value) {
-    errors.value.email = 'The email field cannot be empty';
+    errors.value.email = t('auth.error_email_empty');
     isValid = false;
   } 
   else if (!isEmail(email.value)) {
-    errors.value.email = 'Incorrect email format';
+    errors.value.email = t('auth.error_email_format');
     isValid = false;
   }
   
   if (!password.value) {
-    errors.value.password = 'Please enter your password';
+    errors.value.password = t('auth.error_password_empty');
     isValid = false;
   } 
   else if (password.value.length < 8) {
-    errors.value.password = 'Your password must contain no fewer than 8 characters';
+    errors.value.password = t('auth.error_password_min');
     isValid = false;
   }
 
@@ -226,7 +228,7 @@ async function handleSubmit() {
           errors.value.api = data.non_field_errors[0];
         } 
         else {
-          errors.value.api = 'Incorrect email or password. Please try again';
+          errors.value.api = t('auth.error_invalid_credentials');
         }
       }
     } 

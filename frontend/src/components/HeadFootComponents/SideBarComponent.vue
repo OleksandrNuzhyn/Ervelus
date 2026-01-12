@@ -28,24 +28,24 @@
             leave-from-class="transform translate-x-0"
             leave-to-class="transform translate-x-full">
             <div v-if="isBarOpen" class="fixed right-0 top-[70px] h-[calc(100vh-70px)] py-2 w-80 sidebar-bg z-100 flex flex-col transform-gpu border-l border-white/[0.03] premium-shadow">
-                <div class="px-3 py-4 text-sm text-gray-400 flex items-center justify-between">
-                    <span>Coins: {{ credits }}</span>
-                    <img src="@/assets/svg/coin.svg" class="h-9 w-9 mr-1" />
+                <div class="px-4 py-4 text-sm text-gray-400 flex items-center justify-between">
+                    <span>{{ $t('navigation.coins') }}: {{ credits }}</span>
+                    <img src="@/assets/svg/coin.svg" class="h-9 w-9" />
                 </div>
                 <router-link to="/profile" class="px-4 py-4 text-sm text-gray-400 hover:text-white flex items-center justify-between" @click="closeBar">
-                    <span>Profile</span>
+                    <span>{{ $t('navigation.profile') }}</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </router-link>
                 <router-link to="/pricing" class="px-4 py-4 text-sm text-gray-400 hover:text-white flex items-center justify-between" @click="closeBar">
-                    <span>Pricing</span>
+                    <span>{{ $t('navigation.pricing') }}</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </router-link>
                 <router-link to="/contact-us" class="px-4 py-4 text-sm text-gray-400 hover:text-white flex items-center justify-between" @click="closeBar">
-                    <span>Contact us</span>
+                    <span>{{ $t('navigation.contact_us') }}</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"/>
                     </svg>
@@ -55,7 +55,7 @@
                         <img src="@/assets/svg/sidebar.webp" class="w-full" />
                     </div>
                     <button @click="onLogout" class="w-full text-left px-4 py-4 text-sm bg-black/20 text-gray-400 hover:text-white flex items-center justify-between flex-shrink-0">
-                        <span>Sign out</span>
+                        <span>{{ $t('navigation.sign_out') }}</span>
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20V9.75a5 5 0 00-10 0V20M2 20h20"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 12h8m0 0l-3-3m3 3l-3 3"></path></svg>
                     </button>
                 </div>

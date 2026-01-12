@@ -16,7 +16,7 @@
       </div>
 
       <div class="text-center mb-10">
-        <h2 class="text-3xl font-bold text-white">Join the Ervelus</h2>
+        <h2 class="text-3xl font-bold text-white">{{ $t('auth.register_title') }}</h2>
       </div>
 
       <div>
@@ -32,23 +32,23 @@
             <path d="M11.016 28.596C10.536 27.108 10.272 25.548 10.272 23.988C10.272 22.428 10.536 20.868 11.016 19.38L3.012 13.308C1.128 17.1 0 21.396 0 23.988C0 26.58 1.128 30.876 3.012 34.668L11.016 28.596Z" fill="#FBBC05"/>
             <path d="M24.48 9.36C28.116 9.36 31.32 10.608 33.72 12.876L40.944 5.652C36.636 1.956 31.068 0 24.48 0C15.192 0 7.032 5.34 3.012 13.308L11.016 19.38C12.792 13.644 18.156 9.36 24.48 9.36Z" fill="#EA4335"/>
           </svg>
-          <span v-if="isGoogleLoading">Please wait...</span>
-          <span v-else>Sign up with Google</span>
+          <span v-if="isGoogleLoading">{{ $t('auth.please_wait') }}</span>
+          <span v-else>{{ $t('auth.google_signup') }}</span>
         </button>
         <p class="text-sm text-center text-gray-400 mt-4 mb-2">
-          By signing up, you agree to our
-          <router-link to="/terms-of-service" target="_blank" class="text-sky-200 hover:text-sky-100 hover:underline">Terms</router-link> & <router-link to="/privacy-policy" target="_blank" class="text-sky-200 hover:text-sky-100 hover:underline">Privacy</router-link>
+          {{ $t('auth.signup_agreement') }}
+          <router-link to="/terms-of-service" target="_blank" class="text-sky-200 hover:text-sky-100 hover:underline">{{ $t('auth.terms') }}</router-link> {{ $t('auth.and') }} <router-link to="/privacy-policy" target="_blank" class="text-sky-200 hover:text-sky-100 hover:underline">{{ $t('auth.privacy') }}</router-link>
         </p>
       </div>
 
       <div class="relative flex items-center py-2 mt-4 mb-2">
         <div class="flex-grow border-t border-gray-600"></div>
-        <span class="flex-shrink mx-4 text-gray-400">Or continue with</span>
+        <span class="flex-shrink mx-4 text-gray-400">{{ $t('auth.or_continue') }}</span>
         <div class="flex-grow border-t border-gray-600"></div>
       </div>
 
       <div>
-        <label for="reg-email" class="block text-sm font-semibold text-gray-200">Email</label>
+        <label for="reg-email" class="block text-sm font-semibold text-gray-200">{{ $t('auth.email_label') }}</label>
         <input
           id="reg-email"
           type="email"
@@ -63,7 +63,7 @@
       </div>
 
       <div>
-        <label for="reg-pass1" class="block text-sm font-semibold text-gray-200">Password</label>
+        <label for="reg-pass1" class="block text-sm font-semibold text-gray-200">{{ $t('auth.password_label') }}</label>
         <div class="relative">
           <input
             id="reg-pass1"
@@ -81,7 +81,7 @@
       </div>
 
       <div>
-        <label for="reg-pass2" class="block text-sm font-semibold text-gray-200">Confirm Password</label>
+        <label for="reg-pass2" class="block text-sm font-semibold text-gray-200">{{ $t('auth.confirm_password_label') }}</label>
         <div class="relative">
           <input
             id="reg-pass2"
@@ -106,14 +106,14 @@
           :disabled="isLoading"
           class="w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md disabled:opacity-40 disabled:cursor-not-allowed bg-gray-400 border border-gray-500 shadow-lg hover:bg-gray-500 hover:text-gray-900"
         >
-          <span v-if="isLoading">Creating…</span>
-          <span v-else>Sign Up</span>
+          <span v-if="isLoading">{{ $t('auth.creating_account') }}</span>
+          <span v-else>{{ $t('auth.sign_up') }}</span>
         </button>
       </div>
 
       <div class="text-center mt-8">
-        <span class="text-sm text-gray-400">Already have an account? </span>
-        <router-link to="/login" draggable="false" class="text-sm text-sky-200 hover:text-sky-100">Sign In</router-link>
+        <span class="text-sm text-gray-400">{{ $t('auth.has_account') }} </span>
+        <router-link to="/login" draggable="false" class="text-sm text-sky-200 hover:text-sky-100 ml-1">{{ $t('auth.sign_in') }}</router-link>
       </div>
     </form>
 
@@ -121,13 +121,13 @@
       v-else
       class="space-y-6 text-center"
     >
-      <h2 class="text-2xl font-bold">Confirm your Email</h2>
+      <h2 class="text-2xl font-bold">{{ $t('auth.confirm_email_title') }}</h2>
       <p class="text-gray-400">
-        We've sent a confirmation link to <strong>{{ email }}</strong>. Please check your inbox and spam folder
+        {{ $t('auth.confirm_email_sent_to') }} <strong>{{ email }}</strong>. {{ $t('auth.check_inbox') }}
       </p>
       
       <p v-if="canResend" class="text-green-400 text-sm">
-        Didn't get the email? You can try sending it again
+        {{ $t('auth.resend_prompt') }}
       </p>
 
       <button
@@ -135,8 +135,8 @@
         :disabled="!canResend || isLoading"
         class="w-full py-3 font-bold text-white transition duration-300 rounded-md disabled:opacity-60 disabled:cursor-not-allowed bg-white/10 backdrop-blur-md border border-white/20 shadow-lg hover:bg-white/20"
       >
-        <span v-if="isLoading">Sending...</span>
-        <span v-else>Resend Confirmation Email</span>
+        <span v-if="isLoading">{{ $t('auth.sending') }}</span>
+        <span v-else>{{ $t('auth.resend_btn') }}</span>
       </button>
        <p v-if="errors.api" class="mt-2 text-sm text-red-400">{{ errors.api }}</p>
     </div>
@@ -148,11 +148,13 @@ import { ref, onUnmounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useTokenClient } from "vue3-google-signin";
 import { useAuthStore } from '@/stores/auth';
+import { useI18n } from 'vue-i18n';
 import api from '@/services/api';
 import isEmail from 'validator/lib/isEmail';
 import eye_of_sauron from '@/assets/svg/geralt_closed.svg';
 import eye_of_sauron_looking from '@/assets/svg/geralt_looking.svg';
 
+const { t } = useI18n();
 const email = ref('');
 const password1 = ref('');
 const password2 = ref('');
@@ -212,7 +214,7 @@ async function handleGoogleSuccess(response) {
     }
   } 
   catch (error) {
-    errors.value.api = error.response?.data?.detail || 'Google sign-up failed';
+    errors.value.api = error.response?.data?.detail || t('auth.error_google_signup_failed');
   } 
   finally {
     isGoogleLoading.value = false;
@@ -220,7 +222,7 @@ async function handleGoogleSuccess(response) {
 }
 
 function handleGoogleError() {
-  errors.value.api = 'Google sign-up process failed. Please try again';
+  errors.value.api = t('auth.error_google_process_failed');
 }
 
 function startResendTimer() {
@@ -255,7 +257,7 @@ async function handleResendEmail() {
           errors.value.api = data.detail[0];
         } 
         else {
-          errors.value.api = 'Invalid request. Please check your email address';
+          errors.value.api = t('auth.error_invalid_email_request');
         }
       }
     }
@@ -270,29 +272,29 @@ function validateForm() {
   let isValid = true;
 
   if (!email.value) {
-    errors.value.email = 'Email is required';
+    errors.value.email = t('auth.error_email_required');
     isValid = false;
   } 
   else if (!isEmail(email.value)) {
-    errors.value.email = 'Invalid email format';
+    errors.value.email = t('auth.error_email_format');
     isValid = false;
   }
 
   if (!password1.value) {
-    errors.value.password1 = 'Password is required';
+    errors.value.password1 = t('auth.error_password_required');
     isValid = false;
   } 
   else if (password1.value.length < 8) {
-    errors.value.password1 = 'Your password must contain no fewer than 8 characters';
+    errors.value.password1 = t('auth.error_password_min');
     isValid = false;
   }
 
   if (!password2.value) {
-    errors.value.password2 = 'Please confirm password';
+    errors.value.password2 = t('auth.error_confirm_password');
     isValid = false;
   } 
   else if (password1.value !== password2.value) {
-    errors.value.password2 = 'Passwords are not in harmony';
+    errors.value.password2 = t('auth.error_passwords_mismatch');
     isValid = false;
   }
 
@@ -332,11 +334,11 @@ async function handleSubmit() {
             errors.value.api = Array.isArray(data.non_field_errors) ? data.non_field_errors[0] : data.non_field_errors;
           }
           if (!errors.value.email && !errors.value.password1 && !errors.value.password2 && !errors.value.api) {
-            errors.value.api = 'Invalid data provided. Please check your input';
+            errors.value.api = t('auth.error_invalid_data');
           }
       }
       else if (status === 409) {
-        errors.value.api ='A soul with this name is already wandering the Ervelus';
+        errors.value.api = t('auth.error_email_exists');
       }
     }
   } 

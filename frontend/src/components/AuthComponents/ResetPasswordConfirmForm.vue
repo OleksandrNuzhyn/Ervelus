@@ -2,13 +2,13 @@
   <div class="form-container">
     <form @submit.prevent="handleSubmit" class="space-y-6" novalidate>
       <div class="text-center mb-8">
-        <h2 class="text-2xl font-bold text-white mb-2">Set new password</h2>
-        <p class="text-gray-400 text-sm leading-relaxed">Enter your new password</p>
+        <h2 class="text-2xl font-bold text-white mb-2">{{ $t('auth.set_new_password') }}</h2>
+        <p class="text-gray-400 text-sm leading-relaxed">{{ $t('auth.enter_new_password') }}</p>
       </div>
   
       <div class="space-y-4">
         <div>
-          <label for="new1" class="block text-sm font-semibold text-gray-200">New Password</label>
+          <label for="new1" class="block text-sm font-semibold text-gray-200">{{ $t('auth.new_password_label') }}</label>
           <div class="relative">
             <input 
               id="new1" 
@@ -25,7 +25,7 @@
         </div>
 
         <div>
-          <label for="new2" class="block text-sm font-semibold text-gray-200">Confirm New Password</label>
+          <label for="new2" class="block text-sm font-semibold text-gray-200">{{ $t('auth.confirm_new_password_label') }}</label>
           <div class="relative">
             <input 
               id="new2" 
@@ -46,8 +46,8 @@
 
       <div class="pt-2">
         <button type="submit" :disabled="isLoading" class="w-full py-3 font-bold text-gray-800 transition duration-300 rounded-md disabled:opacity-40 disabled:cursor-not-allowed bg-gray-400 border border-gray-500 shadow-lg hover:bg-gray-500 hover:text-gray-900">
-          <span v-if="isLoading">Setting…</span>
-          <span v-else>Set password</span>
+          <span v-if="isLoading">{{ $t('auth.setting_password') }}</span>
+          <span v-else>{{ $t('auth.set_password_btn') }}</span>
         </button>
       </div>
     </form>
@@ -57,12 +57,14 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import api from '@/services/api';
 import eye_of_sauron from '@/assets/svg/geralt_closed.svg';
 import eye_of_sauron_looking from '@/assets/svg/geralt_looking.svg';
 
 const route = useRoute();
 const router = useRouter();
+const { t } = useI18n();
 const uid = route.params.uid;
 const token = route.params.token;
 
@@ -93,20 +95,20 @@ function validateForm() {
   let ok = true;
 
   if (!password1.value) {
-    errors.value.password1 = 'Password is required';
+    errors.value.password1 = t('auth.error_password_required');
     ok = false;
   } 
   else if (password1.value.length < 8) {
-    errors.value.password1 = 'Minimum 8 characters required';
+    errors.value.password1 = t('auth.error_password_min');
     ok = false;
   }
 
   if (!password2.value) {
-    errors.value.password2 = 'Please confirm password';
+    errors.value.password2 = t('auth.error_confirm_password');
     ok = false;
   } 
   else if (password1.value !== password2.value) {
-    errors.value.password2 = 'Passwords are not in harmony';
+    errors.value.password2 = t('auth.error_passwords_mismatch');
     ok = false;
   }
 

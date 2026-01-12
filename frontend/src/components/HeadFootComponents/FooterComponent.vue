@@ -7,16 +7,14 @@
             <img src="/favicon.svg" alt="Ervelus Logo" class="h-8 w-8" />
             <span class="text-xl font-bold text-white tracking-tight">Ervelus</span>
           </div>
-          <p class="text-sm select-none">&copy; {{ year }} Ervelus. All rights reserved. Made with 🧙‍♂️</p>
+          <p class="text-sm select-none">&copy; {{ year }} Ervelus. {{ $t('navigation.rights_reserved') }}</p>
         </div>
 
         <div class="col-span-1 md:col-span-3 md:col-start-7">
-          <h3 class="text-white font-semibold text-lg mb-4">Company</h3>
+          <h3 class="text-white font-semibold text-lg mb-4">{{ $t('navigation.company') }}</h3>
           <ul class="space-y-3">
-            <li><router-link to="/about-us" class="hover:text-white transition-colors duration-200">About
-                Us</router-link></li>
-            <li><router-link to="/contact-us" class="hover:text-white transition-colors duration-200">Contact
-                Us</router-link></li>
+            <li><router-link to="/about-us" class="hover:text-white transition-colors duration-200">{{ $t('navigation.about_us') }}</router-link></li>
+            <li><router-link to="/contact-us" class="hover:text-white transition-colors duration-200">{{ $t('navigation.contact_us') }}</router-link></li>
             <li>
               <a href="https://discord.gg/38NV8t57th" target="_blank" rel="noopener noreferrer"
                 class="flex items-center gap-2 hover:text-white transition-colors duration-200 group">
@@ -32,16 +30,12 @@
         </div>
 
         <div class="col-span-1 md:col-span-3">
-          <h3 class="text-white font-semibold text-lg mb-4">Legal</h3>
+          <h3 class="text-white font-semibold text-lg mb-4">{{ $t('navigation.legal') }}</h3>
           <ul class="space-y-3">
-            <li><router-link to="/terms-of-service" class="hover:text-white transition-colors duration-200">Terms of
-                Service</router-link></li>
-            <li><router-link to="/privacy-policy" class="hover:text-white transition-colors duration-200">Privacy
-                Policy</router-link></li>
-            <li><router-link to="/refund-policy" class="hover:text-white transition-colors duration-200">Refund
-                Policy</router-link></li>
-            <li><router-link to="/cookie-policy" class="hover:text-white transition-colors duration-200">Cookie
-                Policy</router-link></li>
+            <li><router-link to="/terms-of-service" class="hover:text-white transition-colors duration-200">{{ $t('navigation.terms') }}</router-link></li>
+            <li><router-link to="/privacy-policy" class="hover:text-white transition-colors duration-200">{{ $t('navigation.privacy') }}</router-link></li>
+            <li><router-link to="/refund-policy" class="hover:text-white transition-colors duration-200">{{ $t('navigation.refund') }}</router-link></li>
+            <li><router-link to="/cookie-policy" class="hover:text-white transition-colors duration-200">{{ $t('navigation.cookie') }}</router-link></li>
           </ul>
         </div>
       </div>
