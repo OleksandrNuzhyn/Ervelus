@@ -1675,7 +1675,7 @@ section {
   font-weight: 800;
   line-height: 1.1;
   color: #fff;
-  margin: 0 0 24px;
+  margin: 0 0 64px;
   letter-spacing: -0.02em;
 }
 
@@ -1689,16 +1689,6 @@ section {
   padding-bottom: 0.15em;
   margin-bottom: -0.15em;
   display: inline-block;
-}
-
-.final-cta-subtitle {
-  font-size: clamp(16px, 1.8vw, 20px);
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.5);
-  margin-bottom: 48px;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .final-cta-action {
