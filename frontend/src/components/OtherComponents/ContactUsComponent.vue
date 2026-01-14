@@ -108,6 +108,8 @@ onMounted(() => {
   }
 });
 
+const faqStates = ref(new Array(14).fill(false));
+
 const faqs = computed(() => [
   { question: t('faq.q1'), answer: t('faq.a1'), isOpen: faqStates.value[0] },
   { question: t('faq.q2'), answer: t('faq.a2'), isOpen: faqStates.value[1] },
@@ -124,8 +126,6 @@ const faqs = computed(() => [
   { question: t('faq.q13'), answer: t('faq.a13'), isOpen: faqStates.value[12] },
   { question: t('faq.q14'), answer: t('faq.a14'), isOpen: faqStates.value[13] },
 ]);
-
-const faqStates = ref(new Array(14).fill(false));
 
 function toggleFaq(selectedIndex) {
   const currentlyOpenIndex = faqStates.value.findIndex(state => state);
