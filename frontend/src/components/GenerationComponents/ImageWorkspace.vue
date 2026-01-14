@@ -116,7 +116,7 @@
               {{ $t('workspace.get_more_btn') }}
             </router-link>
             
-            <div class="flex items-center gap-2 text-gray-500 justify-center text-sm uppercase font-bold tracking-widest">
+            <div class="flex items-center gap-2 text-gray-500 justify-center text-sm uppercase font-bold tracking-widest my-4">
               <div class="h-[1px] flex-1 bg-white/10"></div>
               <span>{{ $t('workspace.or') }}</span>
               <div class="h-[1px] flex-1 bg-white/10"></div>
@@ -664,7 +664,6 @@ async function downloadOutputImage() {
 
 .generations-primary-button:hover {
   background: #7c3aed !important;
-  transform: translateY(-2px);
   box-shadow: 0 6px 25px rgba(139, 92, 246, 0.4);
   color: white !important;
 }

@@ -1,6 +1,7 @@
 <template>
   <div class="promo-wrapper">
     <button 
+      ref="promoPill"
       @click="isExpanded = !isExpanded"
       class="promo-pill"
       :class="{ 'active': isExpanded }"
@@ -110,7 +111,10 @@ function checkScroll() {
   canScrollDown.value = el.scrollTop + el.clientHeight < el.scrollHeight - 10;
 }
 
-const handleOpenPromo = () => {
+const promoPill = ref(null);
+
+const handleOpenPromo = (e) => {
+  if (promoPill.value && promoPill.value.offsetParent === null) return;
   isExpanded.value = true;
 };
 
