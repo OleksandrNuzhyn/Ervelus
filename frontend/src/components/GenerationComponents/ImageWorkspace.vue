@@ -15,7 +15,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                 </svg>
               </div>
-              <p class="text-base md:text-2xl font-semibold text-white/50 tracking-wide">Click to upload image</p>
+              <p class="text-base md:text-2xl font-semibold text-white/50 tracking-wide">{{ $t('workspace.upload_click') }}</p>
               <input type="file" ref="fileInput" @change="onFileSelected" class="hidden" accept="image/jpeg, image/png, image/webp" />
             </div>
 
@@ -34,7 +34,7 @@
 
         <button @click="onOpenStylePanel" class="w-full bg-white/[0.06] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] rounded-xl min-h-[56px] lg:min-h-[80px] py-3.5 lg:py-6 mt-0 flex items-center justify-center relative cursor-pointer hover:bg-white/[0.12] active:scale-[0.98] transition-all duration-300 px-4 group overflow-visible">
           <div class="flex items-center gap-2 md:gap-4 px-10 w-full justify-center min-w-0">
-            <span class="text-white/70 font-medium text-base md:text-2xl shrink-0">Style</span>
+            <span class="text-white/70 font-medium text-base md:text-2xl shrink-0">{{ $t('workspace.style') }}</span>
             <div class="w-[1px] h-5 md:h-8 bg-white/20 shrink-0 relative top-[1px]"></div>
             <span class="font-bold text-white text-base md:text-2xl tracking-wide truncate">{{ props.selectedStyleName }}</span>
           </div>
@@ -68,7 +68,7 @@
             <svg class="w-16 h-16 md:w-24 md:h-24 text-white/30" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
             </svg>
-            <p class="text-lg md:text-2xl font-semibold text-white/50 tracking-wide">Final Result</p>
+            <p class="text-lg md:text-2xl font-semibold text-white/50 tracking-wide">{{ $t('workspace.final_result') }}</p>
           </div>
         </div>
 
@@ -105,16 +105,29 @@
     <transition name="modal-fade">
       <div v-if="showGenerationsModal" class="fixed inset-0 flex items-center justify-center z-[100] confirm-modal-overlay" @click.self="showGenerationsModal = false">
         <div class="modal-content-card p-10 w-11/12 max-w-md shadow-2xl flex flex-col gap-6 text-gray-200 relative">
-          <div class="text-center">
-            <h3 class="medieval text-3xl text-gray-100 mb-2">Ready for More?</h3>
+          <div class="text-center px-4">
+            <h3 class="medieval text-3xl text-gray-100 mb-2">{{ $t('workspace.ready_for_more') }}</h3>
             <p class="text-gray-300 text-lg mt-4">
-              Get more generations and keep creating!
+              {{ $t('workspace.modal_desc') }}
             </p>
           </div>
-          <div class="flex justify-center pt-2">
+          <div class="flex flex-col gap-3 justify-center pt-2 px-8">
             <router-link to="/pricing" class="manage-button generations-primary-button">
-              Get More
+              {{ $t('workspace.get_more_btn') }}
             </router-link>
+            
+            <div class="flex items-center gap-2 text-gray-500 justify-center text-sm uppercase font-bold tracking-widest">
+              <div class="h-[1px] flex-1 bg-white/10"></div>
+              <span>{{ $t('workspace.or') }}</span>
+              <div class="h-[1px] flex-1 bg-white/10"></div>
+            </div>
+
+            <button 
+              @click="showGenerationsModal = false; triggerPromo()" 
+              class="manage-button hover:bg-white/10"
+            >
+              {{ $t('workspace.get_free_btn') }}
+            </button>
           </div>
         </div>
       </div>
@@ -126,6 +139,8 @@
 import { ref, watch, onUnmounted, computed, nextTick } from 'vue';
 import api from '@/services/api';
 import { toast } from '@/services/toast';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 async function urlToFile(url, filename) {
     const response = await fetch(url);
@@ -170,6 +185,10 @@ const inputImageLoaded = ref(false);
 const outputImageLoaded = ref(false);
 const completedGenerationId = ref(null);
 const showGenerationsModal = ref(false);
+
+function triggerPromo() {
+  window.dispatchEvent(new CustomEvent('open-promo-dropdown'));
+}
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE_BYTES = 7 * 1024 * 1024;
@@ -257,7 +276,7 @@ async function deleteLongRunningRequest(id) {
     if (finalCheckLatest && finalCheckLatest.id === id) {
       if (!finalCheckLatest.is_visible) {
         await api.delete(`/api/generations/generation-requests/delete/${id}/`);
-        toast.info("The generation request was cancelled because it took too long to complete.");
+        toast.info(t('workspace.error_timeout') || "The generation request was cancelled because it took too long to complete");
       } 
       else if (finalCheckLatest.status === 'completed' && finalCheckLatest.output_large_signed_url) {
         outputImageUrl.value = finalCheckLatest.output_large_signed_url;
@@ -267,7 +286,7 @@ async function deleteLongRunningRequest(id) {
   }
   catch (err) {
     if (err.response && [400, 404].includes(err.response.status)) {
-      toast.info("Could not cancel the generation request. It might have already been completed or cancelled.");
+      toast.info(t('workspace.error_cancel_failed') || "Could not cancel the generation request. It might have already been completed or cancelled");
     }
   }
   finally {
@@ -301,13 +320,13 @@ async function pollForResult() {
       currentGenerationId.value = null;
     }
     else if (latest?.status === 'failed') {
-      toast.info("The spell has failed! Try casting the magic again.");
+      toast.info(t('workspace.error_failed_spell') || "The spell has failed! Try casting the magic again");
       isLoading.value = false;
       stopPolling();
       currentGenerationId.value = null;
     }
     else if (latest?.status === 'rejected_by_safety') {
-        toast.info("This dark magic was rejected by the safety system. Try another image.");
+        toast.info(t('workspace.error_safety_rejected') || "This dark magic was rejected by the safety system. Try another image");
         inputImageUrl.value = null;
         outputImageUrl.value = null;
         isLoading.value = false;
@@ -321,7 +340,7 @@ async function pollForResult() {
     }
   }
   catch (err) {
-    const errorMessage = err.response?.data?.detail || 'An unexpected error occurred while checking generation status.';
+    const errorMessage = err.response?.data?.detail || t('workspace.error_status_check') || 'An unexpected error occurred while checking generation status';
     toast.info(errorMessage);
     isLoading.value = false;
     stopPolling();
@@ -357,13 +376,9 @@ onUnmounted(() => {
   }
 });
 
-const styleButtonText = computed(() => {
-  return props.selectedStyleName || '';
-});
-
 const buttonText = computed(() => {
-  if (isLoading.value) return 'Transforming...';
-  return 'Transform Photo';
+  if (isLoading.value) return t('workspace.transforming') || 'Transforming...';
+  return t('workspace.transform_button') || 'Transform Photo';
 });
 
 const isButtonDisabled = computed(() => {
@@ -386,15 +401,15 @@ function getErrorMessage(err, endpoint) {
 
   if (status === 400) {
     if (endpoint === 'create') {
-      return serverError || data?.non_field_errors?.[0] || 'Could not create request. Please try again later.';
+      return serverError || data?.non_field_errors?.[0] || t('workspace.error_create_request') || 'Could not create request. Please try again later';
     }
     else if (endpoint === 'download') {
-      return serverError || 'Could not download the image. Please try again later.';
+      return serverError || t('workspace.error_download') || 'Could not download the image. Please try again later';
     }
   }
   else if (status === 404) {
     if (endpoint === 'download') {
-      return serverError || 'File for download not found. Please try again later.';
+      return serverError || t('workspace.error_file_not_found') || 'File for download not found. Please try again later';
     }
   }
   return null;
@@ -475,11 +490,11 @@ function handleFile(file) {
   }
 
   if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-    toast.info('Invalid file type. Our magicians support only JPEG, PNG or WEBP format.');
+    toast.info(t('workspace.error_invalid_type') || 'Invalid file type. Our magicians support only JPEG, PNG or WEBP format.');
     return;
   }
   else if (file.size > MAX_FILE_SIZE_BYTES) {
-    toast.info('Maximum file size is 7 MB.');
+    toast.info(t('workspace.error_file_size') || 'Maximum file size is 7 MB');
     return;
   }
 
@@ -522,7 +537,7 @@ function onOutputImageLoad() {
 
 async function downloadOutputImage() {
   if (!completedGenerationId.value) {
-    toast.info("Cannot download image. Please try again later.");
+    toast.info(t('workspace.error_download') || "Cannot download image. Please try again later");
     return;
   }
 

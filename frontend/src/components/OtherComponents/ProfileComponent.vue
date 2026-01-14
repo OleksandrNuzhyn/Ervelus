@@ -8,12 +8,12 @@
 
               <div class="mb-8 flex justify-center">
                 <div class="subscription-display-card !min-h-0 py-14 px-10 w-full max-w-2xl flex flex-col items-center">
-                  <h3 class="medieval text-2xl font-bold text-gray-200 mb-10 tracking-wide">Promo Code</h3>
+                  <h3 class="medieval text-2xl font-bold text-gray-200 mb-10 tracking-wide">{{ $t('profile.promo_title') }}</h3>
                   
                   <div class="flex flex-col sm:flex-row items-center justify-center gap-10 sm:gap-4 w-full max-w-lg">
                     <input 
                       v-model="promoCode" 
-                      placeholder="Enter code" 
+                      :placeholder="$t('profile.promo_placeholder')" 
                       @keyup.enter="applyPromoCode"
                       class="w-full h-[52px] bg-transparent border border-white/10 rounded-full px-8 text-white text-lg placeholder:text-white/10 focus:outline-none focus:border-white/30 transition-all font-light flex items-center"
                     />
@@ -24,7 +24,7 @@
                       class="manage-button !h-[52px] flex items-center justify-center !min-w-[160px] !py-0 !text-base transition-all duration-300 !border-white/10"
                       :class="!promoCode ? '!text-white/10 !cursor-not-allowed grayscale' : 'opacity-100 activate-button-hover shadow-[0_0_12px_rgba(129,180,253,0.07)]'"
                     >
-                      Activate
+                      {{ $t('profile.promo_activate') }}
                     </button>
                   </div>
                 </div>
@@ -33,11 +33,11 @@
               <div v-if="subscriptions.length > 0" class="space-y-6 pb-6">
                 <div v-for="sub in subscriptions" :key="sub.id" class="subscription-display-card">
                   <div class="relative z-10 flex flex-col h-full">
-                    <h3 class="medieval text-2xl font-semibold text-gray-200 mb-6 text-center">Subscription</h3>
+                    <h3 class="medieval text-2xl font-semibold text-gray-200 mb-6 text-center">{{ $t('profile.subscription_title') }}</h3>
                     <div>
                       <div class="flex justify-between items-baseline">
                         <h3 class="text-2xl font-bold text-gray-100 medieval">{{ sub.plan_name }}</h3>
-                        <p class="text-2xl font-semibold medieval">${{ sub.plan_price }}<span class="text-sm text-gray-400 font-normal">/month</span></p>
+                        <p class="text-2xl font-semibold medieval">${{ sub.plan_price }}<span class="text-sm text-gray-400 font-normal">{{ $t('profile.per_month') }}</span></p>
                       </div>
                       <div class="flex justify-between items-center mt-1">
                           <p class="text-gray-400 h-10 truncate flex items-center">{{ sub.plan_description }}</p>
@@ -51,16 +51,16 @@
                     <div class="my-auto py-6 border-t border-b border-white/10">
                       <div class="text-center pb-6 mb-6 border-b border-white/10">
                           <p class="text-5xl font-semibold">{{ sub.remaining_credits }}</p>
-                          <p class="text-sm text-gray-400 mt-2">Credits Remaining</p>
+                          <p class="text-sm text-gray-400 mt-2">{{ $t('profile.credits_remaining') }}</p>
                       </div>
                       <div class="flex justify-around text-center">
                           <div>
                               <p class="text-2xl font-semibold">{{ sub.plan_generations_count }}</p>
-                              <p class="text-sm text-gray-400 mt-2">Generations/month</p>
+                              <p class="text-sm text-gray-400 mt-2">{{ $t('profile.gen_per_month') }}</p>
                           </div>
                           <div>
                               <p class="text-2xl font-semibold">{{ sub.plan_unlocked_styles_count }}</p>
-                              <p class="text-sm text-gray-400 mt-2">Unlocked Styles</p>
+                              <p class="text-sm text-gray-400 mt-2">{{ $t('profile.unlocked_styles') }}</p>
                           </div>
                       </div>
                     </div>
@@ -69,11 +69,11 @@
                       <div class="pt-6 text-gray-400 text-sm">
                         <div class="text-center space-y-4">
                           <div>
-                            <p class="text-xs text-gray-500 mb-1">From:</p>
+                            <p class="text-xs text-gray-500 mb-1">{{ $t('profile.from') }}</p>
                             <p class="text-sm">{{ formatDateTime(sub.start_time) }}</p>
                           </div>
                           <div>
-                            <p class="text-xs text-gray-500 mb-1">Until:</p>
+                            <p class="text-xs text-gray-500 mb-1">{{ $t('profile.until') }}</p>
                             <p class="text-sm">{{ formatDateTime(sub.end_time) }}</p>
                           </div>
                         </div>
@@ -82,10 +82,10 @@
                       <div class="mt-8">
                         <div class="flex justify-center">
                           <button v-if="sub.is_auto_renew" @click="cancelSubscription(sub.id)" class="manage-button">
-                            Cancel Subscription
+                            {{ $t('profile.cancel_sub') }}
                           </button>
                           <button v-else disabled class="manage-button canceled-state cursor-not-allowed">
-                            Canceled
+                            {{ $t('profile.canceled') }}
                           </button>
                         </div>
                       </div>
@@ -98,9 +98,9 @@
                 <div class="subscription-display-card flex flex-col items-center justify-center text-center text-gray-400">
                   <div class="relative z-10 flex flex-col h-full justify-center items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                    <h3 class="text-lg text-gray-300">No Subscriptions Found</h3>
-                    <p class="max-w-xs mt-2 text-sm text-gray-500">No subscription plans. View our pricing</p>
-                    <router-link to="/pricing" class="manage-button mt-8">View Plans</router-link>
+                    <h3 class="text-lg text-gray-300">{{ $t('profile.no_subs') }}</h3>
+                    <p class="max-w-xs mt-2 text-sm text-gray-500">{{ $t('profile.no_subs_desc') }}</p>
+                    <router-link to="/pricing" class="manage-button mt-8">{{ $t('profile.view_plans') }}</router-link>
                   </div>
                 </div>
               </div>
@@ -109,7 +109,7 @@
                 <p class="text-sm text-gray-400">{{ displayEmail }}</p>
 
                 <button @click="deleteAccount" class="delete-button-subtle mt-4">
-                  Delete Account
+                  {{ $t('profile.delete_account_btn') }}
                 </button>
               </div>
             </div>
@@ -124,13 +124,13 @@
             <h3 class="medieval text-3xl text-gray-100 mb-2">{{ modalTitle }}</h3>
             <p class="text-gray-300 text-lg mt-4 leading-relaxed">{{ modalMessage }}</p>
           </div>
-          <div class="flex justify-center gap-4 pt-4">
+          <div class="flex flex-col sm:flex-row justify-center gap-4 pt-4">
             <template v-if="isConfirmMode">
-              <button @click="handleConfirm(false)" class="manage-button !min-w-[140px] py-3 activate-button-hover">Cancel</button>
-              <button @click="handleConfirm(true)" class="manage-button !min-w-[140px] py-3 activate-button-hover">Confirm</button>
+              <button @click="handleConfirm(false)" class="manage-button sm:!min-w-[140px] py-3 activate-button-hover">{{ $t('profile.modal_cancel') }}</button>
+              <button @click="handleConfirm(true)" class="manage-button sm:!min-w-[140px] py-3 activate-button-hover">{{ $t('profile.modal_confirm') }}</button>
             </template>
             <template v-else>
-              <button @click="showModal = false" class="manage-button !min-w-[140px] py-3 activate-button-hover">Got it</button>
+              <button @click="showModal = false" class="manage-button sm:!min-w-[140px] py-3 activate-button-hover">{{ $t('profile.modal_got_it') }}</button>
             </template>
           </div>
         </div>
@@ -144,7 +144,9 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '@/services/api';
 import { useAuthStore } from '@/stores/auth';
+import { useI18n } from 'vue-i18n';
 
+const { t, locale } = useI18n();
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -183,12 +185,12 @@ async function applyPromoCode() {
   isSubmittingPromo.value = true;
   try {
     const response = await api.post('/api/marketing/promo-codes/', { code: promoCode.value });
-    showAlert('Success', `Promo code applied! You received ${response.data.credits_count} generations`);
+    showAlert(t('profile.alert_success'), t('profile.alert_promo_applied', { count: response.data.credits_count }));
     promoCode.value = '';
   }
   catch (error) {
-    const msg = error.response?.data?.detail || 'Failed to apply promo code. Please check the code and try again';
-    showAlert('Promo Error', msg);
+    const msg = error.response?.data?.detail || t('profile.alert_promo_failed');
+    showAlert(t('profile.alert_promo_error'), msg);
   }
   finally {
     isSubmittingPromo.value = false;
@@ -207,7 +209,7 @@ async function getProfileData() {
     subscriptions.value = response.data?.subscriptions || [];
   }
   catch (error) {
-    showAlert('Connection Lost', 'Could not load your subscription data. Please try again later');
+    showAlert(t('profile.alert_connection_lost'), t('profile.alert_subs_failed'));
   }
   finally {
     isLoading.value = false;
@@ -216,8 +218,8 @@ async function getProfileData() {
 
 async function cancelSubscription(subscriptionId) {
   const confirmed = await showConfirm(
-    'Cancel Subscription', 
-    'Are you sure you want to cancel your subscription? This action will turn off auto-renewal'
+    t('profile.confirm_cancel_title'), 
+    t('profile.confirm_cancel_msg')
   );
 
   if (confirmed) {
@@ -227,18 +229,18 @@ async function cancelSubscription(subscriptionId) {
       if (subscription) {
         subscription.is_auto_renew = false;
       }
-      showAlert('Canceled', 'Auto-renewal has been successfully turned off.');
+      showAlert(t('profile.alert_canceled_title'), t('profile.alert_canceled_msg'));
     }
     catch (error) {
-       showAlert('Error', 'Failed to cancel subscription. Please contact support');
+       showAlert(t('profile.alert_error'), t('profile.alert_cancel_failed'));
     }
   }
 }
 
 async function deleteAccount() {
   const confirmed = await showConfirm(
-    'Delete Account',
-    'Are you sure you want to delete your account? This action cannot be undone'
+    t('profile.confirm_delete_title'),
+    t('profile.confirm_delete_msg')
   );
 
   if (confirmed) {
@@ -248,11 +250,10 @@ async function deleteAccount() {
       authStore.authChecked = true;
       localStorage.removeItem('user-token');
       router.push({ name: 'home' });
-      // Note: alert won't be seen as we redirect, but we can use toast if needed
     }
     catch (error) {
-      const msg = error.response?.data?.detail || 'An unexpected error occurred while deleting your account';
-      showAlert('Error', msg);
+      const msg = error.response?.data?.detail || t('profile.alert_delete_failed');
+      showAlert(t('profile.alert_error'), msg);
     }
   }
 }
@@ -275,9 +276,9 @@ function handleModalBackdrop() {
 
 function formatDateTime(dateString) {
   if (!dateString) {
-    return 'None';
+    return t('profile.none');
   }
-  return new Date(dateString).toLocaleString(undefined);
+  return new Date(dateString).toLocaleString(locale.value);
 }
 
 function getStatusDotClass(status) {
@@ -354,7 +355,10 @@ onMounted(() => {
 .dot-inactive { background-color: #6b7280; }
 
 .manage-button {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
   width: auto;
   min-width: 270px;
   text-align: center;

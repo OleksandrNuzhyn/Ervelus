@@ -35,8 +35,8 @@
               </figure>
             </div>
             <div class="mt-3 flex items-center justify-between text-xs text-zinc-300/80 font-medium">
-              <span class="pl-1">Original</span>
-              <span class="pr-1">Stylized</span>
+              <span class="pl-1">{{ $t('gallery.original') }}</span>
+              <span class="pr-1">{{ $t('gallery.stylized') }}</span>
             </div>
           </div>
         </article>
@@ -44,10 +44,10 @@
       
       <transition name="gallery-fade">
         <div v-if="!isLoading && !galleryItems.length" class="w-full mx-auto max-w-md text-center rounded-2xl border border-white/10 bg-zinc-900/40 backdrop-blur p-10 text-zinc-300">
-          <p class="text-lg font-medium">No images yet</p>
-          <p class="mt-1 text-sm text-zinc-400">Stylize your first images to see it here</p>
+          <p class="text-lg font-medium">{{ $t('gallery.no_images') }}</p>
+          <p class="mt-1 text-sm text-zinc-400">{{ $t('gallery.no_images_desc') }}</p>
           <router-link to="/dashboard" class="manage-button small-manage-button mt-8 mx-auto">
-            Go to Dashboard
+            {{ $t('gallery.go_dashboard') }}
           </router-link>
         </div>
       </transition>
@@ -77,13 +77,13 @@
       <div v-if="showDeleteConfirmModal" class="fixed inset-0 flex items-center justify-center z-50 confirm-modal-overlay" @click.self="handleCancelDelete">
         <div class="modal-content-card p-4 sm:p-8 w-11/12 max-w-md shadow-lg flex flex-col gap-5 text-gray-200 relative">
           <div class="pb-2">
-            <h3 class="medieval text-2xl text-center text-gray-100">Delete Images</h3>
+            <h3 class="medieval text-2xl text-center text-gray-100">{{ $t('gallery.delete_title') }}</h3>
           </div>
           <div class="text-center">
-            <p class="text-gray-300 text-base m-0 leading-relaxed">Are you sure you want to delete this images? This action cannot be undone</p>
+            <p class="text-gray-300 text-base m-0 leading-relaxed">{{ $t('gallery.delete_confirm') }}</p>
           </div>
           <div class="flex justify-center gap-4 pt-4">
-            <button @click="handleConfirmDelete" class="manage-button small-manage-button">Confirm</button>
+            <button @click="handleConfirmDelete" class="manage-button small-manage-button">{{ $t('gallery.confirm') }}</button>
           </div>
         </div>
       </div>
@@ -98,7 +98,9 @@ import PaginationComponent from '@/components/GalleryComponents/PaginationCompon
 import GenerationModal from '@/components/GalleryComponents/GenerationModal.vue'
 import { toast } from '@/services/toast';
 import { XCircleIcon } from '@heroicons/vue/24/solid';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const galleryItems = ref([])
 const isLoading = ref(true)
 const page = ref(1)
@@ -148,7 +150,7 @@ async function getPage(p) {
     page.value = 1
     pageCount.value = 1
     isLoading.value = false;
-    toast.info('Failed to load gallery');
+    toast.info(t('gallery.error_load'));
   }
 }
 
@@ -181,7 +183,7 @@ async function deleteRequest(request) {
       }
 
       await api.delete(`/api/generations/generation-requests/delete/${request.id}/`);
-      toast.info('Generation deleted successfully');
+      toast.info(t('gallery.success_delete'));
         
       count.value--;
       pageCount.value = Math.max(1, Math.ceil(count.value / customPageSize));
@@ -196,14 +198,14 @@ async function deleteRequest(request) {
     catch (error) {
       if (error.response) {
         if (error.response.status === 404) {
-          toast.info('This generation does not exist anymore');
+          toast.info(t('gallery.error_not_found'));
         }
         else {
-          toast.info('Failed to delete generation');
+          toast.info(t('gallery.error_delete'));
         }
       }
       else {
-        toast.info('Failed to delete generation');
+        toast.info(t('gallery.error_delete'));
       }
     }
     finally {

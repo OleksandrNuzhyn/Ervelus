@@ -31,7 +31,7 @@
                         class="block max-w-full max-h-full object-contain rounded-2xl"
                       />
                       <div v-else class="h-44 md:h-full w-full flex items-center justify-center text-zinc-500 text-sm font-medium border border-zinc-800 rounded-2xl md:border-0">
-                        Failed to generate input image
+                        {{ $t('gallery.failed_input') }}
                       </div>
                     </div>
                     <div class="flex-1 flex justify-center items-center min-w-0">
@@ -42,7 +42,7 @@
                         class="block max-w-full max-h-full object-contain rounded-2xl"
                       />
                       <div v-else class="h-44 md:h-full w-full flex items-center justify-center text-zinc-500 text-sm font-medium border border-zinc-800 rounded-2xl md:border-0">
-                        Failed to generate output image
+                        {{ $t('gallery.failed_output') }}
                       </div>
                     </div>
                   </div>
@@ -50,8 +50,8 @@
                   <div class="flex-shrink-0 flex h-20 items-center justify-between px-6 pb-2">
                     <div class="flex items-center justify-between w-full">
                       <div class="text-left">
-                        <p class="font-semibold text-zinc-300 truncate" :title="currentStyleName || 'Deleted Style'">
-                          {{ currentStyleName || 'Deleted Style' }}
+                        <p class="font-semibold text-zinc-300 truncate" :title="currentStyleName || $t('gallery.deleted_style')">
+                          {{ currentStyleName || $t('gallery.deleted_style') }}
                         </p>
                         <p v-if="currentFormattedDate" class="text-sm text-zinc-400">{{ currentFormattedDate }}</p>
                       </div>
@@ -61,7 +61,7 @@
                           @click.prevent.stop="downloadOutput(currentRequest)"
                           :disabled="!currentRequest.output_large_signed_url"
                           class="h-min w-min inline-flex justify-center text-zinc-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                          title="Download"
+                          :title="$t('gallery.download')"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download w-6 h-6">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -73,7 +73,7 @@
                           type="button"
                           @click.stop="$emit('delete-request', currentRequest)"
                           class="h-min w-min inline-flex justify-center text-zinc-400 hover:text-red-400 transition-colors"
-                          title="Delete"
+                          :title="$t('gallery.delete')"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 w-6 h-6">
                             <polyline points="3 6 5 6 21 6"></polyline>
@@ -105,6 +105,8 @@
 import api from '@/services/api'
 import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { toast } from '@/services/toast';
+import { useI18n } from 'vue-i18n';
+const { t, locale } = useI18n();
 
 const props = defineProps({
   isOpen: { type: Boolean, required: true },
@@ -151,7 +153,7 @@ async function getCurrentRequest(request) {
       currentStyleName.value = response.data?.chosen_style_name || '';
       
       if (response.data?.created_at) {
-        currentFormattedDate.value = new Date(response.data.created_at).toLocaleString(undefined);
+        currentFormattedDate.value = new Date(response.data.created_at).toLocaleString(locale.value);
       }
       else {
         currentFormattedDate.value = '';
@@ -160,10 +162,10 @@ async function getCurrentRequest(request) {
   }
   catch (error) {
     if (error.response && error.response.status === 404) {
-      toast.info(error.response.data.detail || 'Request not found');
+      toast.info(error.response.data.detail || t('gallery.modal_error_not_found'));
     }
     else {
-      toast.info('An error occurred while fetching the generation');
+      toast.info(t('gallery.error_fetch'));
     }
     emit('close-modal');
   }
@@ -187,10 +189,10 @@ async function downloadOutput(request) {
   }
   catch (error) {
     if (error.response && (error.response.status === 404 || error.response.status === 400)) {
-      toast.info(error.response.data.detail || 'Download failed');
+      toast.info(error.response.data.detail || t('gallery.error_download_failed'));
     }
     else {
-      toast.info('Download failed');
+      toast.info(t('gallery.error_download_failed'));
     }
   }
 };

@@ -12,7 +12,7 @@
       @mouseover="hoveredPage = 'prev'"
       @mouseleave="hoveredPage = null"
     >
-      Prev
+      {{ $t('gallery.prev') }}
     </button>
 
     <button
@@ -44,7 +44,7 @@
       @mouseover="hoveredPage = 'next'"
       @mouseleave="hoveredPage = null"
     >
-      Next
+      {{ $t('gallery.next') }}
     </button>
   </nav>
 </template>

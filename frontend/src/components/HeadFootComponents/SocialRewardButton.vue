@@ -95,7 +95,7 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick } from 'vue';
+import { ref, watch, nextTick, onMounted, onUnmounted } from 'vue';
 
 const isExpanded = ref(false);
 const scrollContainer = ref(null);
@@ -109,6 +109,18 @@ function checkScroll() {
   canScrollUp.value = el.scrollTop > 10;
   canScrollDown.value = el.scrollTop + el.clientHeight < el.scrollHeight - 10;
 }
+
+const handleOpenPromo = () => {
+  isExpanded.value = true;
+};
+
+onMounted(() => {
+  window.addEventListener('open-promo-dropdown', handleOpenPromo);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('open-promo-dropdown', handleOpenPromo);
+});
 
 watch(isExpanded, (newVal) => {
   if (newVal) {

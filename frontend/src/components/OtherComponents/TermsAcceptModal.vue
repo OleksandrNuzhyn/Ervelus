@@ -3,38 +3,38 @@
     <div v-if="showTermsModal" class="fixed inset-0 flex items-center justify-center z-50 confirm-modal-overlay">
       <div class="modal-content-card p-8 w-11/12 max-w-lg shadow-lg flex flex-col gap-4 text-gray-200 relative font-sans">
         <div class="pb-2">
-          <h3 class="medieval text-2xl text-center text-gray-100">Terms Update</h3>
+          <h3 class="medieval text-2xl text-center text-gray-100">{{ t('terms.update_title') }}</h3>
         </div>
         <div class="text-center">
           <p class="text-gray-300 text-base m-0 leading-relaxed">
-            We have updated our {{ documentTypes }}. To continue, you must review and accept the updated terms.
+            {{ t('terms.update_desc', { types: documentTypes }) }}
           </p>
         </div>
         <div class="pt-4">
           <label class="flex items-center justify-center text-gray-400">
             <input type="checkbox" v-model="hasAgreed" class="mr-2 bg-gray-700 border-gray-600 rounded focus:ring-blue-500">
-            <span>I have read and agree to the updated terms</span>
+            <span>{{ t('terms.checkbox_label') }}</span>
           </label>
         </div>
         <div class="flex flex-col items-center justify-center gap-4 pt-4">
           <button @click="acceptTerms" :disabled="!hasAgreed" class="manage-button" :class="{ 'opacity-50 cursor-not-allowed': !hasAgreed }">
-            Accept and Continue
+            {{ t('terms.accept_btn') }}
           </button>
           <div v-if="errorMessage" class="text-center text-red-400 text-sm mt-8">
             <p class="mb-4">{{ errorMessage }}</p>
           </div>
         </div>
         <p class="text-xs text-gray-500 mt-10 text-center">
-          If you do not agree, you can
-          <button @click="deleteAccount" class="text-red-400 hover:underline focus:outline-none bg-transparent border-none p-0">delete your account</button>
+          {{ t('terms.refuse_desc') }}
+          <button @click="deleteAccount" class="text-red-400 hover:underline focus:outline-none bg-transparent border-none p-0">{{ t('terms.delete_account_link') }}</button>
         </p>
         <div class="border-t border-white/10 text-center pt-4">
-            <p class="text-xs text-gray-500 mb-2">You can review our legal documents at any time:</p>
+            <p class="text-xs text-gray-500 mb-2">{{ t('terms.review_docs') }}</p>
             <div class="flex justify-center gap-4">
-                <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 hover:underline">Terms of Service</a>
-                <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 hover:underline">Privacy Policy</a>
-                <a href="/refund-policy" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 hover:underline">Refund Policy</a>
-                <a href="/cookie-policy" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 hover:underline">Cookie Policy</a>
+                <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 hover:underline">{{ t('terms.tos') }}</a>
+                <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 hover:underline">{{ t('terms.privacy') }}</a>
+                <a href="/refund-policy" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 hover:underline">{{ t('terms.refund') }}</a>
+                <a href="/cookie-policy" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 hover:underline">{{ t('terms.cookies') }}</a>
             </div>
         </div>
       </div>
@@ -44,10 +44,10 @@
     <div v-if="showConfirmDeleteModal" class="fixed inset-0 flex items-center justify-center z-50 confirm-modal-overlay" @click.self="handleCancelDelete">
       <div class="modal-content-card p-8 w-11/12 max-w-md shadow-lg flex flex-col gap-5 text-gray-200 relative">
         <div class="pb-2">
-          <h3 class="medieval text-2xl text-center text-gray-100">Delete Account</h3>
+          <h3 class="medieval text-2xl text-center text-gray-100">{{ t('terms.delete_title') }}</h3>
         </div>
         <div class="text-center">
-          <p class="text-gray-300 text-base m-0 leading-relaxed">Are you sure you want to delete your account? This action cannot be undone</p>
+          <p class="text-gray-300 text-base m-0 leading-relaxed">{{ t('terms.delete_confirm') }}</p>
         </div>
 
         <div v-if="errorMessage" class="text-center text-red-400 text-sm">
@@ -55,11 +55,11 @@
         </div>
 
         <div class="flex justify-center gap-4 pt-2">
-          <button @click="handleConfirmDelete" class="manage-button small-manage-button">
-            Confirm
-          </button>
           <button @click="handleCancelDelete" class="delete-button-subtle small-manage-button">
-            Cancel
+            {{ t('terms.cancel_btn') }}
+          </button>
+          <button @click="handleConfirmDelete" class="manage-button small-manage-button">
+            {{ t('terms.confirm_btn') }}
           </button>
         </div>
       </div>
@@ -74,7 +74,9 @@ import { useAuthStore } from '@/stores/auth';
 import { toast } from '@/services/toast';
 import { useRouter } from 'vue-router';
 import api from '@/services/api';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -85,17 +87,29 @@ const errorMessage = ref('');
 let confirmActionResolve = null;
 
 const documentTypes = computed(() => {
-  const names = requiredAgreements.value.map(agreement => agreement.document_type);
+  const getLabel = (type) => {
+    const map = {
+      'terms_of_service': t('terms.tos'),
+      'privacy_policy': t('terms.privacy'),
+      'refund_policy': t('terms.refund'),
+      'cookie_policy': t('terms.cookies')
+    };
+    return map[type] || type;
+  };
+
+  const names = requiredAgreements.value.map(agreement => getLabel(agreement.document_type));
 
   if (names.length === 1) {
     return names[0];
   }
 
+  const andText = ` ${t('terms.and')} `;
+
   if (names.length === 2) {
-    return names.join(' and ');
+    return names.join(andText);
   }
 
-  return names.slice(0, -1).join(', ') + ', and ' + names.slice(-1);
+  return names.slice(0, -1).join(', ') + `, ${t('terms.and')} ` + names.slice(-1);
 });
 
 async function acceptTerms() {
@@ -113,10 +127,10 @@ async function acceptTerms() {
   catch (error) {
     if (error.response?.data) {
       const data = error.response.data;
-      errorMessage.value = data.message || data.detail || 'An unexpected error occurred';
+      errorMessage.value = data.message || data.detail || t('terms.error_generic');
     }
     else {
-      errorMessage.value = 'An error occurred while accepting the terms. Please try again';
+      errorMessage.value = t('terms.error_accept_failed');
     }
   }
 }
@@ -132,7 +146,7 @@ async function deleteAccount() {
   if (confirmed) {
     try {
       await api.delete('/api/auth/account/delete/');
-      toast.info('Your account has been successfully deleted');
+      toast.info(t('terms.success_delete'));
       hide();
       authStore.user = null;
       authStore.authChecked = true;
@@ -144,7 +158,7 @@ async function deleteAccount() {
         errorMessage.value = error.response.data.detail;
       }
       else {
-        errorMessage.value = 'An unexpected error occurred while deleting your account';
+        errorMessage.value = t('terms.error_delete_failed');
       }
     }
     finally {

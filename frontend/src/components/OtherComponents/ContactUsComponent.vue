@@ -1,6 +1,6 @@
 <template>
   <div class="w-full max-w-2xl mx-auto px-4 md:px-8 pt-5 pb-10">
-    <h1 class="text-3xl font-bold medieval text-center text-gray-200 mb-6">Contact Us</h1>
+    <h1 class="text-3xl font-bold medieval text-center text-gray-200 mb-6">{{ $t('contact.title') }}</h1>
     <a href="https://discord.gg/38NV8t57th" target="_blank"
       class="block w-full mb-6 form-container-card transition-colors duration-300 group border border-[#5865F2]/30 hover:!border-[#5865F2] hover:!bg-[#5865F2]/20 !p-4 no-underline">
       <div class="flex items-center justify-center gap-4">
@@ -11,29 +11,28 @@
             fill="currentColor" />
         </svg>
         <div class="text-left">
-          <h3 class="text-lg font-bold text-gray-100 group-hover:text-white transition-colors leading-tight">Join our
-            Community</h3>
-          <p class="text-xs text-gray-400 mt-0.5">Get faster support and share your art!</p>
+          <h3 class="text-lg font-bold text-gray-100 group-hover:text-white transition-colors leading-tight">{{ $t('contact.discord_title') }}</h3>
+          <p class="text-xs text-gray-400 mt-0.5">{{ $t('contact.discord_desc') }}</p>
         </div>
       </div>
     </a>
 
     <div class="form-container-card">
-      <p class="text-xl text-gray-300 text-center">Leave your email and message here</p>
+      <p class="text-xl text-gray-300 text-center">{{ $t('contact.form_desc') }}</p>
       <form class="mt-6 space-y-4" @submit.prevent="onSubmit" novalidate>
         <div>
-          <label for="contact-email" class="block text-sm text-gray-300 mb-1">Email</label>
+          <label for="contact-email" class="block text-sm text-gray-300 mb-1">{{ $t('contact.email_label') }}</label>
           <input id="contact-email" type="email" v-model.trim="email"
             class="w-full rounded-md bg-white/10 focus:border-gray-500 border border-white/10 focus:outline-none px-3 py-2 text-gray-100 placeholder-gray-500"
-            placeholder="you@example.com" :disabled="submitting" required />
+            :placeholder="$t('contact.email_placeholder')" :disabled="submitting" required />
           <p v-if="emailError" class="mt-1 text-xs text-red-400">{{ emailError }}</p>
         </div>
 
         <div>
-          <label for="contact-message" class="block text-sm text-gray-300 mb-1">Message</label>
+          <label for="contact-message" class="block text-sm text-gray-300 mb-1">{{ $t('contact.message_label') }}</label>
           <textarea id="contact-message" v-model="message" maxlength="5000"
             class="w-full min-h-[140px] rounded-md bg-white/10 border border-white/10 focus:border-gray-500 focus:outline-none px-3 py-2 text-gray-100 placeholder-gray-500 resize-y"
-            placeholder="Your ideas, suggestions, questions or bug reports..." :disabled="submitting" required />
+            :placeholder="$t('contact.message_placeholder')" :disabled="submitting" required />
           <div class="mt-1 flex justify-between items-center">
             <p v-if="messageError" class="text-xs text-red-400">{{ messageError }}</p>
             <p class="text-xs text-gray-400 ml-auto" :class="{ 'text-red-400': message.length > 5000 }">{{
@@ -44,8 +43,8 @@
         <button type="submit"
           class="w-full px-4 py-3 mt-2 rounded-full bg-white/10 hover:bg-white/20 text-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
           :disabled="submitting">
-          <span v-if="!submitting">Send</span>
-          <span v-else>Sending...</span>
+          <span v-if="!submitting">{{ $t('contact.send') }}</span>
+          <span v-else>{{ $t('contact.sending') }}</span>
         </button>
         <p v-if="successMessage" class="text-sm text-emerald-400 text-center">{{ successMessage }}</p>
         <p v-if="errorMessage" class="text-sm text-red-400 text-center">{{ errorMessage }}</p>
@@ -53,7 +52,7 @@
     </div>
 
     <div class="mt-14">
-      <h2 class="text-3xl font-bold medieval text-center text-gray-200 mb-4">FAQ</h2>
+      <h2 class="text-3xl font-bold medieval text-center text-gray-200 mb-4">{{ $t('faq.title') }}</h2>
       <div class="divide-y divide-gray-700/50">
         <div v-for="(faq, index) in faqs" :key="index">
           <button @click="toggleFaq(index)"
@@ -86,10 +85,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import api from '@/services/api';
 import isEmail from 'validator/lib/isEmail';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 const email = ref('');
 const message = ref('');
@@ -107,93 +108,39 @@ onMounted(() => {
   }
 });
 
-const faqs = ref([
-  {
-    question: 'What is Ervelus?',
-    answer: 'It is a service for image stylization based on artificial intelligence. Our platform specialises in transforming images into various genre styles.',
-    isOpen: false,
-  },
-  {
-    question: 'How is this different from standard photo filters?',
-    answer: 'Standard filters simply adjust colors, contrast, or overlay a texture. Our AI reinterprets the entire image. It understands the content (like a face or a building) and the style (like Dark Fantasy or Steampunk) and merges them, creating a fundamentally new artwork that didn\'t exist before.',
-    isOpen: false,
-  },
-  {
-    question: 'I can\'t find the style I\'m looking for. Can I suggest a new one?',
-    answer: 'Yes, absolutely! We are always open to new ideas and would love to hear your suggestions. Our team is working to expand our style choices, and the best ideas often come directly from users. We can\'t guarantee that we\'ll add every suggestion, but we\'ll review all requests 💜',
-    isOpen: false,
-  },
-  {
-    question: 'Is this service free?',
-    answer: 'We do not currently offer free credits or free trial periods. We offer affordable subscriptions that allow you to fully experience all the features of our service. You can view prices and join Ervelus on the Pricing page.',
-    isOpen: false,
-  },
-  {
-    question: 'How many subscriptions can a user have?',
-    answer: 'A user can have multiple active subscriptions.',
-    isOpen: false,
-  },
-  {
-    question: 'How styles vary from subscription to subscription?',
-    answer: 'Each subscription provides access to a different set of styles. Our plans are cumulative — each higher level includes all the features and styles of the previous ones.',
-    isOpen: false,
-  },
-  {
-    question: 'What happens if I don\'t use my credits by the end of my subscription?',
-    answer: 'Credits expire at the end of the subscription period.',
-    isOpen: false,
-  },
-  {
-    question: 'How can I get the best possible result?',
-    answer: 'Use good quality, clear, and well-lit images. Photos with strong subjects (like a person, your pet, or building) and less "busy" backgrounds usually produce the most stunning results. Feel free to experiment with different styles and photos!',
-    isOpen: false,
-  },
-  {
-    question: 'Do you keep my uploaded photos?',
-    answer: 'We save your uploaded photos and your generated results. We do this specifically for your benefit, to allow you to easily access, view, and download all of your previous generations in one place (in the Gallery page), so you never lose an artwork you\'ve created.',
-    isOpen: false,
-  },
-  {
-    question: 'What happens to my generations if they are rejected by the safety system?',
-    answer: 'Generations that are rejected by our safety system are automatically and permanently deleted. They are not stored anywhere.',
-    isOpen: false,
-  },
-  {
-    question: 'Can other users see my original photos or my generated images?',
-    answer: 'No. All your uploads and generated artworks are 100% private by default and tied to your account.',
-    isOpen: false,
-  },
-  {
-    question: 'What file formats and sizes are supported?',
-    answer: 'We support the following file formats: JPEG, PNG and WEBP. The maximum size for uploads is 7MB.',
-    isOpen: false,
-  },
-  {
-    question: 'How long does it take to process an image?',
-    answer: 'Each image usually takes less than 45 seconds.',
-    isOpen: false,
-  },
-  {
-    question: 'What should I do if I get an error while using the service?',
-    answer: 'Please wait a moment and try again later. If you\'re still having the same error, please contact us, and we\'ll be happy to help.',
-    isOpen: false,
-  },
+const faqs = computed(() => [
+  { question: t('faq.q1'), answer: t('faq.a1'), isOpen: faqStates.value[0] },
+  { question: t('faq.q2'), answer: t('faq.a2'), isOpen: faqStates.value[1] },
+  { question: t('faq.q3'), answer: t('faq.a3'), isOpen: faqStates.value[2] },
+  { question: t('faq.q4'), answer: t('faq.a4'), isOpen: faqStates.value[3] },
+  { question: t('faq.q5'), answer: t('faq.a5'), isOpen: faqStates.value[4] },
+  { question: t('faq.q6'), answer: t('faq.a6'), isOpen: faqStates.value[5] },
+  { question: t('faq.q7'), answer: t('faq.a7'), isOpen: faqStates.value[6] },
+  { question: t('faq.q8'), answer: t('faq.a8'), isOpen: faqStates.value[7] },
+  { question: t('faq.q9'), answer: t('faq.a9'), isOpen: faqStates.value[8] },
+  { question: t('faq.q10'), answer: t('faq.a10'), isOpen: faqStates.value[9] },
+  { question: t('faq.q11'), answer: t('faq.a11'), isOpen: faqStates.value[10] },
+  { question: t('faq.q12'), answer: t('faq.a12'), isOpen: faqStates.value[11] },
+  { question: t('faq.q13'), answer: t('faq.a13'), isOpen: faqStates.value[12] },
+  { question: t('faq.q14'), answer: t('faq.a14'), isOpen: faqStates.value[13] },
 ]);
 
+const faqStates = ref(new Array(14).fill(false));
+
 function toggleFaq(selectedIndex) {
-  const currentlyOpenIndex = faqs.value.findIndex(faq => faq.isOpen);
+  const currentlyOpenIndex = faqStates.value.findIndex(state => state);
 
   if (currentlyOpenIndex === selectedIndex) {
-    faqs.value[selectedIndex].isOpen = false;
+    faqStates.value[selectedIndex] = false;
     return;
   }
 
   if (currentlyOpenIndex !== -1) {
-    faqs.value[currentlyOpenIndex].isOpen = false;
-    faqs.value[selectedIndex].isOpen = true;
+    faqStates.value[currentlyOpenIndex] = false;
+    faqStates.value[selectedIndex] = true;
   }
   else {
-    faqs.value[selectedIndex].isOpen = true;
+    faqStates.value[selectedIndex] = true;
   }
 }
 
@@ -202,21 +149,21 @@ function validate() {
   messageError.value = '';
 
   if (!email.value) {
-    emailError.value = 'Enter your email';
+    emailError.value = t('contact.error_email_empty');
   }
   else if (!isEmail(email.value.trim())) {
-    emailError.value = 'Invalid email format';
+    emailError.value = t('contact.error_email_invalid');
   }
 
   const trimmedMessage = message.value.trim();
   if (!trimmedMessage) {
-    messageError.value = 'Enter your message';
+    messageError.value = t('contact.error_message_empty');
   }
   else if (trimmedMessage.length < 10) {
-    messageError.value = 'Message must contain at least 10 characters';
+    messageError.value = t('contact.error_message_min');
   }
   else if (message.value.length > 5000) {
-    messageError.value = 'Message must be less than 5000 characters';
+    messageError.value = t('contact.error_message_max');
   }
 
   return !emailError.value && !messageError.value;
@@ -248,7 +195,7 @@ async function onSubmit() {
       errorMessage.value = e.response.data.detail;
     }
     else {
-      errorMessage.value = 'An unexpected error occurred. Please try again later';
+      errorMessage.value = t('contact.error_unexpected');
     }
   }
   finally {
