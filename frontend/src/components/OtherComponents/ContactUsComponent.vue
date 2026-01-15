@@ -24,7 +24,7 @@
           <label for="contact-email" class="block text-sm text-gray-300 mb-1">{{ $t('contact.email_label') }}</label>
           <input id="contact-email" type="email" v-model.trim="email"
             class="w-full rounded-md bg-white/10 focus:border-gray-500 border border-white/10 focus:outline-none px-3 py-2 text-gray-100 placeholder-gray-500"
-            :placeholder="$t('contact.email_placeholder')" :disabled="submitting" required />
+            placeholder="example@email.com" :disabled="submitting" required />
           <p v-if="emailError" class="mt-1 text-xs text-red-400">{{ emailError }}</p>
         </div>
 
