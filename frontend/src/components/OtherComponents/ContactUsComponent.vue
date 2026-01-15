@@ -54,14 +54,14 @@
     <div class="mt-14">
       <h2 class="text-3xl font-bold medieval text-center text-gray-200 mb-4">{{ $t('faq.title') }}</h2>
       <div class="divide-y divide-gray-700/50">
-        <div v-for="(faq, index) in faqs" :key="index">
-          <button @click="toggleFaq(index)"
+        <div v-for="n in 14" :key="n">
+          <button @click="toggleFaq(n - 1)"
             class="w-full flex justify-between items-center text-left py-5 focus:outline-none">
             <span class="text-lg transition-colors duration-300"
-              :class="faq.isOpen ? 'text-gray-200' : 'text-gray-400'">{{ faq.question }}</span>
+              :class="faqStates[n - 1] ? 'text-gray-200' : 'text-gray-400'">{{ $t(`faq.q${n}`) }}</span>
             <span
               class="flex-shrink-0 ml-4 flex items-center justify-center h-7 w-7 rounded-full bg-gray-900/50 text-gray-400">
-              <svg v-if="!faq.isOpen" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+              <svg v-if="!faqStates[n - 1]" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
@@ -74,8 +74,8 @@
           <transition enter-active-class="transition-all duration-700 ease-in-out" enter-from-class="max-h-0 opacity-0"
             enter-to-class="max-h-screen opacity-100" leave-active-class="transition-all duration-700 ease-in-out"
             leave-from-class="max-h-screen opacity-100" leave-to-class="max-h-0 opacity-0">
-            <div v-if="faq.isOpen" class="overflow-hidden">
-              <p class="pr-12 pb-4 pt-2 text-gray-200">{{ faq.answer }}</p>
+            <div v-if="faqStates[n - 1]" class="overflow-hidden">
+              <p class="pr-12 pb-4 pt-2 text-gray-200">{{ $t(`faq.a${n}`) }}</p>
             </div>
           </transition>
         </div>
@@ -85,11 +85,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import api from '@/services/api';
 import isEmail from 'validator/lib/isEmail';
 import { useI18n } from 'vue-i18n';
+
 const { t } = useI18n();
 
 const email = ref('');
@@ -97,35 +98,17 @@ const message = ref('');
 const submitting = ref(false);
 const successMessage = ref('');
 const errorMessage = ref('');
-
 const emailError = ref('');
 const messageError = ref('');
 
+const faqStates = ref(new Array(14).fill(false));
+
 onMounted(() => {
   const authStore = useAuthStore();
-  if (authStore.isAuthenticated && authStore.user.email) {
+  if (authStore.isAuthenticated && authStore.user && authStore.user.email) {
     email.value = authStore.user.email;
   }
 });
-
-const faqStates = ref(new Array(14).fill(false));
-
-const faqs = computed(() => [
-  { question: t('faq.q1'), answer: t('faq.a1'), isOpen: faqStates.value[0] },
-  { question: t('faq.q2'), answer: t('faq.a2'), isOpen: faqStates.value[1] },
-  { question: t('faq.q3'), answer: t('faq.a3'), isOpen: faqStates.value[2] },
-  { question: t('faq.q4'), answer: t('faq.a4'), isOpen: faqStates.value[3] },
-  { question: t('faq.q5'), answer: t('faq.a5'), isOpen: faqStates.value[4] },
-  { question: t('faq.q6'), answer: t('faq.a6'), isOpen: faqStates.value[5] },
-  { question: t('faq.q7'), answer: t('faq.a7'), isOpen: faqStates.value[6] },
-  { question: t('faq.q8'), answer: t('faq.a8'), isOpen: faqStates.value[7] },
-  { question: t('faq.q9'), answer: t('faq.a9'), isOpen: faqStates.value[8] },
-  { question: t('faq.q10'), answer: t('faq.a10'), isOpen: faqStates.value[9] },
-  { question: t('faq.q11'), answer: t('faq.a11'), isOpen: faqStates.value[10] },
-  { question: t('faq.q12'), answer: t('faq.a12'), isOpen: faqStates.value[11] },
-  { question: t('faq.q13'), answer: t('faq.a13'), isOpen: faqStates.value[12] },
-  { question: t('faq.q14'), answer: t('faq.a14'), isOpen: faqStates.value[13] },
-]);
 
 function toggleFaq(selectedIndex) {
   const currentlyOpenIndex = faqStates.value.findIndex(state => state);
