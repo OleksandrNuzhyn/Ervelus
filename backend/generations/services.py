@@ -130,7 +130,7 @@ def get_genai_client():
     global genai_client
     
     if genai_client is None:
-        genai_client = genai.Client()
+        genai_client = genai.Client(vertexai=True, project=settings.GCP_PROJECT_ID, location=settings.GCP_TASKS_LOCATION)
 
     return genai_client
 
