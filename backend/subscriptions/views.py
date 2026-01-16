@@ -77,7 +77,7 @@ def create_order(request):
         'clientEmail': client_email,
         'regularBehavior': 'preset',
         'regularMode': 'monthly',
-        'regularCount': '24',
+        'regularCount': '11',
         'language': 'EN'
     }, status=200)
 
