@@ -4,9 +4,21 @@
     <div :class="['flex-grow flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-6 pb-0 overflow-visible min-h-0 lg:h-full', !hasStartedTransform ? 'h-full' : '']">
       <div :class="['flex flex-col lg:shrink overflow-visible gap-3 min-h-0 lg:justify-between', !hasStartedTransform ? 'flex-1 justify-between' : '']">
         <div :class="['relative w-full flex flex-col lg:flex-grow overflow-visible min-h-0 lg:flex-1', !hasStartedTransform ? 'flex-1' : '']">
-          <div :class="[!hasStartedTransform ? 'flex-1' : 'h-[38vh] md:h-[600px]', 'bg-black/30 backdrop-blur-[7px] shadow-[0_0_1.5px_rgba(0,0,0,0.8)] rounded-xl p-4 flex flex-col items-center justify-center w-full lg:h-full lg:flex-grow lg:min-h-0 overflow-visible', 
+          <div :class="[!hasStartedTransform ? 'flex-1' : 'h-[38vh] md:h-[600px]', 'bg-black/30 backdrop-blur-[7px] shadow-[0_0_1.5px_rgba(0,0,0,0.8)] rounded-xl p-4 flex flex-col items-center justify-center w-full lg:h-full lg:flex-grow min-h-0 overflow-hidden', 
             inputImageUrl ? 'border-gray-600/30' : 'border-transparent']">
             
+            <button 
+              @click.stop="showPhotoTipsModal = true"
+              class="absolute left-6 top-6 z-20 p-2 group/info transition-all duration-300 outline-none"
+              :style="inputImageUrl ? { filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.6)) drop-shadow(0 2px 4px rgba(0,0,0,0.5))' } : {}"
+            >
+              <div v-if="!inputImageUrl" class="absolute inset-0 rounded-full bg-white/20 blur-md info-breath mt-1 ml-1" style="width: calc(100% - 8px); height: calc(100% - 8px);"></div>
+              
+              <svg class="w-6 h-6 text-white/80 group-hover/info:text-white transition-colors relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+              </svg>
+            </button>
+
             <div v-if="!inputImageUrl" @click="triggerFileInput"
                  class="cursor-pointer w-full h-full flex flex-col items-center justify-center relative group/btn">
               
@@ -132,6 +144,115 @@
         </div>
       </div>
     </transition>
+
+    <transition 
+      enter-active-class="transition duration-500 ease-out" 
+      enter-from-class="opacity-0" 
+      enter-to-class="opacity-100"
+      leave-active-class="transition duration-300 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div v-if="showPhotoTipsModal" class="fixed inset-0 flex items-center justify-center z-[100] bg-[#0a0a0c]/80 backdrop-blur-md" @click.self="showPhotoTipsModal = false">
+        <div class="promo-dropdown-style w-[96vw] max-w-lg shadow-2xl relative overflow-hidden h-auto max-h-[94vh] flex flex-col">
+          <div class="dropdown-glow-effect"></div>
+          
+          <button 
+            @click="showPhotoTipsModal = false"
+            class="absolute right-4 top-4 p-2 text-white/30 hover:text-white transition-all duration-300 z-30 hover:bg-white/5 rounded-full"
+          >
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          
+          <div 
+            ref="scrollContainer"
+            @scroll="checkScroll"
+            class="tips-scroll-container mask-fade-vertical h-full overflow-y-auto"
+            :style="{
+              '--mask-top': canScrollUp ? '60px' : '0px',
+              '--mask-bottom': canScrollDown ? '60px' : '0px'
+            }"
+          >
+            <div class="p-8 md:p-10 flex flex-col gap-8 text-gray-200">
+              <div class="text-center relative z-10">
+                <div class="flex items-center justify-center mb-4">
+                  <div class="dropdown-icon-wrapper-style">
+                    <svg class="dropdown-icon-style" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                    </svg>
+                  </div>
+                </div>
+                <h3 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight leading-tight mx-auto px-4 w-full text-center">{{ $t('workspace.photo_tips_title') || 'Поради щодо фото' }}</h3>
+              </div>
+
+              <div class="space-y-4 px-2 relative z-10 text-left">
+                <div class="flex gap-4 items-center group">
+                  <div class="shrink-0">
+                    <div class="w-1.5 h-1.5 rounded-full bg-white/40 group-hover:bg-white group-hover:scale-125 transition-all"></div>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-white/70 text-sm md:text-base leading-relaxed group-hover:text-white transition-colors">
+                      <span class="font-bold text-white">{{ $t('workspace.tip_1_title') }}</span> 
+                      {{ $t('workspace.tip_1_desc') }}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex gap-4 items-center group">
+                  <div class="shrink-0">
+                    <div class="w-1.5 h-1.5 rounded-full bg-white/40 group-hover:bg-white group-hover:scale-125 transition-all"></div>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-white/70 text-sm md:text-base leading-relaxed group-hover:text-white transition-colors">
+                      <span class="font-bold text-white">{{ $t('workspace.tip_2_title') }}</span> 
+                      {{ $t('workspace.tip_2_desc') }}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex gap-4 items-center group">
+                  <div class="shrink-0">
+                    <div class="w-1.5 h-1.5 rounded-full bg-white/40 group-hover:bg-white group-hover:scale-125 transition-all"></div>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-white/70 text-sm md:text-base leading-relaxed group-hover:text-white transition-colors">
+                      <span class="font-bold text-white">{{ $t('workspace.tip_3_title') }}</span> 
+                      {{ $t('workspace.tip_3_desc') }}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex gap-4 items-center group">
+                  <div class="shrink-0">
+                    <div class="w-1.5 h-1.5 rounded-full bg-white/40 group-hover:bg-white group-hover:scale-125 transition-all"></div>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-white/70 text-sm md:text-base leading-relaxed group-hover:text-white transition-colors">
+                      <span class="font-bold text-white">{{ $t('workspace.tip_4_title') }}</span> 
+                      {{ $t('workspace.tip_4_desc') }}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex gap-4 items-center group">
+                  <div class="shrink-0">
+                    <div class="w-1.5 h-1.5 rounded-full bg-white/40 group-hover:bg-white group-hover:scale-125 transition-all"></div>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-white/70 text-sm md:text-base leading-relaxed group-hover:text-white transition-colors">
+                      <span class="font-bold text-white">{{ $t('workspace.tip_5_title') }}</span> 
+                      {{ $t('workspace.tip_5_desc') }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -141,6 +262,25 @@ import api from '@/services/api';
 import { toast } from '@/services/toast';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
+
+const showPhotoTipsModal = ref(false);
+const showGenerationsModal = ref(false);
+const scrollContainer = ref(null);
+const canScrollUp = ref(false);
+const canScrollDown = ref(false);
+
+function checkScroll() {
+  const el = scrollContainer.value;
+  if (!el) return;
+  canScrollUp.value = el.scrollTop > 10;
+  canScrollDown.value = el.scrollTop + el.clientHeight < el.scrollHeight - 10;
+}
+
+watch(showPhotoTipsModal, (newVal) => {
+  if (newVal) {
+    nextTick(checkScroll);
+  }
+});
 
 async function urlToFile(url, filename) {
     const response = await fetch(url);
@@ -178,13 +318,11 @@ const outputImageUrl = ref(null);
 const isLoading = ref(false);
 const hasStartedTransform = ref(false);
 const fileInput = ref(null);
-const outputSection = ref(null);
 const currentGenerationId = ref(null);
 const isDragging = ref(false);
 const inputImageLoaded = ref(false);
 const outputImageLoaded = ref(false);
 const completedGenerationId = ref(null);
-const showGenerationsModal = ref(false);
 
 function triggerPromo() {
   window.dispatchEvent(new CustomEvent('open-promo-dropdown'));
@@ -701,5 +839,108 @@ async function downloadOutputImage() {
   );
   animation: shimmer 3s infinite;
   filter: blur(5px);
+}
+
+.info-breath {
+  animation: infoBreath 3s infinite ease-in-out;
+  will-change: transform, opacity;
+}
+
+@keyframes infoBreath {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.promo-dropdown-style {
+  background: radial-gradient(circle at 20% 0%, rgba(139, 92, 246, 0.08), transparent 40%),
+              radial-gradient(circle at 80% 100%, rgba(88, 101, 242, 0.05), transparent 40%),
+              #0a0a0c;
+  border-radius: 24px;
+  box-shadow: 
+    0 50px 100px rgba(0, 0, 0, 0.9),
+    0 0 120px rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dropdown-glow-effect {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.05), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tips-scroll-container {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.tips-scroll-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+.mask-fade-vertical {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0,0,0,0.4) calc(var(--mask-top, 0px) / 2),
+    black var(--mask-top, 0px),
+    black calc(100% - var(--mask-bottom, 0px)),
+    rgba(0,0,0,0.4) calc(100% - (var(--mask-bottom, 0px) / 2)),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0,0,0,0.4) calc(var(--mask-top, 0px) / 2),
+    black var(--mask-top, 0px),
+    black calc(100% - var(--mask-bottom, 0px)),
+    rgba(0,0,0,0.4) calc(100% - (var(--mask-bottom, 0px) / 2)),
+    transparent 100%
+  );
+  transition: mask-image 0.3s ease-in-out, -webkit-mask-image 0.3s ease-in-out;
+}
+
+.dropdown-icon-wrapper-style {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.dropdown-icon-style {
+  width: 48px;
+  height: 48px;
+  color: #fff;
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+}
+
+.discord-button-style {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 40px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #000;
+  background: #fff;
+  border: none;
+  border-radius: 980px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+}
+
+.discord-button-style:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.4);
 }
 </style>

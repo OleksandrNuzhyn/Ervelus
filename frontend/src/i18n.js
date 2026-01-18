@@ -170,7 +170,20 @@ const messages = {
       error_cancel_failed: "Could not cancel the generation request. It might have already been completed or cancelled",
       error_status_check: "An unexpected error occurred while checking generation status",
       error_file_not_found: "File for download not found. Please try again later",
-      or: "or"
+      or: "or",
+      photo_tips_title: "Perfect Result Guide",
+      photo_tips_subtitle: "For the best results, follow these recommendations",
+      got_it: "Got it",
+      tip_1_title: "Number of People:",
+      tip_1_desc: "Ideally one person, maximum two for the most accurate results",
+      tip_2_title: "Framing & Distance:",
+      tip_2_desc: "The person should occupy most of the frame. Choose close-up portraits or full-body shots with minimal space above/below",
+      tip_3_title: "Clarity:",
+      tip_3_desc: "Faces must be sharp and clearly visible. Avoid blurry or low-resolution images",
+      tip_4_title: "Lighting:",
+      tip_4_desc: "Bright, even lighting without harsh shadows ensures a magical transformation",
+      tip_5_title: "Background:",
+      tip_5_desc: "Clean and simple backgrounds help the AI focus on the main subject"
     },
     gallery: {
       no_images: "No photos yet",
@@ -493,7 +506,20 @@ const messages = {
       error_cancel_failed: "Не вдалося скасувати запит. Можливо, він уже виконаний або скасований",
       error_status_check: "Сталася неочікувана помилка під час перевірки статусу генерації",
       error_file_not_found: "Файл для завантаження не знайдено. Спробуйте пізніше",
-      or: "або"
+      or: "або",
+      photo_tips_title: "Секрет ідеального результату",
+      photo_tips_subtitle: "Для найкращого результату дотримуйтесь цих рекомендацій",
+      got_it: "Зрозуміло",
+      tip_1_title: "Кількість людей:",
+      tip_1_desc: "Ідеально одна людина, максимум дві для найкращого результату",
+      tip_2_title: "Масштаб та відстань:",
+      tip_2_desc: "Людина має займати більшу частину кадру. Обирайте портрети або фото в повний ріст з мінімальним простором навколо",
+      tip_3_title: "Чіткість:",
+      tip_3_desc: "Обличчя має бути чітким та добре освітленим. Уникайте розмитих або зернистих фото",
+      tip_4_title: "Освітлення:",
+      tip_4_desc: "Рівномірне світло без різких тіней гарантує найбільш якісну стилізацію",
+      tip_5_title: "Фон:",
+      tip_5_desc: "Простий фон без зайвих деталей допомагає ШІ краще обробити ваш образ"
     },
     gallery: {
       no_images: "Фото ще немає",
