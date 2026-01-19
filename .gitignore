@@ -1,10 +1,10 @@
 # Backend
 __pycache__/
-/backend/.venv/
-/backend/*.env
+.venv/
+*.env
 
-# Frontend
-/frontend/node_modules/
+# Apps
+node_modules/
 
 # General
 *.log

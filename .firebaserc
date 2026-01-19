@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "credible-cosine-479914-k2"
-  }
+  },
+  "targets": {
+    "credible-cosine-479914-k2": {
+      "hosting": {
+        "web": [
+          "credible-cosine-479914-k2"
+        ],
+        "tma": [
+          "ervelus-tma"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
