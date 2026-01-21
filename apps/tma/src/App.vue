@@ -80,17 +80,13 @@ router.afterEach(() => {
 }
 
 .wave-animation {
-  animation: rotate 2s linear infinite;
+  animation: wave 2s ease-in-out infinite alternate;
   filter: drop-shadow(0 0 15px rgba(129, 180, 253, 0.2));
 }
 
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+@keyframes wave {
+  from { transform: rotate(35deg); }
+  to { transform: rotate(50deg); }
 }
 
 .maintenance-content {
