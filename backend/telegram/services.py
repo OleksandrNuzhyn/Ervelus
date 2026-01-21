@@ -6,9 +6,12 @@ from django.conf import settings
 
 def validate_telegram_init_data(init_data):
     try:
-        telegram_data = dict(parse_qsl(init_data, keep_blank_values=True))
+        telegram_data = dict(parse_qsl(init_data))
         received_hash = telegram_data.pop("hash")
         telegram_data.pop("signature", None)
+
+        if "user" in telegram_data:
+            telegram_data["user"] = telegram_data["user"].replace("\\/", "/")
         
         data_check_string = "\n".join(f"{k}={v}" for k, v in sorted(telegram_data.items()))
         
@@ -16,7 +19,7 @@ def validate_telegram_init_data(init_data):
         calculated_hash = hmac.new(secret_key, data_check_string.encode(), hashlib.sha256).hexdigest()
 
         if calculated_hash != received_hash:
-            raise Exception("invalid hash signature")
+            raise Exception("Invalid hash signature")
 
         return json.loads(telegram_data["user"])
     except Exception as e:
