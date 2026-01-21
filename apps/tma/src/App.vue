@@ -80,7 +80,7 @@ router.afterEach(() => {
 }
 
 .wave-animation {
-  animation: wave 2s ease-in-out infinite alternate;
+  animation: wave 1s ease-in-out infinite alternate;
   filter: drop-shadow(0 0 15px rgba(129, 180, 253, 0.2));
 }
 

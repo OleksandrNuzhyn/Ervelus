@@ -2,34 +2,44 @@ import hmac
 import json
 import hashlib
 from urllib.parse import parse_qsl
+from urllib.parse import unquote
 from django.conf import settings
 
 def validate_telegram_init_data(init_data):
+    # Прибираємо можливі пробіли/лапки з токена
+    bot_token = settings.TELEGRAM_API_KEY.strip().strip('"').strip("'")
+    
     try:
-        telegram_data = dict(parse_qsl(init_data))
-        if "hash" not in telegram_data:
+        # 1. Розбиваємо рядок за допомогою unquote вручну, щоб не було сюрпризів з '+' або іншими символами
+        params = {}
+        for item in init_data.split('&'):
+            if '=' in item:
+                k, v = item.split('=', 1)
+                params[k] = unquote(v)
+        
+        if "hash" not in params:
             raise Exception("Hash missing in initData")
 
-        received_hash = telegram_data.pop("hash")
-        telegram_data.pop("signature", None)
+        received_hash = params.pop("hash")
+        params.pop("signature", None) # Видаляємо signature, якщо є
         
-        data_check_string = "\n".join(f"{k}={v}" for k, v in sorted(telegram_data.items()))
+        # 2. Сортуємо ключі за алфавітом
+        sorted_keys = sorted(params.keys())
+        data_check_string = "\n".join(f"{k}={params[k]}" for k in sorted_keys)
         
-        # DEBUG LOGGING (REMOVE AFTER FIXING)
-        api_key_masked = settings.TELEGRAM_API_KEY[:5] + "***" if settings.TELEGRAM_API_KEY else "NONE"
-        print(f"DEBUG: API_KEY={api_key_masked}")
+        # DEBUG LOGGING
+        print(f"DEBUG: Token Length: {len(bot_token)}")
         print(f"DEBUG: Data Check String:\n{data_check_string}")
-        print(f"DEBUG: Received Hash: {received_hash}")
         
-        secret_key = hmac.new(b"WebAppData", settings.TELEGRAM_API_KEY.encode(), hashlib.sha256).digest()
+        # 3. Рахуємо секретний ключ
+        secret_key = hmac.new(b"WebAppData", bot_token.encode(), hashlib.sha256).digest()
+        
+        # 4. Рахуємо хеш
         calculated_hash = hmac.new(secret_key, data_check_string.encode(), hashlib.sha256).hexdigest()
 
-        print(f"DEBUG: Calculated Hash: {calculated_hash}")
-
         if calculated_hash != received_hash:
-            raise Exception(f"Invalid hash signature. Calculated: {calculated_hash}, Received: {received_hash}")
+            raise Exception(f"Hash mismatch. Calc: {calculated_hash[:10]}... Rec: {received_hash[:10]}...")
 
-        return json.loads(telegram_data["user"])
+        return json.loads(params["user"])
     except Exception as e:
-        # Прокидаємо повну помилку для логера
-        raise Exception(f"{str(e)}")
+        raise Exception(str(e))
