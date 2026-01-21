@@ -10,7 +10,9 @@ from agreements.services import accept_user_document_version
 from agreements.models import TermsVersion
 from users.models import UserProfile
 from . import services
+import logging
 
+logger = logging.getLogger(__name__)
 User = get_user_model()
 
 @api_view(['POST'])
@@ -19,11 +21,13 @@ def telegram_auth(request):
     init_data = request.data.get('initData')
 
     if not init_data:
+        logger.error("Telegram auth failed", extra={"reason": "no init_data provided"})
         return Response({"detail": "Authentication failed"}, status=400)
 
     try:
         telegram_data = services.validate_telegram_init_data(init_data)
-    except Exception:
+    except Exception as e:
+        logger.error("Telegram auth failed", extra={"reason": "validation error", "error": str(e)}, exc_info=True)
         return Response({"detail": "Authentication failed"}, status=400)
 
     telegram_id = str(telegram_data.get('id'))
@@ -34,7 +38,8 @@ def telegram_auth(request):
     except UserProfile.DoesNotExist:
         try:
             user = create_telegram_user(telegram_data, request)
-        except Exception:
+        except Exception as e:
+            logger.error("Telegram auth failed", extra={"reason": "user creation error", "error": str(e)}, exc_info=True)
             return Response({"detail": "Authentication failed"}, status=400)
 
     token, _ = Token.objects.get_or_create(user=user)

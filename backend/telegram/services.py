@@ -16,8 +16,8 @@ def validate_telegram_init_data(init_data):
         calculated_hash = hmac.new(secret_key, data_check_string.encode(), hashlib.sha256).hexdigest()
 
         if calculated_hash != received_hash:
-            raise Exception()
+            raise Exception("invalid hash signature")
 
         return json.loads(telegram_data["user"])
-    except Exception:
-        raise Exception()
+    except Exception as e:
+        raise Exception(str(e))

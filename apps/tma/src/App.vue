@@ -80,16 +80,16 @@ router.afterEach(() => {
 }
 
 .wave-animation {
-  animation: wave 2.5s ease-in-out infinite;
+  animation: rotate 2s linear infinite;
   filter: drop-shadow(0 0 15px rgba(129, 180, 253, 0.2));
 }
 
-@keyframes wave {
-  0%, 100% { transform: rotate(35deg)}
-  25% { transform: rotate(50deg)}
-  75% { transform: rotate(40deg)}
-  50% {
-    opacity: 0.45;
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
