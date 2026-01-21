@@ -1,9 +1,10 @@
 <template>
   <div id="app" class="min-h-screen text-white">
-    <router-view v-if="!authStore.isMaintenanceMode" />
-
+    <router-view v-if="authStore.user && !authStore.isMaintenanceMode" />
+    
     <Transition name="fade" @after-enter="onLoaderFadedIn">
-      <div v-if="isLoading || !authStore.authChecked || authStore.isMaintenanceMode" class="loader-overlay">
+      <div v-if="isLoading || !authStore.user || authStore.isMaintenanceMode" class="loader-overlay">
+
         <div v-if="authStore.isMaintenanceMode" class="maintenance-content">
           <Transition name="fade-box" appear>
             <div class="maintenance-box">
@@ -13,8 +14,14 @@
             </div>
           </Transition>
         </div>
+
+        <div v-else class="loader-content">
+          <img src="@/assets/svg/staff_logo.svg" class="wave-animation w-24 h-24" />
+        </div>
+
       </div>
     </Transition>
+    
     <TermsAcceptModal />
   </div>
 </template>
@@ -61,6 +68,29 @@ router.afterEach(() => {
   inset: 0;
   z-index: 100;
   background-color: #0c0d14;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.wave-animation {
+  animation: wave 2.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 15px rgba(129, 180, 253, 0.2));
+}
+
+@keyframes wave {
+  0%, 100% { transform: rotate(35deg)}
+  25% { transform: rotate(50deg)}
+  75% { transform: rotate(40deg)}
+  50% {
+    opacity: 0.45;
+  }
 }
 
 .maintenance-content {

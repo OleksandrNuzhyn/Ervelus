@@ -20,7 +20,8 @@ if settings.DEBUG:
         path('api/products/', include('products.urls')),
         path('api/generations/', include('generations.urls_api')),
         path('api/agreements/', include('agreements.urls')),
-        path('api/marketing/', include('marketing.urls'))
+        path('api/marketing/', include('marketing.urls')),
+        path('api/telegram/', include('telegram.urls'))
     ]
 else:
     admin.site.__class__ = OTPAdminSite
@@ -30,14 +31,15 @@ else:
             path('sanekit/', admin.site.urls),
 
             path('webhooks/subscriptions/', include('subscriptions.urls_webhooks')),
-
+            
             path('api/auth/', include('users.urls')),
             path('api/core/app-config/', views.app_config_details, name='app-config-details'),
             path('api/subscriptions/', include('subscriptions.urls_api')),
             path('api/products/', include('products.urls')),
             path('api/generations/', include('generations.urls_api')),
             path('api/agreements/', include('agreements.urls')),
-            path('api/marketing/', include('marketing.urls'))
+            path('api/marketing/', include('marketing.urls')),
+            path('api/telegram/', include('telegram.urls'))
         ]
     elif settings.SERVICE_NAME == 'ervelus-generations-service':
         urlpatterns += [

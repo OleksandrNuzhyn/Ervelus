@@ -61,8 +61,8 @@
         </div>
       </div>
     </transition>
-
   </header>
+  
   <transition
     enter-active-class="transition-opacity ease-in-out duration-300"
     enter-from-class="opacity-0"

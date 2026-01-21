@@ -93,15 +93,19 @@ class UserProfile(models.Model):
         verbose_name_plural = 'User Profiles'
 
     class PrivacyMeta:
-        can_anonymise = False
+        fields = [
+            'telegram_id',
+        ]
         search_fields = [
             'user__email',
         ]
         export_fields = [
-            'free_credits',
+            'telegram_id',
+            'free_credits'
         ]
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='profile')
+    telegram_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     free_credits = models.IntegerField(default=5)
     objects = UserProfileCreditManager()
 

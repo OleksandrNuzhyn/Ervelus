@@ -31,9 +31,9 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         if len(latest_documents_version_to_accept) != len(required_document_types):
             raise ValidationError("We are unable to complete your registration at this time")
 
-        ip_address = request.META.get('HTTP_X_FORWARDED_FOR').split(',')[0].strip()
-        user_agent = request.META.get('HTTP_USER_AGENT')
-        context = {"source": "registration_form", "method": "checkbox"}
+        ip_address = request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0].strip()
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+        context = {"source": "registration_form", "method": "automatic"}
 
         for latest_document_version_to_accept in latest_documents_version_to_accept:
             accept_user_document_version(

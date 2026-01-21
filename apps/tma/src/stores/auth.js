@@ -4,32 +4,25 @@ import api from '@/services/api';
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
-    authChecked: false,
     isMaintenanceMode: false
   }),
-  getters: {
-    isAuthenticated: (state) => !!state.user,
-  },
   actions: {
     setMaintenanceMode(status) {
       this.isMaintenanceMode = status;
     },
-    async logout() {
-      await api.post('/api/auth/logout/');
-      this.user = null;
-      this.authChecked = true;
-      localStorage.removeItem('user-token');
-    },
-    async checkAuth() {
+    async telegramAuth() {
       try {
-        const { data } = await api.get('/api/auth/user/');
-        this.user = data;
-      } 
+        const { data } = await api.post('/api/telegram/auth/', {
+          initData: window.Telegram?.WebApp?.initData
+        });
+
+        if (data.token) {
+          localStorage.setItem('user-token', data.token);
+          this.user = true;
+        }
+      }
       catch (error) {
         this.user = null;
-      }
-      finally {
-        this.authChecked = true;
       }
     }
   }

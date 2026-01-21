@@ -10,7 +10,6 @@
         <p class="mt-4 text-gray-300">{{ errorMessage }}</p>
       </div>
     </main>
-    <FooterComponent v-if="isContentLoaded" />
   </div>
 </template>
 
@@ -18,14 +17,12 @@
 import { ref, onMounted } from 'vue';
 import api from '@/services/api.js';
 import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue';
-import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue';
 
 const document = ref({
   title: 'Privacy Policy',
   content: ''
 });
 const errorMessage = ref(null);
-const isContentLoaded = ref(false);
 
 function handleContentClick(event) {
   const anchor = event.target.closest('a');
@@ -64,9 +61,6 @@ async function getDocument() {
     else {
       errorMessage.value = 'The document is currently unavailable. Please try again later';
     }
-  }
-  finally {
-    isContentLoaded.value = true;
   }
 }
 

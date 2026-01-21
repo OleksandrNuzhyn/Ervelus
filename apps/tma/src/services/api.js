@@ -11,11 +11,11 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('user-token');
-    
+
     if (typeof token === 'string' && token) {
       config.headers['Authorization'] = `Token ${token}`;
     }
-    
+
     return config;
   },
   (error) => {
@@ -23,34 +23,24 @@ api.interceptors.request.use(
   }
 );
 
+let isReloading = false;
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
     const authStore = useAuthStore();
 
     if (error.response && error.response.status === 401) {
-      const requestUrl = originalRequest.url || "";
-      
-      if (requestUrl.endsWith('/api/auth/user/')) {
-        if (localStorage.getItem('user-token')) {
-          toast.info("Your session has expired. Please sign in again");
+      if (authStore.user) {
+        if (!isReloading) {
+          isReloading = true;
           authStore.user = null;
-          authStore.authChecked = true;
           localStorage.removeItem('user-token');
-          const router = (await import('@/router')).default;
-          await router.push({ name: 'login' });
+          window.location.reload();
         }
+        return new Promise(() => {});
       }
-      else if (authStore.isAuthenticated && !requestUrl.endsWith('/api/auth/logout/')) {
-        toast.info("Your session has expired. Please sign in again");
-        authStore.user = null;
-        authStore.authChecked = true;
-        localStorage.removeItem('user-token');
-        const router = (await import('@/router')).default;
-        await router.push({ name: 'login' });
-      }
-      return Promise.resolve();
+      return Promise.reject(error);
     }
 
     if (error.response && error.response.status === 428) {

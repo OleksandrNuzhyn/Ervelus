@@ -6,14 +6,12 @@
         <ProfileComponent />
       </div>
     </div>
-    <FooterComponent />
   </div>
 </template>
   
 <script setup>
 import ProfileComponent from '@/components/OtherComponents/ProfileComponent.vue';
 import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue';
-import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue';
 </script>
 
 <style scoped>

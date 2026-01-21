@@ -18,11 +18,10 @@ const router = createRouter({
 
 router.beforeEach(async (to, from) => {
   document.title = to.meta.title || 'Ervelus';
-
   const authStore = useAuthStore();
 
-  if (!authStore.authChecked) {
-    await authStore.checkAuth();
+  if (!authStore.user) {
+    await authStore.telegramAuth();
   }
 });
 

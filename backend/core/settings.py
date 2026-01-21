@@ -58,7 +58,8 @@ INSTALLED_APPS = [
     'subscriptions',
     'generations',
     'agreements',
-    'marketing'
+    'marketing',
+    'telegram'
 ]
 
 SITE_ID = 1
@@ -196,6 +197,7 @@ CSRF_COOKIE_SAMESITE = 'None'
 
 CORS_ALLOWED_ORIGINS = [
     'https://ervelus.com',
+    'https://tma.ervelus.com',
     'https://credible-cosine-479914-k2.web.app',
     'https://credible-cosine-479914-k2.firebaseapp.com',
     'http://localhost:5173',
@@ -225,6 +227,10 @@ WAYFORPAY_MERCHANT_ACCOUNT = os.getenv("WAYFORPAY_MERCHANT_ACCOUNT")
 WAYFORPAY_MERCHANT_DOMAIN = os.getenv("WAYFORPAY_MERCHANT_DOMAIN")
 WAYFORPAY_MERCHANT_PASSWORD = os.getenv("WAYFORPAY_MERCHANT_PASSWORD")
 WAYFORPAY_SECRET_KEY = os.getenv("WAYFORPAY_SECRET_KEY")
+
+
+
+TELEGRAM_API_KEY = os.getenv("TELEGRAM_API_KEY")
 
 
 

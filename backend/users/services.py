@@ -19,8 +19,9 @@ logger = logging.getLogger(__name__)
 def get_user_data_for_retention(user):
     user_data = {
         "user": {
-            "id": user.id, 
-            "email": user.email
+            "id": user.id,
+            "email": user.email,
+            "telegram_id": getattr(user.profile, 'telegram_id', None) if hasattr(user, 'profile') else None
         },
         "agreements": [],
         "subscriptions": [],

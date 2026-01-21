@@ -172,6 +172,8 @@ def account_delete(request):
             user.socialaccount_set.all().delete()
             user.emailaddress_set.all().delete()
 
+            if hasattr(user, 'profile'):
+                user.profile.anonymise()
             user.anonymise()
 
             services.delete_user_audit_records(user, related_objects_ids)
