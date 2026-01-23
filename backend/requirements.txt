@@ -54,6 +54,7 @@ httptools==0.6.4
 httpx==0.28.1
 idna==3.10
 importlib_metadata==8.7.0
+init-data-py==0.2.7
 jiter==0.10.0
 multidict==6.6.3
 oauthlib==3.3.1
