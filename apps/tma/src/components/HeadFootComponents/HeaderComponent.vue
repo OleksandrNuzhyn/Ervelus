@@ -1,5 +1,8 @@
 <template>
-  <header class="fixed inset-x-0 top-0 z-50 bg-black/30 backdrop-blur-sm">
+  <header 
+    class="fixed inset-x-0 top-0 z-50 transition-all duration-300"
+    :class="isBurgerOpen ? 'bg-black/60 backdrop-blur-md' : 'bg-black/30 backdrop-blur-sm'"
+  >
     <div class="max-w-screen mx-auto px-4 sm:px-6 lg:px-12">
       <div class="flex items-center justify-between h-[70px]">
         <router-link to="/" class="flex items-center gap-3 text-2xl font-bold text-gray-100 select-none mobile-up">
@@ -26,7 +29,7 @@
       leave-active-class="transition ease-in duration-150"
       leave-from-class="transform opacity-100 translate-y-0"
       leave-to-class="transform opacity-0 -translate-y-4">
-      <div v-if="isBurgerOpen" class="bg-black/30 backdrop-blur-sm text-gray-200">
+      <div v-if="isBurgerOpen" class="text-gray-200">
         <div class="px-4 py-4 flex flex-col gap-6">
           <div class="flex items-center gap-2 text-gray-100">
             <div class="w-10 flex justify-center">

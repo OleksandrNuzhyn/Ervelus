@@ -44,20 +44,39 @@
             </div>
           </div>
 
-          <div class="mt-auto pt-16 pb-10 flex flex-col items-center">
-            <div class="footer-divider w-16 h-px bg-white/5 mb-8"></div>
+          <div class="mt-auto pt-8 pb-6 w-full max-w-2xl flex flex-col items-center">
+            <div class="w-full bg-white/[0.04] backdrop-blur-md rounded-[24px] overflow-hidden border border-white/5 mb-6">
+              <router-link to="/terms-of-service" class="settings-item flex items-center justify-between px-6 py-4 border-b border-white/5 active:bg-white/5 transition-colors group">
+                <span class="text-white/80 font-medium text-[15px] group-hover:text-white transition-colors">{{ $t('navigation.terms') }}</span>
+                <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="opacity-20 group-hover:opacity-40 transition-opacity">
+                  <path d="M1 9L5 5L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </router-link>
+              
+              <router-link to="/privacy-policy" class="settings-item flex items-center justify-between px-6 py-4 border-b border-white/5 active:bg-white/5 transition-colors group">
+                <span class="text-white/80 font-medium text-[15px] group-hover:text-white transition-colors">{{ $t('navigation.privacy') }}</span>
+                <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="opacity-20 group-hover:opacity-40 transition-opacity">
+                  <path d="M1 9L5 5L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </router-link>
+              
+              <router-link to="/refund-policy" class="settings-item flex items-center justify-between px-6 py-4 border-b border-white/5 active:bg-white/5 transition-colors group">
+                <span class="text-white/80 font-medium text-[15px] group-hover:text-white transition-colors">{{ $t('navigation.refund') }}</span>
+                <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="opacity-20 group-hover:opacity-40 transition-opacity">
+                  <path d="M1 9L5 5L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </router-link>
+              
+              <router-link to="/cookie-policy" class="settings-item flex items-center justify-between px-6 py-4 active:bg-white/5 transition-colors group">
+                <span class="text-white/80 font-medium text-[15px] group-hover:text-white transition-colors">{{ $t('navigation.cookie') }}</span>
+                <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="opacity-20 group-hover:opacity-40 transition-opacity">
+                  <path d="M1 9L5 5L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </router-link>
+            </div>
             
-            <nav class="policies-nav flex flex-wrap justify-center items-center mb-6">
-              <router-link to="/terms-of-service" class="policy-link">{{ $t('navigation.terms') }}</router-link>
-              <router-link to="/privacy-policy" class="policy-link">{{ $t('navigation.privacy') }}</router-link>
-              <router-link to="/refund-policy" class="policy-link">{{ $t('navigation.refund') }}</router-link>
-              <router-link to="/cookie-policy" class="policy-link">{{ $t('navigation.cookie') }}</router-link>
-            </nav>
-            
-            <p class="copyright-text">
-              <span class="opacity-20">&copy; {{ year }}</span> 
-              <span class="font-medium text-white/30 mx-1">Ervelus</span> 
-              <span class="opacity-20">• {{ $t('navigation.rights_reserved') }}</span>
+            <p class="text-[11px] text-white/20 text-center font-medium tracking-wide pb-4">
+              &copy; {{ year }} Ervelus. {{ $t('navigation.rights_reserved') }}
             </p>
           </div>
       </div>
@@ -241,38 +260,9 @@ async function applyPromoCode() {
   font-size: 0.9rem;
 }
 
-.policy-link {
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.25);
-  text-decoration: none;
-  transition: all 0.2s ease;
-  letter-spacing: 0.01em;
-  padding: 0.5rem 0.6rem;
-  display: flex;
-  align-items: center;
-}
-
-.policy-link:hover {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.policies-nav .policy-link:not(:last-child)::after {
-  content: "•";
-  margin-left: 1.2rem;
-  font-size: 0.6rem;
-  opacity: 0.15;
-  pointer-events: none;
-}
-
-.copyright-text {
-  font-size: 0.65rem;
-  letter-spacing: 0.02em;
-  color: rgba(255, 255, 255, 0.3);
-  user-select: none;
-  text-align: center;
-}
-
-.footer-divider {
-  border-radius: 99px;
+.settings-item:active svg {
+  opacity: 0.6;
+  transform: translateX(2px);
+  transition: transform 0.2s ease;
 }
 </style>

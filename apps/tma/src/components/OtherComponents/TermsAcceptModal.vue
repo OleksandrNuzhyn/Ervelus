@@ -16,7 +16,7 @@
             <span>{{ t('terms.checkbox_label') }}</span>
           </label>
         </div>
-        <div class="flex flex-col items-center justify-center gap-4 pt-4">
+        <div class="flex flex-col items-center justify-center gap-4 pt-4 mb-4">
           <button @click="acceptTerms" :disabled="!hasAgreed" class="manage-button" :class="{ 'opacity-50 cursor-not-allowed': !hasAgreed }">
             {{ t('terms.accept_btn') }}
           </button>
@@ -24,13 +24,13 @@
             <p class="mb-4">{{ errorMessage }}</p>
           </div>
         </div>
-        <div class="border-t border-white/10 text-center pt-4">
-            <p class="text-xs text-gray-500 mb-2">{{ t('terms.review_docs') }}</p>
+        <div class="border-t border-white/10 text-center pt-6">
+            <p class="text-xs text-gray-500 mb-2">{{ t('terms.review_docs_short') }}</p>
             <div class="flex justify-center gap-4">
-                <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 hover:underline">{{ t('terms.tos') }}</a>
-                <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 hover:underline">{{ t('terms.privacy') }}</a>
-                <a href="/refund-policy" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 hover:underline">{{ t('terms.refund') }}</a>
-                <a href="/cookie-policy" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 hover:underline">{{ t('terms.cookies') }}</a>
+                <router-link to="/terms-of-service" class="text-xs text-gray-400 hover:underline">{{ t('terms.tos') }}</router-link>
+                <router-link to="/privacy-policy" class="text-xs text-gray-400 hover:underline">{{ t('terms.privacy') }}</router-link>
+                <router-link to="/refund-policy" class="text-xs text-gray-400 hover:underline">{{ t('terms.refund') }}</router-link>
+                <router-link to="/cookie-policy" class="text-xs text-gray-400 hover:underline">{{ t('terms.cookies') }}</router-link>
             </div>
         </div>
       </div>
