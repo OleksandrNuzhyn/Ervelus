@@ -6,6 +6,19 @@
             <div class="relative z-10 flex flex-col h-full">
 
               <div class="mb-8 flex justify-center">
+                <a href="https://discord.gg/38NV8t57th" target="_blank"
+                  class="profile-card !py-8 !px-8 w-full max-w-2xl flex flex-col items-center justify-center gap-4 transition-all duration-300 group border border-[#5865F2]/20 hover:!border-[#5865F2]/50 hover:bg-[#5865F2]/5 no-underline">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-[#5865F2] flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
+                    <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.419-2.1569 2.419zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.419-2.1568 2.419z" fill="currentColor" />
+                  </svg>
+                  <div class="text-center w-full overflow-hidden">
+                    <h3 class="text-lg font-bold text-gray-200 group-hover:text-white transition-colors leading-tight">{{ $t('profile.discord_title') }}</h3>
+                    <p class="text-[10px] text-gray-400 mt-1 whitespace-nowrap truncate px-2">{{ $t('profile.discord_desc') }}</p>
+                  </div>
+                </a>
+              </div>
+
+              <div class="mb-8 flex justify-center">
                 <div class="profile-card py-14 px-10 w-full max-w-2xl flex flex-col items-center">
                   <h3 class="medieval text-2xl font-bold text-gray-200 mb-10 tracking-wide">{{ $t('profile.promo_title') }}</h3>
                   
@@ -28,30 +41,24 @@
                   </div>
                 </div>
               </div>
-              
-              <div class="mb-8 flex justify-center">
-                <a href="https://discord.gg/38NV8t57th" target="_blank"
-                  class="profile-card !py-6 !px-8 w-full max-w-2xl flex items-center justify-center gap-6 transition-all duration-300 group border border-[#5865F2]/20 hover:!border-[#5865F2]/50 hover:bg-[#5865F2]/5 no-underline">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-[#5865F2] flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
-                    <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.419-2.1569 2.419zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.419-2.1568 2.419z" fill="currentColor" />
-                  </svg>
-                  <div class="text-left">
-                    <h3 class="text-lg font-bold text-gray-200 group-hover:text-white transition-colors leading-tight">{{ $t('profile.discord_title') }}</h3>
-                    <p class="text-xs text-gray-400 mt-0.5">{{ $t('profile.discord_desc') }}</p>
-                  </div>
-                </a>
-              </div>
             </div>
           </div>
 
-          <div class="mt-auto pt-12 pb-6 text-center">
-            <div class="flex flex-wrap justify-center gap-4 text-sm text-gray-500 mb-4">
-              <router-link to="/terms-of-service" class="hover:text-gray-300 transition-colors">{{ $t('navigation.terms') }}</router-link>
-              <router-link to="/privacy-policy" class="hover:text-gray-300 transition-colors">{{ $t('navigation.privacy') }}</router-link>
-              <router-link to="/refund-policy" class="hover:text-gray-300 transition-colors">{{ $t('navigation.refund') }}</router-link>
-              <router-link to="/cookie-policy" class="hover:text-gray-300 transition-colors">{{ $t('navigation.cookie') }}</router-link>
-            </div>
-            <p class="text-xs text-gray-600 select-none">&copy; {{ year }} Ervelus. {{ $t('navigation.rights_reserved') }}</p>
+          <div class="mt-auto pt-16 pb-10 flex flex-col items-center">
+            <div class="footer-divider w-16 h-px bg-white/5 mb-8"></div>
+            
+            <nav class="policies-nav flex flex-wrap justify-center items-center mb-6">
+              <router-link to="/terms-of-service" class="policy-link">{{ $t('navigation.terms') }}</router-link>
+              <router-link to="/privacy-policy" class="policy-link">{{ $t('navigation.privacy') }}</router-link>
+              <router-link to="/refund-policy" class="policy-link">{{ $t('navigation.refund') }}</router-link>
+              <router-link to="/cookie-policy" class="policy-link">{{ $t('navigation.cookie') }}</router-link>
+            </nav>
+            
+            <p class="copyright-text">
+              <span class="opacity-20">&copy; {{ year }}</span> 
+              <span class="font-medium text-white/30 mx-1">Ervelus</span> 
+              <span class="opacity-20">• {{ $t('navigation.rights_reserved') }}</span>
+            </p>
           </div>
       </div>
     </div>
@@ -232,5 +239,40 @@ async function applyPromoCode() {
   min-width: 0;
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
+}
+
+.policy-link {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.25);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  letter-spacing: 0.01em;
+  padding: 0.5rem 0.6rem;
+  display: flex;
+  align-items: center;
+}
+
+.policy-link:hover {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.policies-nav .policy-link:not(:last-child)::after {
+  content: "•";
+  margin-left: 1.2rem;
+  font-size: 0.6rem;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.copyright-text {
+  font-size: 0.65rem;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.3);
+  user-select: none;
+  text-align: center;
+}
+
+.footer-divider {
+  border-radius: 99px;
 }
 </style>

@@ -81,15 +81,12 @@
   
 <script setup>
 import { ref, watch } from 'vue';
-import { useAuthStore } from '@/stores/auth';
 import api from '@/services/api';
 
 const isBurgerOpen = ref(false);
 const credits = ref(0);
-const authStore = useAuthStore();
 
 async function fetchCredits() {
-  if (!authStore.isAuthenticated) return;
   try {
     const response = await api.get('/api/auth/credit-balance/');
     credits.value = response.data.total_credits;
