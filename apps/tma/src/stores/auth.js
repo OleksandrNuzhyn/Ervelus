@@ -12,10 +12,6 @@ export const useAuthStore = defineStore('auth', {
     },
     async telegramAuth() {
       try {
-        // DEBUG: Показуємо initData прямо на екрані, щоб перевірити в боті
-        alert("TG Init Data: " + window.Telegram?.WebApp?.initData);
-
-        console.log("TG Init Data:", window.Telegram?.WebApp?.initData);
         const { data } = await api.post('/api/telegram/auth/', {
           initData: window.Telegram?.WebApp?.initData
         });
