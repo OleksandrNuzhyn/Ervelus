@@ -16,7 +16,7 @@
             <span>{{ t('terms.checkbox_label') }}</span>
           </label>
         </div>
-        <div class="flex flex-col items-center justify-center gap-4 py-5">
+        <div class="flex flex-col items-center justify-center gap-4 py-4">
           <button @click="acceptTerms" :disabled="!hasAgreed" class="manage-button" :class="{ 'opacity-50 cursor-not-allowed': !hasAgreed }">
             {{ t('terms.accept_btn') }}
           </button>

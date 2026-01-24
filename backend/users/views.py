@@ -65,7 +65,7 @@ class CustomVerifyEmailView(VerifyEmailView):
 
 
 @api_view(['GET'])
-@permission_classes([HasAcceptedLatestAgreements])
+@permission_classes([IsAuthenticated])
 def user_credit_balance(request):
     user_profile = UserProfile.objects.annotate_total_credits().get(user=request.user)
     serializer = UserCreditsSerializer(user_profile)

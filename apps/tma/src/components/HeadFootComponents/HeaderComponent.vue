@@ -1,7 +1,7 @@
 <template>
   <header 
     class="fixed inset-x-0 top-0 z-50 transition-all duration-300"
-    :class="isBurgerOpen ? 'bg-black/60 backdrop-blur-md shadow-2xl border-b border-white/10' : 'bg-black/30 backdrop-blur-sm border-b border-transparent'"
+    :class="isBurgerOpen ? 'bg-black/60 backdrop-blur-md shadow-2xl' : 'bg-black/30 backdrop-blur-sm'"
   >
     <div class="max-w-screen mx-auto px-4 sm:px-6 lg:px-12">
       <div class="flex items-center justify-between h-[70px]">
