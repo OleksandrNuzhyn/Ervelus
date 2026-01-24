@@ -1,6 +1,6 @@
 <template>
   <transition name="modal-fade">
-    <div v-if="showTermsModal && !isPolicyPage" class="fixed inset-0 flex items-center justify-center z-50 confirm-modal-overlay">
+    <div v-if="showTermsModal && !isPolicyPage && !isNavigating" class="fixed inset-0 flex items-center justify-center z-50 confirm-modal-overlay">
       <div class="modal-content-card p-8 w-11/12 max-w-lg shadow-lg flex flex-col gap-4 text-gray-200 relative font-sans">
         <div class="pb-2">
           <h3 class="medieval text-2xl text-center text-gray-100">{{ t('terms.update_title') }}</h3>
@@ -16,7 +16,7 @@
             <span>{{ t('terms.checkbox_label') }}</span>
           </label>
         </div>
-        <div class="flex flex-col items-center justify-center gap-4 pt-4 mb-4">
+        <div class="flex flex-col items-center justify-center gap-4 py-5">
           <button @click="acceptTerms" :disabled="!hasAgreed" class="manage-button" :class="{ 'opacity-50 cursor-not-allowed': !hasAgreed }">
             {{ t('terms.accept_btn') }}
           </button>
@@ -26,10 +26,10 @@
         </div>
         <div class="border-t border-white/10 pt-4">
             <div class="grid grid-cols-2 gap-3">
-                <router-link to="/terms-of-service" class="flex items-center justify-center text-xs text-gray-400 hover:text-white hover:bg-white/5 py-2.5 rounded-lg transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.tos') }}</router-link>
-                <router-link to="/privacy-policy" class="flex items-center justify-center text-xs text-gray-400 hover:text-white hover:bg-white/5 py-2.5 rounded-lg transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.privacy') }}</router-link>
-                <router-link to="/refund-policy" class="flex items-center justify-center text-xs text-gray-400 hover:text-white hover:bg-white/5 py-2.5 rounded-lg transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.refund') }}</router-link>
-                <router-link to="/cookie-policy" class="flex items-center justify-center text-xs text-gray-400 hover:text-white hover:bg-white/5 py-2.5 rounded-lg transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.cookies') }}</router-link>
+                <div @click="navigateTo('/terms-of-service')" class="cursor-pointer flex items-center justify-center text-xs text-gray-400 hover:text-white hover:bg-white/5 py-2.5 rounded-lg transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.tos') }}</div>
+                <div @click="navigateTo('/privacy-policy')" class="cursor-pointer flex items-center justify-center text-xs text-gray-400 hover:text-white hover:bg-white/5 py-2.5 rounded-lg transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.privacy') }}</div>
+                <div @click="navigateTo('/refund-policy')" class="cursor-pointer flex items-center justify-center text-xs text-gray-400 hover:text-white hover:bg-white/5 py-2.5 rounded-lg transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.refund') }}</div>
+                <div @click="navigateTo('/cookie-policy')" class="cursor-pointer flex items-center justify-center text-xs text-gray-400 hover:text-white hover:bg-white/5 py-2.5 rounded-lg transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.cookies') }}</div>
             </div>
         </div>
       </div>
@@ -39,27 +39,34 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { showTermsModal, requiredAgreements, hide } from '@/services/terms';
 import api from '@/services/api';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const route = useRoute();
+const router = useRouter();
 const hasAgreed = ref(false);
 const errorMessage = ref('');
+const isNavigating = ref(false);
 
 const isPolicyPage = computed(() => {
   return ['/terms-of-service', '/privacy-policy', '/refund-policy', '/cookie-policy'].includes(route.path);
 });
 
+function navigateTo(path) {
+  isNavigating.value = true;
+  router.push(path).finally(() => {
+      setTimeout(() => { isNavigating.value = false }, 500);
+  });
+}
+
 const documentTypes = computed(() => {
   const getLabel = (type) => {
     const map = {
-      'terms_of_service': t('terms.tos'),
-      'privacy_policy': t('terms.privacy'),
-      'refund_policy': t('terms.refund'),
-      'cookie_policy': t('terms.cookies')
+      'Terms of Service': t('terms.tos'),
+      'Privacy Policy': t('terms.privacy')
     };
     return map[type] || type;
   };
