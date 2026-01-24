@@ -11,10 +11,9 @@
             <path d="M19 12H5"/>
             <path d="M12 19l-7-7 7-7"/>
           </svg>
-          <span class="text-sm font-medium text-white/60 group-hover:text-white transition-colors">{{ t('gallery.prev') || 'Back' }}</span>
+          <span class="text-sm font-medium text-white/60 group-hover:text-white transition-colors">{{ $t('gallery.prev') || 'Back' }}</span>
         </button>
       </div>
-
       <div v-if="document.content" class="document-container !pt-4" @click="handleContentClick">
         <div v-html="document.content" class="document-content"></div>
       </div>
@@ -33,7 +32,6 @@ import api from '@/services/api.js';
 import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue';
 
 const router = useRouter();
-
 const document = ref({
   title: 'Terms of Service',
   content: ''

@@ -112,7 +112,7 @@ const messages = {
     },
     terms: {
       update_title: "Terms Update",
-      update_desc: "We have updated our {types}. To continue, you must review and accept the updated terms.",
+      update_desc: "We have updated our {types}. Please review and accept them to continue.",
       checkbox_label: "I have read and agree to the updated terms",
       accept_btn: "Accept and Continue",
       tos: "Terms of Service",
@@ -235,7 +235,7 @@ const messages = {
     },
     terms: {
       update_title: "Оновлення умов",
-      update_desc: "Ми оновили наші {types}. Щоб продовжити, ви повинні переглянути та прийняти оновлені умови.",
+      update_desc: "Ми оновили {types}. Перегляньте та прийміть їх для продовження.",
       checkbox_label: "Я прочитав(-ла) та погоджуюся з оновленими умовами",
       accept_btn: "Прийняти та продовжити",
       tos: "Умови використання",

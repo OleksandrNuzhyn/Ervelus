@@ -5,7 +5,7 @@
         <div class="pb-2">
           <h3 class="medieval text-2xl text-center text-gray-100">{{ t('terms.update_title') }}</h3>
         </div>
-        <div class="text-center">
+        <div class="text-left px-1">
           <p class="text-gray-300 text-base m-0 leading-relaxed">
             {{ t('terms.update_desc', { types: documentTypes }) }}
           </p>
@@ -55,11 +55,15 @@ const isPolicyPage = computed(() => {
   return ['/terms-of-service', '/privacy-policy', '/refund-policy', '/cookie-policy'].includes(route.path);
 });
 
-function navigateTo(path) {
+async function navigateTo(path) {
   isNavigating.value = true;
-  router.push(path).finally(() => {
-      setTimeout(() => { isNavigating.value = false }, 500);
-  });
+  
+  try {
+    await router.push(path);
+  }
+  finally {
+    isNavigating.value = false;
+  }
 }
 
 const documentTypes = computed(() => {
