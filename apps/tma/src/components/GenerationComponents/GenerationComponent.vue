@@ -1,6 +1,6 @@
 <template>
   <div class="relative">
-    <div class="relative">
+    <div class="relative mb-1">
       <CategoryStrip :categories="genres" :selected-category-id="selectedGenreId" @category-selected="handleGenreSelect"/>
       <transition name="slide-fade">
         <StylePanel

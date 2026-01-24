@@ -1,6 +1,6 @@
 <template>
   <div :class="['flex flex-col pt-2 gap-3 relative overflow-hidden', 
-    !hasStartedTransform ? 'h-[calc(100dvh-8.5rem)] lg:h-[calc(100vh-9rem)] pb-2' : 'pb-21 lg:pb-2 lg:h-[calc(100vh-9rem)]']">
+    !hasStartedTransform ? 'h-[calc(100dvh-8.5rem)] lg:h-[calc(100vh-9rem)] pb-3' : 'pb-21 lg:pb-2 lg:h-[calc(100vh-9rem)]']">
     <div :class="['flex-grow flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-6 pb-0 overflow-visible min-h-0 lg:h-full', !hasStartedTransform ? 'h-full' : '']">
       <div :class="['flex flex-col lg:shrink overflow-visible gap-3 min-h-0 lg:justify-between', !hasStartedTransform ? 'flex-1 justify-between' : '']">
         <div :class="['relative w-full flex flex-col lg:flex-grow overflow-visible min-h-0 lg:flex-1', !hasStartedTransform ? 'flex-1' : '']">
@@ -89,8 +89,8 @@
             @click="handleButtonClick"
             :disabled="isButtonDisabled"
             :class="[
-              'w-full bg-white/20 rounded-xl min-h-[80px] py-6 text-center text-2xl font-bold text-white cursor-pointer transition-all duration-300 relative overflow-hidden shadow-xl',
-              isButtonDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/30 active:scale-[0.98]'
+              'w-full bg-[#3a3a3a] rounded-xl min-h-[80px] py-6 text-center text-2xl font-bold text-white cursor-pointer transition-all duration-300 relative overflow-hidden shadow-xl inter',
+              isButtonDisabled ? 'cursor-not-allowed' : 'hover:bg-[#454545]'
             ]"
           >
             <div v-if="!isLoading" class="absolute inset-0 w-full h-full shimmer-effect pointer-events-none"></div>
@@ -100,13 +100,13 @@
       </div>
     </div>
 
-    <div :class="['lg:hidden shrink-0', !hasStartedTransform ? 'static bg-none p-0' : 'fixed bottom-0 left-0 right-0 z-50 px-7 pb-3 pt-4 bg-gradient-to-t from-black/60 to-transparent']">
+    <div :class="['lg:hidden shrink-0', !hasStartedTransform ? 'static bg-none p-0' : 'fixed bottom-0 left-0 right-0 z-50 px-4 pb-3.5 pt-4 bg-gradient-to-t from-black/80 to-transparent']">
       <button 
         @click="handleButtonClick"
         :disabled="isButtonDisabled"
         :class="[
-          'w-full bg-white/20 rounded-xl min-h-[58px] py-4 text-center text-xl font-bold text-white cursor-pointer transition-all duration-300 relative overflow-hidden shadow-xl',
-          isButtonDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/30 active:scale-[0.98]'
+          'w-full bg-[#3a3a3a] rounded-xl min-h-[58px] py-4 text-center text-base font-bold text-white cursor-pointer transition-all duration-300 relative overflow-hidden shadow-xl inter',
+          isButtonDisabled ? 'cursor-not-allowed' : 'hover:bg-[#454545]'
         ]"
       >
         <div v-if="!isLoading" class="absolute inset-0 w-full h-full shimmer-effect pointer-events-none"></div>

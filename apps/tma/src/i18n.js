@@ -10,8 +10,6 @@ const messages = {
       privacy: "Privacy Policy",
       refund: "Refund Policy",
       cookie: "Cookie Policy",
-      company: "Company",
-      legal: "Legal",
       coins: "Generations",
       rights_reserved: "All rights reserved.",
       back: "Back"
@@ -80,34 +78,12 @@ const messages = {
       promo_title: "Promo Code",
       promo_placeholder: "Enter code",
       promo_activate: "Activate",
-      subscription_title: "Subscription",
-      per_month: "/month",
-      credits_remaining: "Generations Remaining",
-      gen_per_month: "Generations/month",
-      unlocked_styles: "Unlocked Styles",
-      from: "From:",
-      until: "Until:",
-      cancel_sub: "Cancel Subscription",
-      canceled: "Canceled",
-      no_subs: "No Subscriptions Found",
-      no_subs_desc: "No active subscriptions",
-      view_plans: "View Plans",
       modal_cancel: "Cancel",
-      modal_confirm: "Confirm",
       modal_got_it: "Got it",
       alert_success: "Success",
       alert_promo_applied: "Promo code applied! You received {count} generations",
       alert_promo_error: "Promo Error",
       alert_promo_failed: "Failed to apply promo code. Please check the code and try again",
-      alert_connection_lost: "Connection Lost",
-      alert_subs_failed: "Could not load your subscription data. Please try again later",
-      confirm_cancel_title: "Cancel Subscription",
-      confirm_cancel_msg: "Are you sure you want to cancel your subscription? This action will turn off auto-renewal",
-      alert_canceled_title: "Canceled",
-      alert_canceled_msg: "Auto-renewal has been successfully turned off",
-      alert_error: "Error",
-      alert_cancel_failed: "Failed to cancel subscription. Please contact support",
-      none: "None",
       discord_title: "Join our Community",
       discord_desc: "Get faster support and share your art!"
     },
@@ -134,8 +110,6 @@ const messages = {
       privacy: "Конфіденційність",
       refund: "Політика повернення",
       cookie: "Політика Cookie",
-      company: "Компанія",
-      legal: "Юридична інформація",
       coins: "Генерації",
       rights_reserved: "Усі права захищені.",
       back: "Назад"
@@ -204,34 +178,12 @@ const messages = {
       promo_title: "Промокод",
       promo_placeholder: "Введіть код",
       promo_activate: "Активувати",
-      subscription_title: "Підписка",
-      per_month: "/міс",
-      credits_remaining: "Залишок генерацій",
-      gen_per_month: "Генерацій на місяць",
-      unlocked_styles: "Розблоковано стилів",
-      from: "З:",
-      until: "До:",
-      cancel_sub: "Скасувати підписку",
-      canceled: "Скасовано",
-      no_subs: "Підписок не знайдено",
-      no_subs_desc: "У вас немає активних підписок",
-      view_plans: "Переглянути ціни",
       modal_cancel: "Скасувати",
-      modal_confirm: "Підтвердити",
       modal_got_it: "Зрозуміло",
       alert_success: "Успішно",
       alert_promo_applied: "Промокод активовано! Ви отримали {count} генерацій",
       alert_promo_error: "Помилка промокоду",
       alert_promo_failed: "Не вдалося активувати промокод. Перевірте код і спробуйте ще раз",
-      alert_connection_lost: "З'єднання розірвано",
-      alert_subs_failed: "Не вдалося завантажити дані підписки. Спробуйте пізніше",
-      confirm_cancel_title: "Скасування підписки",
-      confirm_cancel_msg: "Ви впевнені, що хочете скасувати підписку? Автоподовження буде вимкнено",
-      alert_canceled_title: "Скасовано",
-      alert_canceled_msg: "Автоподовження успішно вимкнено",
-      alert_error: "Помилка",
-      alert_cancel_failed: "Не вдалося скасувати підписку. Зверніться до підтримки",
-      none: "Немає",
       discord_title: "Спільнота Discord",
       discord_desc: "Отримуйте швидку підтримку та діліться своїми артами!"
     },
@@ -252,9 +204,11 @@ const messages = {
 }
 
 function getDetectedLocale() {
-  const lang = navigator.language.toLowerCase()
-  if (lang.startsWith('ru')) return 'uk'
-  return Object.keys(messages).find(m => lang.startsWith(m)) || 'en'
+  const tgLang = window.Telegram?.WebApp?.initDataUnsafe?.user?.language_code;
+  const lang = (tgLang || navigator.language).toLowerCase();
+
+  if (lang.startsWith('ru')) return 'uk';
+  return Object.keys(messages).find(m => lang.startsWith(m)) || 'en';
 }
 
 const i18n = createI18n({
