@@ -9,7 +9,7 @@
 
       <div class="flex-shrink-0 z-10 w-full mb-3">
         <div class="flex items-center justify-center min-h-[44px]">
-          <h2 class="text-xl font-bold text-white leading-none">{{ $t('workspace.choose_style') }}</h2>
+          <h2 class="text-xl font-semibold text-white leading-none">{{ $t('workspace.choose_style') }}</h2>
         </div>
       </div>
 

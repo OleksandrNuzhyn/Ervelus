@@ -1,5 +1,5 @@
 <template>
-  <div :class="['flex flex-col px-3 pt-2 gap-3 relative overflow-hidden', 
+  <div :class="['flex flex-col pt-2 gap-3 relative overflow-hidden', 
     !hasStartedTransform ? 'h-[calc(100dvh-8.5rem)] lg:h-[calc(100vh-9rem)] pb-2' : 'pb-21 lg:pb-2 lg:h-[calc(100vh-9rem)]']">
     <div :class="['flex-grow flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-6 pb-0 overflow-visible min-h-0 lg:h-full', !hasStartedTransform ? 'h-full' : '']">
       <div :class="['flex flex-col lg:shrink overflow-visible gap-3 min-h-0 lg:justify-between', !hasStartedTransform ? 'flex-1 justify-between' : '']">
@@ -44,11 +44,11 @@
           </div>
         </div>
 
-        <button @click="onOpenStylePanel" class="w-full bg-white/[0.06] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] rounded-xl min-h-[56px] lg:min-h-[80px] py-3.5 lg:py-6 mt-0 flex items-center justify-center relative cursor-pointer hover:bg-white/[0.12] active:scale-[0.98] transition-all duration-300 px-4 group overflow-visible">
+        <button @click="onOpenStylePanel" class="w-full bg-white/[0.04] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] rounded-xl min-h-[56px] lg:min-h-[80px] py-3.5 lg:py-6 mt-0 flex items-center justify-center relative cursor-pointer hover:bg-white/[0.1] active:scale-[0.98] transition-all duration-300 px-4 group overflow-visible">
           <div class="flex items-center gap-2 md:gap-4 px-10 w-full justify-center min-w-0">
-            <span class="text-white/70 font-medium text-base md:text-2xl shrink-0">{{ $t('workspace.style') }}</span>
+            <span class="text-white/70 font-bold text-base md:text-2xl shrink-0 inter">{{ $t('workspace.style') }}</span>
             <div class="w-[1px] h-5 md:h-8 bg-white/20 shrink-0 relative top-[1px]"></div>
-            <span class="font-bold text-white text-base md:text-2xl tracking-wide truncate">{{ props.selectedStyleName }}</span>
+            <span class="font-bold text-white text-base md:text-2xl tracking-wide truncate inter">{{ props.selectedStyleName }}</span>
           </div>
           <svg class="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50 group-hover:text-white/80 transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
@@ -89,8 +89,8 @@
             @click="handleButtonClick"
             :disabled="isButtonDisabled"
             :class="[
-              'w-full bg-[#3d3d3d] rounded-xl min-h-[80px] py-6 text-center text-2xl font-bold text-white cursor-pointer transition-all duration-500 relative overflow-hidden shadow-[0_0_20px_rgba(255,255,255,0.1)]',
-              isButtonDisabled ? 'cursor-not-allowed' : 'hover:bg-[#4a4a4a] active:scale-[0.98]'
+              'w-full bg-white/20 rounded-xl min-h-[80px] py-6 text-center text-2xl font-bold text-white cursor-pointer transition-all duration-300 relative overflow-hidden shadow-xl',
+              isButtonDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/30 active:scale-[0.98]'
             ]"
           >
             <div v-if="!isLoading" class="absolute inset-0 w-full h-full shimmer-effect pointer-events-none"></div>
@@ -105,8 +105,8 @@
         @click="handleButtonClick"
         :disabled="isButtonDisabled"
         :class="[
-          'w-full bg-[#3d3d3d] rounded-xl min-h-[58px] py-4 text-center text-xl font-bold text-white cursor-pointer transition-all duration-500 relative overflow-hidden shadow-[0_0_20px_rgba(255,255,255,0.1)]',
-          isButtonDisabled ? 'cursor-not-allowed' : 'hover:bg-[#4a4a4a] active:scale-[0.98]'
+          'w-full bg-white/20 rounded-xl min-h-[58px] py-4 text-center text-xl font-bold text-white cursor-pointer transition-all duration-300 relative overflow-hidden shadow-xl',
+          isButtonDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/30 active:scale-[0.98]'
         ]"
       >
         <div v-if="!isLoading" class="absolute inset-0 w-full h-full shimmer-effect pointer-events-none"></div>
@@ -118,7 +118,7 @@
       <div v-if="showGenerationsModal" class="fixed inset-0 flex items-center justify-center z-[100] confirm-modal-overlay" @click.self="showGenerationsModal = false">
         <div class="modal-content-card p-10 w-11/12 max-w-md shadow-2xl flex flex-col gap-6 text-gray-200 relative">
           <div class="text-center px-4">
-            <h3 class="medieval text-3xl text-gray-100 mb-2">{{ $t('workspace.ready_for_more') }}</h3>
+            <h3 class="text-3xl font-bold text-gray-100 mb-2 tracking-tight">{{ $t('workspace.ready_for_more') }}</h3>
             <p class="text-gray-300 text-lg mt-4">
               {{ $t('workspace.modal_desc') }}
             </p>
@@ -153,13 +153,12 @@
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div v-if="showPhotoTipsModal" class="fixed inset-0 flex items-center justify-center z-[100] bg-[#0a0a0c]/80 backdrop-blur-md" @click.self="showPhotoTipsModal = false">
-        <div class="promo-dropdown-style w-[96vw] max-w-lg shadow-2xl relative overflow-hidden h-auto max-h-[94vh] flex flex-col">
-          <div class="dropdown-glow-effect"></div>
+      <div v-if="showPhotoTipsModal" class="fixed inset-0 flex items-center justify-center z-[100] bg-black/60 backdrop-blur-xl" @click.self="showPhotoTipsModal = false">
+        <div class="bg-white/[0.08] backdrop-blur-[30px] border border-white/10 rounded-[32px] w-11/12 max-w-lg shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] relative overflow-hidden h-auto max-h-[94vh] flex flex-col">
           
           <button 
             @click="showPhotoTipsModal = false"
-            class="absolute right-4 top-4 p-2 text-white/30 hover:text-white transition-all duration-300 z-30 hover:bg-white/5 rounded-full"
+            class="absolute right-6 top-6 p-2 text-white/30 hover:text-white transition-all duration-300 z-30 hover:bg-white/10 rounded-full"
           >
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -175,16 +174,14 @@
               '--mask-bottom': canScrollDown ? '60px' : '0px'
             }"
           >
-            <div class="p-8 md:p-10 flex flex-col gap-8 text-gray-200">
+            <div class="py-8 px-4 md:px-8 flex flex-col gap-8 text-gray-200">
               <div class="text-center relative z-10">
                 <div class="flex items-center justify-center mb-4">
-                  <div class="dropdown-icon-wrapper-style">
-                    <svg class="dropdown-icon-style" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                    </svg>
-                  </div>
+                  <svg class="w-12 h-12 text-white/80" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                  </svg>
                 </div>
-                <h3 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight leading-tight mx-auto px-4 w-full text-center">{{ $t('workspace.photo_tips_title') || 'Поради щодо фото' }}</h3>
+                <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight leading-tight mx-auto px-4 w-full text-center inter">{{ $t('workspace.photo_tips_title') || 'Поради щодо фото' }}</h3>
               </div>
 
               <div class="space-y-4 px-2 relative z-10 text-left">
@@ -193,8 +190,8 @@
                     <div class="w-1.5 h-1.5 rounded-full bg-white/40 group-hover:bg-white group-hover:scale-125 transition-all"></div>
                   </div>
                   <div class="flex-1">
-                    <p class="text-white/70 text-sm md:text-base leading-relaxed group-hover:text-white transition-colors">
-                      <span class="font-bold text-white">{{ $t('workspace.tip_1_title') }}</span> 
+                    <p class="text-white/70 text-sm md:text-base leading-relaxed group-hover:text-white transition-colors inter">
+                      <span class="font-semibold text-white inter">{{ $t('workspace.tip_1_title') }}</span> 
                       {{ $t('workspace.tip_1_desc') }}
                     </p>
                   </div>
@@ -205,8 +202,8 @@
                     <div class="w-1.5 h-1.5 rounded-full bg-white/40 group-hover:bg-white group-hover:scale-125 transition-all"></div>
                   </div>
                   <div class="flex-1">
-                    <p class="text-white/70 text-sm md:text-base leading-relaxed group-hover:text-white transition-colors">
-                      <span class="font-bold text-white">{{ $t('workspace.tip_2_title') }}</span> 
+                    <p class="text-white/70 text-sm md:text-base leading-relaxed group-hover:text-white transition-colors inter">
+                      <span class="font-semibold text-white inter">{{ $t('workspace.tip_2_title') }}</span> 
                       {{ $t('workspace.tip_2_desc') }}
                     </p>
                   </div>
@@ -217,8 +214,8 @@
                     <div class="w-1.5 h-1.5 rounded-full bg-white/40 group-hover:bg-white group-hover:scale-125 transition-all"></div>
                   </div>
                   <div class="flex-1">
-                    <p class="text-white/70 text-sm md:text-base leading-relaxed group-hover:text-white transition-colors">
-                      <span class="font-bold text-white">{{ $t('workspace.tip_3_title') }}</span> 
+                    <p class="text-white/70 text-sm md:text-base leading-relaxed group-hover:text-white transition-colors inter">
+                      <span class="font-semibold text-white inter">{{ $t('workspace.tip_3_title') }}</span> 
                       {{ $t('workspace.tip_3_desc') }}
                     </p>
                   </div>
@@ -229,8 +226,8 @@
                     <div class="w-1.5 h-1.5 rounded-full bg-white/40 group-hover:bg-white group-hover:scale-125 transition-all"></div>
                   </div>
                   <div class="flex-1">
-                    <p class="text-white/70 text-sm md:text-base leading-relaxed group-hover:text-white transition-colors">
-                      <span class="font-bold text-white">{{ $t('workspace.tip_4_title') }}</span> 
+                    <p class="text-white/70 text-sm md:text-base leading-relaxed group-hover:text-white transition-colors inter">
+                      <span class="font-semibold text-white inter">{{ $t('workspace.tip_4_title') }}</span> 
                       {{ $t('workspace.tip_4_desc') }}
                     </p>
                   </div>
@@ -241,8 +238,8 @@
                     <div class="w-1.5 h-1.5 rounded-full bg-white/40 group-hover:bg-white group-hover:scale-125 transition-all"></div>
                   </div>
                   <div class="flex-1">
-                    <p class="text-white/70 text-sm md:text-base leading-relaxed group-hover:text-white transition-colors">
-                      <span class="font-bold text-white">{{ $t('workspace.tip_5_title') }}</span> 
+                    <p class="text-white/70 text-sm md:text-base leading-relaxed group-hover:text-white transition-colors inter">
+                      <span class="font-semibold text-white inter">{{ $t('workspace.tip_5_title') }}</span> 
                       {{ $t('workspace.tip_5_desc') }}
                     </p>
                   </div>
@@ -697,7 +694,7 @@ async function downloadOutputImage() {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @keyframes shimmerText {
   0% { background-position: 200% center; }
@@ -812,8 +809,8 @@ async function downloadOutputImage() {
   font-size: 0.9rem;
 }
 
-.medieval {
-  font-family: 'MedievalSharp', cursive;
+.inter {
+  font-family: 'Inter', sans-serif;
 }
 
 .blur-mask-dock {

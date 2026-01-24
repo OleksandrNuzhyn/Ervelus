@@ -105,12 +105,3 @@ watch(isBurgerOpen, (newValue) => {
   }
 });
 </script>
-
-<style scoped>
-@media (max-width: 767px) {
-  .mobile-up {
-    position: relative;
-    top: 1px;
-  }
-}
-</style>

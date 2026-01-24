@@ -1,21 +1,19 @@
 <template>
   <div class="relative">
-    <div class="w-full px-3">
-      <div class="relative">
-        <CategoryStrip :categories="genres" :selected-category-id="selectedGenreId" @category-selected="handleGenreSelect"/>
-        <transition name="slide-fade">
-          <StylePanel
-            v-if="isStylePanelOpen"
-            class="absolute top-full mt-2 w-full left-0 z-20"
-            :styles="filteredStyles"
-            :selected-style-id="selectedStyleId"
-            :current-genre-name="selectedGenreId"
-            @style-selected="handleStyleSelect"
-            @next-genre="handleNextGenre"
-            @prev-genre="handlePrevGenre"
-            @close="handleClosePanel" />
-        </transition>
-      </div>
+    <div class="relative">
+      <CategoryStrip :categories="genres" :selected-category-id="selectedGenreId" @category-selected="handleGenreSelect"/>
+      <transition name="slide-fade">
+        <StylePanel
+          v-if="isStylePanelOpen"
+          class="absolute top-full mt-2 w-full left-0 z-20"
+          :styles="filteredStyles"
+          :selected-style-id="selectedStyleId"
+          :current-genre-name="selectedGenreId"
+          @style-selected="handleStyleSelect"
+          @next-genre="handleNextGenre"
+          @prev-genre="handlePrevGenre"
+          @close="handleClosePanel" />
+      </transition>
     </div>
     <ImageWorkspace 
       v-show="!isStylePanelOpen" 

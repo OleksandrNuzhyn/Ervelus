@@ -24,7 +24,7 @@
         }"
       >
         <div class="flex items-center space-x-2 md:space-x-12" :class="isScrollable ? 'justify-start' : 'justify-center w-full'">
-          <button v-for="category in categories" :key="category.id" @click="selectCategory(category.id)" :class="['px-4 py-1.5 md:py-2 rounded-full text-sm font-medium transition-all duration-200 flex-shrink-0 whitespace-nowrap', selectedCategoryId === category.id ? 'bg-white/10 text-white' : 'bg-transparent text-white/70 hover:text-white/90 hover:bg-white/5']">{{ category.name }}</button>
+          <button v-for="category in categories" :key="category.id" @click="selectCategory(category.id)" :class="['px-5 py-1.5 md:py-2.5 rounded-full text-[12px] font-semibold transition-all duration-300 flex-shrink-0 whitespace-nowrap inter uppercase tracking-widest', selectedCategoryId === category.id ? 'bg-white/20 text-white shadow-sm' : 'bg-transparent text-white/50 hover:text-white/80 hover:bg-white/5']">{{ category.name }}</button>
         </div>
       </div>
     </div>
@@ -87,7 +87,7 @@ function scrollToSelected() {
     const el = scrollContainer.value;
     if (!el) return;
     
-    const selectedBtn = el.querySelector('button.bg-white\\/10');
+    const selectedBtn = el.querySelector('button.bg-white\\/20');
     if (selectedBtn) {
       const elCenter = el.clientWidth / 2;
       const btnCenter = selectedBtn.offsetLeft + (selectedBtn.clientWidth / 2);

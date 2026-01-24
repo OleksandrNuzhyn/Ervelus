@@ -4,25 +4,25 @@
       <div class="fixed inset-0 modal-overlay transition-opacity" />
 
       <div class="fixed inset-0 z-50 overflow-y-auto" @click="emit('close-modal')">
-        <div class="flex min-h-full items-center justify-center p-3 text-center">
+        <div class="flex min-h-full items-center justify-center py-8 text-center">
           <Transition name="fade-content">
             <div v-if="isLoading && isMobile" key="spinner" class="spinner"></div>
 
             <div
               v-else
               :class="[
-                'relative flex w-full max-w-[1400px] md:h-[90vh] transform flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/50 text-left align-middle shadow-xl backdrop-blur transition-all',
+                'relative flex w-11/12 max-w-[1400px] md:h-[90vh] transform flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] text-left align-middle shadow-xl backdrop-blur-[25px] transition-all',
               ]"
             >
               <button @click="emit('close-modal')"
-                class="absolute right-0 top-0 p-2 text-white hover:text-white/80 transition-all duration-300 z-50 md:hidden">
+                class="absolute right-3 top-3 p-2 text-white hover:text-white/80 transition-all duration-300 z-50 md:hidden">
                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
               <Transition name="fade-content">
                 <div v-if="!isLoading && currentRequest" class="flex h-full flex-col">
-                  <div class="flex-grow flex flex-col md:flex-row justify-center items-stretch gap-4 px-6 pt-8 pb-3 min-h-0">
+                  <div class="flex-grow flex flex-col md:flex-row justify-center items-stretch gap-4 px-6 pt-15 pb-3 min-h-0">
                     <div class="flex-1 flex justify-center items-center min-w-0">
                       <img
                         v-if="currentRequest.input_large_signed_url"

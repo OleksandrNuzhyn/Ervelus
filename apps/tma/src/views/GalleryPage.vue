@@ -19,7 +19,7 @@ import GalleryComponent from '@/components/GalleryComponents/GalleryComponent.vu
   background-image: url('@/assets/background_assets/gallery.webp');
   min-height: max(100vh, calc(100vw * 23 / 48));
   background-size: cover;
-  background-position: center bottom;
+  background-position: 48.4% bottom;
   background-attachment: fixed;
 }
 </style>

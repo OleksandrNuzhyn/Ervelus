@@ -1,35 +1,40 @@
 <template>
   <transition name="modal-fade">
     <div v-if="showTermsModal && !isPolicyPage && !isNavigating" class="fixed inset-0 flex items-center justify-center z-50 confirm-modal-overlay">
-      <div class="modal-content-card p-8 w-11/12 max-w-lg shadow-lg flex flex-col gap-4 text-gray-200 relative font-sans">
-        <div class="pb-2">
-          <h3 class="medieval text-2xl text-center text-gray-100">{{ t('terms.update_title') }}</h3>
-        </div>
-        <div class="text-center px-1">
-          <p class="text-gray-300 text-base m-0 leading-relaxed mx-auto max-w-[90%]">
+      <div class="profile-card !bg-white/[0.08] !backdrop-blur-[30px] !px-6 !py-10 w-11/12 max-w-xl shadow-2xl flex flex-col gap-8 text-gray-200 relative font-sans">
+        <div class="text-center w-full">
+          <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ t('terms.update_title') }}</h3>
+          <p class="text-[15px] text-white/50 leading-relaxed font-medium">
             {{ t('terms.update_desc', { types: documentTypes }) }}
           </p>
         </div>
-        <div class="pt-4">
-          <label class="flex items-center justify-center text-gray-400">
-            <input type="checkbox" v-model="hasAgreed" class="mr-2 bg-gray-700 border-gray-600 rounded focus:ring-blue-500">
-            <span>{{ t('terms.checkbox_label') }}</span>
+
+        <div class="flex flex-col items-center gap-6">
+          <label class="flex items-center justify-center text-white/50 cursor-pointer group">
+            <input type="checkbox" v-model="hasAgreed" class="w-4 h-4 rounded border-white/10 bg-white/5 text-blue-500 focus:ring-offset-0 focus:ring-0 transition-all mr-3">
+            <span class="text-sm font-medium group-hover:text-white/80 transition-colors">{{ t('terms.checkbox_label') }}</span>
           </label>
-        </div>
-        <div class="flex flex-col items-center justify-center gap-4 py-4">
-          <button @click="acceptTerms" :disabled="!hasAgreed" class="manage-button" :class="{ 'opacity-50 cursor-not-allowed': !hasAgreed }">
+
+          <button 
+            @click="acceptTerms" 
+            :disabled="!hasAgreed" 
+            class="flex items-center justify-center h-[48px] min-w-[240px] px-8 text-[14px] font-bold rounded-xl transition-all duration-300 active:scale-[0.98]"
+            :class="!hasAgreed ? 'bg-white/10 text-white/40 cursor-not-allowed' : 'bg-white/25 text-white hover:bg-white/35'"
+          >
             {{ t('terms.accept_btn') }}
           </button>
-          <div v-if="errorMessage" class="text-center text-red-400 text-sm mt-8">
-            <p class="mb-4">{{ errorMessage }}</p>
-          </div>
         </div>
-        <div class="border-t border-white/10 pt-4">
+
+        <div v-if="errorMessage" class="text-center text-red-400 text-sm -mt-2">
+          <p>{{ errorMessage }}</p>
+        </div>
+
+        <div class="border-t border-white/10 pt-6">
             <div class="grid grid-cols-2 gap-3">
-                <div @click="navigateTo('/terms-of-service')" class="cursor-pointer flex items-center justify-center text-xs text-gray-400 hover:text-white hover:bg-white/5 py-2.5 rounded-lg transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.tos') }}</div>
-                <div @click="navigateTo('/privacy-policy')" class="cursor-pointer flex items-center justify-center text-xs text-gray-400 hover:text-white hover:bg-white/5 py-2.5 rounded-lg transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.privacy') }}</div>
-                <div @click="navigateTo('/refund-policy')" class="cursor-pointer flex items-center justify-center text-xs text-gray-400 hover:text-white hover:bg-white/5 py-2.5 rounded-lg transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.refund') }}</div>
-                <div @click="navigateTo('/cookie-policy')" class="cursor-pointer flex items-center justify-center text-xs text-gray-400 hover:text-white hover:bg-white/5 py-2.5 rounded-lg transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.cookies') }}</div>
+                <div @click="navigateTo('/terms-of-service')" class="cursor-pointer flex items-center justify-center text-[12px] font-medium text-white/40 hover:text-white hover:bg-white/10 py-3 rounded-xl transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.tos') }}</div>
+                <div @click="navigateTo('/privacy-policy')" class="cursor-pointer flex items-center justify-center text-[12px] font-medium text-white/40 hover:text-white hover:bg-white/10 py-3 rounded-xl transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.privacy') }}</div>
+                <div @click="navigateTo('/refund-policy')" class="cursor-pointer flex items-center justify-center text-[12px] font-medium text-white/40 hover:text-white hover:bg-white/10 py-3 rounded-xl transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.refund') }}</div>
+                <div @click="navigateTo('/cookie-policy')" class="cursor-pointer flex items-center justify-center text-[12px] font-medium text-white/40 hover:text-white hover:bg-white/10 py-3 rounded-xl transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.cookies') }}</div>
             </div>
         </div>
       </div>
@@ -115,12 +120,7 @@ async function acceptTerms() {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-
-.medieval {
-  font-family: 'MedievalSharp', cursive;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 .font-sans {
   font-family: 'Inter', sans-serif;
@@ -131,35 +131,18 @@ async function acceptTerms() {
   backdrop-filter: blur(15px);
 }
 
-.modal-content-card {
+.profile-card {
   background: rgba(255, 255, 255, 0.03);
-  border-radius: 20px;
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   will-change: backdrop-filter, transform;
   transform: translateZ(0);
-}
-
-.manage-button {
-  display: inline-block;
-  width: auto;
-  min-width: 270px;
-  text-align: center;
-  font-weight: 500;
-  font-size: 0.875rem;
-  border-radius: 9999px;
-  padding: 0.9rem 2.25rem;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #9ca3af;
-  transition: all 0.2s ease-in-out;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.manage-button:hover:not(:disabled) {
-  background: rgba(129, 180, 253, 0.1);
-  color: #81b4fd;
-  border-color: rgba(129, 180, 253, 0.4);
+  border-radius: 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-fade-enter-active, .modal-fade-leave-active {

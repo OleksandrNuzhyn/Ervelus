@@ -2,7 +2,7 @@
   <div class="flex flex-col min-h-screen">
     <HeaderComponent />
     <main class="flex-grow pt-[70px] pb-10 flex flex-col relative">
-      <div class="h-[100px] flex items-center px-8 max-w-[800px] mx-auto w-full">
+      <div class="pt-8 pb-4 flex justify-end px-8 max-w-[800px] mx-auto w-full text-right">
         <button 
           @click="goBack" 
           class="group flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 active:scale-95 transition-all w-fit backdrop-blur-sm"
@@ -81,6 +81,10 @@ onMounted(getDocument);
   font-size: 2.25rem;
   font-weight: bold;
   margin-top: 1.5rem;
+}
+
+.document-content h1:first-child {
+  margin-top: 0;
 }
 
 .document-content h2 {

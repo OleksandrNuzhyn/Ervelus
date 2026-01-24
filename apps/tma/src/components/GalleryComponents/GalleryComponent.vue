@@ -1,5 +1,5 @@
 <template>
-  <section class="relative mx-auto max-w-[1370px] px-4 pt-12 pb-3 min-h-full flex flex-col">
+  <section class="relative mx-auto max-w-[1370px] pb-3 min-h-full flex flex-col">
     <div id="gallery-top"></div>
     
     <div class="flex-grow mb-2"
@@ -10,13 +10,13 @@
         v-if="!isLoading && galleryItems.length"
         tag="div"
         name="gallery-list"
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-11/12 mx-auto pt-12"
       >
         <article
           v-for="request in galleryItems"
           :key="request.id"
           :class="{'gallery-item-visible': request.requestLoaded}"
-          class="group relative rounded-2xl border border-white/10 bg-zinc-900/50 backdrop-blur ring-1 ring-black/20 hover:border-white/20 cursor-pointer gallery-item generation-card"
+          class="group relative rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-[25px] ring-1 ring-black/20 hover:border-white/20 cursor-pointer gallery-item generation-card transition-all duration-300 shadow-xl"
           @click="openModal(request)"
         >
           <div class="flex flex-col p-3 sm:p-4 h-full">
@@ -43,12 +43,18 @@
       </transition-group>
       
       <transition name="gallery-fade">
-        <div v-if="!isLoading && !galleryItems.length" class="w-full mx-auto max-w-md text-center rounded-2xl border border-white/10 bg-zinc-900/40 backdrop-blur p-10 text-zinc-300">
-          <p class="text-lg font-medium">{{ $t('gallery.no_images') }}</p>
-          <p class="mt-1 text-sm text-zinc-400">{{ $t('gallery.no_images_desc') }}</p>
-          <router-link to="/dashboard" class="manage-button small-manage-button mt-8 mx-auto">
-            {{ $t('gallery.go_dashboard') }}
-          </router-link>
+        <div v-if="!isLoading && !galleryItems.length" class="w-11/12 max-w-2xl mx-auto pt-3">
+          <div class="profile-card flex flex-col items-center justify-center gap-6 text-center">
+            <div class="space-y-2">
+              <h3 class="text-xl font-bold text-gray-200 tracking-wide">{{ $t('gallery.no_images') }}</h3>
+              <p class="text-[15px] text-white/50 leading-relaxed font-medium mx-auto">{{ $t('gallery.no_images_desc') }}</p>
+            </div>
+            <div class="flex justify-center pt-2 w-full">
+              <router-link to="/" class="flex items-center justify-center h-[48px] min-w-[200px] px-8 text-[14px] font-bold rounded-xl transition-all duration-300 bg-white/25 text-white hover:bg-white/35 active:scale-[0.98] no-underline">
+                {{ $t('gallery.go_dashboard') }}
+              </router-link>
+            </div>
+          </div>
         </div>
       </transition>
     </div>
@@ -75,15 +81,24 @@
     
     <transition name="modal-fade">
       <div v-if="showDeleteConfirmModal" class="fixed inset-0 flex items-center justify-center z-50 confirm-modal-overlay" @click.self="handleCancelDelete">
-        <div class="modal-content-card p-4 sm:p-8 w-11/12 max-w-md shadow-lg flex flex-col gap-5 text-gray-200 relative">
-          <div class="pb-2">
-            <h3 class="medieval text-2xl text-center text-gray-100">{{ $t('gallery.delete_title') }}</h3>
-          </div>
+        <div class="profile-card !bg-white/[0.08] !backdrop-blur-[30px] !p-10 w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-center gap-8 text-gray-200 relative">
           <div class="text-center">
-            <p class="text-gray-300 text-base m-0 leading-relaxed">{{ $t('gallery.delete_confirm') }}</p>
+            <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ $t('gallery.delete_title') }}</h3>
+            <p class="text-[15px] text-white/50 leading-relaxed font-medium">{{ $t('gallery.delete_confirm') }}</p>
           </div>
-          <div class="flex justify-center gap-4 pt-4">
-            <button @click="handleConfirmDelete" class="manage-button small-manage-button">{{ $t('gallery.confirm') }}</button>
+          <div class="flex flex-col sm:flex-row justify-center gap-3 pt-2 w-full">
+            <button 
+              @click="handleConfirmDelete" 
+              class="flex items-center justify-center h-[48px] min-w-[140px] px-6 text-[14px] font-bold rounded-xl transition-all duration-300 bg-white/20 text-white hover:bg-white/30 active:scale-[0.98]"
+            >
+              {{ $t('gallery.confirm') }}
+            </button>
+            <button 
+              @click="handleCancelDelete" 
+              class="flex items-center justify-center h-[48px] min-w-[140px] px-6 text-[14px] font-bold rounded-xl transition-all duration-300 bg-white/5 text-white/40 hover:bg-white/10 active:scale-[0.98]"
+            >
+              {{ $t('profile.modal_cancel') }}
+            </button>
           </div>
         </div>
       </div>
@@ -255,8 +270,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 .gallery-item {
   opacity: 0;
@@ -341,16 +355,30 @@ onMounted(() => {
   opacity: 0;
 }
 
-.medieval {
-  font-family: 'MedievalSharp', cursive;
-}
-
 .font-sans {
   font-family: 'Inter', sans-serif;
 }
 
+.profile-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  will-change: backdrop-filter, transform;
+  transform: translateZ(0);
+  border-radius: 24px;
+  padding: 2.5rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
 .manage-button {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
   width: auto;
   min-width: 270px;
   text-align: center;
@@ -366,10 +394,11 @@ onMounted(() => {
   cursor: pointer;
 }
 
-.manage-button:hover {
+.manage-button:not(:disabled):hover {
   background: rgba(129, 180, 253, 0.1);
   color: #81b4fd;
   border-color: rgba(129, 180, 253, 0.4);
+  box-shadow: 0 0 15px rgba(129, 180, 253, 0.15);
 }
 
 .small-manage-button {

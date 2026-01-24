@@ -22,7 +22,7 @@
       </div>
       
       <div class="mt-3 text-center">
-        <span class="text-white text-sm font-semibold">{{ styleData.name }}</span>
+        <span class="text-white text-sm font-medium">{{ styleData.name }}</span>
       </div>
       
     </div>
