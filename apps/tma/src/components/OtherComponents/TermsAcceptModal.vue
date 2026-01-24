@@ -5,8 +5,8 @@
         <div class="pb-2">
           <h3 class="medieval text-2xl text-center text-gray-100">{{ t('terms.update_title') }}</h3>
         </div>
-        <div class="text-left px-1">
-          <p class="text-gray-300 text-base m-0 leading-relaxed">
+        <div class="text-center px-1">
+          <p class="text-gray-300 text-base m-0 leading-relaxed mx-auto max-w-[90%]">
             {{ t('terms.update_desc', { types: documentTypes }) }}
           </p>
         </div>
