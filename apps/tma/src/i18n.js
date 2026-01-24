@@ -13,7 +13,8 @@ const messages = {
       company: "Company",
       legal: "Legal",
       coins: "Generations",
-      rights_reserved: "All rights reserved. Made with 🧙‍♂️"
+      rights_reserved: "All rights reserved.",
+      back: "Back"
     },
     workspace: {
       upload_click: "Select photo",
@@ -136,7 +137,8 @@ const messages = {
       company: "Компанія",
       legal: "Юридична інформація",
       coins: "Генерації",
-      rights_reserved: "Усі права захищені. Трішки магії від 🧙‍♂️"
+      rights_reserved: "Усі права захищені.",
+      back: "Назад"
     },
     workspace: {
       upload_click: "Оберіть фото",

@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeaderComponent />
-    <div class="background-container w-full flex items-stretch pt-19">
+    <div class="background-container w-full flex items-stretch pt-[82px]">
       <div class="w-full">
         <ProfileComponent />
       </div>

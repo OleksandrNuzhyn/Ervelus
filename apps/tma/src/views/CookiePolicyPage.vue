@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col min-h-screen">
     <HeaderComponent />
-    <main class="flex-grow pt-[85px] pb-10 flex flex-col relative">
-      <div class="px-8 max-w-[800px] mx-auto w-full mb-0">
+    <main class="flex-grow pt-[100px] pb-10 flex flex-col relative">
+      <div class="px-8 max-w-[800px] mx-auto w-full mb-6">
         <button 
           @click="goBack" 
           class="group flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 active:scale-95 transition-all w-fit backdrop-blur-sm"
@@ -11,7 +11,7 @@
             <path d="M19 12H5"/>
             <path d="M12 19l-7-7 7-7"/>
           </svg>
-          <span class="text-sm font-medium text-white/60 group-hover:text-white transition-colors">{{ $t('gallery.prev') || 'Back' }}</span>
+          <span class="text-sm font-medium text-white/60 group-hover:text-white transition-colors">{{ $t('navigation.back') || 'Back' }}</span>
         </button>
       </div>
       <div v-if="document.content" class="document-container !pt-4">
