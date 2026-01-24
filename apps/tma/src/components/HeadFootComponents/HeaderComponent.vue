@@ -110,7 +110,7 @@ watch(isBurgerOpen, (newValue) => {
 @media (max-width: 767px) {
   .mobile-up {
     position: relative;
-    top: -2px;
+    top: 1px;
   }
 }
 </style>

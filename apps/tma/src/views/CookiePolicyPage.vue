@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col min-h-screen">
     <HeaderComponent />
-    <main class="flex-grow pt-24 pb-10 flex flex-col relative">
-      <div class="px-8 max-w-[800px] mx-auto w-full mb-4">
+    <main class="flex-grow pt-[85px] pb-10 flex flex-col relative">
+      <div class="px-8 max-w-[800px] mx-auto w-full mb-0">
         <button 
           @click="goBack" 
           class="group flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 active:scale-95 transition-all w-fit backdrop-blur-sm"
