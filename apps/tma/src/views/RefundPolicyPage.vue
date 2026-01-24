@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col min-h-screen">
     <HeaderComponent />
-    <main class="flex-grow pt-[100px] pb-10 flex flex-col relative">
-      <div class="px-8 max-w-[800px] mx-auto w-full mb-6">
+    <main class="flex-grow pt-[70px] pb-10 flex flex-col relative">
+      <div class="h-[100px] flex items-center px-8 max-w-[800px] mx-auto w-full">
         <button 
           @click="goBack" 
           class="group flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 active:scale-95 transition-all w-fit backdrop-blur-sm"
@@ -14,7 +14,7 @@
           <span class="text-sm font-medium text-white/60 group-hover:text-white transition-colors">{{ $t('navigation.back') || 'Back' }}</span>
         </button>
       </div>
-      <div v-if="document.content" class="document-container !pt-4">
+      <div v-if="document.content" class="document-container !pt-0">
         <div v-html="document.content" class="document-content"></div>
       </div>
       <div v-else-if="errorMessage" class="flex-grow flex flex-col items-center justify-center text-center">
