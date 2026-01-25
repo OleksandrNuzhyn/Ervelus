@@ -11,7 +11,7 @@
             <div
               v-else
               :class="[
-                'relative flex w-11/12 max-w-[1400px] md:h-[90vh] transform flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] text-left align-middle shadow-xl backdrop-blur-[25px] transition-all',
+                'relative flex w-11/12 max-w-[1400px] md:h-[90vh] transform flex-col overflow-hidden rounded-2xl border border-white/[0.02] bg-white/[0.03] text-left align-middle shadow-xl backdrop-blur-[25px] transition-all',
               ]"
             >
               <button @click="emit('close-modal')"
@@ -30,7 +30,7 @@
                         alt="Input image"
                         class="block max-w-full max-h-full object-contain rounded-2xl"
                       />
-                      <div v-else class="h-44 md:h-full w-full flex items-center justify-center text-zinc-500 text-sm font-medium border border-zinc-800 rounded-2xl md:border-0">
+                      <div v-else class="h-44 md:h-full w-full flex items-center justify-center text-zinc-500 text-sm font-medium border border-white/[0.02] rounded-2xl md:border-0">
                         {{ $t('gallery.failed_input') }}
                       </div>
                     </div>
@@ -41,7 +41,7 @@
                         alt="Output image"
                         class="block max-w-full max-h-full object-contain rounded-2xl"
                       />
-                      <div v-else class="h-44 md:h-full w-full flex items-center justify-center text-zinc-500 text-sm font-medium border border-zinc-800 rounded-2xl md:border-0">
+                      <div v-else class="h-44 md:h-full w-full flex items-center justify-center text-zinc-500 text-sm font-medium border border-white/[0.02] rounded-2xl md:border-0">
                         {{ $t('gallery.failed_output') }}
                       </div>
                     </div>

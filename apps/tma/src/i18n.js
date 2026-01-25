@@ -99,6 +99,11 @@ const messages = {
       error_generic: "An unexpected error occurred",
       error_accept_failed: "An error occurred while accepting the terms. Please try again",
       and: "and"
+    },
+    maintenance: {
+      title: "The site is under maintenance",
+      message: "We'll be back soon. We apologize for the inconvenience",
+      hint: "Please refresh the page periodically to check our status"
     }
   },
   uk: {
@@ -199,6 +204,11 @@ const messages = {
       error_generic: "Сталася неочікувана помилка",
       error_accept_failed: "Сталася помилка під час прийняття умов. Спробуйте ще раз",
       and: "та"
+    },
+    maintenance: {
+      title: "Сайт на технічному обслуговуванні",
+      message: "Ми скоро повернемося. Перепрошуємо за незручності",
+      hint: "Будь ласка, періодично оновлюйте сторінку, щоб перевірити статус"
     }
   }
 }

@@ -8,9 +8,9 @@
         <div v-if="authStore.isMaintenanceMode" class="maintenance-content">
           <Transition name="fade-box" appear>
             <div class="maintenance-box">
-              <h1>The site is under maintenance</h1>
-              <p>We'll be back soon. We apologize for the inconvenience.</p>
-              <p class="mt-4 text-sm text-gray-400">Please refresh the page periodically to check our status</p>
+              <h1>{{ $t('maintenance.title') }}</h1>
+              <p>{{ $t('maintenance.message') }}</p>
+              <p class="mt-4 text-sm text-gray-400">{{ $t('maintenance.hint') }}</p>
             </div>
           </Transition>
         </div>
@@ -106,8 +106,8 @@ router.afterEach(() => {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(5px);
   padding: 2.5rem 4rem;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.02);
 }
 
 .fade-box-enter-active {

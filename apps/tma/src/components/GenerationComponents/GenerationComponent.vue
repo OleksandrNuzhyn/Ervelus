@@ -5,7 +5,7 @@
       <transition name="slide-fade">
         <StylePanel
           v-if="isStylePanelOpen"
-          class="absolute top-full mt-2 w-full left-0 z-20"
+          class="absolute top-full mt-3 w-full left-0 z-20"
           :styles="filteredStyles"
           :selected-style-id="selectedStyleId"
           :current-genre-name="selectedGenreId"

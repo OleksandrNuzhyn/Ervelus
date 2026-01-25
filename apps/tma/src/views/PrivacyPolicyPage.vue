@@ -5,7 +5,7 @@
       <div class="pt-8 pb-4 flex justify-end px-8 max-w-[800px] mx-auto w-full text-right">
         <button 
           @click="goBack" 
-          class="group flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 active:scale-95 transition-all w-fit backdrop-blur-sm"
+          class="group flex items-center gap-2 px-3 py-2 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/[0.02] active:scale-95 transition-all w-fit backdrop-blur-sm"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white/60 group-hover:text-white group-hover:-translate-x-0.5 transition-all">
             <path d="M19 12H5"/>

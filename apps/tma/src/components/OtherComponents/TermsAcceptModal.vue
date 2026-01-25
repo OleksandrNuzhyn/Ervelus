@@ -3,7 +3,7 @@
     <div v-if="showTermsModal && !isPolicyPage && !isNavigating" class="fixed inset-0 flex items-center justify-center z-50 confirm-modal-overlay">
       <div class="profile-card !bg-white/[0.08] !backdrop-blur-[30px] !px-6 !py-10 w-11/12 max-w-xl shadow-2xl flex flex-col gap-8 text-gray-200 relative font-sans">
         <div class="text-center w-full">
-          <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ t('terms.update_title') }}</h3>
+          <h3 class="text-xl font-semibold text-gray-200 tracking-wide mb-2">{{ t('terms.update_title') }}</h3>
           <p class="text-[15px] text-white/50 leading-relaxed font-medium">
             {{ t('terms.update_desc', { types: documentTypes }) }}
           </p>
@@ -11,15 +11,15 @@
 
         <div class="flex flex-col items-center gap-6">
           <label class="flex items-center justify-center text-white/50 cursor-pointer group">
-            <input type="checkbox" v-model="hasAgreed" class="w-4 h-4 rounded border-white/10 bg-white/5 text-blue-500 focus:ring-offset-0 focus:ring-0 transition-all mr-3">
+            <input type="checkbox" v-model="hasAgreed" class="w-4 h-4 rounded border-white/[0.02] bg-white/5 text-blue-500 focus:ring-offset-0 focus:ring-0 transition-all mr-3">
             <span class="text-sm font-medium group-hover:text-white/80 transition-colors">{{ t('terms.checkbox_label') }}</span>
           </label>
 
           <button 
             @click="acceptTerms" 
             :disabled="!hasAgreed" 
-            class="flex items-center justify-center h-[48px] min-w-[240px] px-8 text-[14px] font-bold rounded-xl transition-all duration-300 active:scale-[0.98]"
-            :class="!hasAgreed ? 'bg-white/10 text-white/40 cursor-not-allowed' : 'bg-white/25 text-white hover:bg-white/35'"
+            class="flex items-center justify-center h-[52px] min-w-[240px] px-8 text-[15px] font-semibold rounded-2xl transition-all duration-300 active:scale-[0.98]"
+            :class="!hasAgreed ? 'bg-white/10 text-white/40 cursor-not-allowed' : 'bg-white/20 border border-white/[0.05] text-white hover:bg-white/30'"
           >
             {{ t('terms.accept_btn') }}
           </button>
@@ -29,12 +29,12 @@
           <p>{{ errorMessage }}</p>
         </div>
 
-        <div class="border-t border-white/10 pt-6">
+        <div class="border-t border-white/[0.02] pt-6">
             <div class="grid grid-cols-2 gap-3">
-                <div @click="navigateTo('/terms-of-service')" class="cursor-pointer flex items-center justify-center text-[12px] font-medium text-white/40 hover:text-white hover:bg-white/10 py-3 rounded-xl transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.tos') }}</div>
-                <div @click="navigateTo('/privacy-policy')" class="cursor-pointer flex items-center justify-center text-[12px] font-medium text-white/40 hover:text-white hover:bg-white/10 py-3 rounded-xl transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.privacy') }}</div>
-                <div @click="navigateTo('/refund-policy')" class="cursor-pointer flex items-center justify-center text-[12px] font-medium text-white/40 hover:text-white hover:bg-white/10 py-3 rounded-xl transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.refund') }}</div>
-                <div @click="navigateTo('/cookie-policy')" class="cursor-pointer flex items-center justify-center text-[12px] font-medium text-white/40 hover:text-white hover:bg-white/10 py-3 rounded-xl transition-all border border-white/5 bg-white/[0.02]">{{ t('terms.cookies') }}</div>
+                <div @click="navigateTo('/terms-of-service')" class="cursor-pointer flex items-center justify-center text-[12px] font-medium text-white/40 hover:text-white/80 hover:bg-white/10 py-3 rounded-2xl transition-all border border-white/[0.02] bg-white/[0.03]">{{ t('terms.tos') }}</div>
+                <div @click="navigateTo('/privacy-policy')" class="cursor-pointer flex items-center justify-center text-[12px] font-medium text-white/40 hover:text-white/80 hover:bg-white/10 py-3 rounded-2xl transition-all border border-white/[0.02] bg-white/[0.03]">{{ t('terms.privacy') }}</div>
+                <div @click="navigateTo('/refund-policy')" class="cursor-pointer flex items-center justify-center text-[12px] font-medium text-white/40 hover:text-white/80 hover:bg-white/10 py-3 rounded-2xl transition-all border border-white/[0.02] bg-white/[0.03]">{{ t('terms.refund') }}</div>
+                <div @click="navigateTo('/cookie-policy')" class="cursor-pointer flex items-center justify-center text-[12px] font-medium text-white/40 hover:text-white/80 hover:bg-white/10 py-3 rounded-2xl transition-all border border-white/[0.02] bg-white/[0.03]">{{ t('terms.cookies') }}</div>
             </div>
         </div>
       </div>
@@ -135,11 +135,11 @@ async function acceptTerms() {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.02);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   will-change: backdrop-filter, transform;
   transform: translateZ(0);
-  border-radius: 24px;
+  border-radius: 16px;
   position: relative;
   display: flex;
   flex-direction: column;

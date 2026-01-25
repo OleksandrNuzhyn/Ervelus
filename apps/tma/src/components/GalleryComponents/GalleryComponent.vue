@@ -16,18 +16,18 @@
           v-for="request in galleryItems"
           :key="request.id"
           :class="{'gallery-item-visible': request.requestLoaded}"
-          class="group relative rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-[25px] ring-1 ring-black/20 hover:border-white/20 cursor-pointer gallery-item generation-card transition-all duration-300 shadow-xl"
+          class="group relative rounded-2xl border border-white/[0.02] bg-white/[0.03] backdrop-blur-[25px] ring-1 ring-black/20 cursor-pointer gallery-item generation-card transition-all duration-300 shadow-xl"
           @click="openModal(request)"
         >
           <div class="flex flex-col p-3 sm:p-4 h-full">
             <div class="grid grid-cols-2 gap-2 h-full">
-              <figure class="relative overflow-hidden rounded-xl bg-zinc-900/50 z-20">
+              <figure class="relative overflow-hidden rounded-2xl bg-zinc-900/50 z-20">
                 <img v-if="request.input_thumb_signed_url" :src="request.input_thumb_signed_url" alt="Input Image" :class="['h-full w-full object-cover aspect-square image-fade', { 'image-visible': request.requestLoaded }]"/>
                 <div v-else class="h-full w-full flex items-center justify-center text-zinc-500">
                   <XCircleIcon class="h-8 w-8 opacity-40" />
                 </div>
               </figure>
-              <figure class="relative overflow-hidden rounded-xl bg-zinc-900/50 z-20">
+              <figure class="relative overflow-hidden rounded-2xl bg-zinc-900/50 z-20">
                 <img v-if="request.output_thumb_signed_url" :src="request.output_thumb_signed_url" alt="Output Image" :class="['h-full w-full object-cover aspect-square image-fade', { 'image-visible': request.requestLoaded }]"/>
                 <div v-else class="h-full w-full flex items-center justify-center text-zinc-500">
                   <XCircleIcon class="h-8 w-8 opacity-40" />
@@ -50,7 +50,7 @@
               <p class="text-[15px] text-white/50 leading-relaxed font-medium mx-auto">{{ $t('gallery.no_images_desc') }}</p>
             </div>
             <div class="flex justify-center pt-2 w-full">
-              <router-link to="/" class="flex items-center justify-center h-[48px] min-w-[200px] px-8 text-[14px] font-bold rounded-xl transition-all duration-300 bg-white/25 text-white hover:bg-white/35 active:scale-[0.98] no-underline">
+              <router-link to="/" class="flex items-center justify-center h-[48px] min-w-[200px] px-8 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/[0.03] border border-white/[0.02] text-white hover:bg-white/10 active:scale-[0.98] no-underline">
                 {{ $t('gallery.go_dashboard') }}
               </router-link>
             </div>
@@ -89,13 +89,13 @@
           <div class="flex flex-col sm:flex-row justify-center gap-3 pt-2 w-full">
             <button 
               @click="handleConfirmDelete" 
-              class="flex items-center justify-center h-[48px] min-w-[140px] px-6 text-[14px] font-bold rounded-xl transition-all duration-300 bg-white/20 text-white hover:bg-white/30 active:scale-[0.98]"
+              class="flex items-center justify-center h-[48px] min-w-[140px] px-6 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/20 border border-white/[0.02] text-white hover:bg-white/30 active:scale-[0.98]"
             >
               {{ $t('gallery.confirm') }}
             </button>
             <button 
               @click="handleCancelDelete" 
-              class="flex items-center justify-center h-[48px] min-w-[140px] px-6 text-[14px] font-bold rounded-xl transition-all duration-300 bg-white/5 text-white/40 hover:bg-white/10 active:scale-[0.98]"
+              class="flex items-center justify-center h-[48px] min-w-[140px] px-6 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/5 border border-white/[0.02] text-white/40 hover:bg-white/10 active:scale-[0.98]"
             >
               {{ $t('profile.modal_cancel') }}
             </button>
@@ -319,22 +319,6 @@ onMounted(() => {
   transform: translateZ(0);
 }
 
-.generation-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-color: rgba(255, 255, 255, 0.15);
-  opacity: 0;
-  transition: opacity 0.2s linear;
-  pointer-events: none;
-  z-index: 1;
-  border-radius: inherit;
-}
-
-.generation-card:hover::before {
-  opacity: 1;
-}
-
 .gallery-fade-leave-active {
   transition: opacity 0.4s ease;
   will-change: opacity, transform;
@@ -363,11 +347,11 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.02);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   will-change: backdrop-filter, transform;
   transform: translateZ(0);
-  border-radius: 24px;
+  border-radius: 16px;
   padding: 2.5rem;
   position: relative;
   display: flex;
@@ -387,7 +371,7 @@ onMounted(() => {
   border-radius: 9999px;
   padding: 0.9rem 2.25rem;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.02);
   color: #9ca3af;
   transition: all 0.2s ease-in-out;
   text-decoration: none;
@@ -423,9 +407,9 @@ onMounted(() => {
 
 .modal-content-card {
   background: rgba(255, 255, 255, 0.03);
-  border-radius: 20px;
+  border-radius: 16px;
   padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.02);
   will-change: backdrop-filter, transform;
   transform: translateZ(0);
 }

@@ -27,13 +27,13 @@
                       v-model="promoCode" 
                       :placeholder="$t('profile.promo_placeholder')" 
                       @keyup.enter="applyPromoCode"
-                      class="w-full sm:w-auto flex-grow h-[48px] bg-white/[0.04] border border-white/5 rounded-xl px-4 text-white text-[15px] placeholder:text-white/20 focus:outline-none focus:bg-white/[0.08] transition-all font-medium"
+                      class="w-full sm:w-auto flex-grow h-[48px] bg-white/[0.04] border border-white/[0.02] rounded-2xl px-4 text-white text-[15px] placeholder:text-white/20 focus:outline-none focus:bg-white/[0.08] transition-all font-medium"
                     />
                     
                     <button 
                       @click="applyPromoCode" 
                       :disabled="!promoCode || isSubmittingPromo"
-                      class="flex items-center justify-center h-[48px] min-w-[120px] px-8 text-[14px] font-bold rounded-xl transition-all duration-300"
+                      class="flex items-center justify-center h-[48px] min-w-[120px] px-8 text-[14px] font-bold rounded-2xl transition-all duration-300"
                       :class="!promoCode ? 'bg-white/10 text-white/40 cursor-not-allowed' : 'bg-white/25 text-white hover:bg-white/35 active:scale-[0.98]'"
                     >
                       {{ $t('profile.promo_activate') }}
@@ -47,21 +47,21 @@
           <div class="w-11/12 max-w-2xl flex flex-col items-center">
             <div class="w-full profile-card !p-0 overflow-hidden min-h-[180px] flex flex-col">
               <div class="flex-grow flex flex-col justify-center w-full">
-                <router-link to="/terms-of-service" class="settings-item flex items-center justify-between px-8 py-4 border-b border-white/5 active:bg-white/5 transition-colors group">
+                <router-link to="/terms-of-service" class="settings-item flex items-center justify-between px-8 py-4 border-b border-white/[0.02] active:bg-white/5 transition-colors group">
                   <span class="text-white/80 font-medium text-[15px] group-hover:text-white transition-colors">{{ $t('navigation.terms') }}</span>
                   <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="opacity-20 group-hover:opacity-40 transition-opacity">
                     <path d="M1 9L5 5L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </router-link>
                 
-                <router-link to="/privacy-policy" class="settings-item flex items-center justify-between px-8 py-4 border-b border-white/5 active:bg-white/5 transition-colors group">
+                <router-link to="/privacy-policy" class="settings-item flex items-center justify-between px-8 py-4 border-b border-white/[0.02] active:bg-white/5 transition-colors group">
                   <span class="text-white/80 font-medium text-[15px] group-hover:text-white transition-colors">{{ $t('navigation.privacy') }}</span>
                   <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="opacity-20 group-hover:opacity-40 transition-opacity">
                     <path d="M1 9L5 5L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </router-link>
                 
-                <router-link to="/refund-policy" class="settings-item flex items-center justify-between px-8 py-4 border-b border-white/5 active:bg-white/5 transition-colors group">
+                <router-link to="/refund-policy" class="settings-item flex items-center justify-between px-8 py-4 border-b border-white/[0.02] active:bg-white/5 transition-colors group">
                   <span class="text-white/80 font-medium text-[15px] group-hover:text-white transition-colors">{{ $t('navigation.refund') }}</span>
                   <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="opacity-20 group-hover:opacity-40 transition-opacity">
                     <path d="M1 9L5 5L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -76,7 +76,7 @@
                 </router-link>
               </div>
 
-              <div class="py-4 flex items-center justify-center w-full border-t border-white/5 bg-white/[0.02]">
+              <div class="py-4 flex items-center justify-center w-full border-t border-white/[0.02] bg-white/[0.03]">
                 <p class="text-[11px] text-white/30 text-center font-medium tracking-wide m-0">
                   &copy; {{ year }} Ervelus. {{ $t('navigation.rights_reserved') }}
                 </p>
@@ -96,7 +96,7 @@
           <div class="flex justify-center pt-2 w-full">
             <button 
               @click="showModal = false" 
-              class="flex items-center justify-center h-[48px] min-w-[160px] px-8 text-[14px] font-bold rounded-xl transition-all duration-300 bg-white/20 text-white hover:bg-white/30 active:scale-[0.98]"
+              class="flex items-center justify-center h-[48px] min-w-[160px] px-8 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/20 border border-white/[0.02] text-white hover:bg-white/30 active:scale-[0.98]"
             >
               {{ $t('profile.modal_got_it') }}
             </button>
@@ -162,11 +162,11 @@ async function applyPromoCode() {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.02);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   will-change: backdrop-filter, transform;
   transform: translateZ(0);
-  border-radius: 24px;
+  border-radius: 16px;
   padding: 2.5rem;
   position: relative;
   display: flex;
@@ -186,7 +186,7 @@ async function applyPromoCode() {
   border-radius: 9999px;
   padding: 0.9rem 2.25rem;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.02);
   color: #9ca3af;
   transition: all 0.2s ease-in-out;
   text-decoration: none;
@@ -247,8 +247,8 @@ async function applyPromoCode() {
 
 .modal-content-card {
   background: rgba(255, 255, 255, 0.03);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.02);
   will-change: backdrop-filter, transform;
   transform: translateZ(0);
 }

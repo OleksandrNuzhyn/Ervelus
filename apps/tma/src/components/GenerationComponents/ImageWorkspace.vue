@@ -1,11 +1,10 @@
 <template>
   <div :class="['flex flex-col pt-2 gap-3 relative overflow-hidden', 
-    !hasStartedTransform ? 'h-[calc(100dvh-8.5rem)] lg:h-[calc(100vh-9rem)] pb-3' : 'pb-21 lg:pb-2 lg:h-[calc(100vh-9rem)]']">
+    !hasStartedTransform ? 'h-[calc(100dvh-8.6rem)] lg:h-[calc(100vh-9.4rem)] pb-3' : 'pb-21 lg:pb-2 lg:h-[calc(100vh-9rem)]']">
     <div :class="['flex-grow flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-6 pb-0 overflow-visible min-h-0 lg:h-full', !hasStartedTransform ? 'h-full' : '']">
-      <div :class="['flex flex-col lg:shrink overflow-visible gap-3 min-h-0 lg:justify-between', !hasStartedTransform ? 'flex-1 justify-between' : '']">
+      <div :class="['flex flex-col lg:shrink overflow-visible gap-3 min-h-0', !hasStartedTransform ? 'flex-1 justify-between' : '']">
         <div :class="['relative w-full flex flex-col lg:flex-grow overflow-visible min-h-0 lg:flex-1', !hasStartedTransform ? 'flex-1' : '']">
-          <div :class="[!hasStartedTransform ? 'flex-1' : 'h-[38vh] md:h-[600px]', 'bg-black/30 backdrop-blur-[7px] shadow-[0_0_1.5px_rgba(0,0,0,0.8)] rounded-xl p-4 flex flex-col items-center justify-center w-full lg:h-full lg:flex-grow min-h-0 overflow-hidden', 
-            inputImageUrl ? 'border-gray-600/30' : 'border-transparent']">
+          <div :class="[!hasStartedTransform ? 'flex-1' : 'h-[38vh] md:h-[600px]', 'bg-white/[0.03] backdrop-blur-[20px] border border-white/[0.02] shadow-xl rounded-2xl p-4 flex flex-col items-center justify-center w-full lg:h-full lg:flex-grow min-h-0 overflow-hidden']">
             
             <button 
               @click.stop="showPhotoTipsModal = true"
@@ -27,12 +26,12 @@
                   <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                 </svg>
               </div>
-              <p class="text-base md:text-2xl font-semibold text-white/50 tracking-wide">{{ $t('workspace.upload_click') }}</p>
+              <p class="text-base font-medium text-white/70 inter">{{ $t('workspace.upload_click') }}</p>
               <input type="file" ref="fileInput" @change="onFileSelected" class="hidden" accept="image/jpeg, image/png, image/webp" />
             </div>
 
             <div v-else class="relative w-full h-full flex items-center justify-center">
-              <img :src="inputImageUrl" alt="Input" class="max-w-full max-h-full rounded-xl transition-opacity duration-500" :style="{ opacity: inputImageLoaded ? 1 : 0 }" @load="onInputImageLoad" />
+              <img :src="inputImageUrl" alt="Input" class="max-w-full max-h-full rounded-2xl transition-opacity duration-500" :style="{ opacity: inputImageLoaded ? 1 : 0 }" @load="onInputImageLoad" />
               <button @click="inputImageUrl = null; outputImageUrl = null; inputImageLoaded = false" 
                 class="absolute right-2 top-2 p-2 text-white hover:text-white/80 transition-all duration-300 z-20"
                 :style="{ filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.6)) drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }">
@@ -44,11 +43,11 @@
           </div>
         </div>
 
-        <button @click="onOpenStylePanel" class="w-full bg-white/[0.04] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] rounded-xl min-h-[56px] lg:min-h-[80px] py-3.5 lg:py-6 mt-0 flex items-center justify-center relative cursor-pointer hover:bg-white/[0.1] active:scale-[0.98] transition-all duration-300 px-4 group overflow-visible">
+        <button @click="onOpenStylePanel" class="w-full bg-white/[0.03] backdrop-blur-[20px] border border-white/[0.02] shadow-xl rounded-2xl min-h-[56px] lg:min-h-[80px] py-3.5 lg:py-6 mt-0 flex items-center justify-center relative cursor-pointer hover:bg-white/[0.05] active:scale-[0.98] transition-all duration-300 px-4 group overflow-visible">
           <div class="flex items-center gap-2 md:gap-4 px-10 w-full justify-center min-w-0">
-            <span class="text-white/70 font-bold text-base md:text-2xl shrink-0 inter">{{ $t('workspace.style') }}</span>
+            <span class="text-white/70 font-medium text-base shrink-0 inter">{{ $t('workspace.style') }}</span>
             <div class="w-[1px] h-5 md:h-8 bg-white/20 shrink-0 relative top-[1px]"></div>
-            <span class="font-bold text-white text-base md:text-2xl tracking-wide truncate inter">{{ props.selectedStyleName }}</span>
+            <span class="font-medium text-white text-base tracking-wide truncate inter">{{ props.selectedStyleName }}</span>
           </div>
           <svg class="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50 group-hover:text-white/80 transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
@@ -57,16 +56,15 @@
       </div>
 
       <div ref="outputSection" :class="['flex-col w-full h-full lg:shrink gap-3 overflow-hidden', hasStartedTransform ? 'flex' : 'hidden lg:flex']">
-        <div :class="['relative bg-black/30 backdrop-blur-[7px] shadow-[0_0_1.5px_rgba(0,0,0,0.8)] rounded-xl p-4 flex flex-col items-center justify-center h-[38vh] md:h-[600px] lg:h-full lg:flex-grow lg:min-h-0',
-          outputImageUrl || isLoading ? 'border-gray-600/30' : 'border-transparent',
+        <div :class="['relative bg-white/[0.03] backdrop-blur-[20px] border border-white/[0.02] shadow-xl rounded-2xl p-4 flex flex-col items-center justify-center h-[38vh] md:h-[600px] lg:h-full lg:flex-grow lg:min-h-0',
           !hasStartedTransform ? 'max-lg:hidden' : '']">
           
-          <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center z-30 rounded-xl">
+          <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center z-30 rounded-2xl">
             <img src="@/assets/svg/staff_logo.svg" class="wave-animation h-32 w-32 md:h-48 md:w-48 opacity-40" />
           </div>
 
           <div v-else-if="outputImageUrl" class="relative w-full h-full flex items-center justify-center">
-            <img :src="outputImageUrl" alt="Output" class="max-w-full max-h-full rounded-xl transition-opacity duration-500" :style="{ opacity: outputImageLoaded ? 1 : 0 }" @load="onOutputImageLoad" />
+            <img :src="outputImageUrl" alt="Output" class="max-w-full max-h-full rounded-2xl transition-opacity duration-500" :style="{ opacity: outputImageLoaded ? 1 : 0 }" @load="onOutputImageLoad" />
             <button @click="downloadOutputImage" 
               class="absolute right-2 top-2 p-2 text-white hover:text-white/80 transition-all duration-300 z-20"
               :style="{ filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.6)) drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }">
@@ -80,7 +78,7 @@
             <svg class="w-16 h-16 md:w-24 md:h-24 text-white/30" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
             </svg>
-            <p class="text-lg md:text-2xl font-semibold text-white/50 tracking-wide">{{ $t('workspace.final_result') }}</p>
+            <p class="text-base font-medium text-white/50 tracking-wide">{{ $t('workspace.final_result') }}</p>
           </div>
         </div>
 
@@ -89,7 +87,7 @@
             @click="handleButtonClick"
             :disabled="isButtonDisabled"
             :class="[
-              'w-full bg-[#3a3a3a] rounded-xl min-h-[80px] py-6 text-center text-2xl font-bold text-white cursor-pointer transition-all duration-300 relative overflow-hidden shadow-xl inter',
+              'w-full bg-[#3a3a3a] border border-white/[0.02] rounded-2xl min-h-[80px] py-6 text-center text-2xl font-bold text-white cursor-pointer transition-all duration-300 relative overflow-hidden shadow-xl inter',
               isButtonDisabled ? 'cursor-not-allowed' : 'hover:bg-[#454545]'
             ]"
           >
@@ -105,7 +103,7 @@
         @click="handleButtonClick"
         :disabled="isButtonDisabled"
         :class="[
-          'w-full bg-[#3a3a3a] rounded-xl min-h-[58px] py-4 text-center text-base font-bold text-white cursor-pointer transition-all duration-300 relative overflow-hidden shadow-xl inter',
+          'w-full bg-[#3a3a3a] border border-white/[0.02] rounded-2xl min-h-[58px] py-4 text-center text-base font-bold text-white cursor-pointer transition-all duration-300 relative overflow-hidden shadow-xl inter',
           isButtonDisabled ? 'cursor-not-allowed' : 'hover:bg-[#454545]'
         ]"
       >
@@ -154,7 +152,7 @@
       leave-to-class="opacity-0"
     >
       <div v-if="showPhotoTipsModal" class="fixed inset-0 flex items-center justify-center z-[100] bg-black/60 backdrop-blur-xl" @click.self="showPhotoTipsModal = false">
-        <div class="bg-white/[0.08] backdrop-blur-[30px] border border-white/10 rounded-[32px] w-11/12 max-w-lg shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] relative overflow-hidden h-auto max-h-[94vh] flex flex-col">
+        <div class="bg-white/[0.08] backdrop-blur-[30px] border border-white/[0.05] rounded-2xl w-11/12 max-w-lg shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] relative overflow-hidden h-auto max-h-[94vh] flex flex-col">
           
           <button 
             @click="showPhotoTipsModal = false"
@@ -181,7 +179,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                   </svg>
                 </div>
-                <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight leading-tight mx-auto px-4 w-full text-center inter">{{ $t('workspace.photo_tips_title') || 'Поради щодо фото' }}</h3>
+                <h3 class="text-[18px] font-semibold text-white tracking-tight leading-tight mx-auto px-4 w-full text-center inter">{{ $t('workspace.photo_tips_title') || 'Поради щодо фото' }}</h3>
               </div>
 
               <div class="space-y-4 px-2 relative z-10 text-left">

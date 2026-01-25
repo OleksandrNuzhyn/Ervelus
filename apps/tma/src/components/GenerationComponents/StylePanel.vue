@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-black/30 backdrop-blur-[7px] shadow-[0_0_3px_rgba(0,0,0)] rounded-xl h-[calc(100vh-10rem)] flex flex-col p-4 relative">
+  <div class="bg-white/[0.03] backdrop-blur-[20px] border border-white/[0.02] shadow-xl rounded-2xl h-[calc(100vh-10rem)] flex flex-col p-4 relative">
     <div class="relative w-full h-full flex flex-col min-h-0">
       <button @click="handleClose" class="absolute right-0 top-0 text-white/60 hover:text-white bg-transparent p-2 transition-colors z-30">
         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -9,7 +9,7 @@
 
       <div class="flex-shrink-0 z-10 w-full mb-3">
         <div class="flex items-center justify-center min-h-[44px]">
-          <h2 class="text-xl font-semibold text-white leading-none">{{ $t('workspace.choose_style') }}</h2>
+          <h2 class="text-xl font-medium text-white tracking-wide inter leading-none">{{ $t('workspace.choose_style') }}</h2>
         </div>
       </div>
 
@@ -30,11 +30,11 @@
           class="w-full h-full overflow-y-auto no-scrollbar mask-fade-vertical" 
           id="masked-scroll-container"
           :style="{
-            '--mask-top': canScrollUp ? '48px' : '0px',
-            '--mask-bottom': canScrollDown ? '48px' : '0px'
+            '--mask-top': '60px',
+            '--mask-bottom': '60px'
           }"
         >
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-2 pt-1 md:pb-8 md:pt-8 px-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-8 pt-4 px-4">
             <StyleCard
               v-for="style in styles"
               :key="style.id"
@@ -113,21 +113,21 @@ onMounted(() => {
   mask-image: linear-gradient(
     to bottom,
     transparent 0%,
-    rgba(0,0,0,0.4) calc(var(--mask-top, 0px) / 2),
+    rgba(0,0,0,0.25) calc(var(--mask-top, 0px) / 2),
     black var(--mask-top, 0px),
     black calc(100% - var(--mask-bottom, 0px)),
-    rgba(0,0,0,0.4) calc(100% - (var(--mask-bottom, 0px) / 2)),
+    rgba(0,0,0,0.25) calc(100% - (var(--mask-bottom, 0px) / 2)),
     transparent 100%
   );
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0%,
-    rgba(0,0,0,0.4) calc(var(--mask-top, 0px) / 2),
+    rgba(0,0,0,0.25) calc(var(--mask-top, 0px) / 2),
     black var(--mask-top, 0px),
     black calc(100% - var(--mask-bottom, 0px)),
-    rgba(0,0,0,0.4) calc(100% - (var(--mask-bottom, 0px) / 2)),
+    rgba(0,0,0,0.25) calc(100% - (var(--mask-bottom, 0px) / 2)),
     transparent 100%
   );
-  transition: mask-image 0.3s ease-in-out, -webkit-mask-image 0.3s ease-in-out;
+  transition: mask-image 0.5s ease-in-out, -webkit-mask-image 0.5s ease-in-out;
 }
 </style>

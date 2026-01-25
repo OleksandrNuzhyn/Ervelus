@@ -2,10 +2,10 @@
   <nav class="mt-6 mb-6 flex items-center justify-center gap-2 text-sm" aria-label="Pagination">
     <button
       :class="[
-        'px-4 py-2 rounded-xl border backdrop-blur-[25px] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 active:scale-95',
+        'px-4 py-2 rounded-2xl border backdrop-blur-[25px] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 active:scale-95',
         hoveredPage === 'prev'
-          ? 'border-white/20 bg-white/10 text-white'
-          : 'border-white/10 bg-white/[0.03] text-white/50'
+          ? 'border-white/[0.02] bg-white/10 text-white'
+          : 'border-white/[0.02] bg-white/[0.03] text-white/50'
       ]"
       :disabled="page <= 1 || isLoading"
       @click="$emit('change', page - 1)"
@@ -19,10 +19,10 @@
       v-for="p in pagesToShow"
       :key="p"
       :class="[
-        'w-10 h-10 flex items-center justify-center rounded-xl border backdrop-blur-[25px] transition-all duration-300 active:scale-95',
+        'w-10 h-10 flex items-center justify-center rounded-2xl border backdrop-blur-[25px] transition-all duration-300 active:scale-95',
         (p === hoveredPage || (hoveredPage === null && p === page))
-          ? 'border-white/20 bg-white/10 text-white font-bold'
-          : 'border-white/10 bg-white/[0.03] text-white/50'
+          ? 'border-white/[0.02] bg-white/10 text-white font-bold'
+          : 'border-white/[0.02] bg-white/[0.03] text-white/50'
       ]"
       @click="$emit('change', p)"
       :disabled="isLoading"
@@ -34,10 +34,10 @@
 
     <button
       :class="[
-        'px-4 py-2 rounded-xl border backdrop-blur-[25px] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 active:scale-95',
+        'px-4 py-2 rounded-2xl border backdrop-blur-[25px] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 active:scale-95',
         hoveredPage === 'next'
-          ? 'border-white/20 bg-white/10 text-white'
-          : 'border-white/10 bg-white/[0.03] text-white/50'
+          ? 'border-white/[0.02] bg-white/10 text-white'
+          : 'border-white/[0.02] bg-white/[0.03] text-white/50'
       ]"
       :disabled="page >= pageCount || isLoading"
       @click="$emit('change', page + 1)"
