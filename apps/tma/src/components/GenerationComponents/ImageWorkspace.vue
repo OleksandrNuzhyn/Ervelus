@@ -1,6 +1,6 @@
 <template>
-  <div :class="['flex flex-col pt-2 gap-3 relative overflow-hidden', 
-    !hasStartedTransform ? 'h-[calc(100dvh-8.6rem)] lg:h-[calc(100vh-9.4rem)] pb-3' : 'pb-21 lg:pb-2 lg:h-[calc(100vh-9rem)]']">
+  <div :class="['flex flex-col pt-2 gap-3 relative overflow-hidden lg:h-[calc(100vh-9.4rem)]', 
+    !hasStartedTransform ? 'h-[calc(100dvh-8.6rem)] pb-3' : 'pb-21 lg:pb-2']">
     <div :class="['flex-grow flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-6 pb-0 overflow-visible min-h-0 lg:h-full', !hasStartedTransform ? 'h-full' : '']">
       <div :class="['flex flex-col lg:shrink overflow-visible gap-3 min-h-0', !hasStartedTransform ? 'flex-1 justify-between' : '']">
         <div :class="['relative w-full flex flex-col lg:flex-grow overflow-visible min-h-0 lg:flex-1', !hasStartedTransform ? 'flex-1' : '']">
@@ -26,7 +26,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                 </svg>
               </div>
-              <p class="text-base font-medium text-white/70 inter">{{ $t('workspace.upload_click') }}</p>
+              <p class="text-base lg:text-xl font-medium text-white/70 inter">{{ $t('workspace.upload_click') }}</p>
               <input type="file" ref="fileInput" @change="onFileSelected" class="hidden" accept="image/jpeg, image/png, image/webp" />
             </div>
 
@@ -45,9 +45,9 @@
 
         <button @click="onOpenStylePanel" class="w-full bg-white/[0.03] backdrop-blur-[20px] border border-white/[0.02] shadow-xl rounded-2xl min-h-[56px] lg:min-h-[80px] py-3.5 lg:py-6 mt-0 flex items-center justify-center relative cursor-pointer hover:bg-white/[0.05] active:scale-[0.98] transition-all duration-300 px-4 group overflow-visible">
           <div class="flex items-center gap-2 md:gap-4 px-10 w-full justify-center min-w-0">
-            <span class="text-white/70 font-medium text-base shrink-0 inter">{{ $t('workspace.style') }}</span>
+            <span class="text-white/70 font-medium lg:font-bold text-base lg:text-2xl shrink-0 inter">{{ $t('workspace.style') }}</span>
             <div class="w-[1px] h-5 md:h-8 bg-white/20 shrink-0 relative top-[1px]"></div>
-            <span class="font-medium text-white text-base tracking-wide truncate inter">{{ props.selectedStyleName }}</span>
+            <span class="font-medium lg:font-bold text-white text-base lg:text-2xl tracking-wide truncate inter">{{ props.selectedStyleName }}</span>
           </div>
           <svg class="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50 group-hover:text-white/80 transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
@@ -78,7 +78,7 @@
             <svg class="w-16 h-16 md:w-24 md:h-24 text-white/30" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
             </svg>
-            <p class="text-base font-medium text-white/50 tracking-wide">{{ $t('workspace.final_result') }}</p>
+            <p class="text-base lg:text-xl font-medium text-white/70 inter">{{ $t('workspace.final_result') }}</p>
           </div>
         </div>
 
@@ -98,7 +98,7 @@
       </div>
     </div>
 
-    <div :class="['lg:hidden shrink-0', !hasStartedTransform ? 'static bg-none p-0' : 'fixed bottom-0 left-0 right-0 z-50 px-4 pb-3.5 pt-4 bg-gradient-to-t from-black/80 to-transparent']">
+    <div :class="['lg:hidden shrink-0', !hasStartedTransform ? 'static bg-none p-0' : 'fixed bottom-0 left-0 right-0 z-50 px-4 pb-[13px] pt-4 bg-gradient-to-t from-black/80 to-transparent']">
       <button 
         @click="handleButtonClick"
         :disabled="isButtonDisabled"
@@ -112,36 +112,10 @@
       </button>
     </div>
 
-    <transition name="modal-fade">
-      <div v-if="showGenerationsModal" class="fixed inset-0 flex items-center justify-center z-[100] confirm-modal-overlay" @click.self="showGenerationsModal = false">
-        <div class="modal-content-card p-10 w-11/12 max-w-md shadow-2xl flex flex-col gap-6 text-gray-200 relative">
-          <div class="text-center px-4">
-            <h3 class="text-3xl font-bold text-gray-100 mb-2 tracking-tight">{{ $t('workspace.ready_for_more') }}</h3>
-            <p class="text-gray-300 text-lg mt-4">
-              {{ $t('workspace.modal_desc') }}
-            </p>
-          </div>
-          <div class="flex flex-col gap-3 justify-center pt-2 px-8">
-            <router-link to="/pricing" class="manage-button generations-primary-button">
-              {{ $t('workspace.get_more_btn') }}
-            </router-link>
-            
-            <div class="flex items-center gap-2 text-gray-500 justify-center text-sm uppercase font-bold tracking-widest my-4">
-              <div class="h-[1px] flex-1 bg-white/10"></div>
-              <span>{{ $t('workspace.or') }}</span>
-              <div class="h-[1px] flex-1 bg-white/10"></div>
-            </div>
-
-            <button 
-              @click="showGenerationsModal = false; triggerPromo()" 
-              class="manage-button hover:bg-white/10"
-            >
-              {{ $t('workspace.get_free_btn') }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </transition>
+    <StoreModal 
+      :is-open="showGenerationsModal" 
+      @close="showGenerationsModal = false" 
+    />
 
     <transition 
       enter-active-class="transition duration-500 ease-out" 
@@ -254,6 +228,7 @@
 <script setup>
 import { ref, watch, onUnmounted, computed, nextTick } from 'vue';
 import api from '@/services/api';
+import StoreModal from '../OtherComponents/StoreModal.vue';
 import { toast } from '@/services/toast';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
