@@ -55,11 +55,11 @@ INSTALLED_APPS = [
     'core',
     'users',
     'products',
-    'subscriptions',
+    'payments',
     'generations',
     'agreements',
     'marketing',
-    'telegram'
+    'telegram_bot'
 ]
 
 SITE_ID = 1
@@ -165,14 +165,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
-    ),
-    'DEFAULT_THROTTLE_CLASSES': (
-        'core.throttling.CustomScopedRateThrottle',
-    ),
-    'DEFAULT_THROTTLE_RATES': {
-        'auth_anon': '5/minute',
-        'contact_anon': '5/hour'
-    }
+    )
 }
 
 
@@ -223,13 +216,6 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 
 
 
-WAYFORPAY_MERCHANT_ACCOUNT = os.getenv("WAYFORPAY_MERCHANT_ACCOUNT")
-WAYFORPAY_MERCHANT_DOMAIN = os.getenv("WAYFORPAY_MERCHANT_DOMAIN")
-WAYFORPAY_MERCHANT_PASSWORD = os.getenv("WAYFORPAY_MERCHANT_PASSWORD")
-WAYFORPAY_SECRET_KEY = os.getenv("WAYFORPAY_SECRET_KEY")
-
-
-
 TELEGRAM_API_KEY = os.getenv("TELEGRAM_API_KEY")
 
 
@@ -237,7 +223,6 @@ TELEGRAM_API_KEY = os.getenv("TELEGRAM_API_KEY")
 GCP_PROJECT_ID = os.getenv("GCP_PROJECT_ID")
 GCP_TASKS_SECRET_KEY = os.getenv("GCP_TASKS_SECRET_KEY")
 GCP_TASKS_LOCATION = os.getenv("GCP_TASKS_LOCATION")
-GCP_TASKS_WAYFORPAY_EVENTS_QUEUE_ID = os.getenv("GCP_TASKS_WAYFORPAY_EVENTS_QUEUE_ID")
 GCP_TASKS_GENERATION_EVENTS_QUEUE_ID = os.getenv("GCP_TASKS_GENERATION_EVENTS_QUEUE_ID")
 GCP_TASKS_RESIZE_EVENTS_QUEUE_ID = os.getenv("GCP_TASKS_RESIZE_EVENTS_QUEUE_ID")
 GCP_TASKS_DELETE_EVENTS_QUEUE_ID = os.getenv("GCP_TASKS_DELETE_EVENTS_QUEUE_ID")
@@ -308,10 +293,6 @@ LOGGING = {
         "django.request": {
             "handlers": active_handlers,
             "level": "ERROR",
-            "propagate": False,
-        },
-        "paddle_billing": {
-            "handlers": ["null"],
             "propagate": False,
         },
         "httpx": {

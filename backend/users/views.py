@@ -7,11 +7,8 @@ from dj_rest_auth.app_settings import api_settings
 from dj_rest_auth.models import get_token_model
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from agreements.permissions import HasAcceptedLatestAgreements
 from generations.models import GenerationRequest
-from subscriptions.services import cancel_subscription
 from rest_framework.response import Response
-from django.contrib.contenttypes.models import ContentType
 from .serializers import UserCreditsSerializer, SupportEmailSerializer
 from .models import UserProfile
 from auditlog.models import LogEntry
@@ -98,24 +95,6 @@ def account_delete(request):
     if requests_in_process.exists():
         logger.error("User deletion with unfinished generations", extra={'user_id': user.id, 'requests_in_process_ids': list(requests_in_process.values_list('id', flat=True))})
 
-    active_subscriptions = user.subscriptions.filter(is_auto_renew=True)
-    failed_subscriptions_cancellations = []
-
-    for subscription in active_subscriptions:
-        success = cancel_subscription(subscription)
-
-        if not success:
-            failed_subscriptions_cancellations.append(subscription.id)
-            logger.error("Failed to auto-cancel subscription during account deletion", extra={'user_id': user.id, 'subscription_id': subscription.id})
-
-    if failed_subscriptions_cancellations:
-        return Response({"detail": f"Failed to cancel {len(failed_subscriptions_cancellations)} active subscriptions. Please contact support or try again later"}, status=400)
-    
-    related_objects_ids = []
-    
-    for obj in user.subscriptions.all():
-        related_objects_ids.append((ContentType.objects.get_for_model(obj), str(obj.pk)))
-
     LogEntry.objects.log_create(
         instance=user,
         action=LogEntry.Action.ACCESS,
@@ -175,8 +154,6 @@ def account_delete(request):
             if hasattr(user, 'profile'):
                 user.profile.anonymise()
             user.anonymise()
-
-            services.delete_user_audit_records(user, related_objects_ids)
     except Exception as e:
         logger.error("Failed to anonymise user data in delete request", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)
         return Response(status=400)

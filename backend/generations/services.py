@@ -17,8 +17,6 @@ from .models import GenerationRequest
 from asgiref.sync import sync_to_async
 from google.protobuf import duration_pb2
 from generations.views import tasks_client
-from auditlog.context import disable_auditlog
-from subscriptions.models import UserSubscription
 from google.cloud.tasks_v2.types import HttpMethod
 from google.cloud import storage as gcs_sync_storage
 from gcloud.aio.storage import Storage as GCSAsyncStorage
@@ -222,11 +220,6 @@ def schedule_image_resizing(generation_request_id, user_id, input_image_url, out
 
     tasks_client.create_task(request={'parent': queue_path, 'task': task})
 
-@sync_to_async
-def save_without_auditlog(obj):
-    with disable_auditlog():
-        obj.save(update_fields=['remaining_credits'])
-
 async def handle_generation_process(generation_request_id, input_image_url):
     output_image_url = None
     generation_request_status = None
@@ -266,23 +259,13 @@ async def handle_generation_process(generation_request_id, input_image_url):
             style_name=style_name
         )
 
-        debit_subscription = await UserSubscription.objects.filter(
-            user_id=user_id,
-            end_time__gt=timezone.now(),
-            remaining_credits__gt=0
-        ).order_by('end_time').afirst()
+        user_profile = await UserProfile.objects.aget(user_id=user_id)
 
-        if debit_subscription:
-            debit_subscription.remaining_credits -= 1
-            await save_without_auditlog(debit_subscription)
+        if user_profile.credits > 0:
+            user_profile.credits -= 1
+            await user_profile.asave(update_fields=['credits'])
         else:
-            user_profile = await UserProfile.objects.aget(user_id=user_id)
-
-            if user_profile.free_credits > 0:
-                user_profile.free_credits -= 1
-                await user_profile.asave(update_fields=['free_credits'])
-            else:
-                logger.error("Credit not debited, no active subscription and no free credits found", extra={'generation_request_id': generation_request_id})
+            logger.error("Credit not debited, no credits available", extra={'generation_request_id': generation_request_id})
 
         generation_request_status = GenerationRequest.GenerationStatus.COMPLETED
     except GenerationRequest.DoesNotExist:

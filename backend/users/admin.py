@@ -138,7 +138,7 @@ class UserAdmin(NoLogAdminMixin, BaseUserAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(NoLogAdminMixin, admin.ModelAdmin):
-    list_display = ('id', 'user__email', 'telegram_id', 'free_credits', 'total_credits')
+    list_display = ('id', 'user__email', 'telegram_id', 'credits', 'total_credits')
     list_select_related = ('user',)
     search_fields = ('user__email', 'telegram_id')
     readonly_fields = ('user',)

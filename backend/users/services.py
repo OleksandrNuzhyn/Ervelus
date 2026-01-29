@@ -4,7 +4,7 @@ from generations.services import gcs_sync_storage_client
 from django.contrib.auth import get_user_model
 from auditlog.models import LogEntry
 from agreements.models import UserAgreement
-from subscriptions.models import UserSubscription
+from payments.models import UserPurchase
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.contenttypes.models import ContentType
 from generations import services
@@ -24,19 +24,19 @@ def get_user_data_for_retention(user):
             "telegram_id": getattr(user.profile, 'telegram_id', None) if hasattr(user, 'profile') else None
         },
         "agreements": [],
-        "subscriptions": [],
+        "purchases": [],
         "audit_records": []
     }
 
     agreements = UserAgreement.objects.filter(user=user)
     user_data["agreements"] = list(agreements.values())
 
-    subscriptions = UserSubscription.objects.filter(user=user)
-    user_data["subscriptions"] = list(subscriptions.values())
+    purchases = UserPurchase.objects.filter(user=user)
+    user_data["purchases"] = list(purchases.values())
     
     log_entries_query = Q(actor=user)
 
-    for obj in user.subscriptions.all():
+    for obj in user.purchases.all():
         ct = ContentType.objects.get_for_model(obj)
         log_entries_query |= Q(content_type=ct, object_pk=str(obj.pk))
 
@@ -92,27 +92,6 @@ def schedule_user_images_deletion(user):
     ]
 
     services.schedule_image_deletion(image_urls)
-
-def delete_user_audit_records(user, related_objects_ids):
-    related_logs_query = Q(actor=user)
-
-    for ct, pk in related_objects_ids:
-        related_logs_query |= Q(content_type=ct, object_pk=pk)
-
-    all_related_logs = LogEntry.objects.filter(related_logs_query)
-
-    gdpr_logs_query = Q(additional_data__gdpr_deletion_process=True) | Q(additional_data__gdpr_export_process=True)
-
-    logs_to_anonymise = all_related_logs.filter(gdpr_logs_query)
-    logs_to_anonymise.update(
-        actor_email='',
-        object_repr=f"Anonymised record of user_id: {user.pk}",
-        actor=None,
-        remote_addr=None
-    )
-
-    logs_to_delete = all_related_logs.exclude(gdpr_logs_query)
-    logs_to_delete.delete()
 
 
 

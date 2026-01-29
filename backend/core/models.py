@@ -22,7 +22,7 @@ class LogEntryPrivacyMeta:
 
         objects_to_check = [
             user,
-            *user.subscriptions.all(),
+            *user.purchases.all(),
             *user.agreements.all(),
             *user.generation_requests.all(),
             *user.emailaddress_set.all(),
@@ -55,8 +55,7 @@ gdpr_assist.register(LogEntry, LogEntryPrivacyMeta)
 
 
 class ApplicationConfig(SingletonModel):
-    is_registration_enabled = models.BooleanField(default=True)
-    hard_budget = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    generations_reserved = models.IntegerField(default=0)
 
     class Meta:
         verbose_name = "Application Configuration"

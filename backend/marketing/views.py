@@ -31,7 +31,7 @@ def apply_promo_code(request):
     try:
         with transaction.atomic():
             PromoCodeUsage.objects.create(user=user, promo_code=promo_code)
-            user.profile.free_credits += promo_code.credits_count
+            user.profile.credits += promo_code.credits_count
             user.profile.save()
             promo_code.current_usages += 1
             promo_code.save() 

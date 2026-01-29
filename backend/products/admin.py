@@ -2,7 +2,7 @@ from django.urls import path
 from django.contrib import admin
 from django.db.models import Count
 from django.template.response import TemplateResponse
-from .models import Style, SubscriptionPlan, Genre
+from .models import Style, StarPackage, Genre
 
 
 class StatisticsAdminMixin:
@@ -59,13 +59,8 @@ class StyleAdmin(StatisticsAdminMixin, admin.ModelAdmin):
     statistics_header = 'Generation Count'
 
 
-@admin.register(SubscriptionPlan)
-class SubscriptionPlanAdmin(StatisticsAdminMixin, admin.ModelAdmin):
-    list_display = ('id', 'name', 'price', 'generations_count', 'is_active', 'product_price')
-    list_filter = ('is_active',)
-    search_fields = ('name', 'description', 'features')
-    filter_horizontal = ('unlocked_styles',)
-    ordering = ('-id',)
-    change_list_template = 'admin/products/subscriptionplan/change_list.html'
-    statistics_annotation_lookup = 'user_subscriptions'
-    statistics_header = 'Purchase Count'
+@admin.register(StarPackage)
+class StarPackageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'stars_count', 'generations_count')
+    search_fields = ('name',)
+    ordering = ('stars_count',)

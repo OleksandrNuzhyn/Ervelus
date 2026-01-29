@@ -26,6 +26,20 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from) => {
+  const allowedRoutes = [
+    'home',
+    'terms-of-service',
+    'privacy-policy',
+    'refund-policy',
+    'cookie-policy',
+    'contact-us',
+    'about-us'
+  ];
+
+  if (!allowedRoutes.includes(to.name)) {
+    return { name: 'home' };
+  }
+
   document.title = to.meta.title || 'Ervelus';
 
   const authStore = useAuthStore();

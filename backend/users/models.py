@@ -75,7 +75,7 @@ class UserProfileCreditQuerySet(models.QuerySet):
                 filter=Q(user__subscriptions__end_time__gt=datetime.now(timezone.utc))
             )
         ).annotate(
-            total_credits=Coalesce(F('subscription_credits'), 0) + Coalesce(F('free_credits'), 0)
+            total_credits=Coalesce(F('subscription_credits'), 0) + Coalesce(F('credits'), 0)
         )
 
 
@@ -101,12 +101,12 @@ class UserProfile(models.Model):
         ]
         export_fields = [
             'telegram_id',
-            'free_credits'
+            'credits'
         ]
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='profile')
     telegram_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
-    free_credits = models.IntegerField(default=5)
+    credits = models.IntegerField(default=2)
     objects = UserProfileCreditManager()
 
     def __str__(self):

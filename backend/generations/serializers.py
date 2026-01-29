@@ -32,9 +32,9 @@ class GenerationRequestCreateSerializer(serializers.ModelSerializer):
         )
         
         has_subscription_credits = sum(sub.remaining_credits for sub in active_user_subscriptions) > 0
-        has_free_credits = user.profile.free_credits > 0
+        has_credits = user.profile.credits > 0
 
-        if has_subscription_credits or has_free_credits:
+        if has_subscription_credits or has_credits:
             return data
         
         if active_user_subscriptions:

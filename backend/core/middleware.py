@@ -12,7 +12,7 @@ class MaintenanceModeMiddleware:
 
         excluded_paths = [
             '/sanekit/',
-            '/webhooks/subscriptions/'
+            '/webhooks/payments/'
         ]
 
         if any(request.path.startswith(path) for path in excluded_paths):

@@ -17,19 +17,14 @@ class Style(models.Model):
         return f"{self.name} - {self.genre.name}"
 
 
-class SubscriptionPlan(models.Model):
+class StarPackage(models.Model):
     class Meta:
-        verbose_name = 'Subscription Plan'
-        verbose_name_plural = 'Subscription Plans'
-
-    name = models.CharField(max_length=50, unique=True)
-    description = models.CharField(max_length=255)
-    price = models.DecimalField(max_digits=8, decimal_places=2, db_index=True)
-    features = models.JSONField(default=list)
-    unlocked_styles = models.ManyToManyField(Style)
+        verbose_name = 'Star Package'
+        verbose_name_plural = 'Star Packages'
+    
+    name = models.CharField(max_length=32, unique=True)
+    stars_count = models.IntegerField()
     generations_count = models.IntegerField()
-    is_active = models.BooleanField(default=True, db_index=True)
-    product_price = models.DecimalField(max_digits=8, decimal_places=2)
 
     def __str__(self):
-        return f"{self.name} - {self.description}"
+        return f"{self.name} ({self.stars_count} stars)"
