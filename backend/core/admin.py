@@ -4,11 +4,7 @@ from solo.admin import SingletonModelAdmin
 from .models import ApplicationConfig
 from django.contrib.sites.models import Site
 from django.contrib.sites.admin import SiteAdmin
-from auditlog.models import LogEntry
 from django.contrib.admin.models import LogEntry as AdminLogEntry
-from auditlog.filters import ResourceTypeFilter
-from auditlog.admin import LogEntryAdmin as OriginalLogEntryAdmin
-from core.admin_mixins import NoLogAdminMixin
 from gdpr_assist.admin import PersonalData, PersonalDataAdmin
 from gdpr_assist.admin.tool import PersonalDataSearchForm
 from django.utils.decorators import method_decorator
@@ -19,12 +15,9 @@ from collections import defaultdict
 from django.shortcuts import redirect, render
 from django import forms
 
-admin.site.unregister(LogEntry)
 admin.site.unregister(Site)
 admin.site.unregister(PersonalData)
 
-LogEntry._meta.verbose_name = "Audit Record"
-LogEntry._meta.verbose_name_plural = "Audit Records"
 AdminLogEntry._meta.verbose_name = "Admin Record"
 AdminLogEntry._meta.verbose_name_plural = "Admin Records"
 
@@ -50,21 +43,6 @@ class AdminLogEntryAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
-
-
-@admin.register(LogEntry)
-class CustomLogEntryAdmin(NoLogAdminMixin, OriginalLogEntryAdmin):
-    date_hierarchy = None
-    list_display = ('id', 'resource_url', 'action', 'user_url', 'timestamp_formatted')
-    list_filter = ('action', ResourceTypeFilter, 'timestamp')
-    search_fields = ('object_repr', 'changes', 'remote_addr', 'actor__email')
-    fields = ('resource_url', 'action', 'user_url', 'timestamp_formatted', 'remote_addr', 'msg', 'additional_data')
-    fieldsets = ()
-    ordering = ('-id',)
-
-    @admin.display(ordering='timestamp', description='timestamp')
-    def timestamp_formatted(self, obj):
-        return timezone.localtime(obj.timestamp).strftime('%d.%m.%Y %H:%M:%S')
 
 
 @admin.register(Site)

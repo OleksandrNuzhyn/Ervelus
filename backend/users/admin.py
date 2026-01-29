@@ -138,18 +138,10 @@ class UserAdmin(NoLogAdminMixin, BaseUserAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(NoLogAdminMixin, admin.ModelAdmin):
-    list_display = ('id', 'user__email', 'telegram_id', 'credits', 'total_credits')
+    list_display = ('id', 'user__email', 'telegram_id', 'credits')
     list_select_related = ('user',)
     search_fields = ('user__email', 'telegram_id')
     readonly_fields = ('user',)
-
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-        return queryset.annotate_total_credits().order_by('-total_credits')
-
-    @admin.display(ordering='total_credits', description='total credits')
-    def total_credits(self, obj):
-        return obj.total_credits
     
     def has_add_permission(self, request):
         return False

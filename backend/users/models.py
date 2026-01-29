@@ -4,11 +4,8 @@ from django.contrib.auth.hashers import make_password
 from allauth.account.models import EmailAddress
 from allauth.socialaccount.models import SocialAccount
 from rest_framework.authtoken.models import Token
-from django.db import models
-from django.db.models import Q, Sum, F
-from django.db.models.functions import Coalesce
 from django.conf import settings
-from auditlog.models import LogEntry
+from django.db import models
 import gdpr_assist
 
 User = get_user_model()
@@ -42,15 +39,6 @@ class UserPrivacyMeta:
         instance.date_joined = datetime.fromtimestamp(0, tz=timezone.utc)
 
     def export(self, instance):
-        LogEntry.objects.log_create(
-            instance=instance,
-            action=LogEntry.Action.ACCESS,
-            changes={},
-            additional_data={
-                "gdpr_export_process": True,
-                "message": "Personal data successfully exported"
-            }
-        )
         return {
             'last_login': instance.last_login,
             'is_superuser': instance.is_superuser,
@@ -65,26 +53,6 @@ class UserPrivacyMeta:
 
 
 gdpr_assist.register(User, UserPrivacyMeta, gdpr_default_manager_name="gdpr_objects")
-
-
-class UserProfileCreditQuerySet(models.QuerySet):
-    def annotate_total_credits(self):
-        return self.annotate(
-            subscription_credits=Sum(
-                'user__subscriptions__remaining_credits',
-                filter=Q(user__subscriptions__end_time__gt=datetime.now(timezone.utc))
-            )
-        ).annotate(
-            total_credits=Coalesce(F('subscription_credits'), 0) + Coalesce(F('credits'), 0)
-        )
-
-
-class UserProfileCreditManager(models.Manager):
-    def get_queryset(self):
-        return UserProfileCreditQuerySet(self.model)
-
-    def annotate_total_credits(self):
-        return self.get_queryset().annotate_total_credits()
 
 
 class UserProfile(models.Model):
@@ -107,7 +75,6 @@ class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='profile')
     telegram_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     credits = models.IntegerField(default=2)
-    objects = UserProfileCreditManager()
 
     def __str__(self):
         return f'Profile {self.user.email}'

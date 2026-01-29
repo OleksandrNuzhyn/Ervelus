@@ -1,15 +1,12 @@
-import requests
 from django.conf import settings
 from generations.services import gcs_sync_storage_client
 from django.contrib.auth import get_user_model
-from auditlog.models import LogEntry
 from agreements.models import UserAgreement
 from payments.models import UserPurchase
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.contenttypes.models import ContentType
 from generations import services
 from django.utils import timezone
-from django.db.models import Q
+import requests
 import logging
 import json
 
@@ -33,28 +30,6 @@ def get_user_data_for_retention(user):
 
     purchases = UserPurchase.objects.filter(user=user)
     user_data["purchases"] = list(purchases.values())
-    
-    log_entries_query = Q(actor=user)
-
-    for obj in user.purchases.all():
-        ct = ContentType.objects.get_for_model(obj)
-        log_entries_query |= Q(content_type=ct, object_pk=str(obj.pk))
-
-    audit_records = LogEntry.objects.filter(log_entries_query).distinct()
-
-    user_data["audit_records"] = [
-        {
-            'object_pk': record.object_pk,
-            'object_repr': record.object_repr,
-            'action': record.get_action_display(),
-            'changes': record.changes_str,
-            'timestamp': record.timestamp,
-            'actor_id': record.actor_id,
-            'content_type_id': record.content_type_id,
-            'remote_addr': record.remote_addr
-        }
-        for record in audit_records
-    ]
 
     return user_data
 

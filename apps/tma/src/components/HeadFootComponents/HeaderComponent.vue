@@ -92,7 +92,7 @@ const credits = ref(0);
 async function fetchCredits() {
   try {
     const response = await api.get('/api/auth/credit-balance/');
-    credits.value = response.data.total_credits;
+    credits.value = response.data.credits;
   }
   catch (error) {
     credits.value = 0;

@@ -1,6 +1,5 @@
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.account.signals import user_signed_up
-from django.dispatch import receiver
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView, VerifyEmailView
 from dj_rest_auth.app_settings import api_settings
@@ -9,10 +8,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from generations.models import GenerationRequest
 from rest_framework.response import Response
-from .serializers import UserCreditsSerializer, SupportEmailSerializer
+from .serializers import SupportEmailSerializer
 from .models import UserProfile
-from auditlog.models import LogEntry
-from auditlog.context import set_actor
+from django.dispatch import receiver
 from django.db import transaction
 from . import services
 import requests
@@ -64,10 +62,8 @@ class CustomVerifyEmailView(VerifyEmailView):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_credit_balance(request):
-    user_profile = UserProfile.objects.annotate_total_credits().get(user=request.user)
-    serializer = UserCreditsSerializer(user_profile)
-    
-    return Response(serializer.data, status=200)
+    user_profile = UserProfile.objects.get(user=request.user)
+    return Response({'credits': user_profile.credits}, status=200)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -95,16 +91,6 @@ def account_delete(request):
     if requests_in_process.exists():
         logger.error("User deletion with unfinished generations", extra={'user_id': user.id, 'requests_in_process_ids': list(requests_in_process.values_list('id', flat=True))})
 
-    LogEntry.objects.log_create(
-        instance=user,
-        action=LogEntry.Action.ACCESS,
-        changes={},
-        additional_data={
-            "gdpr_deletion_process": True,
-            "message": "User data anonymization process started"
-        }
-    )
-    
     try:
         user_data_for_retention = services.get_user_data_for_retention(user)
     except Exception as e:
@@ -158,16 +144,4 @@ def account_delete(request):
         logger.error("Failed to anonymise user data in delete request", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)
         return Response(status=400)
 
-    with set_actor(actor=None, remote_addr=None):
-        LogEntry.objects.log_create(
-            instance=user,
-            action=LogEntry.Action.UPDATE,
-            changes={},
-            object_repr = f"Anonymised record of user_id: {user.pk}",
-            additional_data={
-                "gdpr_deletion_process": True,
-                "message": "User data anonymization process completed"
-            }
-        )
-    
     return Response(status=204)

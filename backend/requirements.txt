@@ -23,7 +23,6 @@ dj-rest-auth==7.0.0
 Django==5.2.3
 django-allauth==0.61.1
 django-anymail==13.0
-django-auditlog==3.2.1
 django-cors-headers==4.9.0
 django-gdpr-assist==1.4.2
 django-otp==1.6.1

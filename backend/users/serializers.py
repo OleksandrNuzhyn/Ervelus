@@ -55,14 +55,6 @@ class CustomRegisterSerializer(RegisterSerializer):
         
         return user
 
-
-class UserCreditsSerializer(serializers.ModelSerializer):
-    total_credits = serializers.IntegerField(read_only=True)
-
-    class Meta:
-        model = UserProfile
-        fields = ['total_credits']
-
     
 class SupportEmailSerializer(serializers.Serializer):
     email = serializers.EmailField()

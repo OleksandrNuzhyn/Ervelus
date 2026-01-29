@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'gdpr_assist',
     'django_otp',
     'django_otp.plugins.otp_totp',
-    'auditlog',
     'anymail',
     'solo',
 
@@ -116,8 +115,7 @@ MIDDLEWARE = [
     'django_otp.middleware.OTPMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'auditlog.middleware.AuditlogMiddleware'
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 
@@ -329,7 +327,5 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-AUDITLOG_INCLUDE_ALL_MODELS = False
 
 GDPR_LOG_ON_ANONYMISE = False
