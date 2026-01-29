@@ -11,7 +11,7 @@
       <div class="content-container">
         <section class="hero-section">
           <h1 class="hero-title">
-            <span class="text-gradient-white">{{ $t('about.hero_title_1') }}</span> <span class="text-accent">{{ $t('about.hero_title_2') }}</span>
+            <span class="text-gradient-white">We are</span> <span class="text-accent">Ervelus</span>
           </h1>
         </section>
 
@@ -19,31 +19,31 @@
           <article class="bento-item item-why">
             <div class="item-header">
               <EyeIcon class="item-icon" />
-              <h2 class="item-title">{{ $t('about.purpose_title') }}</h2>
+              <h2 class="item-title">Our Purpose</h2>
             </div>
             <p class="item-text">
-              {{ $t('about.purpose_text') }}
+              The world around us is beautiful, but sometimes we crave more. We built Ervelus because we wanted to see the ordinary through the prism of the extraordinary. We believe everyday life can be an epic adventure.
             </p>
           </article>
 
           <article class="bento-item item-idea">
             <div class="item-header">
               <SparklesIcon class="item-icon" />
-              <h2 class="item-title">{{ $t('about.idea_title') }}</h2>
+              <h2 class="item-title">The Idea</h2>
             </div>
             <p class="item-text">
-              {{ $t('about.idea_text') }}
+              Generative AI meets legendary aesthetics. From gritty cyberpunk to dark fantasy, we provide the tools to transform your photos into digital realms.
             </p>
           </article>
 
           <article class="bento-item item-stat">
             <div class="stat-number">2024</div>
-            <div class="stat-label">{{ $t('about.stat_label') }}</div>
+            <div class="stat-label">Founded</div>
           </article>
           <article class="bento-item item-team">
             <div class="item-header">
               <UserGroupIcon class="item-icon" />
-              <h2 class="item-title">{{ $t('about.team_title') }}</h2>
+              <h2 class="item-title">The Team</h2>
             </div>
             <div class="team-grid">
 
@@ -52,12 +52,12 @@
                 <div class="member-content">
                   <div class="member-header">
                     <h3 class="member-name">Oleksandr Nuzhyn</h3>
-                    <div class="member-role">{{ $t('about.team_on_role') }}</div>
+                    <div class="member-role">Founder & Lead Architect</div>
                   </div>
                   <div class="member-bio">
-                    <p>{{ $t('about.team_on_bio_uni') }}</p>
-                    <p><span class="bio-label">{{ $t('about.bio_label_role') }}</span> {{ $t('about.team_on_bio_role') }}</p>
-                    <p><span class="bio-label">{{ $t('about.bio_label_focus') }}</span> {{ $t('about.team_on_bio_focus') }}</p>
+                    <p>Software Engineering student at NTUU "KPI" (Kyiv).</p>
+                    <p><span class="bio-label">Role:</span> Architected the secure, scalable backend and managed the infrastructure.</p>
+                    <p><span class="bio-label">Focus:</span> System Architecture, API Engineering, System Deployment.</p>
                   </div>
                 </div>
               </div>
@@ -67,12 +67,12 @@
                 <div class="member-content">
                   <div class="member-header">
                     <h3 class="member-name">Nikita Dakhno</h3>
-                    <div class="member-role">{{ $t('about.team_nd_role') }}</div>
+                    <div class="member-role">Co-Founder & Frontend Engineer</div>
                   </div>
                   <div class="member-bio">
-                    <p>{{ $t('about.team_nd_bio_uni') }}</p>
-                    <p><span class="bio-label">{{ $t('about.bio_label_role') }}</span> {{ $t('about.team_nd_bio_role') }}</p>
-                    <p><span class="bio-label">{{ $t('about.bio_label_focus') }}</span> {{ $t('about.team_nd_bio_focus') }}</p>
+                    <p>Computer Science student at TUKE (Slovakia).</p>
+                    <p><span class="bio-label">Role:</span> Designed the UI/UX and developed the client-side application.</p>
+                    <p><span class="bio-label">Focus:</span> UI/UX Design, Frontend Engineering, AI Prompt Logic.</p>
                   </div>
                 </div>
               </div>

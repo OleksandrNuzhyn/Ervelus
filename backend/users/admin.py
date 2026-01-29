@@ -142,6 +142,7 @@ class UserProfileAdmin(NoLogAdminMixin, admin.ModelAdmin):
     list_select_related = ('user',)
     search_fields = ('user__email', 'telegram_id')
     readonly_fields = ('user',)
+    ordering = ('-credits',)
     
     def has_add_permission(self, request):
         return False

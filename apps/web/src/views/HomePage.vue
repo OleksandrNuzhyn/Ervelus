@@ -17,20 +17,16 @@
           <div class="hero-content">
             <div class="v-spacer"></div>
             
-            <div class="badge-pill badge-free-trial">
-              <span class="badge-shimmer">{{ $t('home.badge') }}</span>
-            </div>
-            
-            <div class="v-spacer"></div>
+            <div class="hero-text-decor-group">
+              <!-- Badge removed to reduce clutter/pile effect -->
 
-            <div class="hero-text-group">
               <h1 class="hero-title">
-                {{ $t('home.hero_title_1') }} <br />
-                <span class="text-gradient">{{ $t('home.hero_title_2') }}</span>
+                Transform Your <br />
+                Photos <span class="text-gradient">into AI Art</span>
               </h1>
 
               <p class="hero-subtitle">
-                {{ $t('home.hero_subtitle') }}
+                Professional AI styling. 30+ styles available
               </p>
             </div>
 
@@ -46,9 +42,9 @@
 
             <div class="v-spacer"></div>
 
-            <button @click="handleTryFree" class="cta-primary large hero-cta">
-              {{ $t('home.cta_free') }}
-            </button>
+            <a href="https://t.me/ervelus_bot" target="_blank" class="cta-primary large hero-cta">
+              Launch App
+            </a>
           </div>
           <div class="hero-visual hidden md:block">
             <div class="floating-cards">
@@ -71,9 +67,9 @@
 
       <section class="section-comparison">
         <div class="section-header">
-          <h2 class="section-title">{{ $t('home.compare_title') }}</h2>
+          <h2 class="section-title">See the Difference</h2>
           <p class="section-subtitle">
-            {{ $t('home.compare_subtitle') }}
+            Drag the slider to compare original photo and AI result
           </p>
         </div>
 
@@ -88,13 +84,15 @@
           <div class="comparison-frame">
             <div class="comparison-side before-side">
               <img :src="originalImg" class="comparison-img" alt="Original Photo" loading="lazy" />
-              <span class="comparison-label overlay-label">{{ $t('home.original') }}</span>
             </div>
 
             <div class="comparison-side after-side" :style="{ 'clip-path': `inset(0 ${100 - sliderPosition}% 0 0)` }">
               <img :src="getStyledImageUrl()" class="comparison-img" alt="Styled Result" loading="lazy" />
-              <span class="comparison-label overlay-label">{{ getCurrentStyleName() }}</span>
             </div>
+
+            <span class="comparison-label overlay-label">
+              {{ sliderPosition > 50 ? getCurrentStyleName() : 'Original' }}
+            </span>
 
             <div class="slider-handle-wrapper" :style="{ left: `${sliderPosition}%` }" @mousedown.prevent="startDrag"
               @touchstart.prevent="startDrag">
@@ -113,96 +111,47 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
             </svg>
-            {{ $t('home.drag_hint') }}
+            Drag to compare
           </p>
         </div>
       </section>
 
       <section class="section-styles">
         <div class="section-header">
-          <h2 class="section-title">{{ $t('home.styles_title') }}</h2>
+          <h2 class="section-title">Style Library</h2>
           <p class="section-subtitle">
-            {{ $t('home.styles_subtitle') }}
+            Explore our collection of creative styles
           </p>
         </div>
 
-        <div class="pricing-list">
-          <div v-for="tier in subscriptionTiers" :key="tier.id"
-            :class="['pricing-card-horizontal', { featured: tier.featured }]">
-            <div v-if="tier.featured" class="featured-badge">{{ $t('home.elders_choice') }}</div>
-            <div class="pricing-left">
-              <div class="pricing-header-horizontal">
-                <h3 class="pricing-name-horizontal">{{ tier.name }}</h3>
-                <div class="pricing-price-horizontal">
-                  <template v-if="tier.id === 'free'">
-                    <span class="price-free">{{ tier.price }}</span>
-                  </template>
-                  <template v-else>
-                    <span class="price-currency-horizontal">$</span>
-                    <span class="price-amount-horizontal">{{ tier.price }}</span>
-                    <span class="price-period-horizontal">{{ $t('home.per_month') }}</span>
-                  </template>
+        <div class="styles-listing-container">
+          <div class="styles-listing-grid">
+            <div v-for="category in styleCategories" :key="category.id" class="style-category-card">
+              <div class="card-header">
+                <div class="icon-wrapper">
+                  <component :is="category.icon" class="category-icon" />
+                </div>
+                <div>
+                  <h3 class="category-name">{{ category.name }}</h3>
+                  <p class="category-desc">{{ category.description }}</p>
                 </div>
               </div>
-            </div>
-
-            <div class="pricing-right" :class="{ 'free-plan-adjust': tier.id === 'free' }">
-              <button v-if="tier.id !== 'free'" class="style-toggle-btn" @click="toggleTier(tier.id)" :class="{ active: expandedTiers[tier.id] }">
-                <span class="toggle-text">
-                  {{ expandedTiers[tier.id] ? $t('home.hide_styles') : $t('home.show_styles', { count: tier.styles.length }) }}
+              
+              <div class="style-tags-wrapper">
+                <span v-for="style in category.styles" :key="style" class="style-tag-pill">
+                  {{ style }}
                 </span>
-                <ChevronDownIcon class="toggle-icon" />
-              </button>
-
-              <div class="styles-collapsible" :class="{ expanded: expandedTiers[tier.id] || tier.id === 'free' }">
-                <div class="styles-content-wrapper">
-                  <div v-if="tier.includePrevious" class="previous-styles-note">
-                    <i18n-t keypath="home.plus_all_from">
-                      <template #plan>
-                        <span class="plan-badge-shimmer">{{ tier.previousPlanName }}</span>
-                      </template>
-                    </i18n-t>
-                  </div>
-
-                  <div class="styles-grid">
-                    <div v-for="(style, index) in tier.styles" :key="style.id" 
-                      :class="['style-item', { 'style-description': style.id === 'desc' }]"
-                      :style="{ 'animation-delay': `${index * 0.1}s` }">
-                      <div class="style-name">{{ style.name }}</div>
-                      <div class="style-genre">{{ style.genre }}</div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section-genres">
-        <div class="section-header">
-          <h2 class="section-title">{{ $t('home.genres_title') }}</h2>
-          <p class="section-subtitle">
-            {{ $t('home.genres_subtitle') }}
-          </p>
-        </div>
-
-        <div class="genres-grid">
-          <div v-for="genre in genres" :key="genre.id" class="genre-card">
-            <div class="genre-icon-wrapper">
-              <component :is="genre.icon" class="genre-icon" />
-            </div>
-            <h3 class="genre-title">{{ genre.title }}</h3>
-            <p class="genre-description">{{ genre.description }}</p>
           </div>
         </div>
       </section>
 
       <section class="section-steps">
         <div class="section-header">
-          <h2 class="section-title">{{ $t('home.how_title') }}</h2>
+          <h2 class="section-title">How it Works</h2>
           <p class="section-subtitle">
-            {{ $t('home.how_subtitle') }}
+            Transform your photos in three simple steps
           </p>
         </div>
 
@@ -221,36 +170,14 @@
 
       <section class="section-product-demo">
         <div class="section-header">
-          <h2 class="section-title">{{ $t('home.demo_title') }}</h2>
+          <h2 class="section-title">See It in Action</h2>
           <p class="section-subtitle">
-            {{ $t('home.demo_subtitle') }}
+            Watch the real-time generation process
           </p>
         </div>
 
         <div class="video-container">
           <video ref="demoVideo" :src="ervelusDemoVideo" :poster="posterImg" muted loop playsinline preload="none" class="steps-video"></video>
-        </div>
-      </section>
-
-      <section class="section-final-cta">
-        <div class="final-cta-card">
-          <div class="card-glow-bg">
-            <div class="orb-float cta-orb-1"></div>
-            <div class="orb-float cta-orb-2"></div>
-            <div class="orb-float cta-orb-3"></div>
-          </div>
-          
-          <div class="final-cta-content">
-            <h2 class="final-cta-title">
-              {{ $t('home.final_title_1') }}
-              <span class="text-gradient-gold">{{ $t('home.final_title_2') }}</span>
-            </h2>
-            <div class="final-cta-action">
-              <button @click="handleTryFree" class="cta-primary large cta-final-pulse">
-                {{ $t('home.final_cta') }}
-              </button>
-            </div>
-          </div>
         </div>
       </section>
     </div>
@@ -261,8 +188,6 @@
 <script setup>
 import { ref, onUnmounted, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import { useAuthStore } from '@/stores/auth'
 import originalImg from '@/assets/home_page/original.webp'
 import darkFantasyResult from '@/assets/home_page/dark-fantasy_result.webp'
 import lightFantasyResult from '@/assets/home_page/light-fantasy_result.webp'
@@ -289,16 +214,10 @@ import {
 } from '@heroicons/vue/24/outline'
 
 const router = useRouter()
-const authStore = useAuthStore()
-const { t } = useI18n()
 const sliderPosition = ref(50)
 let isDragging = false
-const expandedTiers = ref({})
 const selectedPreviewStyle = ref('dark-fantasy')
 
-const toggleTier = (id) => {
-  expandedTiers.value[id] = !expandedTiers.value[id]
-}
 const heroCard = ref(null)
 
 const previewStyles = [
@@ -321,136 +240,70 @@ function getStyledImageUrl() {
   return styleImages[selectedPreviewStyle.value] || styleImages['dark-fantasy']
 }
 
-const subscriptionTiers = computed(() => [
-  {
-    id: 'free',
-    name: t('home.plan_free'),
-    price: t('home.genes_included'),
-    featured: false,
-    includePrevious: false,
-    previousPlanName: null,
-    styles: [
-      { id: 'desc', name: t('home.desc_style_name'), genre: t('home.desc_style_genre') }
-    ]
-  },
-  {
-    id: 'amateur',
-    name: t('home.plan_amateur'),
-    price: 6,
-    featured: false,
-    includePrevious: false,
-    previousPlanName: null,
-    styles: [
-      { id: 1, name: 'Gothic Fantasy', genre: 'Fantasy' },
-      { id: 2, name: 'Light Fantasy', genre: 'Fantasy' },
-      { id: 3, name: 'Steampunk', genre: 'Punkverse' },
-      { id: 4, name: 'Solarpunk', genre: 'Punkverse' },
-      { id: 5, name: 'Dieselpunk', genre: 'Punkverse' },
-      { id: 6, name: 'Stone Age', genre: 'Time Travel' },
-      { id: 7, name: 'Ancient Greece', genre: 'Time Travel' },
-      { id: 8, name: 'Wonders of Giza', genre: 'Around The World' },
-      { id: 9, name: 'Japanese Spring', genre: 'Around The World' },
-      { id: 10, name: 'Parisian Dream', genre: 'Around The World' },
-      { id: 11, name: 'Merry Christmas', genre: 'Events' },
-      { id: 12, name: 'Rio de Janeiro Carnival', genre: 'Events' }
-    ]
-  },
-  {
-    id: 'journeyman',
-    name: t('home.plan_journeyman'),
-    price: 10,
-    featured: true,
-    includePrevious: true,
-    previousPlanName: t('home.plan_amateur'),
-    styles: [
-      { id: 13, name: 'Dark Fantasy', genre: 'Fantasy' },
-      { id: 14, name: 'Adventure Fantasy', genre: 'Fantasy' },
-      { id: 15, name: 'Cyberpunk', genre: 'Punkverse' },
-      { id: 16, name: 'Atompunk', genre: 'Punkverse' },
-      { id: 17, name: 'The Gilded Age', genre: 'Time Travel' },
-      { id: 18, name: 'Wild West', genre: 'Time Travel' },
-      { id: 19, name: 'Medieval Realism', genre: 'Time Travel' },
-      { id: 20, name: 'Pripyat Gloom', genre: 'Around The World' },
-      { id: 21, name: 'Valentine\'s Day', genre: 'Events' },
-      { id: 22, name: 'Halloween', genre: 'Events' },
-      { id: 23, name: 'Hong Kong Urban', genre: 'Trending' },
-      { id: 24, name: 'Tokyo Drive', genre: 'Trending' },
-      { id: 25, name: 'Diplomatic Elevator', genre: 'Trending' }
-    ]
-  },
-  {
-    id: 'master',
-    name: t('home.plan_master'),
-    price: 15,
-    featured: false,
-    includePrevious: true,
-    previousPlanName: t('home.plan_journeyman'),
-    styles: [
-      { id: 26, name: 'Grimdark Fantasy', genre: 'Fantasy' },
-      { id: 27, name: 'Venice Canals', genre: 'Around The World' },
-      { id: 28, name: 'Chinise New Year', genre: 'Events' },
-      { id: 29, name: 'Dark Cinematic', genre: 'Trending' },
-      { id: 30, name: 'Yacht Chillin\'', genre: 'Trending' }
-    ]
-  }
-])
-
-const genres = computed(() => [
+const styleCategories = [
   {
     id: 'fantasy',
-    title: 'Fantasy',
-    description: t('home.genre_fantasy'),
-    icon: FireIcon
+    name: 'Fantasy',
+    description: 'Aesthetics of mythical realms and legendary creatures',
+    icon: FireIcon,
+    styles: ['Gothic Fantasy', 'Light Fantasy', 'Dark Fantasy', 'Adventure Fantasy', 'Grimdark Fantasy']
   },
   {
     id: 'punkverse',
-    title: 'Punkverse',
-    description: t('home.genre_punkverse'),
-    icon: CogIcon
+    name: 'Punkverse',
+    description: 'Fusion of urban subcultures and technology',
+    icon: CogIcon,
+    styles: ['Steampunk', 'Solarpunk', 'Dieselpunk', 'Cyberpunk', 'Atompunk']
   },
   {
     id: 'time-travel',
-    title: 'Time Travel',
-    description: t('home.genre_timetravel'),
-    icon: ClockIcon
+    name: 'Time Travel',
+    description: 'Visual immersion into different historical epochs',
+    icon: ClockIcon,
+     styles: ['Stone Age', 'Ancient Greece', 'The Gilded Age', 'Wild West', 'Medieval Realism']
   },
   {
     id: 'around-the-world',
-    title: 'Around the World',
-    description: t('home.genre_world'),
-    icon: GlobeAltIcon
+    name: 'Around The World',
+    description: 'Iconic locations and distinct spots across the globe',
+    icon: GlobeAltIcon,
+    styles: ['Wonders of Giza', 'Japanese Spring', 'Parisian Dream', 'Pripyat Gloom', 'Venice Canals']
   },
   {
     id: 'events',
-    title: 'Events',
-    description: t('home.genre_events'),
-    icon: SparklesIcon
+    name: 'Events',
+    description: 'Stylized visuals for festive and large-scale gatherings',
+    icon: SparklesIcon,
+    styles: ['Merry Christmas', 'Rio de Janeiro Carnival', "Valentine's Day", 'Halloween', 'Chinese New Year']
   },
   {
     id: 'trending',
-    title: 'Trending',
-    description: t('home.genre_trending'),
-    icon: ArrowTrendingUpIcon
+    name: 'Trending',
+    description: 'Cinematic photography and high-quality visual aesthetics',
+    icon: ArrowTrendingUpIcon,
+    styles: ['Hong Kong Urban', 'Tokyo Drive', 'Diplomatic Elevator', 'Dark Cinematic', "Yacht Chillin'"]
   }
-])
+]
+
+/* 'genres' computed property removed as it is now merged into styleCategories */
 
 const steps = computed(() => [
   {
     id: 'upload',
-    title: t('home.step_1_title'),
-    description: t('home.step_1_desc'),
+    title: 'Upload Your Photo',
+    description: 'Upload a selfie, portrait, or any image from your gallery',
     icon: CloudArrowUpIcon
   },
   {
     id: 'style',
-    title: t('home.step_2_title'),
-    description: t('home.step_2_desc'),
+    title: 'Choose Your Style',
+    description: 'Choose from 30+ professional styles',
     icon: SwatchIcon
   },
   {
     id: 'generate',
-    title: t('home.step_3_title'),
-    description: t('home.step_3_desc'),
+    title: 'Transform & Download',
+    description: 'Download high-quality art instantly. Ready to share',
     icon: ArrowDownTrayIcon
   }
 ])
@@ -538,11 +391,6 @@ const demoVideo = ref(null)
 let videoObserver = null
 
 onMounted(() => {
-  if (authStore.isAuthenticated && !window.history.state?.back) {
-    router.push('/dashboard')
-    return
-  }
-
   videoObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting && demoVideo.value) {
@@ -578,12 +426,12 @@ html, body {
 
 <style scoped>
 .landing-wrapper {
-  --color-bg: #000000;
+  --color-bg: #0c0d14;
   --color-surface: #1c1c1e;
   --color-text-primary: #ffffff;
   --color-text-secondary: #a1a1a6;
-  --color-accent: #8b5cf6;
-  --color-accent-hover: #a78bfa;
+  --color-accent: #ffffff;
+  --color-accent-hover: #e5e5e5;
   --spacing-xs: 8px;
   --spacing-sm: 16px;
   --spacing-md: 24px;
@@ -591,13 +439,14 @@ html, body {
   --spacing-xl: 80px;
   --spacing-2xl: 120px;
   --radius-sm: 12px;
-  --radius-md: 18px;
-  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-lg: 16px;
+  --radius-card: 16px;
   background: transparent;
   position: relative;
   z-index: 1;
   color: var(--color-text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -616,7 +465,8 @@ html, body {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.4;
+  opacity: 0.3;
+  display: block;
 }
 
 .ambient-light {
@@ -625,9 +475,11 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.05), transparent 60%);
+  /* Cool white/blue glow for saturation */
+  background: radial-gradient(circle at 50% 0%, rgba(139, 180, 255, 0.08), transparent 70%);
   pointer-events: none;
   z-index: 0;
+  display: block; 
 }
 
 .global-background {
@@ -636,42 +488,44 @@ html, body {
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-
-  background-color: #000000;
-  background-image: linear-gradient(to bottom, #000000, #0a0a0c);
+  background-color: #0c0d14;
 }
 
 .glow-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(100px);
-  opacity: 0.4;
+  filter: blur(120px);
+  opacity: 0.2;
   mix-blend-mode: screen;
+  display: block;
 }
 
 .orb-1 {
-  width: 600px;
-  height: 600px;
-  background: #3b82f6;
-  top: -100px;
-  left: -100px;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%); /* Soft white glow */
+  top: -200px;
+  left: -200px;
+  opacity: 1; /* Gradient handles opacity */
+  filter: blur(80px); /* Reduced blur as gradient is soft */
 }
 
 .orb-2 {
   width: 500px;
   height: 500px;
-  background: #60a5fa;
+  background: #94a3b8;
   bottom: -100px;
   right: -100px;
+  opacity: 0.1;
 }
 
 .orb-3 {
   width: 400px;
   height: 400px;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
   top: 40%;
   left: 40%;
-  opacity: 0.2;
+  opacity: 0.1;
 }
 
 .grid-overlay {
@@ -681,8 +535,11 @@ html, body {
     linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 50px 50px;
-  mask-image: radial-gradient(circle at center, black 40%, transparent 90%);
+  mask-image: radial-gradient(circle at 50% 40%, black 60%, transparent 100%);
+  opacity: 0.5;
+  display: block;
 }
+
 
 .section-title {
   font-size: clamp(40px, 5vw, 64px);
@@ -725,7 +582,7 @@ html, body {
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.02);
 }
 
 .steps-video {
@@ -735,34 +592,42 @@ html, body {
 
 .hero-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
+  grid-template-columns: 1.4fr 1fr; /* Give more space to text column (approx 60/40) */
+  gap: 40px; /* Reducing gap slightly to help space */
   align-items: center;
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
+  min-height: 85vh; /* Enough height but not too much */
+  padding-top: 0;
 }
 
 .hero-content {
   position: relative;
   z-index: 2;
+  z-index: 2;
   text-align: left;
-  max-width: 600px;
+  max-width: none; /* Let grid define width */
 }
 
-.badge-pill {
+.hero-badge-minimal {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: 6px 12px;
-  background: rgba(139, 92, 246, 0.1);
-  border: 1px solid rgba(139, 92, 246, 0.2);
-  border-radius: 100px;
-  font-size: 14px;
-  color: var(--color-accent);
   margin-bottom: 24px;
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
+  position: relative;
 }
+
+/* Removed vertical border styling for cleaner look */
+.hero-text-decor-group {
+  display: block;
+  text-align: left;
+  padding-left: 0;
+  border: none;
+  margin-bottom: 24px; /* Reduced bottom margin */
+}
+
+/* Enhancing Mobile Layout for the Group */
+/* Removed mobile border override as border is gone */
 
 .badge-dot {
   width: 6px;
@@ -788,31 +653,31 @@ html, body {
 }
 
 .hero-title {
-  font-size: clamp(48px, 3.1vw, 60px);
-  font-weight: 700;
-  line-height: 1.3;
+  font-size: clamp(48px, 5vw, 72px); /* Much larger Apple-style */
+  font-weight: 800;
+  line-height: 1.1;
   letter-spacing: -0.03em;
   color: var(--color-text-primary);
-  margin: 0 0 var(--spacing-sm);
+  margin: 0 0 var(--spacing-md); /* Increased margin */
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+  background: linear-gradient(135deg, #fff 30%, #94a3b8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.3));
+  filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.2));
   padding-right: 0.1em;
   display: inline-block;
 }
 
 .hero-subtitle {
-  font-size: clamp(18px, 2vw, 20px);
-  font-weight: 300;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.75);
-  margin: 0 0 var(--spacing-md);
-  max-width: 600px;
+  font-size: clamp(20px, 2vw, 24px); /* Larger subtitle */
+  font-weight: 400;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 32px;
+  max-width: 700px; /* Increased to ensure 1 line */
 }
 
 .hero-description {
@@ -825,35 +690,80 @@ html, body {
   margin-right: auto;
 }
 
+/* High Contrast Pills (White BG, Black Text) */
+/* Glassy Pill Style */
+.hero-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px; /* Smaller padding */
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 9999px;
+  margin-bottom: 24px;
+  transform-origin: left;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.hero-badge-pill:hover {
+  transform: scale(1.02);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.badge-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff; /* White text for glass */
+  letter-spacing: 0.08em;
+  /* text-transform: uppercase; Removed */
+}
+
+.badge-dot {
+  width: 5px;
+  height: 5px;
+  background: #fff;
+  border-radius: 50%;
+  animation: pulse-white 2s infinite;
+}
+
+@keyframes pulse-white {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+  70% { box-shadow: 0 0 0 4px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
 .cta-primary {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-xs);
-  padding: 14px 28px;
+  padding: 16px 32px;
   font-size: 17px;
-  font-weight: 500;
-  color: #fff;
-  background: var(--color-accent);
+  font-weight: 700;
+  color: #000;
+  background: #ffffff;
   border: none;
   border-radius: 980px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 30px rgba(139, 92, 246, 0.5), 0 4px 16px rgba(139, 92, 246, 0.3);
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.15), 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
 .cta-primary:hover {
-  background: var(--color-accent-hover);
+  background: #e2e8f0;
   transform: translateY(-2px);
-  box-shadow: 0 0 50px rgba(139, 92, 246, 0.6), 0 8px 24px rgba(139, 92, 246, 0.5);
+  box-shadow: 0 0 60px rgba(255, 255, 255, 0.3), 0 0 30px rgba(255, 255, 255, 0.2);
 }
 
 .cta-primary.large {
   padding: 18px 36px;
   font-size: 19px;
+  min-height: 58px;
 }
 
 .hero-cta {
-  margin-top: var(--spacing-lg);
+  margin-top: 16px; /* Reduced from large spacing */
 }
 
 .cta-arrow {
@@ -884,18 +794,20 @@ html, body {
 
 .card {
   position: absolute;
-  border-radius: 24px;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.02);
   cursor: pointer;
   pointer-events: auto;
   transition: filter 0.3s ease, box-shadow 0.3s ease;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
 }
 
 .card:hover {
   filter: brightness(1.1);
-  box-shadow: 0 30px 60px -12px rgba(139, 92, 246, 0.4);
+  box-shadow: 0 30px 60px -12px rgba(255, 255, 255, 0.25); /* White glow instead of violet */
 }
 
 .card-img {
@@ -981,15 +893,15 @@ html, body {
 
 .card-1 {
   top: 10%;
-  right: 0;
-  transform: rotate(10deg);
+  right: -10%; /* Move outwards */
+  transform: rotate(12deg);
   animation: float-right 8s ease-in-out infinite 1s;
 }
 
 .card-2 {
-  bottom: 10%;
-  left: 0;
-  transform: rotate(-10deg);
+  bottom: 5%;
+  left: -10%; /* Move outwards */
+  transform: rotate(-12deg);
   animation: float-left 7s ease-in-out infinite 2s;
 }
 
@@ -1035,8 +947,8 @@ section {
   font-size: 15px;
   font-weight: 500;
   color: var(--color-text-secondary);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.02);
   border-radius: 980px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1048,10 +960,11 @@ section {
 }
 
 .style-pill.active {
-  color: #fff;
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+  color: #000;
+  background: #ffffff;
+  border-color: #ffffff;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+  font-weight: 700;
 }
 
 .comparison-container {
@@ -1190,273 +1103,103 @@ section {
   height: 16px;
 }
 
-.pricing-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-lg);
-  max-width: 1400px;
+.styles-listing-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  /* Removed double padding, reliance on section padding */
+}
+
+.styles-listing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+  max-width: 1000px;
   margin: 0 auto;
 }
 
-.pricing-card-horizontal {
-  position: relative;
-  background: rgba(28, 28, 30, 0.6);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-lg);
-  display: flex;
-  gap: var(--spacing-lg);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.pricing-card-horizontal:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
-}
-
-.pricing-card-horizontal.featured {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 60px rgba(139, 92, 246, 0.3), 0 20px 40px rgba(139, 92, 246, 0.2);
-}
-
-.featured-badge {
-  position: absolute;
-  top: -12px;
-  left: var(--spacing-lg);
-  padding: 6px 16px;
-  background: var(--color-accent);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-radius: 100px;
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
-}
-
-.pricing-left {
-  flex-shrink: 0;
-  min-width: 240px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.pricing-header-horizontal {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.pricing-name-horizontal {
-  font-size: 32px;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  margin: 0;
-  letter-spacing: -0.02em;
-}
-
-.pricing-price-horizontal {
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
-}
-
-.price-currency-horizontal {
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-}
-
-.price-amount-horizontal {
-  font-size: 48px;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--color-text-primary);
-}
-
-.price-period-horizontal {
-  font-size: 16px;
-  color: var(--color-text-secondary);
-}
-
-.price-free {
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--color-accent);
-}
-
-.pricing-right {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-.pricing-card-horizontal:first-child .pricing-right {
-  justify-content: center;
-}
-
-.previous-styles-note {
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid rgba(139, 92, 246, 0.3);
-  border-radius: var(--radius-sm);
-  color: var(--color-text-primary);
-  font-size: 14px;
-  font-weight: 500;
-  text-align: center;
-  background: rgba(139, 92, 246, 0.05);
-}
-
-.plan-badge-shimmer {
-  display: inline-block;
-  font-weight: 700;
-  
-  /* Shimmer text effect */
-  background-image: linear-gradient(
-    90deg,
-    #fff 0%,
-    #a78bfa 50%,
-    #fff 100%
-  );
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer-text 5s linear infinite;
-  
-  vertical-align: baseline;
-}
-
-.styles-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: var(--spacing-sm);
-  animation: fadeInGrid 0.6s ease-out;
-}
-
-@keyframes fadeInGrid {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
+@media (max-width: 768px) {
+  .styles-listing-grid {
+    grid-template-columns: 1fr; /* Single column on mobile */
   }
 }
 
-.style-item {
+.style-category-card {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-sm);
-  padding: var(--spacing-sm);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  border-radius: 16px;
+  padding: 32px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  animation: pulse-border 3s ease-in-out infinite;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-.style-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg,
-      transparent,
-      rgba(139, 92, 246, 0.3),
-      transparent);
-  animation: shimmer-continuous 3s ease-in-out infinite;
+.style-category-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
 }
 
-@keyframes shimmer-continuous {
-  0% {
-    left: -100%;
-  }
-
-  50% {
-    left: 100%;
-  }
-
-  100% {
-    left: 100%;
-  }
+.card-header {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
 }
 
-@keyframes pulse-border {
-
-  0%,
-  100% {
-    border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 0 rgba(139, 92, 246, 0);
-  }
-
-  50% {
-    border-color: rgba(139, 92, 246, 0.3);
-    box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
-  }
+.icon-wrapper {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.style-item:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: var(--color-accent);
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 0 30px rgba(139, 92, 246, 0.4), 0 8px 24px rgba(139, 92, 246, 0.2);
+.category-icon {
+  width: 24px;
+  height: 24px;
+  color: #fff;
 }
 
-.style-item:active {
-  transform: translateY(-2px) scale(1);
+.category-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 4px 0;
 }
 
-.style-name {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: 4px;
-  position: relative;
-  z-index: 1;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.category-desc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.4;
+  margin: 0;
 }
 
-.style-item:hover .style-name {
-  color: var(--color-accent);
-  transform: translateX(4px);
+.style-tags-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px; /* Kept 8px, but wide card should fix per-row issue */
 }
 
-.style-genre {
-  font-size: 12px;
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  position: relative;
-  z-index: 1;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* Removed old category header style */
 
-.style-item:hover .style-genre {
+.style-tag-pill {
+  font-size: 13px;
   color: rgba(255, 255, 255, 0.8);
-  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 8px 16px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  transition: all 0.2s ease;
+  line-height: 1.4;
+  font-weight: 500;
 }
 
-.style-description {
-  grid-column: 1 / -1;
-  text-align: center;
-}
-
-.style-description .style-name {
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.style-description .style-genre {
-  font-size: 12px;
+.style-tag-pill:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.05);
+  transform: translateY(-1px);
+  box-shadow: none;
 }
 
 .genres-grid {
@@ -1469,15 +1212,16 @@ section {
 }
 
 .genre-card {
-  background: rgba(28, 28, 30, 0.5);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  border-radius: 16px;
   padding: var(--spacing-md);
   text-align: center;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   min-width: 0;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 .genre-card:hover {
@@ -1495,7 +1239,7 @@ section {
   color: var(--color-accent);
   margin: 0 auto;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.3));
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
 }
 
 .genre-card:hover .genre-icon {
@@ -1541,10 +1285,10 @@ section {
   margin-bottom: var(--spacing-md);
   font-size: 24px;
   font-weight: 700;
-  color: #fff;
-  background: var(--color-accent);
+  color: #000000;
+  background: #ffffff;
   border-radius: 50%;
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
 }
 
 .step-icon-wrapper {
@@ -1572,136 +1316,6 @@ section {
   margin: 0;
 }
 
-.section-final-cta {
-  padding: 120px var(--spacing-md);
-  position: relative;
-  overflow: visible;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-@media (max-width: 768px) {
-  .section-final-cta {
-    padding: 80px var(--spacing-sm);
-  }
-}
-
-.final-cta-card {
-  position: relative;
-  width: 100%;
-  max-width: 1000px;
-  border-radius: 40px;
-  padding: 80px 40px;
-  text-align: center;
-  overflow: hidden;
-  
-  background: rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-  
-  box-shadow: 
-    0 0 0 1px rgba(255, 255, 255, 0.08),
-    0 20px 50px -10px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  
-  transition: transform 0.5s ease;
-}
-
-.final-cta-card:hover {
-  transform: translateY(-2px);
-}
-
-.card-glow-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.orb-float {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.4;
-  animation: float-orb 10s infinite ease-in-out alternate;
-}
-
-.cta-orb-1 {
-  width: 400px;
-  height: 400px;
-  background: #4c1d95;
-  top: -100px;
-  left: -50px;
-  animation-delay: 0s;
-}
-
-.cta-orb-2 {
-  width: 500px;
-  height: 500px;
-  background: #0f172a;
-  bottom: -150px;
-  right: -100px;
-  animation-delay: -5s;
-}
-
-.cta-orb-3 {
-  width: 300px;
-  height: 300px;
-  background: rgba(139, 92, 246, 0.15);
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  animation: float-orb 15s infinite ease-in-out alternate-reverse;
-}
-
-@keyframes float-orb {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(20px, -20px) scale(1.1); }
-  100% { transform: translate(-20px, 20px) scale(0.95); }
-}
-
-.final-cta-content {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.final-cta-title {
-  font-size: clamp(36px, 6vw, 64px);
-  font-weight: 800;
-  line-height: 1.1;
-  color: #fff;
-  margin: 0 0 64px;
-  letter-spacing: -0.02em;
-}
-
-.text-gradient-gold {
-  background: linear-gradient(135deg, #fff 0%, #c4b5fd 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.4));
-  padding-right: 0.1em;
-  padding-bottom: 0.15em;
-  margin-bottom: -0.15em;
-  display: inline-block;
-}
-
-.final-cta-action {
-  display: flex;
-  justify-content: center;
-}
-
-.section-final-cta .cta-primary {
-  margin-bottom: 0;
-  padding: 18px 48px;
-  font-size: 18px;
-}
-
 footer {
   position: relative;
   z-index: 2;
@@ -1716,6 +1330,10 @@ footer {
 }
 
 @media (max-width: 1024px) {
+  section {
+    padding: var(--spacing-xl) var(--spacing-sm); /* Unified 16px side padding for all sections on mobile */
+  }
+
   .hero-container {
     grid-template-columns: 1fr;
     gap: var(--spacing-lg);
@@ -2235,39 +1853,6 @@ footer {
   text-shadow: none;
 }
 
-.cta-final-pulse {
-  animation: cta-breathe 2.5s ease-in-out infinite;
-  position: relative;
-  overflow: hidden;
-}
-
-.cta-final-pulse::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
-}
-
-.cta-final-pulse:hover::before {
-  width: 300px;
-  height: 300px;
-}
-
-@keyframes cta-breathe {
-  0%, 100% {
-    box-shadow: 0 0 30px rgba(139, 92, 246, 0.5), 0 4px 16px rgba(139, 92, 246, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 50px rgba(139, 92, 246, 0.7), 0 8px 32px rgba(139, 92, 246, 0.5), 0 0 80px rgba(139, 92, 246, 0.3);
-  }
-}
-
 @media (max-width: 768px) {
   .badge-shimmer {
     font-size: 12px;
@@ -2286,118 +1871,23 @@ footer {
 }
 
 
-.style-toggle-btn {
-  display: none;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px 0;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  color: var(--color-text-primary);
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  margin-top: var(--spacing-sm);
-  animation: pulse-border 3s ease-in-out infinite;
-}
-
-.style-toggle-btn:not(.active)::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(139, 92, 246, 0.2),
-    transparent
-  );
-  animation: shimmer-continuous 3s ease-in-out infinite;
-}
-
-.style-toggle-btn:hover {
-  background: rgba(139, 92, 246, 0.15);
-  border-color: rgba(139, 92, 246, 0.4);
-  transform: translateY(-1px);
-}
-
-.style-toggle-btn.active {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: #fff;
-  margin-bottom: var(--spacing-md);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
-}
-
-.toggle-icon {
-  width: 16px;
-  height: 16px;
-  opacity: 0.8;
-  transition: transform 0.3s ease;
-  margin-top: 2px;
-}
-
-.style-toggle-btn.active .toggle-icon {
-  transform: rotate(180deg);
-  opacity: 1;
-}
-
-.previous-styles-note {
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid rgba(139, 92, 246, 0.3);
-  border-radius: var(--radius-sm);
-  color: var(--color-text-primary);
-  font-size: 14px;
-  font-weight: 500;
-  text-align: center;
-  background: rgba(139, 92, 246, 0.05);
-  margin-bottom: var(--spacing-md);
-}
-
 @media (max-width: 768px) {
-  .pricing-card-horizontal {
-    padding-bottom: 16px;
-    height: auto !important;
+  .styles-listing-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
-
-  .style-toggle-btn {
-    margin-bottom: 0 !important;
+  
+  .style-category-group {
+    padding: 16px;
   }
-
-  .pricing-right {
-    flex: 0 0 auto;
+  
+  .category-header {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
   }
-
-  .styles-grid {
-    padding-bottom: 0;
-  }
-
-  .styles-collapsible.expanded {
-    margin-bottom: 24px;
-  }
-
-  .previous-styles-note {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 0;
-    padding: var(--spacing-sm);
-    margin-bottom: var(--spacing-md);
-  }
-}
-
-@media (min-width: 769px) {
-  .styles-collapsible {
-    display: block !important;
-    grid-template-rows: unset !important;
+  
+  .category-name {
+    font-size: 16px;
   }
 }
 </style>
