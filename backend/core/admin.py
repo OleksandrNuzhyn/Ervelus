@@ -2,8 +2,6 @@ from django.contrib import admin, messages
 from django.utils import timezone
 from solo.admin import SingletonModelAdmin
 from .models import ApplicationConfig
-from django.contrib.sites.models import Site
-from django.contrib.sites.admin import SiteAdmin
 from django.contrib.admin.models import LogEntry as AdminLogEntry
 from gdpr_assist.admin import PersonalData, PersonalDataAdmin
 from gdpr_assist.admin.tool import PersonalDataSearchForm
@@ -15,7 +13,6 @@ from collections import defaultdict
 from django.shortcuts import redirect, render
 from django import forms
 
-admin.site.unregister(Site)
 admin.site.unregister(PersonalData)
 
 AdminLogEntry._meta.verbose_name = "Admin Record"
@@ -43,13 +40,6 @@ class AdminLogEntryAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
-
-
-@admin.register(Site)
-class CustomSiteAdmin(SiteAdmin):
-    list_display = ('id', 'domain', 'name')
-    search_fields = ('domain', 'name')
-    ordering = ('-id',)
 
 
 class CustomPersonalDataSearchForm(PersonalDataSearchForm):

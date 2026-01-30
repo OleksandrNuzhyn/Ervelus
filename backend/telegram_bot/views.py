@@ -5,7 +5,6 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
-from allauth.account.models import EmailAddress
 from agreements.services import accept_user_document_version
 from agreements.models import TermsVersion
 from users.models import UserProfile
@@ -51,33 +50,18 @@ def telegram_auth(request):
 def create_telegram_user(telegram_data, request):
     telegram_id = str(telegram_data.get('id'))
     email = f"tg_{telegram_id}@tma.ervelus.com"
-    
-    user = User.objects.filter(email=email).first()
 
-    if not user:
-        user = User.objects.create_user(
-            username=f"tg_{telegram_id}",
-            email=email,
-            password=None,
-            first_name=telegram_data.get('first_name', ''),
-            last_name=telegram_data.get('last_name', '')
-        )
-        user.set_unusable_password()
-        user.save()
+    user = User.objects.create_user(
+        username=f"tg_{telegram_id}",
+        email=email,
+        password=None,
+        first_name=telegram_data.get('first_name', ''),
+        last_name=telegram_data.get('last_name', '')
+    )
+    user.set_unusable_password()
+    user.save()
 
-        EmailAddress.objects.create(
-            user=user, 
-            email=email, 
-            verified=True, 
-            primary=True
-        )
-        
-        user_profile = UserProfile.objects.create(user=user, telegram_id=telegram_id)
-    else:
-        EmailAddress.objects.filter(user=user, email=email).update(verified=True)
-        user_profile = UserProfile.objects.get(user=user)
-        user_profile.telegram_id = telegram_id
-        user_profile.save()
+    UserProfile.objects.create(user=user, telegram_id=telegram_id)
     
     required_document_types = [
         TermsVersion.DocumentType.TERMS_OF_SERVICE,
@@ -89,11 +73,11 @@ def create_telegram_user(telegram_data, request):
     ).order_by('document_type', '-version').distinct('document_type')
 
     if len(latest_documents_version_to_accept) != len(required_document_types):
-        raise Exception()
+        raise Exception("Cannot auto-accept terms. Not all required documents are found")
 
     ip_address = request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0].strip()
     user_agent = request.META.get('HTTP_USER_AGENT', '')
-    context = {"source": "telegram_app", "method": "automatic"}
+    context = {"source": "tma", "method": "automatic"}
 
     for latest_document_version_to_accept in latest_documents_version_to_accept:
         accept_user_document_version(

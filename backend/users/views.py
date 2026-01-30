@@ -1,62 +1,13 @@
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.account.signals import user_signed_up
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-from dj_rest_auth.registration.views import SocialLoginView, VerifyEmailView
-from dj_rest_auth.app_settings import api_settings
-from dj_rest_auth.models import get_token_model
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from generations.models import GenerationRequest
 from rest_framework.response import Response
 from .models import UserProfile
-from django.dispatch import receiver
 from django.db import transaction
 from . import services
-import requests
 import logging
 
 logger = logging.getLogger(__name__)
-
-@receiver(user_signed_up)
-def user_signed_up_handler(request, user, **kwargs):
-    request.is_registration = True
-
-
-class GoogleLogin(SocialLoginView):
-    adapter_class = GoogleOAuth2Adapter
-    client_class = OAuth2Client
-
-    def get_response(self):
-        response = super().get_response()
-        response.data['is_registration'] = getattr(self.request, 'is_registration', False)
-        return response
-
-    def login(self):
-        self.user = self.serializer.validated_data['user']
-        token_model = get_token_model()
-        
-        if token_model:
-            self.token = api_settings.TOKEN_CREATOR(token_model, self.user, self.serializer)
-
-
-class CustomVerifyEmailView(VerifyEmailView):
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.kwargs['key'] = serializer.validated_data['key']
-        confirmation = self.get_object()
-        confirmation.confirm(self.request)
-        
-        user = confirmation.email_address.user
-        token_model = get_token_model()
-
-        if token_model:
-            token = api_settings.TOKEN_CREATOR(token_model, user, serializer)
-            token_serializer_class = api_settings.TOKEN_SERIALIZER
-            response_data = token_serializer_class(token).data
-            
-            return Response(response_data, 200)
-
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -86,18 +37,6 @@ def account_delete(request):
         return Response(status=400)
 
     try:
-        services.remove_user_from_mailgun_list(user)
-    except requests.exceptions.HTTPError as e:
-        if e.response.status_code != 404:
-            raise
-    except requests.exceptions.RequestException as e:
-        logger.error("Failed to remove user from Mailgun list in delete request due to HTTP error", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)
-        return Response(status=400)
-    except Exception as e:
-        logger.error("Failed to remove user from Mailgun list in delete request due to unknown error", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)
-        return Response(status=400)
-
-    try:
         services.schedule_user_images_deletion(user)
     except Exception as e:
         logger.error("Failed to schedule user images deletion in delete request", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)
@@ -115,9 +54,6 @@ def account_delete(request):
 
             for promo_code_usage in user.promo_code_usages.all():
                 promo_code_usage.anonymise()
-                
-            user.socialaccount_set.all().delete()
-            user.emailaddress_set.all().delete()
 
             if hasattr(user, 'profile'):
                 user.profile.anonymise()

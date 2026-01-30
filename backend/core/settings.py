@@ -25,7 +25,6 @@ ALLOWED_HOSTS = [
 
 
 INSTALLED_APPS = [
-    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -37,19 +36,10 @@ INSTALLED_APPS = [
     'gdpr_assist',
     'django_otp',
     'django_otp.plugins.otp_totp',
-    'anymail',
     'solo',
 
     'rest_framework',
     'rest_framework.authtoken',
-
-    'dj_rest_auth',
-    'dj_rest_auth.registration',
-
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
 
     'core',
     'users',
@@ -60,46 +50,6 @@ INSTALLED_APPS = [
     'marketing',
     'telegram_bot'
 ]
-
-SITE_ID = 1
-
-
-
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-]
-
-ACCOUNT_ADAPTER = 'users.adapters.CustomAccountAdapter'
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-ACCOUNT_EMAIL_SUBJECT_PREFIX = "Welcome to Ervelus! "
-ACCOUNT_RATE_LIMITS = {
-    'confirm_email': '1/15s',
-}
-
-
-
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'APP': {
-            'client_id': os.getenv('GOOGLE_CLIENT_ID'),
-            'secret': os.getenv('GOOGLE_CLIENT_SECRET'),
-        },
-        'SCOPE': [
-            'email',
-        ],
-    }
-}
-
-SOCIALACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-SOCIALACCOUNT_AUTO_SIGNUP = True
-SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
-SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT	= True
-SOCIALACCOUNT_ADAPTER = 'users.adapters.CustomSocialAccountAdapter'
 
 
 
@@ -113,7 +63,6 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django_otp.middleware.OTPMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
@@ -131,8 +80,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'core.context_processors.frontend_url',
+                'django.contrib.messages.context_processors.messages'
             ],
         },
     },
@@ -143,16 +91,8 @@ ASGI_APPLICATION = 'core.asgi.application'
 WEB_WORKER_URL = os.getenv("WEB_WORKER_URL")
 GENERATIONS_WORKER_URL = os.getenv("GENERATIONS_WORKER_URL")
 BACKGROUND_WORKER_URL = os.getenv("BACKGROUND_WORKER_URL")
-FRONTEND_URL = os.getenv("FRONTEND_URL")
 
 
-
-REST_AUTH = {
-    'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer',
-    'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
-    'SESSION_LOGIN': False,
-    'USE_JWT': False
-}
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -198,26 +138,6 @@ CORS_ALLOW_CREDENTIALS = True
 
 
 
-ANYMAIL = {
-    "MAILGUN_API_KEY": os.getenv("MAILGUN_API_KEY"),
-    "MAILGUN_SENDER_DOMAIN": os.getenv("MAILGUN_SENDER_DOMAIN"),
-    "MAILGUN_API_URL": os.getenv("MAILGUN_API_BASE_URL")
-}
-
-MAILGUN_API_KEY = os.getenv("MAILGUN_API_KEY")
-MAILGUN_SENDER_DOMAIN = os.getenv("MAILGUN_SENDER_DOMAIN")
-MAILGUN_API_BASE_URL = os.getenv("MAILGUN_API_BASE_URL")
-MAILGUN_MAILING_LIST_ADDRESS = os.getenv("MAILGUN_MAILING_LIST_ADDRESS")
-
-EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
-
-
-
-TELEGRAM_API_KEY = os.getenv("TELEGRAM_API_KEY")
-
-
-
 GCP_PROJECT_ID = os.getenv("GCP_PROJECT_ID")
 GCP_TASKS_SECRET_KEY = os.getenv("GCP_TASKS_SECRET_KEY")
 GCP_TASKS_LOCATION = os.getenv("GCP_TASKS_LOCATION")
@@ -227,6 +147,10 @@ GCP_TASKS_DELETE_EVENTS_QUEUE_ID = os.getenv("GCP_TASKS_DELETE_EVENTS_QUEUE_ID")
 GCP_COMPLIANCE_BUCKET_NAME = os.getenv("GCP_COMPLIANCE_BUCKET_NAME")
 GCP_STORAGE_BUCKET_NAME = os.getenv("GCP_STORAGE_BUCKET_NAME")
 GCP_TEMP_BUCKET_NAME = os.getenv("GCP_TEMP_BUCKET_NAME")
+
+
+
+TELEGRAM_API_KEY = os.getenv("TELEGRAM_API_KEY")
 
 
 

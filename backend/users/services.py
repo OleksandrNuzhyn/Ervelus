@@ -1,12 +1,11 @@
-from django.conf import settings
+from django.core.serializers.json import DjangoJSONEncoder
 from generations.services import gcs_sync_storage_client
 from django.contrib.auth import get_user_model
 from agreements.models import UserAgreement
 from payments.models import UserPurchase
-from django.core.serializers.json import DjangoJSONEncoder
 from generations import services
 from django.utils import timezone
-import requests
+from django.conf import settings
 import logging
 import json
 
@@ -42,15 +41,6 @@ def upload_user_data_for_retention_to_gcs(user, user_data_for_retention):
     json_data = json.dumps(user_data_for_retention, cls=DjangoJSONEncoder, indent=4)
     blob.upload_from_string(json_data, content_type='application/json')
 
-
-
-def remove_user_from_mailgun_list(user):
-    url = f"{settings.MAILGUN_API_BASE_URL.rstrip('/')}/lists/{settings.MAILGUN_MAILING_LIST_ADDRESS.rstrip('/')}/members/{user.email}"
-    auth = ('api', settings.MAILGUN_API_KEY)
-    
-    response = requests.delete(url, auth=auth)
-    response.raise_for_status()
-
 def schedule_user_images_deletion(user):
     bucket_name = settings.GCP_STORAGE_BUCKET_NAME
     bucket = gcs_sync_storage_client.bucket(bucket_name)
@@ -67,83 +57,3 @@ def schedule_user_images_deletion(user):
     ]
 
     services.schedule_image_deletion(image_urls)
-
-
-
-def sync_users_with_mailgun_list():
-    try:
-        user_emails = list(
-            User.objects.filter(
-                is_active=True,
-                is_staff=False,
-                emailaddress__verified=True
-            ).values_list('email', flat=True)
-        )
-
-        total_users = len(user_emails)
-        batch_size = 1000
-        is_success = True
-
-        if not user_emails:
-            return {"is_success": True, "message": "No users found to sync with Mailgun"}
-
-        url = f"{settings.MAILGUN_API_BASE_URL.rstrip('/')}/lists/{settings.MAILGUN_MAILING_LIST_ADDRESS.rstrip('/')}/members.json"
-        auth = ('api', settings.MAILGUN_API_KEY)
-
-        for i in range(0, total_users, batch_size):
-            if is_success:
-                batch = user_emails[i:i+batch_size]
-                
-                data = {
-                    'members': json.dumps(batch),
-                    'upsert': 'true'
-                }
-
-                try:
-                    response = requests.post(url, auth=auth, data=data)
-                    response.raise_for_status()
-                except requests.exceptions.RequestException as e:
-                    is_success = False
-                    logger.error("Failed to sync users with Mailgun", extra={'error': str(e)}, exc_info=True)
-                    return {"is_success": is_success, "message": "Failed to sync users with Mailgun"}
-        return {"is_success": is_success, "message": f"Mailgun sync completed successfully for {total_users} users"}
-    except Exception as e:
-        logger.error("Failed to sync users with Mailgun", extra={'error': str(e)}, exc_info=True)
-        return {"is_success": False, "message": "An unexpected error occurred during Mailgun sync"}
-
-def get_mailgun_template_list():
-    url = f"{settings.MAILGUN_API_BASE_URL.rstrip('/')}/{settings.MAILGUN_SENDER_DOMAIN.rstrip('/')}/templates"
-    auth = ("api", settings.MAILGUN_API_KEY)
-    templates = []
-    
-    try:
-        response = requests.get(url, auth=auth)
-        response.raise_for_status()
-        data = response.json()
-        
-        for item in data.get('items', []):
-            templates.append((item['name'], item['name']))
-    except Exception as e:
-        logger.error("Failed to get Mailgun template list", extra={'error': str(e)}, exc_info=True)
-        return []
-    
-    return templates
-
-def send_email(recipient, template_name):
-    url = f"{settings.MAILGUN_API_BASE_URL.rstrip('/')}/{settings.MAILGUN_SENDER_DOMAIN.rstrip('/')}/messages"
-    auth = ("api", settings.MAILGUN_API_KEY)
-    
-    data = {
-        "from": settings.DEFAULT_FROM_EMAIL,
-        "to": recipient,
-        "template": template_name
-    }
-    
-    try:
-        response = requests.post(url, auth=auth, data=data)
-        response.raise_for_status()
-
-        return {"is_success": True, "message": f'Email with template "{template_name}" sent to {recipient}'}
-    except Exception as e:
-        logger.error("Failed to send email", extra={'error': str(e)}, exc_info=True)
-        return {"is_success": False, "message": "Failed to send email"}

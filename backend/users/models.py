@@ -1,8 +1,6 @@
 from datetime import datetime, timezone
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
-from allauth.account.models import EmailAddress
-from allauth.socialaccount.models import SocialAccount
 from rest_framework.authtoken.models import Token
 from django.conf import settings
 from django.db import models
@@ -78,38 +76,6 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f'Profile {self.user.email}'
-
-
-class EmailAddressPrivacyMeta:
-    can_anonymise = False
-    search_fields = [
-        'email',
-    ]
-    export_fields = [
-        'email', 
-        'verified', 
-        'primary'
-    ]
-
-
-gdpr_assist.register(EmailAddress, EmailAddressPrivacyMeta)
-
-
-class SocialAccountPrivacyMeta:
-    can_anonymise = False
-    search_fields = [
-        'user__email',
-    ]
-    export_fields = [
-        'provider', 
-        'uid', 
-        'last_login', 
-        'date_joined', 
-        'extra_data'
-    ]
-
-
-gdpr_assist.register(SocialAccount, SocialAccountPrivacyMeta)
 
 
 class TokenPrivacyMeta:
