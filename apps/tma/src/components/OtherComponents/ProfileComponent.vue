@@ -1,5 +1,5 @@
 <template>
-  <div class="text-white h-full flex flex-col font-sans profile-container pb-6">
+  <div class="text-white h-full overflow-y-auto flex flex-col font-sans profile-container pb-12">
     <div class="noise-overlay"></div>
     <div class="ambient-light"></div>
     <div class="global-background">
