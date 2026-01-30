@@ -16,28 +16,15 @@
         <div class="hero-container" @mousemove="handleGlobalMouseMove">
           <div class="hero-content">
             <div class="v-spacer"></div>
-            
             <div class="hero-text-decor-group">
-              <!-- Badge removed to reduce clutter/pile effect -->
-
               <h1 class="hero-title">
                 Transform Your <br />
                 Photos <span class="text-gradient">into AI Art</span>
               </h1>
 
               <p class="hero-subtitle">
-                Professional AI styling. 30+ styles available
+                Cinematic Quality <span class="dot-separator">•</span> 30+ Styles
               </p>
-            </div>
-
-            <div class="v-spacer"></div>
-
-            <div class="hero-visual-mobile md:hidden">
-              <div class="floating-cards-mobile">
-                <div class="card-m card-1"><img src="@/assets/home_page/paris-flying.webp" alt="1" /></div>
-                <div class="card-m card-2"><img src="@/assets/home_page/elevator-flying.webp" alt="2" /></div>
-                <div class="card-m card-3"><img src="@/assets/home_page/urban-flying.webp" alt="3" /></div>
-              </div>
             </div>
 
             <div class="v-spacer"></div>
@@ -46,30 +33,27 @@
               Launch App
             </a>
           </div>
-          <div class="hero-visual hidden md:block">
-            <div class="floating-cards">
-              <div class="card card-main tilt-card" ref="heroCard" @click="bringCardToFront('main')">
-                <div class="card-inner">
-                  <img src="@/assets/home_page/paris-flying.webp" alt="AI Art Main" class="card-img" />
-                  <div class="card-shine"></div>
-                </div>
-              </div>
-              <div class="card card-floating card-1" @click="bringCardToFront('card1')">
-                <img src="@/assets/home_page/urban-flying.webp" alt="Urban" class="card-img" />
-              </div>
-              <div class="card card-floating card-2" @click="bringCardToFront('card2')">
-                <img src="@/assets/home_page/elevator-flying.webp" alt="Elevator" class="card-img" />
-              </div>
-            </div>
+          <div class="hero-visual">
+          <div class="carousel-3d-container">
+             <div 
+               v-for="(slide, index) in carouselSlides" 
+               :key="slide.id"
+               class="carousel-slide-card"
+               :class="getSlideClass(index)"
+               @click="activeSlideIndex = index"
+             >
+               <img :src="getSlideImage(slide)" :alt="slide.title" class="slide-img" />
+             </div>
+          </div>
           </div>
         </div>
       </section>
 
       <section class="section-comparison">
         <div class="section-header">
-          <h2 class="section-title">See the Difference</h2>
+          <h2 class="section-title">See the Results</h2>
           <p class="section-subtitle">
-            Drag the slider to compare original photo and AI result
+            Drag the slider to compare
           </p>
         </div>
 
@@ -120,7 +104,7 @@
         <div class="section-header">
           <h2 class="section-title">Style Library</h2>
           <p class="section-subtitle">
-            Explore our collection of creative styles
+            Explore collection of creative styles
           </p>
         </div>
 
@@ -151,7 +135,7 @@
         <div class="section-header">
           <h2 class="section-title">How it Works</h2>
           <p class="section-subtitle">
-            Transform your photos in three simple steps
+            Transform your photos in three steps
           </p>
         </div>
 
@@ -172,7 +156,7 @@
         <div class="section-header">
           <h2 class="section-title">See It in Action</h2>
           <p class="section-subtitle">
-            Watch the real-time generation process
+            Real-time generation process
           </p>
         </div>
 
@@ -187,7 +171,6 @@
 
 <script setup>
 import { ref, onUnmounted, onMounted, computed } from 'vue'
-import { useRouter } from 'vue-router'
 import originalImg from '@/assets/home_page/original.webp'
 import darkFantasyResult from '@/assets/home_page/dark-fantasy_result.webp'
 import lightFantasyResult from '@/assets/home_page/light-fantasy_result.webp'
@@ -196,6 +179,9 @@ import gildedResult from '@/assets/home_page/gilded-result.webp'
 import medievalResult from '@/assets/home_page/medieval-result.webp'
 import ervelusDemoVideo from '@/assets/home_page/Ervelus Demo.mp4'
 import posterImg from '@/assets/home_page/poster.webp'
+import parisFlying from '@/assets/home_page/paris-flying.webp'
+import urbanFlying from '@/assets/home_page/urban-flying.webp'
+import elevatorFlying from '@/assets/home_page/elevator-flying.webp'
 import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue'
 import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue'
 import {
@@ -210,20 +196,16 @@ import {
   GlobeAltIcon,
   SparklesIcon,
   ArrowTrendingUpIcon,
-  ChevronDownIcon
 } from '@heroicons/vue/24/outline'
 
-const router = useRouter()
 const sliderPosition = ref(50)
 let isDragging = false
-const selectedPreviewStyle = ref('dark-fantasy')
-
-const heroCard = ref(null)
+const selectedPreviewStyle = ref('ancient-greece')
 
 const previewStyles = [
+  { id: 'ancient-greece', name: 'Ancient Greece', icon: GlobeAltIcon },
   { id: 'dark-fantasy', name: 'Dark Fantasy', icon: FireIcon },
   { id: 'light-fantasy', name: 'Light Fantasy', icon: SparklesHeroIcon },
-  { id: 'ancient-greece', name: 'Ancient Greece', icon: GlobeAltIcon },
   { id: 'gilded', name: 'The Gilded Age', icon: SparklesIcon },
   { id: 'medieval', name: 'Medieval', icon: CubeIcon }
 ]
@@ -285,13 +267,11 @@ const styleCategories = [
   }
 ]
 
-/* 'genres' computed property removed as it is now merged into styleCategories */
-
 const steps = computed(() => [
   {
     id: 'upload',
     title: 'Upload Your Photo',
-    description: 'Upload a selfie, portrait, or any image from your gallery',
+    description: 'Upload a portrait or image from gallery',
     icon: CloudArrowUpIcon
   },
   {
@@ -303,7 +283,7 @@ const steps = computed(() => [
   {
     id: 'generate',
     title: 'Transform & Download',
-    description: 'Download high-quality art instantly. Ready to share',
+    description: 'Download high-quality art instantly',
     icon: ArrowDownTrayIcon
   }
 ])
@@ -343,50 +323,6 @@ function stopDrag() {
   document.removeEventListener('touchend', stopDrag)
 }
 
-function handleTryFree() {
-  router.push('/register')
-}
-
-function handleGlobalMouseMove(e) {
-  if (heroCard.value) {
-    const rect = heroCard.value.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-
-    const centerX = rect.width / 2
-    const centerY = rect.height / 2
-
-    const rotateX = ((y - centerY) / centerY) * -5
-    const rotateY = ((x - centerX) / centerX) * 5
-
-    heroCard.value.style.transform = `translate(-50%, -50%) rotate(-5deg) perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
-
-    const shine = heroCard.value.querySelector('.card-shine')
-    if (shine) {
-      shine.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.2), transparent 80%)`
-    }
-  }
-}
-
-function bringCardToFront(cardId) {
-  const cards = document.querySelectorAll('.floating-cards .card')
-  cards.forEach(card => {
-    card.style.zIndex = '1'
-  })
-
-  if (cardId === 'main' && heroCard.value) {
-    heroCard.value.style.zIndex = '10'
-  }
-  else if (cardId === 'card1') {
-    const card1 = document.querySelector('.card-1')
-    if (card1) card1.style.zIndex = '10'
-  }
-  else if (cardId === 'card2') {
-    const card2 = document.querySelector('.card-2')
-    if (card2) card2.style.zIndex = '10'
-  }
-}
-
 const demoVideo = ref(null)
 let videoObserver = null
 
@@ -405,7 +341,42 @@ onMounted(() => {
   if (demoVideo.value) {
     videoObserver.observe(demoVideo.value)
   }
+
+  startCarousel()
 })
+
+const carouselSlides = [
+  { id: 'paris', img: parisFlying, title: 'Paris' },
+  { id: 'urban', img: urbanFlying, title: 'Urban' },
+  { id: 'elevator', img: elevatorFlying, title: 'Elevator' }
+]
+const activeSlideIndex = ref(0)
+let carouselInterval = null
+
+function startCarousel() {
+  if (carouselInterval) clearInterval(carouselInterval)
+  carouselInterval = setInterval(() => {
+    nextSlide()
+  }, 2000)
+}
+
+function nextSlide() {
+  activeSlideIndex.value = (activeSlideIndex.value + 1) % carouselSlides.length
+}
+
+function getSlideClass(index) {
+  const current = activeSlideIndex.value
+  const total = carouselSlides.length
+  
+  if (index === current) return 'slide-center'
+  if (index === (current + 1) % total) return 'slide-right'
+  if (index === (current - 1 + total) % total) return 'slide-left'
+  return 'slide-hidden'
+}
+
+function getSlideImage(slide) {
+  return slide.img
+}
 
 onUnmounted(() => {
   if (videoObserver) {
@@ -475,7 +446,6 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  /* Cool white/blue glow for saturation */
   background: radial-gradient(circle at 50% 0%, rgba(139, 180, 255, 0.08), transparent 70%);
   pointer-events: none;
   z-index: 0;
@@ -503,11 +473,11 @@ html, body {
 .orb-1 {
   width: 800px;
   height: 800px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%); /* Soft white glow */
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
   top: -200px;
   left: -200px;
-  opacity: 1; /* Gradient handles opacity */
-  filter: blur(80px); /* Reduced blur as gradient is soft */
+  opacity: 1;
+  filter: blur(80px); 
 }
 
 .orb-2 {
@@ -536,7 +506,7 @@ html, body {
     linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 50px 50px;
   mask-image: radial-gradient(circle at 50% 40%, black 60%, transparent 100%);
-  opacity: 0.5;
+  opacity: 0.7;
   display: block;
 }
 
@@ -555,7 +525,7 @@ html, body {
   font-weight: 400;
   line-height: 1.5;
   color: var(--color-text-secondary);
-  margin: var(--spacing-sm) 0 0;
+  margin: 0;
   max-width: 700px;
   margin-left: auto;
   margin-right: auto;
@@ -566,6 +536,10 @@ html, body {
   margin-bottom: var(--spacing-xl);
 }
 
+.section-title {
+  margin-bottom: 20px;
+}
+
 .hero-apple {
   position: relative;
   min-height: 90vh;
@@ -574,6 +548,20 @@ html, body {
   justify-content: center;
   padding: var(--spacing-xl) var(--spacing-md);
   overflow: hidden;
+}
+
+@media (min-width: 1025px) {
+  .section-steps {
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+
+.section-product-demo {
+  padding-bottom: calc(var(--spacing-2xl) * 2); 
 }
 
 .video-container {
@@ -592,22 +580,53 @@ html, body {
 
 .hero-container {
   display: grid;
-  grid-template-columns: 1.4fr 1fr; /* Give more space to text column (approx 60/40) */
-  gap: 40px; /* Reducing gap slightly to help space */
+  grid-template-columns: 1.4fr 1fr;
+  gap: 40px;
   align-items: center;
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
-  min-height: 85vh; /* Enough height but not too much */
+  min-height: 85vh;
   padding-top: 0;
+}
+
+.grid-overlay {
+  opacity: 0.7;
+  filter: brightness(1.5);
+  display: block; 
 }
 
 .hero-content {
   position: relative;
   z-index: 2;
-  z-index: 2;
   text-align: left;
-  max-width: none; /* Let grid define width */
+  max-width: none;
+}
+
+@media (max-width: 768px) {
+  .hero-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .hero-title {
+    text-align: center;
+    width: 100%;
+  }
+
+  .hero-title br {
+    display: block;
+  }
+  
+  .hero-subtitle {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    color: rgba(255, 255, 255, 0.85);
+  }
 }
 
 .hero-badge-minimal {
@@ -617,17 +636,13 @@ html, body {
   position: relative;
 }
 
-/* Removed vertical border styling for cleaner look */
 .hero-text-decor-group {
   display: block;
   text-align: left;
   padding-left: 0;
   border: none;
-  margin-bottom: 24px; /* Reduced bottom margin */
+  margin-bottom: 24px;
 }
-
-/* Enhancing Mobile Layout for the Group */
-/* Removed mobile border override as border is gone */
 
 .badge-dot {
   width: 6px;
@@ -653,31 +668,40 @@ html, body {
 }
 
 .hero-title {
-  font-size: clamp(48px, 5vw, 72px); /* Much larger Apple-style */
+  font-size: clamp(48px, 5vw, 72px);
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.03em;
   color: var(--color-text-primary);
-  margin: 0 0 var(--spacing-md); /* Increased margin */
+  margin: 0 0 var(--spacing-md);
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #fff 30%, #94a3b8 100%);
+  background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.2));
+  filter: drop-shadow(0 0 30px rgba(165, 180, 252, 0.2));
   padding-right: 0.1em;
   display: inline-block;
 }
 
 .hero-subtitle {
-  font-size: clamp(20px, 2vw, 24px); /* Larger subtitle */
+  font-size: clamp(20px, 2vw, 24px);
   font-weight: 400;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.75);
   margin: 0 0 32px;
-  max-width: 700px; /* Increased to ensure 1 line */
+  max-width: 700px;
+}
+
+.dot-separator {
+  font-size: 0.7em;
+  vertical-align: middle;
+  margin: 0 8px;
+  opacity: 0.75;
+  position: relative;
+  top: -1px;
 }
 
 .hero-description {
@@ -690,13 +714,11 @@ html, body {
   margin-right: auto;
 }
 
-/* High Contrast Pills (White BG, Black Text) */
-/* Glassy Pill Style */
 .hero-badge-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 12px; /* Smaller padding */
+  padding: 4px 12px;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
@@ -715,9 +737,8 @@ html, body {
 .badge-text {
   font-size: 12px;
   font-weight: 600;
-  color: #fff; /* White text for glass */
+  color: #fff;
   letter-spacing: 0.08em;
-  /* text-transform: uppercase; Removed */
 }
 
 .badge-dot {
@@ -742,7 +763,7 @@ html, body {
   font-size: 17px;
   font-weight: 700;
   color: #000;
-  background: #ffffff;
+  background: linear-gradient(135deg, #ffffff 40%, #c7d2fe 100%);
   border: none;
   border-radius: 980px;
   cursor: pointer;
@@ -751,8 +772,8 @@ html, body {
 }
 
 .cta-primary:hover {
-  background: #e2e8f0;
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #ffffff 50%, #e0e7ff 100%);
+  transform: scale(1.03);
   box-shadow: 0 0 60px rgba(255, 255, 255, 0.3), 0 0 30px rgba(255, 255, 255, 0.2);
 }
 
@@ -763,7 +784,7 @@ html, body {
 }
 
 .hero-cta {
-  margin-top: 16px; /* Reduced from large spacing */
+  margin-top: 16px;
 }
 
 .cta-arrow {
@@ -807,7 +828,7 @@ html, body {
 
 .card:hover {
   filter: brightness(1.1);
-  box-shadow: 0 30px 60px -12px rgba(255, 255, 255, 0.25); /* White glow instead of violet */
+  box-shadow: 0 30px 60px -12px rgba(255, 255, 255, 0.25);
 }
 
 .card-img {
@@ -878,54 +899,92 @@ html, body {
   z-index: 3;
 }
 
-.card-floating {
-  width: 240px;
-  height: 320px;
-  z-index: 1;
+.carousel-3d-container {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1200px;
+}
+
+.carousel-slide-card {
+  position: absolute;
+  width: 280px;
+  height: 420px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  opacity: 0;
+  z-index: 0;
+  transform-origin: center center;
+  transform: translate3d(0, 0, -200px) scale(0.8);
+  pointer-events: none;
+}
+
+.slide-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.slide-center {
+  opacity: 1;
+  z-index: 10;
+  transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  pointer-events: auto;
+  box-shadow: 0 35px 70px rgba(0,0,0,0.6);
+  border-color: rgba(255, 255, 255, 0.02);
+}
+
+.slide-left {
+  opacity: 0.6;
+  z-index: 5;
+  transform: translate3d(-220px, 10px, -100px) scale(0.85) rotate(-8deg);
   filter: brightness(0.7);
-  transition: all 0.5s ease;
+  cursor: pointer;
+  pointer-events: auto;
 }
 
-.card-floating:hover {
-  filter: brightness(1);
-  z-index: 3;
+.slide-right {
+  opacity: 0.6;
+  z-index: 5;
+  transform: translate3d(220px, 10px, -100px) scale(0.85) rotate(8deg);
+  filter: brightness(0.7);
+  cursor: pointer;
+  pointer-events: auto;
 }
 
-.card-1 {
-  top: 10%;
-  right: -10%; /* Move outwards */
-  transform: rotate(12deg);
-  animation: float-right 8s ease-in-out infinite 1s;
+.slide-hidden {
+  opacity: 0;
+  z-index: 0;
+  transform: translate3d(0, 0, -300px);
 }
 
-.card-2 {
-  bottom: 5%;
-  left: -10%; /* Move outwards */
-  transform: rotate(-12deg);
-  animation: float-left 7s ease-in-out infinite 2s;
-}
-
-@keyframes float-right {
-
-  0%,
-  100% {
-    transform: translateY(0px) rotate(10deg);
+@media (max-width: 768px) {
+  .carousel-3d-container {
+    height: 400px;
+    perspective: 800px;
   }
-
-  50% {
-    transform: translateY(-20px) rotate(10deg);
+  
+  .carousel-slide-card {
+    width: 220px;
+    height: 330px;
+    border: 1px solid rgba(255, 255, 255, 0.08); 
   }
-}
-
-@keyframes float-left {
-
-  0%,
-  100% {
-    transform: translateY(0px) rotate(-10deg);
+  
+  .slide-left {
+    transform: translate3d(-100px, 0, -100px) scale(0.85) rotate(-5deg);
   }
-
-  50% {
-    transform: translateY(-20px) rotate(-10deg);
+  
+  .slide-right {
+    transform: translate3d(100px, 0, -100px) scale(0.85) rotate(5deg);
   }
 }
 
@@ -956,19 +1015,17 @@ section {
 
 .style-pill:hover {
   background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .style-pill.active {
   color: #000;
-  background: #ffffff;
-  border-color: #ffffff;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
-  font-weight: 700;
+  background: linear-gradient(135deg, #ffffff 40%, #c7d2fe 100%);
+  border-color: transparent;
+  box-shadow: 0 0 20px rgba(199, 210, 254, 0.3);
 }
 
 .comparison-container {
-  max-width: 1100px;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
@@ -1008,14 +1065,6 @@ section {
   color: #fff;
 }
 
-.comparison-label {
-  font-size: 15px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.6);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
 .comparison-img {
   width: 100%;
   height: 100%;
@@ -1032,12 +1081,18 @@ section {
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  padding: 6px 12px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  background: rgba(20, 20, 20, 0.6);
+  backdrop-filter: blur(10px);
+  padding: 10px 20px;
+  border-radius: 980px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-shadow: none;
+  white-space: nowrap;
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+  text-transform: none;
+  letter-spacing: normal;
 }
 
 .slider-handle-wrapper {
@@ -1106,7 +1161,6 @@ section {
 .styles-listing-container {
   max-width: 1200px;
   margin: 0 auto;
-  /* Removed double padding, reliance on section padding */
 }
 
 .styles-listing-grid {
@@ -1119,26 +1173,28 @@ section {
 
 @media (max-width: 768px) {
   .styles-listing-grid {
-    grid-template-columns: 1fr; /* Single column on mobile */
+    grid-template-columns: 1fr;
   }
 }
 
 .style-category-card {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(18, 18, 20, 0.75);
   border: 1px solid rgba(255, 255, 255, 0.02);
   border-radius: 16px;
   padding: 32px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
 .style-category-card:hover {
-  background: rgba(255, 255, 255, 0.05);
-  transform: translateY(-2px);
+  background: rgba(30, 30, 35, 0.8);
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
 }
 
 .card-header {
@@ -1169,29 +1225,38 @@ section {
 
 .category-desc {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.5);
-  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.5;
   margin: 0;
 }
 
 .style-tags-wrapper {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px; /* Kept 8px, but wide card should fix per-row issue */
+  gap: 8px;
 }
 
-/* Removed old category header style */
-
 .style-tag-pill {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.04);
-  padding: 8px 16px;
+  font-size: 15px;
+  color: var(--color-text-secondary);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px 20px;
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.02);
   transition: all 0.2s ease;
   line-height: 1.4;
   font-weight: 500;
+}
+
+@media (min-width: 769px) {
+  .style-tag-pill {
+    flex-grow: 1;
+    text-align: center;
+    width: auto;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .style-tag-pill:hover {
@@ -1257,8 +1322,8 @@ section {
 
 .genre-description {
   font-size: 13px;
-  line-height: 1.4;
-  color: var(--color-text-secondary);
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.75);
   margin: 0;
   word-wrap: break-word;
 }
@@ -1267,13 +1332,13 @@ section {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--spacing-lg);
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
 .step-item {
   text-align: center;
-  padding: var(--spacing-lg);
+  padding: 0;
 }
 
 .step-number {
@@ -1312,7 +1377,7 @@ section {
 .step-description {
   font-size: 16px;
   line-height: 1.5;
-  color: var(--color-text-secondary);
+  color: rgba(255, 255, 255, 0.75);
   margin: 0;
 }
 
@@ -1331,7 +1396,14 @@ footer {
 
 @media (max-width: 1024px) {
   section {
-    padding: var(--spacing-xl) var(--spacing-sm); /* Unified 16px side padding for all sections on mobile */
+    padding: var(--spacing-xl) var(--spacing-sm);
+  }
+
+  .section-steps {
+    min-height: auto;
+    display: block;
+    padding-top: var(--spacing-xl);
+    padding-bottom: var(--spacing-xl);
   }
 
   .hero-container {
@@ -1362,45 +1434,28 @@ footer {
       width: 100%;
       height: 100%;
       box-sizing: border-box;
-      padding: 0 var(--spacing-sm);
+      padding: 35px var(--spacing-sm) 15px;
+      justify-content: space-evenly;
+      gap: 16px;
     }
 
     .hero-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      padding-top: 70px;
-      padding-bottom: 30px;
+      display: contents;
     }
 
     .v-spacer {
-      flex: 1;
-      width: 100%;
-      min-height: 10px;
+      display: none;
     }
 
-    .v-spacer:nth-child(1) {
-      flex: 0.9;
-    }
-
-    .v-spacer:nth-child(3) {
-      flex: 0.2;
-    }
-
-    .v-spacer:nth-child(5),
-    .v-spacer:nth-child(7) {
-      flex: 2.5;
-    }
-
-    .hero-text-group {
+    .hero-text-decor-group {
+      order: 1;
       flex: 0 0 auto;
       display: flex;
       flex-direction: column;
       align-items: center;
       width: 100%;
       z-index: 10;
+      margin: 0;
     }
 
     .badge-pill {
@@ -1438,46 +1493,94 @@ footer {
     }
 
     .hero-title {
-      font-size: clamp(26px, 7.5vw, 32px);
+      font-size: 38px;
       line-height: 1.1;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
+      text-align: center;
+      font-weight: 700;
     }
+
+    .section-title {
+      font-size: 38px;
+      margin-bottom: 14px !important;
+    }
+
+    .hero-subtitle {
+       font-size: 18px;
+       line-height: 1.5;
+       color: rgba(255, 255, 255, 0.75);
+       text-align: center;
+       margin-bottom: 24px;
+       max-width: 90%;
+       margin-left: auto;
+       margin-right: auto;
+    }
+
+    .section-subtitle {
+      font-size: 18px;
+    }
+
 
     .hero-visual {
-      display: none !important;
+       display: flex !important;
+       align-items: center;
+       justify-content: center;
+       order: 2;
+       flex: 0 0 auto;
+       height: 35vh !important; /* Increased from 20vh to 28vh */
+       min-height: 180px;
+       margin: 0 !important;
+       width: 100%;
+       position: relative;
     }
 
-    .hero-visual-mobile {
-      flex: 0 1 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 35vh;
-      min-height: 160px;
-      max-height: 45vh;
-      width: 100%;
-      position: relative;
-    }
-
-    .floating-cards-mobile {
+    .carousel-3d-container {
       position: relative;
       height: 100%;
       width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1000px;
     }
 
-    .card-m {
+    .carousel-slide-card {
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 25vh;
-      height: 34vh;
-      max-width: 240px;
-      max-height: 320px;
-      border-radius: 20px;
+      height: 100% !important; 
+      max-height: 400px !important; 
+      width: auto;
+      aspect-ratio: 0.74;
+      border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      transition: all 0.5s ease;
       border: 1px solid rgba(255,255,255,0.15);
+      transform-origin: center center;
+    }
+    
+    .slide-center {
+      transform: translate(-50%, -50%) translate3d(0, 0, 0) scale(1) !important;
+      z-index: 10;
+    }
+
+    .slide-left {
+      transform: translate(-50%, -50%) translate3d(-60px, 0, -50px) scale(0.85) rotate(-5deg) !important;
+      z-index: 5;
+      opacity: 0.7;
+    }
+
+    .slide-right {
+      transform: translate(-50%, -50%) translate3d(60px, 0, -50px) scale(0.85) rotate(5deg) !important;
+      z-index: 5;
+      opacity: 0.7;
+    }
+    
+    .slide-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .card-m img {
@@ -1498,7 +1601,7 @@ footer {
     .card-3 { animation: heroCycle 6s infinite -4s; }
 
     .hero-subtitle {
-      font-size: 13.5px;
+      font-size: 18px;
       color: rgba(255, 255, 255, 0.82);
       margin-bottom: 0;
       display: block;
@@ -1517,6 +1620,7 @@ footer {
       margin: 0 !important;
       display: flex;
       justify-content: center;
+      order: 3;
     }
   }
 
@@ -1534,16 +1638,6 @@ footer {
     .hero-visual-mobile {
       min-height: 140px; 
       height: 25vh;
-    }
-
-    .card-m {
-      width: 150px;
-      height: 200px;
-    }
-
-    .hero-title {
-      font-size: 26px;
-      margin-bottom: 4px;
     }
     
     .v-spacer {
@@ -1709,24 +1803,26 @@ footer {
   }
 
   .hero-title {
-    font-size: 34px;
+    font-size: 38px;
     line-height: 1.1;
   }
 
+  .section-title {
+    font-size: 38px;
+  }
+
   .hero-subtitle {
-    font-size: 13px;
+    font-size: 18px;
     line-height: 1.6;
     opacity: 0.75;
     font-weight: 300;
-    max-width: 250px;
+    max-width: 90%;
     margin-left: auto;
     margin-right: auto;
   }
 
-  @media (max-width: 380px) {
-    .hero-title {
-      font-size: 28px;
-    }
+  .section-product-demo {
+     padding-bottom: calc(var(--spacing-xl) * 2);
   }
 
   .badge-pill {
@@ -1759,6 +1855,45 @@ footer {
   .genre-icon {
     width: 28px;
     height: 28px;
+  }
+
+  .style-pills {
+    gap: 8px !important;
+    padding: 0;
+  }
+
+  .style-pill {
+    padding: 10px 14px !important;
+    font-size: 12.5px !important;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    height: auto;
+    white-space: nowrap;
+  }
+
+  .style-category-card {
+    padding: 16px !important;
+  }
+
+  .style-tags-wrapper {
+    gap: 8px !important;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .style-tag-pill {
+    padding: 10px 14px !important;
+    font-size: 12.5px !important;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    flex-grow: 1;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .overlay-label {
+    padding: 10px 14px !important;
+    font-size: 12.5px !important;
   }
 }
 
@@ -1870,24 +2005,20 @@ footer {
   }
 }
 
-
 @media (max-width: 768px) {
   .styles-listing-grid {
     grid-template-columns: 1fr;
     gap: 16px;
   }
   
-  .style-category-group {
-    padding: 16px;
+  .style-category-card {
+    padding: 20px;
+    gap: 16px;
   }
   
   .category-header {
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-  }
-  
-  .category-name {
-    font-size: 16px;
+    margin-bottom: 0;
+    padding-bottom: 0;
   }
 }
 </style>

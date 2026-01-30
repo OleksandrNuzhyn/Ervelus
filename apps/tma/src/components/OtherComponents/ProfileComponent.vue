@@ -1,19 +1,25 @@
 <template>
   <div class="text-white h-full flex flex-col font-sans profile-container pb-6">
+    <div class="noise-overlay"></div>
+    <div class="ambient-light"></div>
+    <div class="global-background">
+      <div class="glow-orb orb-1"></div>
+      <div class="glow-orb orb-2"></div>
+      <div class="glow-orb orb-3"></div>
+      <div class="grid-overlay"></div>
+    </div>
     <div class="flex-grow flex flex-col w-full max-w-[1850px] mx-auto space-y-8 pt-3">
       <div class="py-2 flex-grow flex flex-col items-center">
           <div class="w-11/12 max-w-2xl">
             <div class="relative z-10 flex flex-col h-full">
 
               <div class="mb-8 flex justify-center">
-                <a href="https://discord.gg/38NV8t57th" target="_blank"
-                  class="profile-card !py-4 !px-8 min-h-[175px] w-full max-w-2xl flex flex-col items-center justify-center gap-4 transition-all duration-300 group border border-[#5865F2]/20 hover:!border-[#5865F2]/50 hover:bg-[#5865F2]/5 no-underline">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-[#5865F2] flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
-                    <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.419-2.1569 2.419zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.419-2.1568 2.419z" fill="currentColor" />
-                  </svg>
+                <a href="https://t.me/ervelus_bot" target="_blank"
+                  class="profile-card !py-4 !px-8 min-h-[175px] w-full max-w-2xl flex flex-col items-center justify-center gap-4 transition-all duration-300 group border border-[#28A8EA]/20 hover:!border-[#28A8EA]/50 hover:bg-[#28A8EA]/5 no-underline">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" class="w-10 h-10 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
                   <div class="text-center w-full overflow-hidden">
-                    <h3 class="text-xl font-bold text-gray-200 group-hover:text-white transition-colors leading-tight">{{ $t('profile.discord_title') }}</h3>
-                    <p class="text-[10px] text-gray-400 mt-1 whitespace-nowrap truncate px-2">{{ $t('profile.discord_desc') }}</p>
+                    <h3 class="text-xl font-bold text-gray-200 group-hover:text-white transition-colors leading-tight">{{ $t('profile.support_title') }}</h3>
+                    <p class="text-[12px] text-gray-400 mt-1 whitespace-nowrap truncate px-2">{{ $t('profile.support_desc') }}</p>
                   </div>
                 </a>
               </div>
@@ -268,5 +274,86 @@ async function applyPromoCode() {
   opacity: 0.6;
   transform: translateX(2px);
   transition: transform 0.2s ease;
+}
+
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.3;
+  display: block;
+}
+
+.ambient-light {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 0%, rgba(139, 180, 255, 0.08), transparent 70%);
+  pointer-events: none;
+  z-index: 2;
+  display: block; 
+}
+
+.global-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background-color: #0c0d14;
+}
+
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.2;
+  mix-blend-mode: screen;
+  display: block;
+}
+
+.orb-1 {
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+  top: -200px;
+  left: -200px;
+  opacity: 1;
+  filter: blur(80px); 
+}
+
+.orb-2 {
+  width: 500px;
+  height: 500px;
+  background: #94a3b8;
+  bottom: -100px;
+  right: -100px;
+  opacity: 0.1;
+}
+
+.orb-3 {
+  width: 400px;
+  height: 400px;
+  background: rgba(255, 255, 255, 0.2);
+  top: 40%;
+  left: 40%;
+  opacity: 0.1;
+}
+
+.grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  mask-image: radial-gradient(circle at 50% 40%, black 60%, transparent 100%);
+  opacity: 0.7;
+  filter: brightness(1.7);
+  display: block;
 }
 </style>

@@ -1,9 +1,18 @@
 <template>
   <div class="flex flex-col min-h-screen">
+    <div class="noise-overlay"></div>
+    <div class="ambient-light"></div>
+    <div class="global-background">
+      <div class="glow-orb orb-1"></div>
+      <div class="glow-orb orb-2"></div>
+      <div class="glow-orb orb-3"></div>
+      <div class="grid-overlay"></div>
+    </div>
     <HeaderComponent />
-    <main class="flex-grow pt-[70px] pb-10 flex flex-col relative">
+    <main class="flex-grow pt-[70px] pb-10 flex flex-col relative z-20">
       <div class="pt-8 pb-4 flex justify-end px-8 max-w-[800px] mx-auto w-full text-right">
         <button 
+          v-if="canGoBack"
           @click="goBack" 
           class="group flex items-center gap-2 px-3 py-2 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/[0.02] active:scale-95 transition-all w-fit backdrop-blur-sm"
         >
@@ -26,7 +35,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '@/services/api.js';
 import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue';
@@ -37,6 +46,7 @@ const document = ref({
   content: ''
 });
 const errorMessage = ref(null);
+const canGoBack = computed(() => window.history.state.back !== null);
 
 function goBack() {
   router.back();
@@ -59,6 +69,89 @@ async function getDocument() {
 
 onMounted(getDocument);
 </script>
+
+<style scoped>
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.3;
+  display: block;
+}
+
+.ambient-light {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 0%, rgba(139, 180, 255, 0.08), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  display: block; 
+}
+
+.global-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background-color: #0c0d14;
+}
+
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.2;
+  mix-blend-mode: screen;
+  display: block;
+}
+
+.orb-1 {
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+  top: -200px;
+  left: -200px;
+  opacity: 1;
+  filter: blur(80px); 
+}
+
+.orb-2 {
+  width: 500px;
+  height: 500px;
+  background: #94a3b8;
+  bottom: -100px;
+  right: -100px;
+  opacity: 0.1;
+}
+
+.orb-3 {
+  width: 400px;
+  height: 400px;
+  background: rgba(255, 255, 255, 0.2);
+  top: 40%;
+  left: 40%;
+  opacity: 0.1;
+}
+
+.grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  mask-image: radial-gradient(circle at 50% 40%, black 60%, transparent 100%);
+  opacity: 0.7;
+  filter: brightness(1.7);
+  display: block;
+}
+</style>
 
 <style>
 .document-container {

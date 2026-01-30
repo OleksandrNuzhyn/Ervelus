@@ -147,17 +147,3 @@ def send_email(recipient, template_name):
     except Exception as e:
         logger.error("Failed to send email", extra={'error': str(e)}, exc_info=True)
         return {"is_success": False, "message": "Failed to send email"}
-
-def send_support_email(sender_email, text_body):
-    url = f"{settings.MAILGUN_API_BASE_URL.rstrip('/')}/{settings.MAILGUN_SENDER_DOMAIN.rstrip('/')}/messages"
-    auth = ("api", settings.MAILGUN_API_KEY)
-    
-    data = {
-        "from": f"Request from {settings.DEFAULT_FROM_EMAIL}",
-        "to": "<support@ervelus.com>",
-        "subject": f"New letter from {sender_email}",
-        "text": text_body
-    }
-    
-    response = requests.post(url, auth=auth, data=data)
-    response.raise_for_status()

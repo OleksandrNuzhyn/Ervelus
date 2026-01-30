@@ -11,7 +11,7 @@ const messages = {
       refund: "Refund Policy",
       cookie: "Cookie Policy",
       coins: "Generations",
-      rights_reserved: "All rights reserved.",
+      rights_reserved: "All rights reserved",
       back: "Back"
     },
     workspace: {
@@ -79,8 +79,8 @@ const messages = {
       alert_promo_applied: "Promo code applied! You received {count} generations",
       alert_promo_error: "Promo Error",
       alert_promo_failed: "Failed to apply promo code. Please check the code and try again",
-      discord_title: "Join our Community",
-      discord_desc: "Get faster support and share your art!"
+      support_title: "Support",
+      support_desc: "Get help directly in Telegram"
     },
     terms: {
       update_title: "Terms Update",
@@ -111,7 +111,7 @@ const messages = {
       refund: "Політика повернення",
       cookie: "Політика Cookie",
       coins: "Генерації",
-      rights_reserved: "Усі права захищені.",
+      rights_reserved: "Усі права захищені",
       back: "Назад"
     },
     workspace: {
@@ -179,8 +179,8 @@ const messages = {
       alert_promo_applied: "Промокод активовано! Ви отримали {count} генерацій",
       alert_promo_error: "Помилка промокоду",
       alert_promo_failed: "Не вдалося активувати промокод. Перевірте код і спробуйте ще раз",
-      discord_title: "Спільнота Discord",
-      discord_desc: "Отримуйте швидку підтримку та діліться своїми артами!"
+      support_title: "Підтримка",
+      support_desc: "Отримайте допомогу прямо в Telegram"
     },
     terms: {
       update_title: "Оновлення умов",

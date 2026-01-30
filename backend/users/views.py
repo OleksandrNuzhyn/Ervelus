@@ -5,10 +5,9 @@ from dj_rest_auth.registration.views import SocialLoginView, VerifyEmailView
 from dj_rest_auth.app_settings import api_settings
 from dj_rest_auth.models import get_token_model
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from generations.models import GenerationRequest
 from rest_framework.response import Response
-from .serializers import SupportEmailSerializer
 from .models import UserProfile
 from django.dispatch import receiver
 from django.db import transaction
@@ -64,23 +63,6 @@ class CustomVerifyEmailView(VerifyEmailView):
 def user_credit_balance(request):
     user_profile = UserProfile.objects.get(user=request.user)
     return Response({'credits': user_profile.credits}, status=200)
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def send_support_email(request):
-    try:
-        serializer = SupportEmailSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        sender_email = serializer.validated_data['email']
-        text_body = serializer.validated_data['text_body']
-
-        services.send_support_email(sender_email, text_body)
-
-        return Response({"detail": "Support email successfully sent"}, status=200)
-    except Exception as e:
-        logger.error("Failed to send support email", extra={'error': str(e)}, exc_info=True)
-        return Response({"detail": "Failed to send email"}, status=400)
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])

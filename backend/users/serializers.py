@@ -54,8 +54,3 @@ class CustomRegisterSerializer(RegisterSerializer):
             )
         
         return user
-
-    
-class SupportEmailSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    text_body = serializers.CharField(max_length=5000)
