@@ -7,16 +7,6 @@
     </div>
     
     <div class="relative flex-grow bg-white/[0.03] backdrop-blur-[20px] border border-white/[0.02] shadow-xl rounded-2xl overflow-hidden">
-
-      <div 
-        class="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black/25 to-transparent z-10 pointer-events-none transition-opacity duration-500"
-        :class="showLeftArrow ? 'opacity-100' : 'opacity-0'"
-      ></div>
-      <div 
-        class="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black/25 to-transparent z-10 pointer-events-none transition-opacity duration-500"
-        :class="showArrow ? 'opacity-100' : 'opacity-0'"
-      ></div>
-
       <div ref="scrollContainer" 
         class="py-2 px-4 md:py-3 overflow-x-auto no-scrollbar min-h-[52px] md:min-h-[60px] flex items-center scroll-smooth mask-fade"
         :style="{

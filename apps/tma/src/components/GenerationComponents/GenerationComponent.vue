@@ -5,7 +5,7 @@
       <transition name="slide-fade">
         <StylePanel
           v-if="isStylePanelOpen"
-          class="absolute top-full mt-3 w-full left-0 z-20"
+          class="!absolute top-full mt-3 w-full left-0 z-[60]"
           :styles="filteredStyles"
           :selected-style-id="selectedStyleId"
           :current-genre-name="selectedGenreId"
@@ -143,11 +143,13 @@ function handlePrevGenre() {
 </script>
 
 <style scoped>
-.slide-fade-enter-active {
-  transition: opacity 0.4s ease-in-out;
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: opacity 0.3s ease-in-out;
 }
 
-.slide-fade-enter-from {
-  opacity: 0.5;
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  opacity: 0;
 }
 </style>

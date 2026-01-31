@@ -1,10 +1,8 @@
   <template>
-    <div
-      @click="selectStyle"
-      class="relative cursor-pointer transition-all duration-200 ease-in-out transform hover:scale-105"
-    >
+    <div @click.stop class="relative cursor-default transition-all duration-200 ease-in-out transform hover:scale-105">
       <div 
-        class="w-45 h-45 rounded-2xl mx-auto transition-all duration-200 flex items-center justify-center relative"
+        @click.stop="selectStyle"
+        class="w-45 h-45 rounded-2xl mx-auto transition-all duration-200 flex items-center justify-center relative cursor-pointer"
         :class="[
           isSelected ? 'ring-3 ring-gray-400' : 'hover:ring-2 hover:ring-gray-800 hover:ring-opacity-30',
           getSpriteClass() || 'bg-transparent'
@@ -21,7 +19,7 @@
         </div>
       </div>
       
-      <div class="mt-3 text-center">
+      <div class="mt-3 text-center pointer-events-none">
         <span class="text-white text-sm font-medium">{{ styleData.name }}</span>
       </div>
       

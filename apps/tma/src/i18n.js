@@ -80,7 +80,7 @@ const messages = {
       alert_promo_error: "Promo Error",
       alert_promo_failed: "Failed to apply promo code. Please check the code and try again",
       support_title: "Support",
-      support_desc: "Get help directly in Telegram"
+      support_desc: "Contact our team directly"
     },
     terms: {
       update_title: "Terms Update",
@@ -93,6 +93,7 @@ const messages = {
       cookies: "Cookie Policy",
       error_generic: "An unexpected error occurred",
       error_accept_failed: "An error occurred while accepting the terms. Please try again",
+      error_unavailable: "The document is currently unavailable. Please try again later",
       and: "and"
     },
     maintenance: {
@@ -180,7 +181,7 @@ const messages = {
       alert_promo_error: "Помилка промокоду",
       alert_promo_failed: "Не вдалося активувати промокод. Перевірте код і спробуйте ще раз",
       support_title: "Підтримка",
-      support_desc: "Отримайте допомогу прямо в Telegram"
+      support_desc: "Прямий зв'язок з нашою командою"
     },
     terms: {
       update_title: "Оновлення умов",
@@ -193,6 +194,7 @@ const messages = {
       cookies: "Політика Cookie",
       error_generic: "Сталася неочікувана помилка",
       error_accept_failed: "Сталася помилка під час прийняття умов. Спробуйте ще раз",
+      error_unavailable: "Документ наразі недоступний. Будь ласка, спробуйте пізніше",
       and: "та"
     },
     maintenance: {

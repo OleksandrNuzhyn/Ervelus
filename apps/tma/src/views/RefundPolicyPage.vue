@@ -10,7 +10,7 @@
     </div>
     <HeaderComponent />
     <main class="flex-grow pt-[70px] pb-10 flex flex-col relative z-20">
-      <div class="pt-8 pb-4 flex justify-end px-8 max-w-[800px] mx-auto w-full text-right">
+      <div class="flex justify-end mx-auto" :class="document.content ? 'pt-8 pb-4 px-8 max-w-[800px] w-full' : 'py-6 w-11/12 max-w-2xl'">
         <button 
           v-if="canGoBack"
           @click="goBack" 
@@ -26,9 +26,11 @@
       <div v-if="document.content" class="document-container !pt-0">
         <div v-html="document.content" class="document-content"></div>
       </div>
-      <div v-else-if="errorMessage" class="flex-grow flex flex-col items-center justify-center text-center">
-        <h1 class="text-3xl font-bold text-white">{{ document.title }}</h1>
-        <p class="mt-4 text-gray-300">{{ errorMessage }}</p>
+      <div v-else-if="errorMessage" class="flex justify-center w-full">
+        <div class="w-11/12 max-w-2xl profile-card flex flex-col items-center justify-center text-center py-12 px-8">
+          <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ document.title }}</h3>
+          <p class="text-[12px] text-gray-400 mt-1 leading-relaxed font-medium">{{ errorMessage }}</p>
+        </div>
       </div>
     </main>
   </div>
@@ -37,10 +39,12 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import api from '@/services/api.js';
 import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue';
 
 const router = useRouter();
+const { t } = useI18n();
 const document = ref({
   title: 'Refund Policy',
   content: ''
@@ -55,15 +59,15 @@ function goBack() {
 async function getDocument() {
   try {
     const response = await api.get('/api/agreements/refund_policy/');
-    document.value.content = response.data.content;
-  }
-  catch (error) {
-    if (error.response && error.response.status === 404 && error.response.data.detail) {
-      errorMessage.value = error.response.data.detail;
+    if (response.data && response.data.content && response.data.content.trim()) {
+      document.value.content = response.data.content;
     }
     else {
-      errorMessage.value = 'The document is currently unavailable. Please try again later';
+      errorMessage.value = t('terms.error_unavailable');
     }
+  }
+  catch (error) {
+    errorMessage.value = t('terms.error_unavailable');
   }
 }
 
@@ -150,6 +154,19 @@ onMounted(getDocument);
   opacity: 0.7;
   filter: brightness(1.7);
   display: block;
+}
+
+.profile-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border-radius: 16px;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 </style>
 

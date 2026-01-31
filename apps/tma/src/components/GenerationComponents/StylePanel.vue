@@ -34,7 +34,7 @@
             '--mask-bottom': '60px'
           }"
         >
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-8 pt-4 px-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-6 lg:pb-8 pt-4 px-4">
             <StyleCard
               v-for="style in styles"
               :key="style.id"
@@ -49,10 +49,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted, nextTick, watch } from 'vue';
 import StyleCard from './StyleCard.vue';
 
-defineProps({
+const props = defineProps({
   styles: {
     type: Array,
     required: true,
@@ -97,6 +97,12 @@ onMounted(() => {
     setTimeout(checkScroll, 500);
   });
 });
+
+watch(() => props.currentGenreName, () => {
+  if (scrollContainer.value) {
+    scrollContainer.value.scrollTop = 0;
+  }
+});
 </script>
 
 <style scoped>
@@ -112,21 +118,21 @@ onMounted(() => {
 .mask-fade-vertical {
   mask-image: linear-gradient(
     to bottom,
-    transparent 0%,
-    rgba(0,0,0,0.25) calc(var(--mask-top, 0px) / 2),
+    rgba(0,0,0,0.2) 0%,
+    rgba(0,0,0,0.6) calc(var(--mask-top, 0px) / 2),
     black var(--mask-top, 0px),
     black calc(100% - var(--mask-bottom, 0px)),
-    rgba(0,0,0,0.25) calc(100% - (var(--mask-bottom, 0px) / 2)),
-    transparent 100%
+    rgba(0,0,0,0.6) calc(100% - (var(--mask-bottom, 0px) / 2)),
+    rgba(0,0,0,0.2) 100%
   );
   -webkit-mask-image: linear-gradient(
     to bottom,
-    transparent 0%,
-    rgba(0,0,0,0.25) calc(var(--mask-top, 0px) / 2),
+    rgba(0,0,0,0.2) 0%,
+    rgba(0,0,0,0.6) calc(var(--mask-top, 0px) / 2),
     black var(--mask-top, 0px),
     black calc(100% - var(--mask-bottom, 0px)),
-    rgba(0,0,0,0.25) calc(100% - (var(--mask-bottom, 0px) / 2)),
-    transparent 100%
+    rgba(0,0,0,0.6) calc(100% - (var(--mask-bottom, 0px) / 2)),
+    rgba(0,0,0,0.2) 100%
   );
   transition: mask-image 0.5s ease-in-out, -webkit-mask-image 0.5s ease-in-out;
 }
