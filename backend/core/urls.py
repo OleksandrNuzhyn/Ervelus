@@ -11,7 +11,7 @@ if settings.DEBUG:
         path('sanekit/', admin.site.urls),
         path('webhooks/payments/', include('payments.urls_webhooks')),
         path('webhooks/generations/', include('generations.urls_webhooks')),
-        path('api/auth/', include('users.urls')),
+        path('api/users/', include('users.urls')),
         path('api/payments/', include('payments.urls_api')),
         path('api/products/', include('products.urls')),
         path('api/generations/', include('generations.urls_api')),
@@ -26,7 +26,7 @@ else:
         urlpatterns += [
             path('sanekit/', admin.site.urls),
             path('webhooks/payments/', include('payments.urls_webhooks')),
-            path('api/auth/', include('users.urls')),
+            path('api/users/', include('users.urls')),
             path('api/payments/', include('payments.urls_api')),
             path('api/products/', include('products.urls')),
             path('api/generations/', include('generations.urls_api')),

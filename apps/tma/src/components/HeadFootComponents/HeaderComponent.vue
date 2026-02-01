@@ -91,7 +91,7 @@ const credits = ref(0);
 
 async function fetchCredits() {
   try {
-    const response = await api.get('/api/auth/credit-balance/');
+    const response = await api.get('/api/users/credit-balance/');
     credits.value = response.data.credits;
   }
   catch (error) {
