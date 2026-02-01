@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from django.utils import timezone
 from .models import GenerationRequest
 from . import services
 
@@ -25,22 +24,10 @@ class GenerationRequestCreateSerializer(serializers.ModelSerializer):
     def validate(self, data):
         user = self.context['request'].user
         
-        active_user_subscriptions = list(
-            user.subscriptions.filter(
-                end_time__gt=timezone.now()
-            )
-        )
-        
-        has_subscription_credits = sum(sub.remaining_credits for sub in active_user_subscriptions) > 0
-        has_credits = user.profile.credits > 0
-
-        if has_subscription_credits or has_credits:
+        if user.profile.credits > 0:
             return data
-        
-        if active_user_subscriptions:
-            raise serializers.ValidationError("All active subscriptions and free generations have been used")
-        else:
-            raise serializers.ValidationError("You don't have an active subscription or free generations")
+            
+        raise serializers.ValidationError("You don't have enough generations")
 
 
 class GenerationRequestListSerializer(serializers.ModelSerializer):

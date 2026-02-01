@@ -34,7 +34,7 @@ def star_package_list(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def available_style_list(request):
+def style_list(request):
     styles_queryset = Style.objects.annotate(
         is_available=Value(True, output_field=BooleanField())
     ).select_related('genre').all()

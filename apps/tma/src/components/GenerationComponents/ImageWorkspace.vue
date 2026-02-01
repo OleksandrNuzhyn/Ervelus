@@ -294,10 +294,6 @@ const inputImageLoaded = ref(false);
 const outputImageLoaded = ref(false);
 const completedGenerationId = ref(null);
 
-function triggerPromo() {
-  window.dispatchEvent(new CustomEvent('open-promo-dropdown'));
-}
-
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE_BYTES = 7 * 1024 * 1024;
 const POLL_INTERVALS_MS = [

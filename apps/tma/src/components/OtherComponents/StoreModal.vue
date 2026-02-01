@@ -46,54 +46,22 @@
               </div>
             </section>
 
-            <section>
+            <section v-if="starPackages.length > 0">
                <h3 class="text-sm font-medium text-white/60 mb-4 text-center inter">Star Packages</h3>
                <div class="flex flex-col gap-3">
-                  <div class="group bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.05] rounded-2xl p-4 flex items-center gap-4 transition-all active:scale-[0.99] cursor-pointer">
+                  <div v-for="pkg in starPackages" :key="pkg.id" class="group bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.05] rounded-2xl p-4 flex items-center gap-4 transition-all active:scale-[0.99] cursor-pointer">
                      <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-white/90 group-hover:bg-white/10 transition-colors shrink-0 border border-white/5">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
                      </div>
                      <div class="flex-1 min-w-0 flex flex-col items-start gap-0.5">
-                        <h4 class="text-lg font-bold text-white tracking-tight inter">25 Photos</h4>
-                        <p class="text-[11px] text-white/50 font-medium inter leading-tight">Unlock all premium styles</p>
+                        <h4 class="text-lg font-bold text-white tracking-tight inter">{{ pkg.name }}</h4>
+                        <p class="text-[11px] text-white/50 font-medium inter leading-tight">{{ pkg.generations_count }} generations</p>
                      </div>
                      <button class="shrink-0 h-10 px-5 bg-white text-black text-sm font-bold rounded-xl hover:bg-gray-100 transition-colors inter whitespace-nowrap flex items-center gap-1.5 ml-auto">
-                        199 
+                        {{ pkg.stars_count }}
                         <svg class="w-3.5 h-3.5 text-yellow-500 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2L9.19 8.63L2 9.24l5.46 4.73L5.82 21z"/></svg>
                      </button>
                   </div>
-
-                  <div class="relative group bg-white/[0.07] border border-white/10 rounded-2xl p-4 transition-all active:scale-[0.99] cursor-pointer shadow-[0_0_30px_rgba(59,130,246,0.15)] overflow-hidden">
-                     <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10 opacity-100"></div>
-                     <div class="flex items-center gap-4 relative z-10">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center text-white border border-white/10 shrink-0">
-                           <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                        </div>
-                        <div class="flex-1 min-w-0 flex flex-col items-start gap-0.5">
-                           <h4 class="text-lg font-bold text-white tracking-tight inter">50 Photos</h4>
-                           <p class="text-[11px] text-white/50 font-medium inter leading-tight">Unlock all premium styles</p>
-                        </div>
-                        <button class="shrink-0 h-10 px-5 bg-white text-black text-sm font-bold rounded-xl hover:bg-gray-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)] inter whitespace-nowrap flex items-center gap-1.5 ml-auto">
-                           349 
-                           <svg class="w-3.5 h-3.5 text-yellow-500 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2L9.19 8.63L2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        </button>
-                     </div>
-                  </div>
-
-                  <div class="group bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.05] rounded-2xl p-4 flex items-center gap-4 transition-all active:scale-[0.99] cursor-pointer">
-                     <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-white/90 group-hover:bg-white/10 transition-colors shrink-0 border border-white/5">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
-                     </div>
-                     <div class="flex-1 min-w-0 flex flex-col items-start gap-0.5">
-                        <h4 class="text-lg font-bold text-white tracking-tight inter">100 Photos</h4>
-                        <p class="text-[11px] text-white/50 font-medium inter leading-tight">Unlock all premium styles</p>
-                     </div>
-                     <button class="shrink-0 h-10 px-5 bg-white text-black text-sm font-bold rounded-xl hover:bg-gray-100 transition-colors inter whitespace-nowrap flex items-center gap-1.5 ml-auto">
-                        599 
-                        <svg class="w-3.5 h-3.5 text-yellow-500 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2L9.19 8.63L2 9.24l5.46 4.73L5.82 21z"/></svg>
-                     </button>
-                  </div>
-
                </div>
             </section>
             <div class="pb-10"></div>
@@ -105,11 +73,25 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
+import api from '@/services/api';
+
+const starPackages = ref([]);
+
+async function getStarPackages() {
+  const { data } = await api.get('/api/products/star-packages/');
+  starPackages.value = data.star_packages || [];
+}
+
 defineProps({
   isOpen: Boolean
 });
 
 defineEmits(['close']);
+
+onMounted(() => {
+  getStarPackages();
+});
 </script>
 
 <style scoped>
