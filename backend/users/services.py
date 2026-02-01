@@ -13,24 +13,18 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 def get_user_data_for_retention(user):
-    user_data = {
+    return {
         "user": {
-            "id": user.id,
-            "email": user.email,
-            "telegram_id": getattr(user.profile, 'telegram_id', None) if hasattr(user, 'profile') else None
+            "id": str(user.id),
+            "email": str(user.email)
         },
-        "agreements": [],
-        "purchases": [],
-        "audit_records": []
+        "profile": {
+            "telegram_id": str(user.profile.telegram_id),
+            "credits": str(user.profile.credits)
+        },
+        "agreements": list(UserAgreement.objects.filter(user=user).values()),
+        "purchases": list(UserPurchase.objects.filter(user=user).values())
     }
-
-    agreements = UserAgreement.objects.filter(user=user)
-    user_data["agreements"] = list(agreements.values())
-
-    purchases = UserPurchase.objects.filter(user=user)
-    user_data["purchases"] = list(purchases.values())
-
-    return user_data
 
 def upload_user_data_for_retention_to_gcs(user, user_data_for_retention):
     file_name = f"{user.email}-{timezone.now().strftime('%Y-%m-%d-%H-%M')}.json"

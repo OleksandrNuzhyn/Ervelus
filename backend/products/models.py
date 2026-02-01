@@ -23,8 +23,9 @@ class StarPackage(models.Model):
         verbose_name_plural = 'Star Packages'
     
     name = models.CharField(max_length=32, unique=True)
-    stars_count = models.IntegerField()
+    stars_counts = models.JSONField(default=dict, blank=True)
     generations_count = models.IntegerField()
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.name} ({self.stars_count} stars)"
+        return f"{self.name} ({self.stars_counts.get('default', 0)} stars)"

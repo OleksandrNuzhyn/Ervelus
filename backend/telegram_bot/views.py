@@ -1,13 +1,15 @@
-from django.db import transaction
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import update_last_login
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
+from agreements.services import accept_user_document_version
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
-from agreements.services import accept_user_document_version
+from rest_framework.response import Response
 from agreements.models import TermsVersion
+from core.models import ApplicationConfig
 from users.models import UserProfile
+from django.db import transaction
+from django.db.models import F
 from . import services
 import logging
 
@@ -61,8 +63,12 @@ def create_telegram_user(telegram_data, request):
     user.set_unusable_password()
     user.save()
 
-    UserProfile.objects.create(user=user, telegram_id=telegram_id)
+    user_profile = UserProfile.objects.create(user=user, telegram_id=telegram_id)
     
+    config = ApplicationConfig.get_solo()
+    config.reserved_generations = F('reserved_generations') + user_profile.credits
+    config.save(update_fields=['reserved_generations'])
+
     required_document_types = [
         TermsVersion.DocumentType.TERMS_OF_SERVICE,
         TermsVersion.DocumentType.PRIVACY_POLICY

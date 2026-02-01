@@ -80,7 +80,10 @@ const messages = {
       alert_promo_error: "Promo Error",
       alert_promo_failed: "Failed to apply promo code. Please check the code and try again",
       support_title: "Support",
-      support_desc: "Contact our team directly"
+      support_desc: "Contact our team directly",
+      delete_account: "Delete account",
+      delete_account_confirm: "Are you sure you want to delete your account? All your data will be permanently removed",
+      delete_account_error: "Currently unable to delete. Please contact support"
     },
     terms: {
       update_title: "Terms Update",
@@ -181,7 +184,10 @@ const messages = {
       alert_promo_error: "Помилка промокоду",
       alert_promo_failed: "Не вдалося активувати промокод. Перевірте код і спробуйте ще раз",
       support_title: "Підтримка",
-      support_desc: "Прямий зв'язок з нашою командою"
+      support_desc: "Прямий зв'язок з нашою командою",
+      delete_account: "Видалити акаунт",
+      delete_account_confirm: "Ви впевнені, що хочете видалити акаунт? Всі ваші дані будуть безповоротно видалені",
+      delete_account_error: "Наразі неможливо видалити акаунт. Будь ласка, зверніться до підтримки"
     },
     terms: {
       update_title: "Оновлення умов",

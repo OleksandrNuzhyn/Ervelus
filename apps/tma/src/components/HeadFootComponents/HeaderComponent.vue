@@ -1,6 +1,6 @@
 <template>
   <header 
-    class="fixed inset-x-0 top-0 z-50 transition-all duration-300"
+    class="fixed inset-x-0 top-0 z-[70] transition-all duration-300"
     :class="isBurgerOpen ? 'bg-black/60 backdrop-blur-md shadow-2xl' : 'bg-black/30 backdrop-blur-sm'"
   >
     <div class="max-w-screen mx-auto px-4 sm:px-6 lg:px-12">
@@ -77,7 +77,7 @@
     <div
       v-if="isBurgerOpen"
       @click="isBurgerOpen = false"
-      class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40">
+      class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[65]">
     </div>
   </transition>
 </template>

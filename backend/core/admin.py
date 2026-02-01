@@ -123,4 +123,4 @@ class CustomPersonalDataAdmin(PersonalDataAdmin):
 
 @admin.register(ApplicationConfig)
 class ApplicationConfigAdmin(SingletonModelAdmin):
-    readonly_fields = ('generations_reserved',)
+    readonly_fields = ('unused_generations', 'reserved_generations')

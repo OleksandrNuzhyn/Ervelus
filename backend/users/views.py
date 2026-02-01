@@ -2,7 +2,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from generations.models import GenerationRequest
 from rest_framework.response import Response
+from core.models import ApplicationConfig
 from .models import UserProfile
+from django.db.models import F
 from django.db import transaction
 from . import services
 import logging
@@ -11,13 +13,13 @@ logger = logging.getLogger(__name__)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def user_credit_balance(request):
+def credit_balance(request):
     user_profile = UserProfile.objects.get(user=request.user)
     return Response({'credits': user_profile.credits}, status=200)
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
-def account_delete(request):
+def delete_account(request):
     user = request.user
     requests_in_process = GenerationRequest.objects.filter(user=user, is_visible=False)
 
@@ -55,8 +57,12 @@ def account_delete(request):
             for promo_code_usage in user.promo_code_usages.all():
                 promo_code_usage.anonymise()
 
-            if hasattr(user, 'profile'):
-                user.profile.anonymise()
+            if user.profile.credits > 0:
+                config = ApplicationConfig.get_solo()
+                config.reserved_generations = F('reserved_generations') - user.profile.credits
+                config.save(update_fields=['reserved_generations'])
+                
+            user.profile.delete()
             user.anonymise()
     except Exception as e:
         logger.error("Failed to anonymise user data in delete request", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)

@@ -59,9 +59,7 @@ class UserProfile(models.Model):
         verbose_name_plural = 'User Profiles'
 
     class PrivacyMeta:
-        fields = [
-            'telegram_id',
-        ]
+        can_anonymise = False
         search_fields = [
             'user__email',
         ]
@@ -72,10 +70,10 @@ class UserProfile(models.Model):
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='profile')
     telegram_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
-    credits = models.IntegerField(default=2)
+    credits = models.IntegerField(default=1)
 
     def __str__(self):
-        return f'Profile {self.user.email}'
+        return f'Profile of {self.user.email}'
 
 
 class TokenPrivacyMeta:

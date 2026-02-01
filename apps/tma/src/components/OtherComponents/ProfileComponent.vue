@@ -82,6 +82,15 @@
                 </router-link>
               </div>
 
+              <div class="w-full border-t border-white/[0.05]">
+                <button @click="showDeleteModal = true" class="settings-item flex items-center justify-between w-full px-8 py-4 active:bg-red-500/10 transition-colors group text-left">
+                  <span class="text-red-400 font-medium text-[15px] group-hover:text-red-300 transition-colors">{{ $t('profile.delete_account') }}</span>
+                  <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="opacity-20 group-hover:opacity-40 transition-opacity">
+                    <path d="M1 9L5 5L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+
               <div class="py-4 flex items-center justify-center w-full border-t border-white/[0.02] bg-white/[0.03]">
                 <p class="text-[11px] text-white/30 text-center font-medium tracking-wide m-0">
                   &copy; {{ year }} Ervelus. {{ $t('navigation.rights_reserved') }}
@@ -110,6 +119,32 @@
         </div>
       </div>
     </transition>
+
+    <transition name="modal-fade">
+      <div v-if="showDeleteModal" class="fixed inset-0 flex items-center justify-center z-50 confirm-modal-overlay" @click.self="showDeleteModal = false">
+        <div class="profile-card !bg-white/[0.08] !backdrop-blur-[30px] !p-10 w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-center gap-8 text-gray-200 relative">
+          <div class="text-center">
+            <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ $t('profile.delete_account') }}</h3>
+            <p class="text-[15px] text-white/50 leading-relaxed font-medium">{{ $t('profile.delete_account_confirm') }}</p>
+          </div>
+          <div class="flex flex-col sm:flex-row justify-center gap-3 pt-2 w-full">
+            <button 
+              @click="confirmDeleteAccount" 
+              :disabled="isDeleting"
+              class="flex items-center justify-center h-[48px] min-w-[140px] px-6 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/20 border border-white/[0.02] text-white hover:bg-white/30 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {{ isDeleting ? '...' : $t('gallery.confirm') }}
+            </button>
+            <button 
+              @click="showDeleteModal = false" 
+              class="flex items-center justify-center h-[48px] min-w-[140px] px-6 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/5 border border-white/[0.02] text-white/40 hover:bg-white/10 active:scale-[0.98]"
+            >
+              {{ $t('profile.modal_cancel') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -124,6 +159,8 @@ const promoCode = ref('');
 const isSubmittingPromo = ref(false);
 
 const showModal = ref(false);
+const showDeleteModal = ref(false);
+const isDeleting = ref(false);
 const modalTitle = ref('');
 const modalMessage = ref('');
 
@@ -148,6 +185,26 @@ async function applyPromoCode() {
   }
   finally {
     isSubmittingPromo.value = false;
+  }
+}
+
+async function confirmDeleteAccount() {
+  isDeleting.value = true;
+  
+  try {
+    await api.delete('/api/users/delete-account/');
+    localStorage.removeItem('user-token');
+
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.close();
+    }
+  }
+  catch (error) {
+    showDeleteModal.value = false;
+    openModal(t('profile.delete_account'), t('profile.delete_account_error'));
+  }
+  finally {
+    isDeleting.value = false;
   }
 }
 </script>
