@@ -52,9 +52,9 @@ class UserAdmin(NoLogAdminMixin, BaseUserAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(NoLogAdminMixin, admin.ModelAdmin):
-    list_display = ('id', 'user__email', 'telegram_id', 'credits')
+    list_display = ('id', 'user__email', 'telegram_id', 'country_code', 'credits')
     list_select_related = ('user',)
-    search_fields = ('user__email', 'telegram_id')
+    search_fields = ('user__email', 'telegram_id', 'country_code')
     readonly_fields = ('user',)
     ordering = ('-credits',)
     

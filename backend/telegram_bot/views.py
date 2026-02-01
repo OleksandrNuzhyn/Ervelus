@@ -63,7 +63,10 @@ def create_telegram_user(telegram_data, request):
     user.set_unusable_password()
     user.save()
 
-    user_profile = UserProfile.objects.create(user=user, telegram_id=telegram_id)
+    ip_address = request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0].strip()
+    country_code = services.get_country_code_from_ip_address(ip_address)
+
+    user_profile = UserProfile.objects.create(user=user, telegram_id=telegram_id, country_code=country_code)
     
     config = ApplicationConfig.get_solo()
     config.reserved_generations = F('reserved_generations') + user_profile.credits
