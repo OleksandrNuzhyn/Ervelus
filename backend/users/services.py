@@ -15,8 +15,7 @@ logger = logging.getLogger(__name__)
 def get_user_data_for_retention(user):
     return {
         "user": {
-            "id": str(user.id),
-            "email": str(user.email)
+            "id": str(user.id)
         },
         "profile": {
             "telegram_id": str(user.profile.telegram_id),
@@ -27,7 +26,7 @@ def get_user_data_for_retention(user):
     }
 
 def upload_user_data_for_retention_to_gcs(user, user_data_for_retention):
-    file_name = f"{user.email}-{timezone.now().strftime('%Y-%m-%d-%H-%M')}.json"
+    file_name = f"{user.profile.telegram_id}-{timezone.now().strftime('%Y-%m-%d-%H-%M')}.json"
     bucket_name = settings.GCP_COMPLIANCE_BUCKET_NAME
     bucket = gcs_sync_storage_client.bucket(bucket_name)
     blob = bucket.blob(file_name)
