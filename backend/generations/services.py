@@ -132,12 +132,20 @@ def get_genai_client():
 
     return genai_client
 
-@retry(wait=wait_random_exponential(multiplier=2, min=5, max=60), stop=stop_after_delay(60), retry=retry_if_exception(is_retryable_error))
+@retry(wait=wait_random_exponential(multiplier=2, min=5, max=60), stop=stop_after_delay(45), retry=retry_if_exception(is_retryable_error))
+async def generate_output_image_client(genai_client, model, contents, config):
+    return await genai_client.aio.models.generate_content(
+        model=model,
+        contents=contents,
+        config=config
+    )
+
 async def generate_output_image(prompt, input_image_bytes):
     image = Image.open(BytesIO(input_image_bytes))
     genai_client = get_genai_client()
 
-    response = await genai_client.aio.models.generate_content(
+    response = await generate_output_image_client(
+        genai_client=genai_client,
         model="gemini-2.5-flash-image",
         contents = [prompt, image],
         config=types.GenerateContentConfig(
