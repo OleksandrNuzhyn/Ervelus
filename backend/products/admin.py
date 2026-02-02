@@ -61,13 +61,7 @@ class StyleAdmin(StatisticsAdminMixin, admin.ModelAdmin):
 
 @admin.register(StarPackage)
 class StarPackageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'get_stars_counts', 'generations_count', 'is_active')
+    list_display = ('id', 'name', 'stars_count_t1', 'stars_count_t2', 'generations_count', 'is_active')
     list_filter = ('is_active',)
     search_fields = ('name',)
     ordering = ('generations_count',)
-    
-    @admin.display(description='Stars Counts (Default)')
-    def get_stars_counts(self, obj):
-        if not obj.stars_counts:
-            return '0'
-        return obj.stars_counts.get('default', '0')

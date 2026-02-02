@@ -13,22 +13,14 @@ def star_package_list(request):
     star_packages = []
 
     for star_package in star_packages_queryset:
-        stars_counts_dict = star_package.stars_counts or {}
-        stars_count = None
+        stars_count = star_package.get_stars_count_for_country(country_code)
 
-        if country_code:
-            stars_count = stars_counts_dict.get(country_code)
-        
-        if stars_count is None:
-            stars_count = stars_counts_dict.get('default')
-            
-        if stars_count is not None:
-            star_packages.append({
-                'id': star_package.id,
-                'name': star_package.name,
-                'stars_count': stars_count,
-                'generations_count': star_package.generations_count
-            })
+        star_packages.append({
+            'id': star_package.id,
+            'name': star_package.name,
+            'stars_count': stars_count,
+            'generations_count': star_package.generations_count
+        })
     
     return Response({'star_packages': star_packages}, status=200)
 
