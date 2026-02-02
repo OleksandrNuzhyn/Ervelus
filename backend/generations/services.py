@@ -128,11 +128,11 @@ def get_genai_client():
     global genai_client
     
     if genai_client is None:
-        genai_client = genai.Client(vertexai=True, project=settings.GCP_PROJECT_ID, location=settings.GCP_TASKS_LOCATION)
+        genai_client = genai.Client(vertexai=True, project=settings.GCP_PROJECT_ID, location='global')
 
     return genai_client
 
-@retry(wait=wait_random_exponential(min=5, max=60), stop=stop_after_delay(240), retry=retry_if_exception(is_retryable_error))
+@retry(wait=wait_random_exponential(multiplier=1, max=60), stop=stop_after_delay(240), retry=retry_if_exception(is_retryable_error))
 async def generate_output_image(prompt, input_image_bytes):
     image = Image.open(BytesIO(input_image_bytes))
     genai_client = get_genai_client()
