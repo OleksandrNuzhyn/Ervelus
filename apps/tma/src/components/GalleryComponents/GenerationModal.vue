@@ -1,104 +1,106 @@
 <template>
-  <Transition name="modal">
-    <div v-if="isOpen" class="relative z-50">
-      <div class="fixed inset-0 modal-overlay transition-opacity" />
+  <Teleport to="body">
+    <Transition name="modal">
+      <div v-if="isOpen" class="relative z-[100]">
+        <div class="fixed inset-0 modal-overlay transition-opacity" />
 
-      <div class="fixed inset-0 z-50 overflow-y-auto" @click="emit('close-modal')">
-        <div class="flex min-h-full items-center justify-center py-8 text-center">
-          <Transition name="fade-content">
-            <div v-if="isLoading && isMobile" key="spinner" class="spinner"></div>
+        <div class="fixed inset-0 z-[100] overflow-y-auto" @click="emit('close-modal')">
+          <div class="flex min-h-full items-center justify-center py-8 text-center">
+            <Transition name="fade-content">
+              <div v-if="isLoading && isMobile" key="spinner" class="spinner"></div>
 
-            <div
-              v-else
-              :class="[
-                'relative flex w-11/12 max-w-[1400px] md:h-[90vh] transform flex-col overflow-hidden rounded-2xl border border-white/[0.02] bg-white/[0.03] text-left align-middle shadow-xl backdrop-blur-[25px] transition-all',
-              ]"
-            >
-              <button @click="emit('close-modal')"
-                class="absolute right-3 top-3 p-2 text-white hover:text-white/80 transition-all duration-300 z-50 md:hidden">
-                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-              <Transition name="fade-content">
-                <div v-if="!isLoading && currentRequest" class="flex h-full flex-col">
-                  <div class="flex-grow flex flex-col md:flex-row justify-center items-stretch gap-4 px-6 pt-15 pb-3 min-h-0">
-                    <div class="flex-1 flex justify-center items-center min-w-0">
-                      <img
-                        v-if="currentRequest.input_large_signed_url"
-                        :src="currentRequest.input_large_signed_url"
-                        alt="Input image"
-                        class="block max-w-full max-h-full object-contain rounded-2xl"
-                      />
-                      <div v-else class="h-44 md:h-full w-full flex items-center justify-center text-zinc-500 text-sm font-medium border border-white/[0.02] rounded-2xl md:border-0">
-                        {{ $t('gallery.failed_input') }}
+              <div
+                v-else
+                :class="[
+                  'relative flex w-11/12 max-w-[1400px] md:h-[90vh] transform flex-col overflow-hidden rounded-2xl border border-white/[0.02] bg-white/[0.03] text-left align-middle shadow-xl backdrop-blur-[25px] transition-all',
+                ]"
+              >
+                <button @click="emit('close-modal')"
+                  class="absolute right-3 top-3 p-2 text-white hover:text-white/80 transition-all duration-300 z-50 md:hidden">
+                  <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+                <Transition name="fade-content">
+                  <div v-if="!isLoading && currentRequest" class="flex h-full flex-col">
+                    <div class="flex-grow flex flex-col md:flex-row justify-center items-stretch gap-4 px-6 pt-15 pb-3 min-h-0">
+                      <div class="flex-1 flex justify-center items-center min-w-0">
+                        <img
+                          v-if="currentRequest.input_large_signed_url"
+                          :src="currentRequest.input_large_signed_url"
+                          alt="Input image"
+                          class="block max-w-full max-h-full object-contain rounded-2xl"
+                        />
+                        <div v-else class="h-44 md:h-full w-full flex items-center justify-center text-zinc-500 text-sm font-medium border border-white/[0.02] rounded-2xl md:border-0">
+                          {{ $t('gallery.failed_input') }}
+                        </div>
+                      </div>
+                      <div class="flex-1 flex justify-center items-center min-w-0">
+                        <img
+                          v-if="currentRequest.output_large_signed_url"
+                          :src="currentRequest.output_large_signed_url"
+                          alt="Output image"
+                          class="block max-w-full max-h-full object-contain rounded-2xl"
+                        />
+                        <div v-else class="h-44 md:h-full w-full flex items-center justify-center text-zinc-500 text-sm font-medium border border-white/[0.02] rounded-2xl md:border-0">
+                          {{ $t('gallery.failed_output') }}
+                        </div>
                       </div>
                     </div>
-                    <div class="flex-1 flex justify-center items-center min-w-0">
-                      <img
-                        v-if="currentRequest.output_large_signed_url"
-                        :src="currentRequest.output_large_signed_url"
-                        alt="Output image"
-                        class="block max-w-full max-h-full object-contain rounded-2xl"
-                      />
-                      <div v-else class="h-44 md:h-full w-full flex items-center justify-center text-zinc-500 text-sm font-medium border border-white/[0.02] rounded-2xl md:border-0">
-                        {{ $t('gallery.failed_output') }}
+
+                    <div class="flex-shrink-0 flex h-20 items-center justify-between px-6 pb-2">
+                      <div class="flex items-center justify-between w-full">
+                        <div class="text-left">
+                          <p class="font-semibold text-zinc-300 truncate" :title="currentStyleName || $t('gallery.deleted_style')">
+                            {{ currentStyleName || $t('gallery.deleted_style') }}
+                          </p>
+                          <p v-if="currentFormattedDate" class="text-sm text-zinc-400">{{ currentFormattedDate }}</p>
+                        </div>
+                        <div class="flex items-center gap-x-6">
+                          <button
+                            type="button"
+                            @click.prevent.stop="downloadOutput(currentRequest)"
+                            :disabled="!currentRequest.output_large_signed_url"
+                            class="h-min w-min inline-flex justify-center text-zinc-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            :title="$t('gallery.download')"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download w-6 h-6">
+                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                              <polyline points="7 10 12 15 17 10"></polyline>
+                              <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                          </button>
+                          <button
+                            type="button"
+                            @click.stop="$emit('delete-request', currentRequest)"
+                            class="h-min w-min inline-flex justify-center text-zinc-400 hover:text-red-400 transition-colors"
+                            :title="$t('gallery.delete')"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 w-6 h-6">
+                              <polyline points="3 6 5 6 21 6"></polyline>
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                              <line x1="10" y1="11" x2="10" y2="17"></line>
+                              <line x1="14" y1="11" x2="14" y2="17"></line>
+                            </svg>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
+                </Transition>
 
-                  <div class="flex-shrink-0 flex h-20 items-center justify-between px-6 pb-2">
-                    <div class="flex items-center justify-between w-full">
-                      <div class="text-left">
-                        <p class="font-semibold text-zinc-300 truncate" :title="currentStyleName || $t('gallery.deleted_style')">
-                          {{ currentStyleName || $t('gallery.deleted_style') }}
-                        </p>
-                        <p v-if="currentFormattedDate" class="text-sm text-zinc-400">{{ currentFormattedDate }}</p>
-                      </div>
-                      <div class="flex items-center gap-x-6">
-                        <button
-                          type="button"
-                          @click.prevent.stop="downloadOutput(currentRequest)"
-                          :disabled="!currentRequest.output_large_signed_url"
-                          class="h-min w-min inline-flex justify-center text-zinc-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                          :title="$t('gallery.download')"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download w-6 h-6">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                          </svg>
-                        </button>
-                        <button
-                          type="button"
-                          @click.stop="$emit('delete-request', currentRequest)"
-                          class="h-min w-min inline-flex justify-center text-zinc-400 hover:text-red-400 transition-colors"
-                          :title="$t('gallery.delete')"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 w-6 h-6">
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                            <line x1="10" y1="11" x2="10" y2="17"></line>
-                            <line x1="14" y1="11" x2="14" y2="17"></line>
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
+                <div v-if="isLoading && !isMobile" class="absolute inset-0 z-10 flex items-center justify-center">
+                    <div :class="{'unified-shimmer-container': !isMobile}" class="h-full w-full">
+                    <div class="stars-loader"></div>
                   </div>
-                </div>
-              </Transition>
-
-              <div v-if="isLoading && !isMobile" class="absolute inset-0 z-10 flex items-center justify-center">
-                  <div :class="{'unified-shimmer-container': !isMobile}" class="h-full w-full">
-                  <div class="stars-loader"></div>
                 </div>
               </div>
-            </div>
-          </Transition>
+            </Transition>
+          </div>
         </div>
       </div>
-    </div>
-  </Transition>
+    </Transition>
+  </Teleport>
 </template>
 
 <script setup>
