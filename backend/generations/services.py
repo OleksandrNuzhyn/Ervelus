@@ -170,16 +170,15 @@ async def generate_output_image(prompt, input_image_bytes):
         )
     )
 
-    if not response.candidates or not response.candidates[0].content:
+    if not response.candidates or not response.candidates[0].content or not response.candidates[0].content.parts:
         raise ContentBlockedError()
 
     output_image_bytes = None
     
-    if response.candidates[0].content.parts:
-        for part in response.candidates[0].content.parts:
-            if part.inline_data:
-                output_image_bytes = part.inline_data.data
-                break
+    for part in response.candidates[0].content.parts:
+        if part.inline_data:
+            output_image_bytes = part.inline_data.data
+            break
 
     return output_image_bytes
 
