@@ -132,7 +132,7 @@ def get_genai_client():
 
     return genai_client
 
-@retry(wait=wait_random_exponential(multiplier=2, min=5, max=60), stop=stop_after_delay(45), retry=retry_if_exception(is_retryable_error))
+@retry(wait=wait_random_exponential(min=3, max=30), stop=stop_after_delay(45), retry=retry_if_exception(is_retryable_error))
 async def generate_output_image_client(genai_client, model, contents, config):
     return await genai_client.aio.models.generate_content(
         model=model,
@@ -175,10 +175,11 @@ async def generate_output_image(prompt, input_image_bytes):
 
     output_image_bytes = None
     
-    for part in response.candidates[0].content.parts:
-        if part.inline_data:
-            output_image_bytes = part.inline_data.data
-            break
+    if response.candidates[0].content.parts:
+        for part in response.candidates[0].content.parts:
+            if part.inline_data:
+                output_image_bytes = part.inline_data.data
+                break
 
     return output_image_bytes
 
