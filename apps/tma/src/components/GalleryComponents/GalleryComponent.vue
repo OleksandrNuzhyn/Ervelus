@@ -10,7 +10,7 @@
         v-if="!isLoading && galleryItems.length"
         tag="div"
         name="gallery-list"
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-11/12 mx-auto pt-12"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-11/12 mx-auto pt-4"
       >
         <article
           v-for="request in galleryItems"
@@ -23,14 +23,18 @@
             <div class="grid grid-cols-2 gap-2 h-full">
               <figure class="relative overflow-hidden rounded-2xl bg-zinc-900/50 z-20">
                 <img v-if="request.input_thumb_signed_url" :src="request.input_thumb_signed_url" alt="Input Image" :class="['h-full w-full object-cover aspect-square image-fade', { 'image-visible': request.requestLoaded }]"/>
-                <div v-else class="h-full w-full flex items-center justify-center text-zinc-500">
-                  <XCircleIcon class="h-8 w-8 opacity-40" />
+                <div v-else class="h-full w-full flex items-center justify-center bg-white/[0.02] backdrop-blur-sm">
+                  <svg class="w-13 h-11 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" preserveAspectRatio="none">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
                 </div>
               </figure>
               <figure class="relative overflow-hidden rounded-2xl bg-zinc-900/50 z-20">
                 <img v-if="request.output_thumb_signed_url" :src="request.output_thumb_signed_url" alt="Output Image" :class="['h-full w-full object-cover aspect-square image-fade', { 'image-visible': request.requestLoaded }]"/>
-                <div v-else class="h-full w-full flex items-center justify-center text-zinc-500">
-                  <XCircleIcon class="h-8 w-8 opacity-40" />
+                <div v-else class="h-full w-full flex items-center justify-center bg-white/[0.02] backdrop-blur-sm">
+                  <svg class="w-13 h-11 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" preserveAspectRatio="none">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
                 </div>
               </figure>
             </div>

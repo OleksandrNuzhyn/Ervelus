@@ -10,7 +10,19 @@
           <span>Ervelus</span>
         </router-link>
         <div class="flex items-center gap-3">
-          <button @click="isBurgerOpen = !isBurgerOpen" class="text-gray-200 hover:text-gray-50 focus:outline-none">
+          <button @click="isStoreOpen = true" class="relative text-gray-200 hover:text-white transition-colors focus:outline-none mr-1">
+            <div class="relative">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-7 w-7">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+              </svg>
+              <div class="absolute -bottom-1 -right-1">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 15" fill="currentColor" class="w-3.5 h-3.5 text-yellow-400" style="filter: drop-shadow(0px 0px 3px rgba(0,0,0,1));">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M6.63869 12.1902L3.50621 14.1092C3.18049 14.3087 2.75468 14.2064 2.55515 13.8807C2.45769 13.7216 2.42864 13.5299 2.47457 13.3491L2.95948 11.4405C3.13452 10.7515 3.60599 10.1756 4.24682 9.86791L7.6642 8.22716C7.82352 8.15067 7.89067 7.95951 7.81418 7.80019C7.75223 7.67116 7.61214 7.59896 7.47111 7.62338L3.66713 8.28194C2.89387 8.41581 2.1009 8.20228 1.49941 7.69823L0.297703 6.69116C0.00493565 6.44581 -0.0335059 6.00958 0.211842 5.71682C0.33117 5.57442 0.502766 5.48602 0.687982 5.47153L4.35956 5.18419C4.61895 5.16389 4.845 4.99974 4.94458 4.75937L6.36101 1.3402C6.5072 0.987302 6.91179 0.819734 7.26469 0.965925C7.43413 1.03612 7.56876 1.17075 7.63896 1.3402L9.05539 4.75937C9.15496 4.99974 9.38101 5.16389 9.6404 5.18419L13.3322 5.47311C13.713 5.50291 13.9975 5.83578 13.9677 6.2166C13.9534 6.39979 13.8667 6.56975 13.7269 6.68896L10.9114 9.08928C10.7131 9.25826 10.6267 9.52425 10.6876 9.77748L11.5532 13.3733C11.6426 13.7447 11.414 14.1182 11.0427 14.2076C10.8642 14.2506 10.676 14.2208 10.5195 14.1249L7.36128 12.1902C7.13956 12.0544 6.8604 12.0544 6.63869 12.1902Z" fill="currentColor"></path>
+                </svg>
+              </div>
+            </div>
+          </button>
+          <button @click="isBurgerOpen = !isBurgerOpen" class="text-gray-200 hover:text-gray-50 focus:outline-none translate-y-[2px]">
             <svg v-if="!isBurgerOpen" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
             </svg>
@@ -64,6 +76,7 @@
         </div>
       </div>
     </transition>
+    <StoreModal :isOpen="isStoreOpen" @close="isStoreOpen = false" />
   </header>
   
   <transition
@@ -85,8 +98,10 @@
 <script setup>
 import { ref, watch } from 'vue';
 import api from '@/services/api';
+import StoreModal from '@/components/OtherComponents/StoreModal.vue';
 
 const isBurgerOpen = ref(false);
+const isStoreOpen = ref(false);
 const credits = ref(0);
 
 async function fetchCredits() {

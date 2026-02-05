@@ -3,21 +3,18 @@
     !hasStartedTransform ? 'h-[calc(100dvh-8.6rem)] pb-3' : 'pb-21 lg:pb-2']">
     <div :class="['flex-grow flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-6 pb-0 overflow-visible min-h-0 lg:h-full', !hasStartedTransform ? 'h-full' : '']">
       <div :class="['flex flex-col lg:shrink overflow-visible gap-3 min-h-0', !hasStartedTransform ? 'flex-1 justify-between' : '']">
+        
+        <button @click="showPhotoTipsModal = true" class="w-full bg-white/[0.03] backdrop-blur-[20px] border border-white/[0.02] shadow-xl rounded-2xl py-2.5 px-4 flex items-center justify-center gap-2 group hover:bg-white/[0.05] transition-all cursor-pointer">
+           <svg class="w-4 h-4 text-white/40 group-hover:text-white/80 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+             <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+           </svg>
+           <span class="text-[12px] font-medium text-white/50 group-hover:text-white transition-colors inter">
+             {{ $t('workspace.photo_tips_title') || 'Tips for best results' }}
+           </span>
+        </button>
+
         <div :class="['relative w-full flex flex-col lg:flex-grow overflow-visible min-h-0 lg:flex-1', !hasStartedTransform ? 'flex-1' : '']">
           <div :class="[!hasStartedTransform ? 'flex-1' : 'h-[38vh] md:h-[600px]', 'bg-white/[0.03] backdrop-blur-[20px] border border-white/[0.02] shadow-xl rounded-2xl p-4 flex flex-col items-center justify-center w-full lg:h-full lg:flex-grow min-h-0 overflow-hidden']">
-            
-            <button 
-              @click.stop="showPhotoTipsModal = true"
-              class="absolute left-6 top-6 z-20 p-2 group/info transition-all duration-300 outline-none"
-              :style="inputImageUrl ? { filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.6)) drop-shadow(0 2px 4px rgba(0,0,0,0.5))' } : {}"
-            >
-              <div v-if="!inputImageUrl" class="absolute inset-0 rounded-full bg-white/20 blur-md info-breath mt-1 ml-1" style="width: calc(100% - 8px); height: calc(100% - 8px);"></div>
-              
-              <svg class="w-6 h-6 text-white/80 group-hover/info:text-white transition-colors relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-              </svg>
-            </button>
-
             <div v-if="!inputImageUrl" @click="triggerFileInput"
                  class="cursor-pointer w-full h-full flex flex-col items-center justify-center relative group/btn">
               
@@ -27,19 +24,12 @@
                 </svg>
               </div>
               <p class="text-base lg:text-xl font-medium text-white/70 inter">{{ $t('workspace.upload_click') }}</p>
-              <input type="file" ref="fileInput" @change="onFileSelected" class="hidden" accept="image/jpeg, image/png, image/webp" />
             </div>
 
-            <div v-else class="relative w-full h-full flex items-center justify-center">
+            <div v-else @click="triggerFileInput" class="relative w-full h-full flex items-center justify-center cursor-pointer group/image" title="Click to replace image">
               <img :src="inputImageUrl" alt="Input" class="max-w-full max-h-full rounded-2xl transition-opacity duration-500" :style="{ opacity: inputImageLoaded ? 1 : 0 }" @load="onInputImageLoad" />
-              <button @click="inputImageUrl = null; outputImageUrl = null; inputImageLoaded = false" 
-                class="absolute right-2 top-2 p-2 text-white hover:text-white/80 transition-all duration-300 z-20"
-                :style="{ filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.6)) drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }">
-                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
             </div>
+            <input type="file" ref="fileInput" @change="onFileSelected" class="hidden" accept="image/jpeg, image/png, image/webp" />
           </div>
         </div>
 
@@ -63,9 +53,9 @@
             <img src="@/assets/svg/staff_logo.svg" class="wave-animation h-32 w-32 md:h-48 md:w-48 opacity-40" />
           </div>
 
-          <div v-else-if="outputImageUrl" class="relative w-full h-full flex items-center justify-center">
+          <div v-else-if="outputImageUrl" @click="showOutputModal = true" class="relative w-full h-full flex items-center justify-center cursor-pointer group/output" title="Click to view full screen">
             <img :src="outputImageUrl" alt="Output" class="max-w-full max-h-full rounded-2xl transition-opacity duration-500" :style="{ opacity: outputImageLoaded ? 1 : 0 }" @load="onOutputImageLoad" />
-            <button @click="downloadOutputImage" 
+            <button @click.stop="downloadOutputImage" 
               class="absolute right-2 top-2 p-2 text-white hover:text-white/80 transition-all duration-300 z-20"
               :style="{ filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.6)) drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }">
               <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
@@ -126,33 +116,19 @@
       leave-to-class="opacity-0"
     >
       <div v-if="showPhotoTipsModal" class="fixed inset-0 flex items-center justify-center z-[100] bg-black/60 backdrop-blur-xl" @click.self="showPhotoTipsModal = false">
-        <div class="bg-white/[0.08] backdrop-blur-[30px] border border-white/[0.05] rounded-2xl w-11/12 max-w-lg shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] relative overflow-hidden h-auto max-h-[94vh] flex flex-col">
-          
-          <button 
-            @click="showPhotoTipsModal = false"
-            class="absolute right-6 top-6 p-2 text-white/30 hover:text-white transition-all duration-300 z-30 hover:bg-white/10 rounded-full"
-          >
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-          
+        <div class="bg-white/[0.08] backdrop-blur-[30px] border border-white/[0.02] rounded-2xl w-11/12 max-w-lg shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] relative overflow-hidden h-auto max-h-[94vh] flex flex-col">
           <div 
             ref="scrollContainer"
             @scroll="checkScroll"
-            class="tips-scroll-container mask-fade-vertical h-full overflow-y-auto"
+            class="tips-scroll-container mask-fade-vertical flex-1 min-h-0 overflow-y-auto"
             :style="{
               '--mask-top': canScrollUp ? '60px' : '0px',
               '--mask-bottom': canScrollDown ? '60px' : '0px'
             }"
           >
-            <div class="py-8 px-4 md:px-8 flex flex-col gap-8 text-gray-200">
+            <div class="pt-8 pb-6 px-4 md:px-8 flex flex-col gap-8 text-gray-200">
               <div class="text-center relative z-10">
-                <div class="flex items-center justify-center mb-4">
-                  <svg class="w-12 h-12 text-white/80" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                  </svg>
-                </div>
+
                 <h3 class="text-[18px] font-semibold text-white tracking-tight leading-tight mx-auto px-4 w-full text-center inter">{{ $t('workspace.photo_tips_title') || 'Поради щодо фото' }}</h3>
               </div>
 
@@ -218,11 +194,36 @@
                 </div>
               </div>
             </div>
+
+          </div>
+          <div class="px-6 pb-7 pt-2 shrink-0 z-20">
+            <button 
+              @click="showPhotoTipsModal = false"
+              class="w-full bg-white/[0.08] hover:bg-white/[0.12] active:scale-[0.98] transition-all text-white font-bold rounded-xl py-3.5 text-[15px] inter"
+            >
+              {{ $t('workspace.got_it') }}
+            </button>
           </div>
         </div>
       </div>
     </transition>
   </div>
+
+    <!-- Output Image Modal -->
+    <transition 
+      enter-active-class="transition duration-500 ease-out" 
+      enter-from-class="opacity-0" 
+      enter-to-class="opacity-100"
+      leave-active-class="transition duration-300 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div v-if="showOutputModal" class="fixed inset-0 flex items-center justify-center z-[120] bg-black/60 backdrop-blur-xl p-4" @click.self="showOutputModal = false">
+        <div class="relative w-full h-full flex items-center justify-center pointer-events-none">
+             <img :src="outputImageUrl" class="max-w-full max-h-full object-contain pointer-events-auto shadow-2xl rounded-2xl" @click.stop />
+        </div>
+      </div>
+    </transition>
 </template>
 
 <script setup>
@@ -232,6 +233,7 @@ import StoreModal from '../OtherComponents/StoreModal.vue';
 import { toast } from '@/services/toast';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
+const showOutputModal = ref(false);
 
 const showPhotoTipsModal = ref(false);
 const showGenerationsModal = ref(false);
@@ -593,6 +595,10 @@ function handleFile(file) {
     return;
   }
 
+  outputImageUrl.value = null;
+  inputImageLoaded.value = false;
+  hasStartedTransform.value = false;
+
   if (!ALLOWED_MIME_TYPES.includes(file.type)) {
     toast.info(t('workspace.error_invalid_type') || 'Invalid file type. Our magicians support only JPEG, PNG or WEBP format.');
     return;
@@ -843,12 +849,12 @@ async function downloadOutputImage() {
 }
 
 .tips-scroll-container {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .tips-scroll-container::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
+  display: none;
 }
 
 .mask-fade-vertical {

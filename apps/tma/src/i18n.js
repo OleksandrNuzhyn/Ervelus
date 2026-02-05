@@ -12,7 +12,8 @@ const messages = {
       cookie: "Cookie Policy",
       coins: "Generations",
       rights_reserved: "All rights reserved",
-      back: "Back"
+      back: "Back",
+      close: "Close"
     },
     workspace: {
       upload_click: "Select photo",
@@ -103,6 +104,15 @@ const messages = {
       title: "The site is under maintenance",
       message: "We'll be back soon. We apologize for the inconvenience",
       hint: "Please refresh the page periodically to check our status"
+    },
+    store: {
+      title: "Store",
+      free_bonuses: "Community Rewards",
+      star_packages: "Star Packs",
+      generations: "generations",
+      premium_styles: "Lifetime access to all styles",
+      invite_friend: "Invite friend",
+      join_channel: "Join channel"
     }
   },
   uk: {
@@ -116,7 +126,8 @@ const messages = {
       cookie: "Політика Cookie",
       coins: "Генерації",
       rights_reserved: "Усі права захищені",
-      back: "Назад"
+      back: "Назад",
+      close: "Закрити"
     },
     workspace: {
       upload_click: "Оберіть фото",
@@ -207,6 +218,15 @@ const messages = {
       title: "Сайт на технічному обслуговуванні",
       message: "Ми скоро повернемося. Перепрошуємо за незручності",
       hint: "Будь ласка, періодично оновлюйте сторінку, щоб перевірити статус"
+    },
+    store: {
+      title: "Магазин",
+      free_bonuses: "Нагороди спільноти",
+      star_packages: "Зіркові Паки",
+      generations: "генерацій",
+      premium_styles: "Довічний доступ до всіх стилів",
+      invite_friend: "Запросити друга",
+      join_channel: "Приєднатися до каналу"
     }
   }
 }

@@ -5,7 +5,7 @@
         <div class="fixed inset-0 modal-overlay transition-opacity" />
 
         <div class="fixed inset-0 z-[100] overflow-y-auto" @click="emit('close-modal')">
-          <div class="flex min-h-full items-center justify-center py-8 text-center">
+          <div class="flex min-h-full items-center justify-center py-6 text-center">
             <Transition name="fade-content">
               <div v-if="isLoading && isMobile" key="spinner" class="spinner"></div>
 
@@ -15,12 +15,6 @@
                   'relative flex w-11/12 max-w-[1400px] md:h-[90vh] transform flex-col overflow-hidden rounded-2xl border border-white/[0.02] bg-white/[0.03] text-left align-middle shadow-xl backdrop-blur-[25px] transition-all',
                 ]"
               >
-                <button @click="emit('close-modal')"
-                  class="absolute right-3 top-3 p-2 text-white hover:text-white/80 transition-all duration-300 z-50 md:hidden">
-                  <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
                 <Transition name="fade-content">
                   <div v-if="!isLoading && currentRequest" class="flex h-full flex-col">
                     <div class="flex-grow flex flex-col md:flex-row justify-center items-stretch gap-4 px-6 pt-15 pb-3 min-h-0">
@@ -42,8 +36,22 @@
                           alt="Output image"
                           class="block max-w-full max-h-full object-contain rounded-2xl"
                         />
-                        <div v-else class="h-44 md:h-full w-full flex items-center justify-center text-zinc-500 text-sm font-medium border border-white/[0.02] rounded-2xl md:border-0">
-                          {{ $t('gallery.failed_output') }}
+                        <div v-else class="relative w-full flex items-center justify-center">
+                          <template v-if="currentRequest.input_large_signed_url">
+                             <img :src="currentRequest.input_large_signed_url" class="invisible block max-w-full max-h-full object-contain rounded-2xl" aria-hidden="true" />
+                             <div class="absolute inset-0 flex flex-col items-center justify-center gap-3 text-zinc-500 text-sm font-medium border border-white/5 rounded-2xl bg-white/[0.02] backdrop-blur-sm">
+                                <svg class="w-14 h-12 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" preserveAspectRatio="none">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <span class="text-white/40 text-xs">{{ $t('gallery.failed_output') }}</span>
+                             </div>
+                          </template>
+                          <div v-else class="h-44 md:h-full w-full flex flex-col items-center justify-center gap-3 text-zinc-500 text-sm font-medium border border-white/5 rounded-2xl bg-white/[0.02] md:border-0">
+                                <svg class="w-14 h-12 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" preserveAspectRatio="none">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <span class="text-white/40 text-xs">{{ $t('gallery.failed_output') }}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
