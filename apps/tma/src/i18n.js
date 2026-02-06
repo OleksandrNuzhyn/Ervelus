@@ -112,7 +112,9 @@ const messages = {
       generations: "generations",
       premium_styles: "Lifetime access to all styles",
       invite_friend: "Invite friend",
-      join_channel: "Join channel"
+      join_channel: "Join channel",
+      error_title: "Payment Error",
+      error_desc: "Failed to create invoice. Please try again later"
     }
   },
   uk: {
@@ -226,7 +228,9 @@ const messages = {
       generations: "генерацій",
       premium_styles: "Довічний доступ до всіх стилів",
       invite_friend: "Запросити друга",
-      join_channel: "Приєднатися до каналу"
+      join_channel: "Приєднатися до каналу",
+      error_title: "Помилка оплати",
+      error_desc: "Не вдалося створити інвойс. Будь ласка, спробуйте пізніше"
     }
   }
 }

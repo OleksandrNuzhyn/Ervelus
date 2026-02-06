@@ -1,8 +1,6 @@
 from django.contrib import admin, messages
-from django.utils import timezone
 from solo.admin import SingletonModelAdmin
 from .models import ApplicationConfig
-from django.contrib.admin.models import LogEntry as AdminLogEntry
 from gdpr_assist.admin import PersonalData, PersonalDataAdmin
 from gdpr_assist.admin.tool import PersonalDataSearchForm
 from django.utils.decorators import method_decorator
@@ -14,32 +12,6 @@ from django.shortcuts import redirect, render
 from django import forms
 
 admin.site.unregister(PersonalData)
-
-AdminLogEntry._meta.verbose_name = "Admin Record"
-AdminLogEntry._meta.verbose_name_plural = "Admin Records"
-
-
-@admin.register(AdminLogEntry)
-class AdminLogEntryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user__email', 'object_repr', 'action_flag', 'action_time_formatted')
-    list_select_related = ('user',)
-    list_filter = ('action_flag', 'action_time', 'content_type')
-    search_fields = ('user__email', 'object_repr', 'change_message')
-    readonly_fields = ('action_time_formatted',)
-    ordering = ('-id',)
-
-    @admin.display(ordering='action_time', description='action time')
-    def action_time_formatted(self, obj):
-        return timezone.localtime(obj.action_time).strftime('%d.%m.%Y %H:%M:%S')
-
-    def has_add_permission(self, request):
-        return False
-    
-    def has_change_permission(self, request, obj=None):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False
 
 
 class CustomPersonalDataSearchForm(PersonalDataSearchForm):

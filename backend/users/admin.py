@@ -22,7 +22,7 @@ TOTPDevice._meta.verbose_name_plural = "TOTP Devices"
 
 @admin.register(User)
 class UserAdmin(NoLogAdminMixin, BaseUserAdmin):
-    list_display = ('id', 'username', 'is_active', 'date_joined_formatted', 'last_login_formatted')
+    list_display = ('id', 'username', 'date_joined_formatted', 'last_login_formatted', 'is_active')
     list_filter = ('is_active', 'date_joined', 'last_login', 'is_superuser')
     search_fields = ('email', 'username', 'first_name', 'last_name')
     ordering = ('-id',)
@@ -66,7 +66,7 @@ class UserProfileAdmin(NoLogAdminMixin, admin.ModelAdmin):
 
 @admin.register(TOTPDevice)
 class CustomTOTPDeviceAdmin(TOTPDeviceAdmin):
-    list_display = ('id', 'name', 'confirmed', 'created_at_formatted', 'last_used_at_formatted')
+    list_display = ('id', 'name', 'last_used_at_formatted', 'confirmed')
     search_fields = ('user__email', 'name')
     readonly_fields = ('created_at_formatted', 'last_used_at_formatted', 'qrcode_link')
     ordering = ('-id',)
