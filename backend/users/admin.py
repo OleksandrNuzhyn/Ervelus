@@ -22,7 +22,7 @@ TOTPDevice._meta.verbose_name_plural = "TOTP Devices"
 
 @admin.register(User)
 class UserAdmin(NoLogAdminMixin, BaseUserAdmin):
-    list_display = ('id', 'email', 'username', 'is_active', 'date_joined_formatted', 'last_login_formatted')
+    list_display = ('id', 'username', 'is_active', 'date_joined_formatted', 'last_login_formatted')
     list_filter = ('is_active', 'date_joined', 'last_login', 'is_superuser')
     search_fields = ('email', 'username', 'first_name', 'last_name')
     ordering = ('-id',)
@@ -52,8 +52,7 @@ class UserAdmin(NoLogAdminMixin, BaseUserAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(NoLogAdminMixin, admin.ModelAdmin):
-    list_display = ('id', 'user__email', 'telegram_id', 'country_code', 'credits')
-    list_select_related = ('user',)
+    list_display = ('id', 'telegram_id', 'country_code', 'credits')
     search_fields = ('user__email', 'telegram_id', 'country_code')
     readonly_fields = ('user',)
     ordering = ('-credits',)
@@ -67,8 +66,7 @@ class UserProfileAdmin(NoLogAdminMixin, admin.ModelAdmin):
 
 @admin.register(TOTPDevice)
 class CustomTOTPDeviceAdmin(TOTPDeviceAdmin):
-    list_display = ('id', 'user__email', 'name', 'confirmed', 'created_at_formatted', 'last_used_at_formatted')
-    list_select_related = ('user',)
+    list_display = ('id', 'name', 'confirmed', 'created_at_formatted', 'last_used_at_formatted')
     search_fields = ('user__email', 'name')
     readonly_fields = ('created_at_formatted', 'last_used_at_formatted', 'qrcode_link')
     ordering = ('-id',)

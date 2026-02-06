@@ -33,11 +33,18 @@ def telegram_handler(request):
             error_message = ""
             
             try:
-                # Sync DB check
-                package = StarPackage.objects.get(id=int(payload))
+                # Basic validation ensuring payload isn't garbage
+                # New format: generations|stars
+                if "|" in payload:
+                    gen, stars = payload.split("|")
+                    int(gen)
+                    int(stars)
+                else:
+                    # Legacy: just ID
+                    int(payload)
             except Exception:
                 is_ok = False
-                error_message = "Invalid package identifier."
+                error_message = "Invalid payload format."
             
             # Answer asynchronously (converted to sync)
             async def answer():

@@ -14,8 +14,8 @@ class PromoCodeAdmin(admin.ModelAdmin):
 
 @admin.register(PromoCodeUsage)
 class PromoCodeUsageAdmin(NoLogAdminMixin, admin.ModelAdmin):
-    list_display = ('id', 'user__email', 'promo_code', 'used_at_formatted')
-    list_select_related = ('user', 'promo_code')
+    list_display = ('id', 'promo_code', 'used_at_formatted')
+    list_select_related = ('promo_code',)
     list_filter = ('promo_code',)
     search_fields = ('user__email',)
     ordering = ('-used_at',)

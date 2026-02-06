@@ -24,9 +24,9 @@ class TermsVersionAdmin(admin.ModelAdmin):
 
 @admin.register(UserAgreement)
 class UserAgreementAdmin(NoLogAdminMixin, admin.ModelAdmin):
-    list_display = ('id', 'user__email', 'terms_version', 'accepted_at_formatted')
+    list_display = ('id', 'terms_version', 'accepted_at_formatted')
     list_filter = ('terms_version__document_type', 'terms_version__version', 'accepted_at')
-    list_select_related = ('user', 'terms_version')
+    list_select_related = ('terms_version',)
     search_fields = ('user__email', 'ip_address', 'user_agent')
     ordering = ('-accepted_at',)
 
