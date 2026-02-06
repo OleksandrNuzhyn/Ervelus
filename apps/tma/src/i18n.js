@@ -114,7 +114,10 @@ const messages = {
       invite_friend: "Invite friend",
       join_channel: "Join channel",
       error_title: "Payment Error",
-      error_desc: "Failed to create invoice. Please try again later"
+      error_desc: "Failed to create invoice. Please try again later",
+      success_title: "Payment Successful!",
+      success_desc: "The generations have been successfully added to your balance",
+      got_it: "Excellent"
     }
   },
   uk: {
@@ -230,7 +233,10 @@ const messages = {
       invite_friend: "Запросити друга",
       join_channel: "Приєднатися до каналу",
       error_title: "Помилка оплати",
-      error_desc: "Не вдалося створити інвойс. Будь ласка, спробуйте пізніше"
+      error_desc: "Не вдалося створити інвойс. Будь ласка, спробуйте пізніше",
+      success_title: "Оплата успішна!",
+      success_desc: "Генерації успішно зараховані на ваш баланс",
+      got_it: "Чудово"
     }
   }
 }

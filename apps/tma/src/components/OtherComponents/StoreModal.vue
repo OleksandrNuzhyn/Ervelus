@@ -116,6 +116,39 @@
           </div>
         </div>
       </transition>
+
+      <transition name="modal-fade">
+        <div v-if="showSuccessModal" class="fixed inset-0 flex items-center justify-center z-[110] confirm-modal-overlay" @click.self="showSuccessModal = false">
+          <div class="relative w-11/12 max-w-sm overflow-hidden rounded-2xl border border-white/10 bg-[#1c1c1e]/90 p-8 text-center backdrop-blur-xl shadow-2xl transition-all">
+            <div class="pointer-events-none absolute -left-10 -top-10 h-32 w-32 rounded-full bg-green-500/20 blur-3xl"></div>
+            <div class="pointer-events-none absolute -bottom-10 -right-10 h-32 w-32 rounded-full bg-emerald-500/10 blur-3xl"></div>
+
+            <div class="relative z-10 flex flex-col items-center">
+              <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-tr from-green-500/20 to-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)] ring-1 ring-white/10">
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-tr from-green-500 to-emerald-600 shadow-lg shadow-emerald-500/30">
+                  <svg class="h-6 w-6 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              </div>
+
+              <h3 class="mb-3 text-2xl font-bold tracking-tight text-white">{{ $t('store.success_title') }}</h3>
+              
+              <p class="mb-8 text-[15px] font-medium leading-relaxed text-white/60">
+                {{ $t('store.success_desc') }}
+              </p>
+
+              <button 
+                @click="showSuccessModal = false" 
+                class="group relative flex w-full items-center justify-center overflow-hidden rounded-xl bg-white text-[15px] font-bold text-black shadow-lg transition-transform active:scale-[0.98]"
+              >
+                <div class="absolute inset-0 bg-gradient-to-r from-gray-100 to-white opacity-100 transition-opacity group-hover:opacity-90"></div>
+                <span class="relative py-3.5">{{ $t('store.got_it') }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </transition>
     </transition>
   </Teleport>
 </template>
@@ -127,6 +160,7 @@ import api from '@/services/api';
 const starPackages = ref([]);
 const loading = ref(false);
 const showErrorModal = ref(false);
+const showSuccessModal = ref(false);
 
 async function createStarInvoice(pkg) {
   try {
@@ -136,7 +170,11 @@ async function createStarInvoice(pkg) {
     
     if (response.data?.star_invoice_link) {
       if (window.Telegram?.WebApp) {
-        window.Telegram.WebApp.openInvoice(response.data.star_invoice_link);
+        window.Telegram.WebApp.openInvoice(response.data.star_invoice_link, (status) => {
+          if (status === 'paid') {
+            showSuccessModal.value = true;
+          }
+        });
       }
       else {
         showErrorModal.value = true;

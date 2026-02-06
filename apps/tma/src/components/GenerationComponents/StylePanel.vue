@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-[#1c1c1c] border border-white/[0.02] shadow-xl rounded-2xl h-[calc(100vh-9.9rem_+_8px)] lg:h-[calc(100vh-10.5rem_+_6px)] flex flex-col p-4 relative">
+  <div class="bg-[#1c1c1c] border border-white/[0.02] shadow-xl rounded-2xl h-[calc(100vh-9.9rem_+_7px)] lg:h-[calc(100vh-10.5rem_+_6px)] flex flex-col p-4 relative">
     <div class="relative w-full h-full flex flex-col min-h-0">
       <button @click="handleClose" class="absolute right-0 top-0 text-white/60 hover:text-white bg-transparent p-2 transition-colors z-30">
         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
