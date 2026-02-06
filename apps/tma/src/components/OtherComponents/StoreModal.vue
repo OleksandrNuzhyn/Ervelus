@@ -97,58 +97,58 @@
           </div>
         </div>
       </div>
+    </transition>
 
-      <transition name="modal-fade">
-        <div v-if="showErrorModal" class="fixed inset-0 flex items-center justify-center z-[110] confirm-modal-overlay" @click.self="showErrorModal = false">
-          <div class="profile-card !bg-white/[0.08] !backdrop-blur-[30px] !p-10 w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-center gap-8 text-gray-200 relative">
-            <div class="text-center">
-              <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ $t('store.error_title') }}</h3>
-              <p class="text-[15px] text-white/50 leading-relaxed font-medium">{{ $t('store.error_desc') }}</p>
-            </div>
-            <div class="flex justify-center pt-2 w-full">
-              <button 
-                @click="showErrorModal = false" 
-                class="flex items-center justify-center h-[48px] min-w-[140px] px-6 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/20 border border-white/[0.02] text-white hover:bg-white/30 active:scale-[0.98]"
-              >
-                {{ $t('navigation.close') }}
-              </button>
-            </div>
+    <transition name="modal-fade">
+      <div v-if="showErrorModal" class="fixed inset-0 flex items-center justify-center z-[110] confirm-modal-overlay" @click.self="showErrorModal = false">
+        <div class="profile-card !bg-white/[0.08] !backdrop-blur-[30px] !p-10 w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-center gap-8 text-gray-200 relative">
+          <div class="text-center">
+            <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ $t('store.error_title') }}</h3>
+            <p class="text-[15px] text-white/50 leading-relaxed font-medium">{{ $t('store.error_desc') }}</p>
+          </div>
+          <div class="flex justify-center pt-2 w-full">
+            <button 
+              @click="showErrorModal = false" 
+              class="flex items-center justify-center h-[48px] min-w-[140px] px-6 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/20 border border-white/[0.02] text-white hover:bg-white/30 active:scale-[0.98]"
+            >
+              {{ $t('navigation.close') }}
+            </button>
           </div>
         </div>
-      </transition>
+      </div>
+    </transition>
 
-      <transition name="modal-fade">
-        <div v-if="showSuccessModal" class="fixed inset-0 flex items-center justify-center z-[110] confirm-modal-overlay" @click.self="showSuccessModal = false">
-          <div class="relative w-11/12 max-w-sm overflow-hidden rounded-2xl border border-white/10 bg-[#1c1c1e]/90 p-8 text-center backdrop-blur-xl shadow-2xl transition-all">
-            <div class="pointer-events-none absolute -left-10 -top-10 h-32 w-32 rounded-full bg-green-500/20 blur-3xl"></div>
-            <div class="pointer-events-none absolute -bottom-10 -right-10 h-32 w-32 rounded-full bg-emerald-500/10 blur-3xl"></div>
+    <transition name="modal-fade">
+      <div v-if="showSuccessModal" class="fixed inset-0 flex items-center justify-center z-[110] confirm-modal-overlay" @click.self="showSuccessModal = false">
+        <div class="relative w-11/12 max-w-sm overflow-hidden rounded-2xl border border-white/10 bg-[#1c1c1e]/90 p-8 text-center backdrop-blur-xl shadow-2xl transition-all">
+          <div class="pointer-events-none absolute -left-10 -top-10 h-32 w-32 rounded-full bg-green-500/20 blur-3xl"></div>
+          <div class="pointer-events-none absolute -bottom-10 -right-10 h-32 w-32 rounded-full bg-emerald-500/10 blur-3xl"></div>
 
-            <div class="relative z-10 flex flex-col items-center">
-              <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-tr from-green-500/20 to-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)] ring-1 ring-white/10">
-                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-tr from-green-500 to-emerald-600 shadow-lg shadow-emerald-500/30">
-                  <svg class="h-6 w-6 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
+          <div class="relative z-10 flex flex-col items-center">
+            <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-tr from-green-500/20 to-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)] ring-1 ring-white/10">
+              <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-tr from-green-500 to-emerald-600 shadow-lg shadow-emerald-500/30">
+                <svg class="h-6 w-6 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
               </div>
-
-              <h3 class="mb-3 text-2xl font-bold tracking-tight text-white">{{ $t('store.success_title') }}</h3>
-              
-              <p class="mb-8 text-[15px] font-medium leading-relaxed text-white/60">
-                {{ $t('store.success_desc') }}
-              </p>
-
-              <button 
-                @click="showSuccessModal = false" 
-                class="group relative flex w-full items-center justify-center overflow-hidden rounded-xl bg-white text-[15px] font-bold text-black shadow-lg transition-transform active:scale-[0.98]"
-              >
-                <div class="absolute inset-0 bg-gradient-to-r from-gray-100 to-white opacity-100 transition-opacity group-hover:opacity-90"></div>
-                <span class="relative py-3.5">{{ $t('store.got_it') }}</span>
-              </button>
             </div>
+
+            <h3 class="mb-3 text-2xl font-bold tracking-tight text-white">{{ $t('store.success_title') }}</h3>
+            
+            <p class="mb-8 text-[15px] font-medium leading-relaxed text-white/60">
+              {{ $t('store.success_desc') }}
+            </p>
+
+            <button 
+              @click="showSuccessModal = false" 
+              class="group relative flex w-full items-center justify-center overflow-hidden rounded-xl bg-white text-[15px] font-bold text-black shadow-lg transition-transform active:scale-[0.98]"
+            >
+              <div class="absolute inset-0 bg-gradient-to-r from-gray-100 to-white opacity-100 transition-opacity group-hover:opacity-90"></div>
+              <span class="relative py-3.5">{{ $t('store.got_it') }}</span>
+            </button>
           </div>
         </div>
-      </transition>
+      </div>
     </transition>
   </Teleport>
 </template>
