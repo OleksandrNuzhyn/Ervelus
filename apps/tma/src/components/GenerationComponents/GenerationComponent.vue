@@ -1,7 +1,7 @@
 <template>
   <div class="relative">
     <div class="relative mb-1">
-      <CategoryStrip :categories="genres" :selected-category-id="selectedGenreId" @category-selected="handleGenreSelect"/>
+      <CategoryStrip :categories="genres" :selected-category-id="selectedGenreId" :is-style-panel-open="isStylePanelOpen" @category-selected="handleGenreSelect"/>
       <transition name="slide-fade">
         <StylePanel
           v-if="isStylePanelOpen"
@@ -31,6 +31,12 @@ import CategoryStrip from './CategoryStrip.vue';
 import StylePanel from './StylePanel.vue';
 import ImageWorkspace from './ImageWorkspace.vue';
 import api from '@/services/api';
+import spriteFantasy from '@/assets/style_sprites/fantasy.png';
+import spriteTimeTravel from '@/assets/style_sprites/time_travel.png';
+import spriteAroundTheWorld from '@/assets/style_sprites/around_the_world.png';
+import spritePunkverse from '@/assets/style_sprites/punkverse.png';
+import spriteEvents from '@/assets/style_sprites/events.png';
+import spriteTrending from '@/assets/style_sprites/trending.png';
 
 const genres = ref([]);
 const styles = ref([]);
@@ -41,6 +47,20 @@ const isStylePanelOpen = ref(false);
 const latestGenerationData = ref(null);
 
 onMounted(async () => {
+  const customPreloadImages = [
+    spriteFantasy,
+    spriteTimeTravel,
+    spriteAroundTheWorld,
+    spritePunkverse,
+    spriteEvents,
+    spriteTrending
+  ];
+
+  customPreloadImages.forEach(src => {
+    const img = new Image();
+    img.src = src;
+  });
+
   const [stylesResponse, latestGenerationResponse] = await Promise.all([
     api.get('/api/products/styles/'),
     api.get('/api/generations/generation-requests/latest/')
@@ -70,12 +90,12 @@ onMounted(async () => {
     }
   }
   else if (styles.value.length > 0) {
-    const parisianDreamStyle = styles.value.find(s => s.name.toLowerCase() === 'parisian dream');
+    const defaultStyle = styles.value.find(s => s.name.toLowerCase() === 'hong kong urban');
     
-    if (parisianDreamStyle) {
-      selectedStyleId.value = parisianDreamStyle.id;
-      if (parisianDreamStyle.genre && parisianDreamStyle.genre.name) {
-        selectedGenreId.value = parisianDreamStyle.genre.name;
+    if (defaultStyle) {
+      selectedStyleId.value = defaultStyle.id;
+      if (defaultStyle.genre && defaultStyle.genre.name) {
+        selectedGenreId.value = defaultStyle.genre.name;
       }
     }
     else {

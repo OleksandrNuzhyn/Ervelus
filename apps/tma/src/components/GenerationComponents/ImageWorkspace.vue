@@ -4,7 +4,7 @@
     <div :class="['flex-grow flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-6 pb-0 overflow-visible min-h-0 lg:h-full', !hasStartedTransform ? 'h-full' : '']">
       <div :class="['flex flex-col lg:shrink overflow-visible gap-3 min-h-0', !hasStartedTransform ? 'flex-1 justify-between' : '']">
         
-        <button @click="showPhotoTipsModal = true" class="w-full bg-white/[0.03] backdrop-blur-[20px] border border-white/[0.02] shadow-xl rounded-2xl py-2.5 px-4 flex items-center justify-center gap-2 group hover:bg-white/[0.05] transition-all cursor-pointer">
+        <button @click="showPhotoTipsModal = true" class="w-full bg-white/[0.03] backdrop-blur-[20px] border border-white/[0.02] shadow-xl rounded-2xl py-2 px-4 flex items-center justify-center gap-2 group hover:bg-white/[0.05] transition-all cursor-pointer">
            <svg class="w-4 h-4 text-white/40 group-hover:text-white/80 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
              <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
            </svg>
@@ -116,7 +116,7 @@
       leave-to-class="opacity-0"
     >
       <div v-if="showPhotoTipsModal" class="fixed inset-0 flex items-center justify-center z-[100] bg-black/60 backdrop-blur-xl" @click.self="showPhotoTipsModal = false">
-        <div class="bg-white/[0.08] backdrop-blur-[30px] border border-white/[0.02] rounded-2xl w-11/12 max-w-lg shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] relative overflow-hidden h-auto max-h-[94vh] flex flex-col">
+        <div class="bg-[#1c1c1c] border border-white/[0.02] rounded-2xl w-11/12 max-w-lg shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] relative overflow-hidden h-auto max-h-[94vh] flex flex-col">
           <div 
             ref="scrollContainer"
             @scroll="checkScroll"
@@ -208,8 +208,6 @@
       </div>
     </transition>
   </div>
-
-    <!-- Output Image Modal -->
     <transition 
       enter-active-class="transition duration-500 ease-out" 
       enter-from-class="opacity-0" 
@@ -218,9 +216,9 @@
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div v-if="showOutputModal" class="fixed inset-0 flex items-center justify-center z-[120] bg-black/60 backdrop-blur-xl p-4" @click.self="showOutputModal = false">
+      <div v-if="showOutputModal" class="fixed inset-0 flex items-center justify-center z-[120] bg-black/60 backdrop-blur-xl p-4" @click="showOutputModal = false">
         <div class="relative w-full h-full flex items-center justify-center pointer-events-none">
-             <img :src="outputImageUrl" class="max-w-full max-h-full object-contain pointer-events-auto shadow-2xl rounded-2xl" @click.stop />
+             <img :src="outputImageUrl" class="max-w-full max-h-full object-contain pointer-events-auto shadow-2xl rounded-2xl" />
         </div>
       </div>
     </transition>

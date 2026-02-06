@@ -44,7 +44,7 @@ const messages = {
       tip_4_title: "Lighting:",
       tip_4_desc: "Bright, even lighting without harsh shadows ensures a magical transformation",
       tip_5_title: "Background:",
-      tip_5_desc: "Clean and simple backgrounds help the AI focus on the main subject"
+      tip_5_desc: "The background should be multi-layered and detailed, but not overloaded"
     },
     gallery: {
       no_images: "No photos yet",
@@ -158,7 +158,7 @@ const messages = {
       tip_4_title: "Освітлення:",
       tip_4_desc: "Рівномірне світло без різких тіней гарантує найбільш якісну стилізацію",
       tip_5_title: "Фон:",
-      tip_5_desc: "Простий фон без зайвих деталей допомагає ШІ краще обробити ваш образ"
+      tip_5_desc: "Фон повинен бути багатошаровим і з деталями, але не перевантаженим"
     },
     gallery: {
       no_images: "Фото ще немає",

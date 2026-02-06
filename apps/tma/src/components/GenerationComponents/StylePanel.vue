@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white/[0.03] backdrop-blur-[20px] border border-white/[0.02] shadow-xl rounded-2xl h-[calc(100vh-10rem)] lg:h-[calc(100vh-10.6rem)] flex flex-col p-4 relative">
+  <div class="bg-[#1c1c1c] border border-white/[0.02] shadow-xl rounded-2xl h-[calc(100vh-9.9rem)] lg:h-[calc(100vh-10.5rem)] flex flex-col p-4 relative">
     <div class="relative w-full h-full flex flex-col min-h-0">
       <button @click="handleClose" class="absolute right-0 top-0 text-white/60 hover:text-white bg-transparent p-2 transition-colors z-30">
         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -30,8 +30,8 @@
           class="w-full h-full overflow-y-auto no-scrollbar mask-fade-vertical" 
           id="masked-scroll-container"
           :style="{
-            '--mask-top': '60px',
-            '--mask-bottom': '60px'
+            '--mask-top': '30px',
+            '--mask-bottom': '30px'
           }"
         >
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-6 lg:pb-8 pt-4 px-4">
