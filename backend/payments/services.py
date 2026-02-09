@@ -19,12 +19,12 @@ def handle_user_purchase(user, payload, transaction_id):
         generations_count = int(generations_count)
         stars_count = int(stars_count)
     except Exception as e:
-        logger.error("Invalid payload format", extra={"payload": payload, "error": str(e)})
+        logger.error("Invalid payload format", extra={"payload": payload, "error": str(e)}, exc_info=True)
         return
 
     config = ApplicationConfig.get_solo()
-    config.generations_reserved = F('generations_reserved') + generations_count
-    config.save(update_fields=['generations_reserved'])
+    config.reserved_generations = F('reserved_generations') + generations_count
+    config.save(update_fields=['reserved_generations'])
 
     user.profile.credits += generations_count
     user.profile.save(update_fields=['credits'])

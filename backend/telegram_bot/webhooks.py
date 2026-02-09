@@ -27,7 +27,7 @@ def telegram_handler(request):
         elif update.message and update.message.successful_payment:
             handle_message_successful_payment(update)
     except Exception as e:
-        logger.error("Error while handling Telegram webhook", extra={"error": str(e), "exc_info": True})
+        logger.error("Error while handling Telegram webhook", extra={"error": str(e)}, exc_info=True)
         return Response(status=500)
 
     return Response(status=200)
