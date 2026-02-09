@@ -34,9 +34,8 @@ def create_star_invoice_link(request):
     async def async_create_star_invoice_link():
         return await bot.create_invoice_link(
             title=star_package.name,
-            description=f"{star_package.generations_count} generations",
+            description=star_package.name,
             payload=payload,
-            provider_token="",
             currency="XTR",
             prices=[telegram.LabeledPrice(label=star_package.name, amount=amount)]
         )
