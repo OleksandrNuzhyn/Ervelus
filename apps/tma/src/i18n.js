@@ -116,7 +116,7 @@ const messages = {
       error_title: "Payment Error",
       error_desc: "Failed to create invoice. Please try again later",
       success_title: "Payment Successful!",
-      success_desc: "The generations have been successfully added to your balance",
+      success_desc: "The generations have been added to your balance",
       got_it: "Excellent"
     }
   },
@@ -235,7 +235,7 @@ const messages = {
       error_title: "Помилка оплати",
       error_desc: "Не вдалося створити інвойс. Будь ласка, спробуйте пізніше",
       success_title: "Оплата успішна!",
-      success_desc: "Генерації успішно зараховані на ваш баланс",
+      success_desc: "Генерації зараховані на ваш баланс",
       got_it: "Чудово"
     }
   }

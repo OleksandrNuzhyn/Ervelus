@@ -8,7 +8,7 @@
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div v-if="isOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md" @click.self="$emit('close')">
+      <div v-if="isOpen && !showSuccessModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md" @click.self="$emit('close')">
         <div class="relative w-full max-w-lg md:max-w-xl h-auto max-h-[85vh] m-4 bg-[#1c1c1e]/80 backdrop-blur-xl border border-white/[0.02] rounded-2xl overflow-hidden flex flex-col shadow-2xl z-10 pointer-events-auto">
           <div class="px-6 py-5 flex items-center justify-center shrink-0">
             <h2 class="text-xl font-bold text-white tracking-tight inter w-full text-center">{{ $t('store.title') }}</h2>
@@ -48,7 +48,7 @@
               </div>
             </section>
     
-            <section>
+            <section v-if="loading || starPackages.length > 0">
                <h3 class="text-sm font-medium text-white/60 mb-4 text-center inter">{{ $t('store.star_packages') }}</h3>
                <div class="flex flex-col gap-3">
                   <template v-if="loading && starPackages.length === 0">
@@ -125,8 +125,9 @@
           <div class="pointer-events-none absolute -bottom-10 -right-10 h-32 w-32 rounded-full bg-emerald-500/10 blur-3xl"></div>
 
           <div class="relative z-10 flex flex-col items-center">
-            <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-tr from-green-500/20 to-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)] ring-1 ring-white/10">
-              <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-tr from-green-500 to-emerald-600 shadow-lg shadow-emerald-500/30">
+            <div class="relative mb-6 flex h-20 w-20 items-center justify-center">
+              <div class="absolute inset-0 rounded-full bg-green-500/20 blur-xl"></div>
+              <div class="relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-tr from-green-500 to-emerald-600 shadow-lg shadow-emerald-500/30">
                 <svg class="h-6 w-6 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
@@ -135,12 +136,12 @@
 
             <h3 class="mb-3 text-2xl font-bold tracking-tight text-white">{{ $t('store.success_title') }}</h3>
             
-            <p class="mb-8 text-[15px] font-medium leading-relaxed text-white/60">
+            <p class="mb-8 text-[15px] font-medium leading-relaxed text-white/60 whitespace-nowrap">
               {{ $t('store.success_desc') }}
             </p>
 
             <button 
-              @click="showSuccessModal = false" 
+              @click="handleSuccessClose" 
               class="group relative flex w-full items-center justify-center overflow-hidden rounded-xl bg-white text-[15px] font-bold text-black shadow-lg transition-transform active:scale-[0.98]"
             >
               <div class="absolute inset-0 bg-gradient-to-r from-gray-100 to-white opacity-100 transition-opacity group-hover:opacity-90"></div>
@@ -208,7 +209,15 @@ const props = defineProps({
   isOpen: Boolean
 });
 
-defineEmits(['close']);
+const emit = defineEmits(['close']);
+import { useProductsStore } from '@/stores/products';
+
+function handleSuccessClose() {
+  showSuccessModal.value = false;
+  const productsStore = useProductsStore();
+  productsStore.getStyles();
+  emit('close');
+}
 
 watch(() => props.isOpen, (newVal) => {
   if (newVal) {

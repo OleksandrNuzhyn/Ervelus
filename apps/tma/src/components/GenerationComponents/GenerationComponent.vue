@@ -37,47 +37,37 @@ import spriteAroundTheWorld from '@/assets/style_sprites/around_the_world.png';
 import spritePunkverse from '@/assets/style_sprites/punkverse.png';
 import spriteEvents from '@/assets/style_sprites/events.png';
 import spriteTrending from '@/assets/style_sprites/trending.png';
+import { useProductsStore } from '@/stores/products';
+import { storeToRefs } from 'pinia';
 
-const genres = ref([]);
-const styles = ref([]);
+const customPreloadImages = [
+  spriteFantasy,
+  spriteTimeTravel,
+  spriteAroundTheWorld,
+  spritePunkverse,
+  spriteEvents,
+  spriteTrending
+];
 
+const productsStore = useProductsStore();
+const { styles, genres } = storeToRefs(productsStore);
 const selectedGenreId = ref(null);
 const selectedStyleId = ref(null);
 const isStylePanelOpen = ref(false);
 const latestGenerationData = ref(null);
 
 onMounted(async () => {
-  const customPreloadImages = [
-    spriteFantasy,
-    spriteTimeTravel,
-    spriteAroundTheWorld,
-    spritePunkverse,
-    spriteEvents,
-    spriteTrending
-  ];
-
   customPreloadImages.forEach(src => {
     const img = new Image();
     img.src = src;
   });
 
-  const [stylesResponse, latestGenerationResponse] = await Promise.all([
-    api.get('/api/products/styles/'),
-    api.get('/api/generations/generation-requests/latest/')
-  ]);
-
-  styles.value = stylesResponse.data;
-  latestGenerationData.value = latestGenerationResponse.data;
-
-  if (styles.value.length > 0) {
-    const genreMap = new Map();
-    styles.value.forEach(style => {
-      if (style.genre && style.genre.name && !genreMap.has(style.genre.name)) {
-        genreMap.set(style.genre.name, { id: style.genre.name, name: style.genre.name });
-      }
-    });
-    genres.value = Array.from(genreMap.values());
+  if (styles.value.length === 0) {
+    await productsStore.getStyles();
   }
+
+  const latestGenerationResponse = await api.get('/api/generations/generation-requests/latest/');
+  latestGenerationData.value = latestGenerationResponse.data;
 
   if (latestGenerationData.value && latestGenerationData.value.chosen_style) {
     const styleId = latestGenerationData.value.chosen_style;
