@@ -52,7 +52,8 @@ class UserAdmin(NoLogAdminMixin, BaseUserAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(NoLogAdminMixin, admin.ModelAdmin):
-    list_display = ('id', 'telegram_id', 'country_code', 'credits')
+    list_display = ('id', 'telegram_id', 'country_code', 'credits', 'is_paid')
+    list_filter = ('is_paid',)
     search_fields = ('user__email', 'telegram_id', 'country_code')
     readonly_fields = ('user',)
     ordering = ('-credits',)

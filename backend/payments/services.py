@@ -27,7 +27,8 @@ def handle_user_purchase(user, payload, transaction_id):
     config.save(update_fields=['reserved_generations'])
 
     user.profile.credits += generations_count
-    user.profile.save(update_fields=['credits'])
+    user.profile.is_paid = True
+    user.profile.save(update_fields=['credits', 'is_paid'])
 
     UserPurchase.objects.create(
         user=user,

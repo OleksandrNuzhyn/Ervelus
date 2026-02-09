@@ -11,6 +11,7 @@ class Genre(models.Model):
 class Style(models.Model):
     name = models.CharField(max_length=50, unique=True)
     genre = models.ForeignKey(Genre, on_delete=models.PROTECT, related_name='styles')
+    is_paid = models.BooleanField(default=False)
     prompt_template = models.TextField()
 
     def __str__(self):

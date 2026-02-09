@@ -1,6 +1,6 @@
 from rest_framework.decorators import permission_classes, api_view
+from django.db.models import Value, BooleanField, Case, When
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import Value, BooleanField
 from rest_framework.response import Response
 from .serializers import StyleSerializer
 from .models import Style, StarPackage
@@ -27,8 +27,14 @@ def star_package_list(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def style_list(request):
+    is_paid = request.user.profile.is_paid
+
     styles_queryset = Style.objects.annotate(
-        is_available=Value(True, output_field=BooleanField())
+        is_available=Case(
+            When(is_paid=False, then=Value(True)),
+            When(is_paid=True, then=Value(is_paid)),
+            output_field=BooleanField()
+        )
     ).select_related('genre').all()
 
     serializer = StyleSerializer(styles_queryset, many=True)

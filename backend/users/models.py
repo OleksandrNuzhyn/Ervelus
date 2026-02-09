@@ -66,13 +66,15 @@ class UserProfile(models.Model):
         export_fields = [
             'telegram_id',
             'country_code',
-            'credits'
+            'credits',
+            'is_paid'
         ]
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='profile')
     telegram_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     country_code = models.CharField(max_length=2, null=True, blank=True)
     credits = models.IntegerField(default=1)
+    is_paid = models.BooleanField(default=False)
 
     def __str__(self):
         return f'Profile of {self.user.email}'

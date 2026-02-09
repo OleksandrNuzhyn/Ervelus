@@ -19,7 +19,7 @@ def create_star_invoice_link(request):
         return Response(status=400)
         
     try:
-        star_package = StarPackage.objects.get(id=star_package_id)
+        star_package = StarPackage.objects.get(id=star_package_id, is_active=True)
     except StarPackage.DoesNotExist:
         return Response(status=404)
     

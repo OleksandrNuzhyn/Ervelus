@@ -48,8 +48,8 @@ class GenreAdmin(StatisticsAdminMixin, admin.ModelAdmin):
 
 @admin.register(Style)
 class StyleAdmin(StatisticsAdminMixin, admin.ModelAdmin):
-    list_display = ('id', 'name', 'genre')
-    list_filter = ('genre',)
+    list_display = ('id', 'name', 'genre', 'is_paid')
+    list_filter = ('genre', 'is_paid')
     list_select_related = ('genre',)
     search_fields = ('name',)
     raw_id_fields = ('genre',)
