@@ -6,7 +6,7 @@ from core.admin_mixins import NoLogAdminMixin
 
 @admin.register(GenerationRequest)
 class GenerationRequestAdmin(NoLogAdminMixin, admin.ModelAdmin):
-    list_display = ('id', 'status', 'style_name', 'created_at_formatted', 'updated_at_formatted')
+    list_display = ('id', 'style_name', 'status', 'created_at_formatted', 'updated_at_formatted')
     list_select_related = ('chosen_style',)
     list_filter = ('status', 'created_at', 'is_visible', 'is_hidden', 'chosen_style')
     search_fields = ('user__email', 'input_large_url', 'output_large_url')
