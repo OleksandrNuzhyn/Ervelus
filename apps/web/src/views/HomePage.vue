@@ -1194,7 +1194,6 @@ section {
 .style-category-card:hover {
   background: rgba(30, 30, 35, 0.8);
   transform: scale(1.02);
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
 }
 
 .card-header {

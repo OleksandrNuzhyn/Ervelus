@@ -63,7 +63,6 @@
                     <div class="member-role">Founder & Lead Architect</div>
                   </div>
                   <div class="member-bio">
-                    <p>Software Engineering student at NTUU "KPI" (Kyiv).</p>
                     <p><span class="bio-label">Role:</span> Architected the secure backend and managed the infrastructure.</p>
                     <p><span class="bio-label">Focus:</span> System Architecture, API Engineering, System Deployment.</p>
                   </div>
@@ -78,7 +77,6 @@
                     <div class="member-role">Co-Founder & Frontend Engineer</div>
                   </div>
                   <div class="member-bio">
-                    <p>Computer Science student at TUKE (Slovakia).</p>
                     <p><span class="bio-label">Role:</span> Designed the UI/UX and developed the client-side application.</p>
                     <p><span class="bio-label">Focus:</span> UI/UX Design, Frontend Engineering, AI Prompt Logic.</p>
                   </div>
@@ -269,7 +267,6 @@ html, body {
   border: 1px solid rgba(255, 255, 255, 0.02);
   border-radius: 16px;
   padding: 32px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   overflow: hidden;
 }
@@ -277,7 +274,6 @@ html, body {
 .bento-item:hover {
   background: rgba(30, 30, 35, 0.8);
   transform: scale(1.02);
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
 }
 
 .item-why { grid-column: span 2; }

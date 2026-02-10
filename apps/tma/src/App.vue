@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import TermsAcceptModal from '@/components/OtherComponents/TermsAcceptModal.vue';
@@ -42,17 +42,24 @@ function handleRouterBack() {
   router.go(-1);
 }
 
-watch(() => route.path, (path) => {
+function updateBackButton() {
   const tg = window.Telegram?.WebApp;
-  if (path !== '/') {
-    tg?.BackButton.show();
-    tg?.BackButton.onClick(handleRouterBack);
+  if (!tg) return;
+
+  tg.BackButton.offClick(handleRouterBack);
+
+  if (window.history.state?.back) {
+    tg.BackButton.show();
+    tg.BackButton.onClick(handleRouterBack);
   }
   else {
-    tg?.BackButton.offClick(handleRouterBack);
-    tg?.BackButton.hide();
+    tg.BackButton.hide();
   }
-});
+}
+
+watch(() => route.path, updateBackButton);
+
+onMounted(updateBackButton);
 
 function onLoaderFadedIn() {
   if (resolveNavigation) {
