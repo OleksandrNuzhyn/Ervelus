@@ -59,29 +59,18 @@ const isStylePanelOpen = ref(false);
 const latestGenerationData = ref(null);
 const imageWorkspaceRef = ref(null);
 
-const closeStylePanel = () => {
-  isStylePanelOpen.value = false;
-};
-
 watch(isStylePanelOpen, (val) => {
-  const tg = window.Telegram?.WebApp;
   if (val) {
     window.scrollTo(0, 0);
     document.body.style.overflow = 'hidden';
-    tg?.BackButton.show();
-    tg?.BackButton.onClick(closeStylePanel);
   }
   else {
     document.body.style.overflow = '';
-    tg?.BackButton.offClick(closeStylePanel);
-    tg?.BackButton.hide();
   }
 });
 
 onUnmounted(() => {
-  const tg = window.Telegram?.WebApp;
   document.body.style.overflow = '';
-  tg?.BackButton.offClick(closeStylePanel);
 });
 
 function handleOpenStore() {

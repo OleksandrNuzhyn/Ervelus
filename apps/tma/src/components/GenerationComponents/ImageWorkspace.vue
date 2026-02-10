@@ -254,31 +254,6 @@ watch(showPhotoTipsModal, (newVal) => {
   }
 });
 
-const isAnyModalOpen = computed(() => showGenerationsModal.value || showOutputModal.value || showPhotoTipsModal.value);
-
-const handleBackClick = () => {
-  if (showOutputModal.value) showOutputModal.value = false;
-  else if (showGenerationsModal.value) showGenerationsModal.value = false;
-  else if (showPhotoTipsModal.value) showPhotoTipsModal.value = false;
-};
-
-watch(isAnyModalOpen, (val) => {
-  const tg = window.Telegram?.WebApp;
-  if (val) {
-    tg?.BackButton.show();
-    tg?.BackButton.onClick(handleBackClick);
-  }
-  else {
-    tg?.BackButton.offClick(handleBackClick);
-    tg?.BackButton.hide();
-  }
-});
-
-onUnmounted(() => {
-  const tg = window.Telegram?.WebApp;
-  tg?.BackButton.offClick(handleBackClick);
-});
-
 async function urlToFile(url, filename) {
     const response = await fetch(url);
     if (!response.ok) {

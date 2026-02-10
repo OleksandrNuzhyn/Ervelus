@@ -38,28 +38,27 @@ const authStore = useAuthStore();
 const isLoading = ref(false);
 let resolveNavigation = null;
 
-function handleRouterBack() {
-  router.go(-1);
-}
+const tg = window.Telegram?.WebApp;
 
 function updateBackButton() {
-  const tg = window.Telegram?.WebApp;
   if (!tg) return;
-
-  tg.BackButton.offClick(handleRouterBack);
 
   if (window.history.state?.back) {
     tg.BackButton.show();
-    tg.BackButton.onClick(handleRouterBack);
   }
   else {
     tg.BackButton.hide();
   }
 }
 
-watch(() => route.path, updateBackButton);
+onMounted(() => {
+  if (tg) {
+    tg.BackButton.onClick(() => router.back());
+    updateBackButton();
+  }
+});
 
-onMounted(updateBackButton);
+watch(() => route.path, updateBackButton);
 
 function onLoaderFadedIn() {
   if (resolveNavigation) {
