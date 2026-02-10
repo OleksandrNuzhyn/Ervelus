@@ -103,8 +103,8 @@
       <div v-if="showErrorModal" class="fixed inset-0 flex items-center justify-center z-[110] confirm-modal-overlay" @click.self="showErrorModal = false">
         <div class="profile-card !bg-white/[0.08] !backdrop-blur-[30px] !p-10 w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-center gap-8 text-gray-200 relative">
           <div class="text-center">
-            <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ $t('store.error_title') }}</h3>
-            <p class="text-[15px] text-white/50 leading-relaxed font-medium">{{ $t('store.error_desc') }}</p>
+            <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ errorModalTitle }}</h3>
+            <p class="text-[15px] text-white/50 leading-relaxed font-medium">{{ errorModalMessage }}</p>
           </div>
           <div class="flex justify-center pt-2 w-full">
             <button 
@@ -157,11 +157,23 @@
 <script setup>
 import { ref, watch } from 'vue';
 import api from '@/services/api';
+import { useProductsStore } from '@/stores/products';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const starPackages = ref([]);
 const loading = ref(false);
 const showErrorModal = ref(false);
 const showSuccessModal = ref(false);
+const errorModalTitle = ref('');
+const errorModalMessage = ref('');
+
+function openErrorModal(title, message) {
+  errorModalTitle.value = title;
+  errorModalMessage.value = message;
+  showErrorModal.value = true;
+}
 
 async function createStarInvoice(pkg) {
   try {
@@ -178,15 +190,15 @@ async function createStarInvoice(pkg) {
         });
       }
       else {
-        showErrorModal.value = true;
+        openErrorModal(t('store.error_title'), t('store.error_desc'));
       }
     }
     else {
-      showErrorModal.value = true;
+      openErrorModal(t('store.error_title'), t('store.error_desc'));
     }
   }
   catch (e) {
-    showErrorModal.value = true;
+    openErrorModal(t('store.error_title'), t('store.error_desc'));
   }
 }
 
@@ -199,6 +211,7 @@ async function getStarPackages() {
   }
   catch (e) {
     starPackages.value = [];
+    openErrorModal(t('workspace.error_title'), t('workspace.error_load_failed'));
   }
   finally {
     loading.value = false;
@@ -210,7 +223,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['close']);
-import { useProductsStore } from '@/stores/products';
 
 function handleSuccessClose() {
   showSuccessModal.value = false;

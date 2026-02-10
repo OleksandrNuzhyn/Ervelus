@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
 import { show } from '@/services/terms';
-import { toast } from './toast';
 
 const api = axios.create({
   baseURL: 'https://ervelus-web-service-324377414272.us-central1.run.app',
@@ -49,22 +48,6 @@ api.interceptors.response.use(
         show(requiredAgreements);
       }
       return new Promise(() => {});
-    }
-
-    if (error.response && error.response.status === 429) {
-      const message = error.response.data?.detail;
-      if (message) {
-        toast.info(message);
-      }
-      else {
-        toast.info("You are making too many requests. Please try again in a moment");
-      }
-      return Promise.resolve();
-    }
-
-    if (error.response && error.response.status === 500) {
-      toast.info("Oh! Something went wrong. Dwarves are already working on it");
-      return Promise.reject(error);
     }
 
     if (error.response && error.response.status === 503 && error.response.data?.maintenance_mode === true) {

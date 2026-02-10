@@ -165,14 +165,7 @@ async function acceptTerms() {
     window.location.reload();
   }
   catch (error) {
-    if (error.response?.data) {
-      const data = error.response.data;
-      const msg = data.message || data.detail || t('terms.error_generic');
-      openAlertModal(t('terms.error_generic'), msg);
-    }
-    else {
-      openAlertModal(t('terms.error_generic'), t('terms.error_accept_failed'));
-    }
+    openAlertModal(t('terms.error_generic'), t('terms.error_accept_failed'));
   }
 }
 

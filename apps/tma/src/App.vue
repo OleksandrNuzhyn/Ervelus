@@ -36,9 +36,8 @@ const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
 const isLoading = ref(false);
-let resolveNavigation = null;
-
 const tg = window.Telegram?.WebApp;
+let resolveNavigation = null;
 
 function updateBackButton() {
   if (!tg) return;

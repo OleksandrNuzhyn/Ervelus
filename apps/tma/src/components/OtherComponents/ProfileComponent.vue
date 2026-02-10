@@ -180,8 +180,23 @@ async function applyPromoCode() {
     promoCode.value = '';
   }
   catch (error) {
-    const msg = error.response?.data?.detail || t('profile.alert_promo_failed');
-    openModal(t('profile.alert_promo_error'), msg);
+    const detail = String(error.response?.data?.detail || '').toLowerCase();
+    let message = t('profile.alert_promo_failed');
+
+    if (detail.includes('exist')) {
+      message = t('profile.promo_not_found');
+    }
+    else if (detail.includes('active')) {
+      message = t('profile.promo_inactive');
+    }
+    else if (detail.includes('limit')) {
+      message = t('profile.promo_limit');
+    }
+    else if (detail.includes('already')) {
+      message = t('profile.promo_used');
+    }
+
+    openModal(t('profile.alert_promo_error'), message);
   }
   finally {
     isSubmittingPromo.value = false;

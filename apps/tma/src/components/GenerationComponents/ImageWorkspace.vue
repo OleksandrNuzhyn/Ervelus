@@ -105,8 +105,8 @@
     </div>
 
     <StoreModal 
-      :is-open="showGenerationsModal" 
-      @close="showGenerationsModal = false" 
+      :is-open="showStoreModal" 
+      @close="showStoreModal = false" 
     />
 
     <transition 
@@ -224,19 +224,46 @@
         </div>
       </div>
     </transition>
+
+    <transition name="modal-fade">
+      <div v-if="showErrorModal" class="fixed inset-0 flex items-center justify-center z-[150] confirm-modal-overlay" @click.self="showErrorModal = false">
+        <div class="profile-card !bg-white/[0.08] !backdrop-blur-[30px] !p-10 w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-center gap-8 text-gray-200 relative">
+          <div class="text-center">
+            <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ errorModalTitle }}</h3>
+            <p class="text-[15px] text-white/50 leading-relaxed font-medium">{{ errorModalMessage }}</p>
+          </div>
+          <div class="flex justify-center pt-2 w-full">
+            <button 
+              @click="showErrorModal = false" 
+              class="flex items-center justify-center h-[48px] min-w-[160px] px-8 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/20 border border-white/[0.02] text-white hover:bg-white/30 active:scale-[0.98]"
+            >
+              {{ $t('workspace.got_it') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
 </template>
 
 <script setup>
 import { ref, watch, onUnmounted, computed, nextTick } from 'vue';
 import api from '@/services/api';
 import StoreModal from '../OtherComponents/StoreModal.vue';
-import { toast } from '@/services/toast';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const showOutputModal = ref(false);
+const showErrorModal = ref(false);
+const errorModalTitle = ref('');
+const errorModalMessage = ref('');
+
+function openErrorModal(title, message) {
+  errorModalTitle.value = title;
+  errorModalMessage.value = message;
+  showErrorModal.value = true;
+}
 
 const showPhotoTipsModal = ref(false);
-const showGenerationsModal = ref(false);
+const showStoreModal = ref(false);
 const scrollContainer = ref(null);
 const canScrollUp = ref(false);
 const canScrollDown = ref(false);
@@ -285,7 +312,7 @@ const props = defineProps({
 });
 
 function openStore() {
-  showGenerationsModal.value = true;
+  showStoreModal.value = true;
 }
 
 defineExpose({
@@ -390,7 +417,7 @@ async function deleteLongRunningRequest(id) {
     if (finalCheckLatest && finalCheckLatest.id === id) {
       if (!finalCheckLatest.is_visible) {
         await api.delete(`/api/generations/generation-requests/delete/${id}/`);
-        toast.info(t('workspace.error_timeout') || "The generation request was cancelled because it took too long to complete");
+        openErrorModal(t('workspace.error_title'), t('workspace.error_timeout'));
       } 
       else if (finalCheckLatest.status === 'completed' && finalCheckLatest.output_large_signed_url) {
         outputImageUrl.value = finalCheckLatest.output_large_signed_url;
@@ -399,9 +426,7 @@ async function deleteLongRunningRequest(id) {
     }
   }
   catch (err) {
-    if (err.response && [400, 404].includes(err.response.status)) {
-      toast.info(t('workspace.error_cancel_failed') || "Could not cancel the generation request. It might have already been completed or cancelled");
-    }
+    openErrorModal(t('workspace.error_title'), t('workspace.error_cancel_failed'));
   }
   finally {
     isLoading.value = false;
@@ -447,13 +472,13 @@ async function pollForResult() {
       currentGenerationId.value = null;
     }
     else if (latest?.status === 'failed') {
-      toast.info(t('workspace.error_failed_spell') || "The spell has failed! Try casting the magic again");
+      openErrorModal(t('workspace.error_title'), t('workspace.error_failed_spell'));
       isLoading.value = false;
       stopPolling();
       currentGenerationId.value = null;
     }
     else if (latest?.status === 'rejected_by_safety') {
-        toast.info(t('workspace.error_safety_rejected') || "This dark magic was rejected by the safety system. Try another image");
+        openErrorModal(t('workspace.error_title'), t('workspace.error_safety_rejected'));
         inputImageUrl.value = null;
         outputImageUrl.value = null;
         isLoading.value = false;
@@ -468,8 +493,7 @@ async function pollForResult() {
     }
   }
   catch (err) {
-    const errorMessage = err.response?.data?.detail || t('workspace.error_status_check') || 'An unexpected error occurred while checking generation status';
-    toast.info(errorMessage);
+    openErrorModal(t('workspace.error_title'), t('workspace.error_status_check'));
     isLoading.value = false;
     stopPolling();
     currentGenerationId.value = null;
@@ -519,30 +543,6 @@ function handleButtonClick() {
   }
 }
 
-function getErrorMessage(err, endpoint) {
-  if (!err.response) {
-    return null;
-  }
-
-  const { status, data } = err.response;
-  const serverError = data?.detail;
-
-  if (status === 400) {
-    if (endpoint === 'create') {
-      return serverError || data?.non_field_errors?.[0] || t('workspace.error_create_request') || 'Could not create request. Please try again later';
-    }
-    else if (endpoint === 'download') {
-      return serverError || t('workspace.error_download') || 'Could not download the image. Please try again later';
-    }
-  }
-  else if (status === 404) {
-    if (endpoint === 'download') {
-      return serverError || t('workspace.error_file_not_found') || 'File for download not found. Please try again later';
-    }
-  }
-  return null;
-}
-
 async function handleGenerate() {
   if (isLoading.value) return;
   if (!inputImageFile.value && !inputImageUrl.value) {
@@ -571,7 +571,7 @@ async function handleGenerate() {
   try {
     let fileToUpload = inputImageFile.value;
     if (!fileToUpload && inputImageUrl.value) {
-        fileToUpload = await urlToFile(inputImageUrl.value, 'reloaded-image.jpeg');
+      fileToUpload = await urlToFile(inputImageUrl.value, 'reloaded-image.jpeg');
     }
 
     const formData = new FormData();
@@ -583,21 +583,19 @@ async function handleGenerate() {
     });
 
     if (response.data && response.data.id) {
-        currentGenerationId.value = response.data.id;
+      currentGenerationId.value = response.data.id;
     }
 
     startPolling();
   }
   catch (err) {
     isLoading.value = false;
-    if (err.response && err.response.status === 400) {
-        const message = getErrorMessage(err, 'create');
-        if (message && message.includes('generations')) {
-            showGenerationsModal.value = true;
-        }
-        else {
-            toast.info(message);
-        }
+    const detail = err.response?.data?.detail || '';
+    if (detail.includes('generations')) {
+      showStoreModal.value = true;
+    }
+    else {
+      openErrorModal(t('workspace.error_title'), t('workspace.error_create_request'));
     }
   }
 }
@@ -622,11 +620,11 @@ function handleFile(file) {
   hasStartedTransform.value = false;
 
   if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-    toast.info(t('workspace.error_invalid_type') || 'Invalid file type. Our magicians support only JPEG, PNG or WEBP format.');
+    openErrorModal(t('workspace.error_title'), t('workspace.error_invalid_type'));
     return;
   }
   else if (file.size > MAX_FILE_SIZE_BYTES) {
-    toast.info(t('workspace.error_file_size') || 'Maximum file size is 7 MB');
+    openErrorModal(t('workspace.error_title'), t('workspace.error_file_size'));
     return;
   }
 
@@ -636,27 +634,6 @@ function handleFile(file) {
     inputImageUrl.value = event.target?.result;
   };
   reader.readAsDataURL(file);
-}
-
-function onDragEnter(event) {
-  event.preventDefault();
-  isDragging.value = true;
-}
-
-function onDragOver(event) {
-  event.preventDefault();
-}
-
-function onDragLeave(event) {
-  event.preventDefault();
-  isDragging.value = false;
-}
-
-function onDrop(event) {
-  event.preventDefault();
-  isDragging.value = false;
-  const file = event.dataTransfer.files[0];
-  handleFile(file);
 }
 
 function onInputImageLoad() {
@@ -669,7 +646,7 @@ function onOutputImageLoad() {
 
 async function downloadOutputImage() {
   if (!completedGenerationId.value) {
-    toast.info(t('workspace.error_download') || "Cannot download image. Please try again later");
+    openErrorModal(t('workspace.error_title'), t('workspace.error_download'));
     return;
   }
 
@@ -683,9 +660,7 @@ async function downloadOutputImage() {
     document.body.removeChild(link);
   }
   catch (err) {
-    if (err.response && [400, 404].includes(err.response.status)) {
-      toast.info(getErrorMessage(err, 'download'));
-    }
+    openErrorModal(t('workspace.error_title'), t('workspace.error_download'));
   }
 }
 </script>

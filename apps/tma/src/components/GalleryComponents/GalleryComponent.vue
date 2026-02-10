@@ -107,6 +107,25 @@
         </div>
       </div>
     </transition>
+
+    <transition name="modal-fade">
+      <div v-if="showErrorModal" class="fixed inset-0 flex items-center justify-center z-[60] confirm-modal-overlay" @click.self="showErrorModal = false">
+        <div class="profile-card !bg-white/[0.08] !backdrop-blur-[30px] !p-10 w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-center gap-8 text-gray-200 relative">
+          <div class="text-center">
+            <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ errorModalTitle }}</h3>
+            <p class="text-[15px] text-white/50 leading-relaxed font-medium">{{ errorModalMessage }}</p>
+          </div>
+          <div class="flex justify-center pt-2 w-full">
+            <button 
+              @click="showErrorModal = false" 
+              class="flex items-center justify-center h-[48px] min-w-[160px] px-8 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/20 border border-white/[0.02] text-white hover:bg-white/30 active:scale-[0.98]"
+            >
+              {{ $t('profile.modal_got_it') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </section>
 </template>
 
@@ -115,8 +134,6 @@ import { ref, onMounted } from 'vue'
 import api from '@/services/api'
 import PaginationComponent from '@/components/GalleryComponents/PaginationComponent.vue'
 import GenerationModal from '@/components/GalleryComponents/GenerationModal.vue'
-import { toast } from '@/services/toast';
-import { XCircleIcon } from '@heroicons/vue/24/solid';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -130,6 +147,16 @@ const isOpen = ref(false)
 const selectedRequest = ref(null)
 const showDeleteConfirmModal = ref(false);
 let deleteActionResolve = null;
+
+const showErrorModal = ref(false);
+const errorModalTitle = ref('');
+const errorModalMessage = ref('');
+
+function openErrorModal(title, message) {
+  errorModalTitle.value = title;
+  errorModalMessage.value = message;
+  showErrorModal.value = true;
+}
 
 async function preloadRequest(urlsToLoad) {
   const promises = urlsToLoad.map(urlToLoad => {
@@ -169,7 +196,7 @@ async function getPage(p) {
     page.value = 1
     pageCount.value = 1
     isLoading.value = false;
-    toast.info(t('gallery.error_load'));
+    openErrorModal(t('gallery.delete_title'), t('gallery.error_load'));
   }
 }
 
@@ -202,7 +229,7 @@ async function deleteRequest(request) {
       }
 
       await api.delete(`/api/generations/generation-requests/delete/${request.id}/`);
-      toast.info(t('gallery.success_delete'));
+      openErrorModal(t('gallery.delete_title'), t('gallery.success_delete'));
         
       count.value--;
       pageCount.value = Math.max(1, Math.ceil(count.value / customPageSize));
@@ -217,14 +244,14 @@ async function deleteRequest(request) {
     catch (error) {
       if (error.response) {
         if (error.response.status === 404) {
-          toast.info(t('gallery.error_not_found'));
+          openErrorModal(t('gallery.delete_title'), t('gallery.error_not_found'));
         }
         else {
-          toast.info(t('gallery.error_delete'));
+          openErrorModal(t('gallery.delete_title'), t('gallery.error_delete'));
         }
       }
       else {
-        toast.info(t('gallery.error_delete'));
+        openErrorModal(t('gallery.delete_title'), t('gallery.error_delete'));
       }
     }
     finally {
