@@ -256,7 +256,7 @@ watch(() => props.isOpen, (newVal) => {
 }
 
 .modal-fade-enter-active, .modal-fade-leave-active {
-  transition: opacity 0.3s ease-in-out;
+  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .modal-fade-enter-from {

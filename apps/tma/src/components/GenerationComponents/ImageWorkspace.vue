@@ -46,7 +46,7 @@
       </div>
 
       <div ref="outputSection" :class="['flex-col w-full h-full lg:shrink gap-3 overflow-hidden', hasStartedTransform ? 'flex' : 'hidden lg:flex']">
-        <div :class="['relative bg-white/[0.03] backdrop-blur-[20px] border border-white/[0.02] shadow-xl rounded-2xl p-4 flex flex-col items-center justify-center h-[38vh] md:h-[600px] lg:h-full lg:flex-grow lg:min-h-0',
+        <div :class="['relative bg-white/[0.03] backdrop-blur-md border border-white/[0.02] shadow-xl rounded-2xl p-4 flex flex-col items-center justify-center h-[38vh] md:h-[600px] lg:h-full lg:flex-grow lg:min-h-0 transform-gpu backface-hidden',
           !hasStartedTransform ? 'max-lg:hidden' : '']">
           
           <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center z-30 rounded-2xl">
@@ -88,7 +88,9 @@
       </div>
     </div>
 
-    <div :class="['lg:hidden shrink-0', !hasStartedTransform ? 'static bg-none p-0' : 'fixed bottom-0 left-0 right-0 z-50 px-4 pb-[13px] pt-4 bg-gradient-to-t from-black/80 to-transparent']">
+    <div v-if="hasStartedTransform" class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md h-28 bg-gradient-to-t from-[#1c1c1c] via-[#1c1c1c]/80 to-transparent z-40 pointer-events-none lg:hidden"></div>
+
+    <div :class="['lg:hidden shrink-0', !hasStartedTransform ? 'static bg-none px-[1px]' : 'fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-50 px-[17px] pb-[13px] pt-4']">
       <button 
         @click="handleButtonClick"
         :disabled="isButtonDisabled"
@@ -252,6 +254,31 @@ watch(showPhotoTipsModal, (newVal) => {
   }
 });
 
+const isAnyModalOpen = computed(() => showGenerationsModal.value || showOutputModal.value || showPhotoTipsModal.value);
+
+const handleBackClick = () => {
+  if (showOutputModal.value) showOutputModal.value = false;
+  else if (showGenerationsModal.value) showGenerationsModal.value = false;
+  else if (showPhotoTipsModal.value) showPhotoTipsModal.value = false;
+};
+
+watch(isAnyModalOpen, (val) => {
+  const tg = window.Telegram?.WebApp;
+  if (val) {
+    tg?.BackButton.show();
+    tg?.BackButton.onClick(handleBackClick);
+  }
+  else {
+    tg?.BackButton.offClick(handleBackClick);
+    tg?.BackButton.hide();
+  }
+});
+
+onUnmounted(() => {
+  const tg = window.Telegram?.WebApp;
+  tg?.BackButton.offClick(handleBackClick);
+});
+
 async function urlToFile(url, filename) {
     const response = await fetch(url);
     if (!response.ok) {
@@ -280,6 +307,14 @@ const props = defineProps({
     type: Object,
     default: null,
   }
+});
+
+function openStore() {
+  showGenerationsModal.value = true;
+}
+
+defineExpose({
+  openStore
 });
 
 const inputImageUrl = ref(null);
@@ -417,7 +452,20 @@ async function pollForResult() {
     }
 
     if (latest?.status === 'completed' && latest.output_large_signed_url) {
+      try {
+        const res = await fetch(latest.output_large_signed_url);
+        if (res.ok) {
+          const blob = await res.blob();
+          outputImageUrl.value = URL.createObjectURL(blob);
+        }
+        else {
       outputImageUrl.value = latest.output_large_signed_url;
+        }
+      }
+      catch (e) {
+        outputImageUrl.value = latest.output_large_signed_url;
+      }
+      
       completedGenerationId.value = latest.id;
       isLoading.value = false;
       stopPolling();
@@ -434,6 +482,7 @@ async function pollForResult() {
         inputImageUrl.value = null;
         outputImageUrl.value = null;
         isLoading.value = false;
+        hasStartedTransform.value = false;
         stopPolling();
         currentGenerationId.value = null;
     }

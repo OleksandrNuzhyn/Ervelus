@@ -96,13 +96,29 @@
 </template>
   
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onUnmounted } from 'vue';
 import api from '@/services/api';
 import StoreModal from '@/components/OtherComponents/StoreModal.vue';
 
 const isBurgerOpen = ref(false);
 const isStoreOpen = ref(false);
 const credits = ref(0);
+
+const closeStore = () => {
+  isStoreOpen.value = false;
+};
+
+watch(isStoreOpen, (val) => {
+  const tg = window.Telegram?.WebApp;
+  if (val) {
+    tg?.BackButton.show();
+    tg?.BackButton.onClick(closeStore);
+  }
+  else {
+    tg?.BackButton.offClick(closeStore);
+    tg?.BackButton.hide();
+  }
+});
 
 async function fetchCredits() {
   try {
@@ -118,5 +134,10 @@ watch(isBurgerOpen, (newValue) => {
   if (newValue) {
     fetchCredits();
   }
+});
+
+onUnmounted(() => {
+  const tg = window.Telegram?.WebApp;
+  tg?.BackButton.offClick(closeStore);
 });
 </script>

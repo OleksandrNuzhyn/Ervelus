@@ -18,7 +18,6 @@ const messages = {
     workspace: {
       upload_click: "Select photo",
       style: "Style",
-      choose_style: "Choose your style",
       final_result: "Final Result",
       transform_button: "Transform Photo",
       transforming: "Transforming...",
@@ -137,7 +136,6 @@ const messages = {
     workspace: {
       upload_click: "Оберіть фото",
       style: "Стиль",
-      choose_style: "Оберіть стиль",
       final_result: "Результат",
       transform_button: "Перетворити фото",
       transforming: "Творимо магію...",

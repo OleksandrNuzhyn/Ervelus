@@ -5,17 +5,19 @@
       <transition name="slide-fade">
         <StylePanel
           v-if="isStylePanelOpen"
-          class="!absolute top-full mt-3 w-[101%] ml-[-0.5%] left-0 z-[60]"
+          class="!absolute top-full mt-3 w-full left-0 z-[60]"
           :styles="filteredStyles"
           :selected-style-id="selectedStyleId"
           :current-genre-name="selectedGenreId"
           @style-selected="handleStyleSelect"
           @next-genre="handleNextGenre"
           @prev-genre="handlePrevGenre"
-          @close="handleClosePanel" />
+          @close="handleClosePanel" 
+          @open-store="handleOpenStore" />
       </transition>
     </div>
     <ImageWorkspace 
+      ref="imageWorkspaceRef"
       v-show="!isStylePanelOpen" 
       :selected-style-name="selectedStyleName" 
       :selected-style-id="selectedStyleId" 
@@ -26,7 +28,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue';
 import CategoryStrip from './CategoryStrip.vue';
 import StylePanel from './StylePanel.vue';
 import ImageWorkspace from './ImageWorkspace.vue';
@@ -55,6 +57,36 @@ const selectedGenreId = ref(null);
 const selectedStyleId = ref(null);
 const isStylePanelOpen = ref(false);
 const latestGenerationData = ref(null);
+const imageWorkspaceRef = ref(null);
+
+const closeStylePanel = () => {
+  isStylePanelOpen.value = false;
+};
+
+watch(isStylePanelOpen, (val) => {
+  const tg = window.Telegram?.WebApp;
+  if (val) {
+    window.scrollTo(0, 0);
+    document.body.style.overflow = 'hidden';
+    tg?.BackButton.show();
+    tg?.BackButton.onClick(closeStylePanel);
+  }
+  else {
+    document.body.style.overflow = '';
+    tg?.BackButton.offClick(closeStylePanel);
+    tg?.BackButton.hide();
+  }
+});
+
+onUnmounted(() => {
+  const tg = window.Telegram?.WebApp;
+  document.body.style.overflow = '';
+  tg?.BackButton.offClick(closeStylePanel);
+});
+
+function handleOpenStore() {
+  imageWorkspaceRef.value?.openStore();
+}
 
 onMounted(async () => {
   customPreloadImages.forEach(src => {
@@ -103,7 +135,11 @@ const filteredStyles = computed(() => {
   if (!selectedGenreId.value) {
     return [];
   }
-  return styles.value.filter(s => s.genre && s.genre.name === selectedGenreId.value);
+  const filtered = styles.value.filter(s => s.genre && s.genre.name === selectedGenreId.value);
+  return filtered.sort((a, b) => {
+    if (a.is_available === b.is_available) return 0;
+    return a.is_available ? -1 : 1;
+  });
 });
 
 const selectedStyleName = computed(() => {

@@ -27,15 +27,32 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import TermsAcceptModal from '@/components/OtherComponents/TermsAcceptModal.vue';
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 const isLoading = ref(false);
 let resolveNavigation = null;
+
+function handleRouterBack() {
+  router.go(-1);
+}
+
+watch(() => route.path, (path) => {
+  const tg = window.Telegram?.WebApp;
+  if (path !== '/') {
+    tg?.BackButton.show();
+    tg?.BackButton.onClick(handleRouterBack);
+  }
+  else {
+    tg?.BackButton.offClick(handleRouterBack);
+    tg?.BackButton.hide();
+  }
+});
 
 function onLoaderFadedIn() {
   if (resolveNavigation) {

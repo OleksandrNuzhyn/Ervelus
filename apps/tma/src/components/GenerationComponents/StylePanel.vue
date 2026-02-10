@@ -1,46 +1,38 @@
 <template>
-  <div class="bg-[#1c1c1c] border border-white/[0.02] shadow-xl rounded-2xl h-[calc(100vh-9.8rem)] lg:h-[calc(100vh-10.5rem_+_6px)] flex flex-col p-4 relative">
+  <div class="bg-[#1c1c1c] border border-white/[0.02] shadow-xl rounded-2xl h-[calc(100vh-9.8rem)] lg:h-[calc(100vh-10.5rem_+_6px)] flex flex-col relative" @click="handleBackgroundClick">
     <div class="relative w-full h-full flex flex-col min-h-0">
-      <button @click="handleClose" class="absolute right-0 top-0 text-white/60 hover:text-white bg-transparent p-2 transition-colors z-30">
-        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
 
-      <div class="flex-shrink-0 z-10 w-full mb-3">
-        <div class="flex items-center justify-center min-h-[44px]">
-          <h2 class="text-xl font-medium text-white tracking-wide inter leading-none">{{ $t('workspace.choose_style') }}</h2>
-        </div>
-      </div>
-
-      <div class="md:hidden absolute left-0 top-1/2 -translate-y-1/2 z-20 flex items-center">
-        <button @click="$emit('prev-genre')" class="text-white/60 hover:text-white bg-transparent p-2 transition-colors active:scale-95">
+      <div class="md:hidden absolute left-2 top-1/2 -translate-y-1/2 z-20 flex items-center">
+        <button @click.stop="$emit('prev-genre')" class="text-white/60 hover:text-white bg-transparent p-2 transition-colors active:scale-95">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
         </button>
       </div>
-      <div class="md:hidden absolute right-0 top-1/2 -translate-y-1/2 z-20 flex items-center">
-        <button @click="$emit('next-genre')" class="text-white/60 hover:text-white bg-transparent p-2 transition-colors active:scale-95">
+      <div class="md:hidden absolute right-2 top-1/2 -translate-y-1/2 z-20 flex items-center">
+        <button @click.stop="$emit('next-genre')" class="text-white/60 hover:text-white bg-transparent p-2 transition-colors active:scale-95">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
         </button>
       </div>
-      <div class="relative flex-grow min-h-0 group">
+      <div class="relative flex-grow min-h-0 group" @click="handleBackgroundClick">
         <div 
           ref="scrollContainer"
           @scroll="checkScroll"
+          @click="handleBackgroundClick"
           class="w-full h-full overflow-y-auto no-scrollbar mask-fade-vertical" 
           id="masked-scroll-container"
           :style="{
-            '--mask-top': '30px',
-            '--mask-bottom': '30px'
+            '--mask-top': canScrollUp ? '30px' : '0px',
+            '--mask-bottom': canScrollDown ? '30px' : '0px'
           }"
         >
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-6 lg:pb-8 pt-4 px-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 py-6 px-4">
             <StyleCard
+              class="style-card-item"
               v-for="style in styles"
               :key="style.id"
               :style-data="style"
               :is-selected="style.id === selectedStyleId"
-              @select-style="onStyleSelected"/>
+              @select-style="onStyleSelected"
+              @open-store="$emit('open-store')"/>
           </div>
         </div>
       </div>
@@ -69,7 +61,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['style-selected', 'close', 'next-genre', 'prev-genre']);
+const emit = defineEmits(['style-selected', 'close', 'next-genre', 'prev-genre', 'open-store']);
 
 const scrollContainer = ref(null);
 const canScrollUp = ref(true);
@@ -89,6 +81,10 @@ function onStyleSelected(styleId) {
 
 function handleClose() {
   emit('close');
+}
+
+function handleBackgroundClick(event) {
+  handleClose();
 }
 
 onMounted(() => {
