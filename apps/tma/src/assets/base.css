@@ -50,6 +50,8 @@ textarea {
   display: flex;
   flex-direction: column;
   transform: translateZ(0);
+  will-change: backdrop-filter, transform;
+  isolation: isolate;
 }
 
 .modal-fade-enter-active,

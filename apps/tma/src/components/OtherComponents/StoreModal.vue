@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <transition name="modal-fade">
-      <div v-if="isOpen" class="fixed inset-0 z-[100] flex items-center justify-center modal-backdrop" @click.self="modalStore.closeStore()">
+      <div v-if="isOpen" class="fixed inset-0 z-[100] flex items-center justify-center modal-backdrop bg-black/60 backdrop-blur-xl" @click.self="modalStore.closeStore()">
         <div class="solid-panel w-full max-w-lg md:max-w-xl relative overflow-hidden h-auto m-4 pointer-events-auto shadow-2xl">
           <div class="pointer-events-none absolute -left-10 -top-10 h-48 w-48 rounded-full bg-white/5 blur-[100px]"></div>
           <div class="pointer-events-none absolute -bottom-10 -right-10 h-48 w-48 rounded-full bg-white/5 blur-[100px]"></div>
