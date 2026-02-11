@@ -4,10 +4,9 @@
     <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center z-[110] modal-backdrop" @click.self="handleBackdropClick">
       <div 
         v-if="type === 'success'"
-        class="solid-panel w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-between shadow-2xl transition-all overflow-hidden"
+        class="solid-panel w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-between shadow-2xl transition-all overflow-hidden relative"
       >
-          <div class="pointer-events-none absolute -left-10 -top-10 h-48 w-48 rounded-full bg-emerald-500/20 blur-[100px]"></div>
-          <div class="pointer-events-none absolute -bottom-10 -right-10 h-48 w-48 rounded-full bg-green-500/20 blur-[100px]"></div>
+          <div class="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-45 w-50 rounded-full bg-emerald-500/15 blur-[80px]"></div>
 
           <div class="relative z-10 flex flex-col items-center w-full pt-10 pb-4 px-8 text-center">
             <h3 class="mb-3 text-2xl font-bold tracking-tight text-white">{{ title }}</h3>
@@ -28,10 +27,9 @@
       
       <div 
         v-else-if="type === 'error'"
-        class="solid-panel w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-between shadow-2xl transition-all overflow-hidden"
+        class="solid-panel w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-between shadow-2xl transition-all overflow-hidden relative"
       >
-          <div class="pointer-events-none absolute -left-10 -top-10 h-48 w-48 rounded-full bg-rose-500/20 blur-[100px]"></div>
-          <div class="pointer-events-none absolute -bottom-10 -right-10 h-48 w-48 rounded-full bg-red-500/15 blur-[100px]"></div>
+          <div class="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-45 w-50 rounded-full bg-rose-500/15 blur-[80px]"></div>
 
           <div class="relative z-10 flex flex-col items-center w-full pt-10 pb-4 px-8 text-center">
             <h3 class="mb-3 text-2xl font-bold tracking-tight text-white">{{ title }}</h3>
@@ -54,7 +52,7 @@
         v-else
         class="solid-panel w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-between text-gray-200 relative overflow-hidden"
       >
-        <div class="pointer-events-none absolute -left-10 -top-10 h-48 w-48 rounded-full bg-white/10 blur-[100px]"></div>
+        <div class="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-45 w-50 rounded-full bg-white/5 blur-[80px]"></div>
         
         <div class="relative z-10 w-full pt-10 pb-4 px-8 text-center">
           <h3 class="text-2xl font-bold text-white tracking-wide mb-3">{{ title }}</h3>
@@ -103,9 +101,8 @@ function handleClose() {
 }
 
 function handleBackdropClick() {
-  if (!onConfirm.value) {
-    handleClose();
-  }
+  // Always try to cancel/close when clicking backdrop
+  handleCancel();
 }
 
 function handleConfirm() {

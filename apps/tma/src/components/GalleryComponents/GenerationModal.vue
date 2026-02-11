@@ -1,9 +1,8 @@
 <template>
   <Teleport to="body">
-    <Transition name="modal">
-      <div v-if="modalStore.isGalleryOpen" class="relative z-[100]">
-        <div class="fixed inset-0 z-[100] overflow-y-auto bg-black/60 backdrop-blur-xl" @click="modalStore.closeGallery()">
-          <div class="flex min-h-full items-center justify-center py-6 text-center">
+    <Transition name="modal-fade">
+      <div v-if="modalStore.isGalleryOpen" class="modal-backdrop fixed inset-0 z-[100] overflow-y-auto" @click="modalStore.closeGallery()">
+        <div class="flex min-h-full items-center justify-center py-6 text-center">
             <Transition name="fade-content">
               <div v-if="isLoading && isMobile" key="spinner" class="spinner"></div>
 
@@ -103,7 +102,6 @@
               </div>
             </Transition>
           </div>
-        </div>
       </div>
     </Transition>
   </Teleport>
@@ -218,32 +216,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.modal-enter-active {
-  transition: opacity 10ms;
-}
-
-.modal-leave-active {
-  transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.modal-leave-active .modal-backdrop {
-  transition: opacity 300ms ease-in;
-}
-
-.modal-leave-active .glass-card {
-  transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.modal-enter-from,
-.modal-leave-to .modal-backdrop {
-  opacity: 0;
-}
-
-.modal-leave-to .glass-card {
-  opacity: 0;
-  transform: scale(0.96) translateZ(0);
-}
-
 .fade-content-enter-active {
   transition: opacity 0.7s ease-in-out;
   transform: translateZ(0);

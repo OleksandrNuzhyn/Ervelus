@@ -2,7 +2,7 @@
   <div class="relative">
     <div class="relative mb-1">
       <CategoryStrip :categories="genres" :selected-category-id="selectedGenreId" :is-style-panel-open="modalStore.isStylePanelOpen" @category-selected="handleGenreSelect"/>
-      <transition name="slide-fade">
+      <transition name="modal-fade">
         <StylePanel
           v-if="modalStore.isStylePanelOpen"
           class="!absolute top-full mt-3 w-full left-0 z-[60]"
@@ -181,15 +181,3 @@ function handlePrevGenre() {
   selectedGenreId.value = genres.value[prevIndex].id;
 }
 </script>
-
-<style scoped>
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-  transition: opacity 0.3s ease-in-out;
-}
-
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-  opacity: 0;
-}
-</style>

@@ -16,7 +16,7 @@
           v-for="request in galleryItems"
           :key="request.id"
           :class="{'gallery-item-visible': request.requestLoaded}"
-          class="group relative rounded-2xl border border-white/[0.02] bg-white/[0.03] backdrop-blur-[25px] ring-1 ring-black/20 cursor-pointer gallery-item generation-card transition-all duration-300 shadow-xl"
+          class="group relative rounded-2xl border border-white/[0.02] bg-white/[0.03] backdrop-blur-[25px] ring-1 ring-black/20 cursor-pointer gallery-item generation-card shadow-xl transition-transform duration-[1200ms] ease-[cubic-bezier(0.25,1,0.5,1)] transform hover:scale-[1.03] active:scale-[0.97] active:duration-150"
           @click="openModal(request)"
         >
           <div class="flex flex-col p-3 sm:p-4 h-full">
