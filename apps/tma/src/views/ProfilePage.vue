@@ -11,5 +11,5 @@
   
 <script setup>
 import ProfileComponent from '@/components/OtherComponents/ProfileComponent.vue';
-import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue';
+import HeaderComponent from '@/components/OtherComponents/HeaderComponent.vue';
 </script>

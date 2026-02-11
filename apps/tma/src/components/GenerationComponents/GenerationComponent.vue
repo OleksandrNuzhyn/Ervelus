@@ -4,7 +4,7 @@
       <CategoryStrip :categories="genres" :selected-category-id="selectedGenreId" :is-style-panel-open="isStylePanelOpen" @category-selected="handleGenreSelect"/>
       <transition name="slide-fade">
         <StylePanel
-          v-if="isStylePanelOpen"
+          v-if="modalStore.isStylePanelOpen"
           class="!absolute top-full mt-3 w-full left-0 z-[60]"
           :styles="filteredStyles"
           :selected-style-id="selectedStyleId"
@@ -17,7 +17,7 @@
     </div>
     <ImageWorkspace 
       ref="imageWorkspaceRef"
-      v-show="!isStylePanelOpen" 
+      v-show="!modalStore.isStylePanelOpen" 
       :selected-style-name="selectedStyleName" 
       :selected-style-id="selectedStyleId" 
       :on-open-style-panel="handleOpenStylePanel"
@@ -57,11 +57,9 @@ const modalStore = useModalStore();
 const { styles, genres } = storeToRefs(productsStore);
 const selectedGenreId = ref(null);
 const selectedStyleId = ref(null);
-const isStylePanelOpen = ref(false);
 const latestGenerationData = ref(null);
-const { t } = useI18n();
 
-watch(isStylePanelOpen, (val) => {
+watch(() => modalStore.isStylePanelOpen, (val) => {
   if (val) {
     window.scrollTo(0, 0);
     document.body.style.overflow = 'hidden';
@@ -144,7 +142,7 @@ const selectedStyleName = computed(() => {
 
 function handleGenreSelect(genreId) {
   selectedGenreId.value = genreId;
-  isStylePanelOpen.value = true;
+  modalStore.openStylePanel();
 }
 
 function handleStyleSelect(styleId) {
@@ -153,11 +151,11 @@ function handleStyleSelect(styleId) {
   if (selectedStyle && selectedStyle.genre) {
     selectedGenreId.value = selectedStyle.genre.name;
   }
-  isStylePanelOpen.value = false;
+  modalStore.closeStylePanel();
 }
 
 function handleClosePanel() {
-  isStylePanelOpen.value = false;
+  modalStore.closeStylePanel();
   const style = styles.value.find(s => s.id === selectedStyleId.value);
   if (style && style.genre) {
     selectedGenreId.value = style.genre.name;
@@ -165,7 +163,7 @@ function handleClosePanel() {
 }
 
 function handleOpenStylePanel() {
-  isStylePanelOpen.value = true;
+  modalStore.openStylePanel();
 }
 
 function handleNextGenre() {

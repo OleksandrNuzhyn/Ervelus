@@ -11,7 +11,7 @@
 
 <script setup>
 import GenerationComponent from '@/components/GenerationComponents/GenerationComponent.vue';
-import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue';
+import HeaderComponent from '@/components/OtherComponents/HeaderComponent.vue';
 </script>
 
 <style scoped>

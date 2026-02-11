@@ -1,10 +1,8 @@
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div v-if="isOpen" class="relative z-[100]">
-        <div class="modal-backdrop transition-opacity" />
-
-        <div class="fixed inset-0 z-[100] overflow-y-auto" @click="emit('close-modal')">
+      <div v-if="modalStore.isGalleryOpen" class="relative z-[100]">
+        <div class="fixed inset-0 z-[100] overflow-y-auto bg-black/60 backdrop-blur-xl" @click="modalStore.closeGallery()">
           <div class="flex min-h-full items-center justify-center py-6 text-center">
             <Transition name="fade-content">
               <div v-if="isLoading && isMobile" key="spinner" class="spinner"></div>
@@ -12,7 +10,7 @@
               <div
                 v-else
                 :class="[
-                  'glass-card backdrop-blur-[25px] w-11/12 max-w-[1400px] md:h-[90vh] text-left align-middle transition-all overflow-hidden',
+                  'solid-panel w-11/12 max-w-[1400px] md:h-[90vh] text-left align-middle transition-all overflow-hidden',
                 ]"
               >
                 <Transition name="fade-content">
@@ -198,7 +196,7 @@ async function downloadOutput(request) {
   }
 };
 
-watch(() => props.isOpen, (newVal) => {
+watch(() => modalStore.isGalleryOpen, (newVal) => {
   if (newVal && props.selectedRequest) {
     getCurrentRequest(props.selectedRequest);
   }
@@ -220,7 +218,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* No entrance animation */
 .modal-enter-active {
   transition: opacity 10ms;
 }

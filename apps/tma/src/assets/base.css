@@ -2,9 +2,21 @@
 @import "tailwindcss";
 
 .fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.6s ease-in-out;
-  transform: translateZ(0);
+.fade-leave-active,
+.modal-enter-active,
+.modal-leave-active,
+.modal-fade-enter-active,
+.modal-fade-leave-active,
+.slide-fade-enter-active,
+.slide-fade-leave-active,
+.v-enter-active,
+.v-leave-active,
+[class*="-enter-active"],
+[class*="-leave-active"] {
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  will-change: opacity, transform !important;
+  transform: translateZ(0) !important;
+  backface-visibility: hidden !important;
 }
 
 html,

@@ -4,7 +4,7 @@
     <div :class="['flex-grow flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-6 pb-0 overflow-visible min-h-0 lg:h-full', !hasStartedTransform ? 'h-full' : '']">
       <div :class="['flex flex-col lg:shrink overflow-visible gap-3 min-h-0', !hasStartedTransform ? 'flex-1 justify-between' : '']">
         
-        <button @click="showPhotoTipsModal = true" class="glass-card backdrop-blur-[25px] !flex-row py-2 px-4 items-center justify-center gap-2 group hover:bg-white/[0.05] transition-all cursor-pointer">
+        <button @click="modalStore.openTips()" class="glass-card backdrop-blur-[25px] !flex-row py-2 px-4 items-center justify-center gap-2 group hover:bg-white/[0.05] transition-all cursor-pointer">
            <svg class="w-4 h-4 text-white/40 group-hover:text-white/80 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
              <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
            </svg>
@@ -53,7 +53,7 @@
             <img src="@/assets/svg/staff_logo.svg" class="wave-animation h-32 w-32 md:h-48 md:w-48 opacity-40" />
           </div>
 
-          <div v-else-if="outputImageUrl" @click="showOutputModal = true" class="relative w-full h-full flex items-center justify-center cursor-pointer group/output" title="Click to view full screen">
+          <div v-else-if="outputImageUrl" @click="modalStore.openOutput()" class="relative w-full h-full flex items-center justify-center cursor-pointer group/output" title="Click to view full screen">
             <img :src="outputImageUrl" alt="Output" class="max-w-full max-h-full rounded-2xl transition-opacity duration-500" :style="{ opacity: outputImageLoaded ? 1 : 0 }" @load="onOutputImageLoad" />
             <button @click.stop="downloadOutputImage" 
               class="absolute right-2 top-2 p-2 text-white hover:text-white/80 transition-all duration-300 z-20"
@@ -112,7 +112,7 @@
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div v-if="showPhotoTipsModal" class="fixed inset-0 flex items-center justify-center z-[100] bg-black/60 backdrop-blur-xl" @click.self="showPhotoTipsModal = false">
+      <div v-if="modalStore.isTipsOpen" class="fixed inset-0 flex items-center justify-center z-[100] bg-black/60 backdrop-blur-xl" @click.self="modalStore.closeTips()">
         <div class="solid-panel w-11/12 max-w-lg relative overflow-hidden h-auto max-h-[94vh] flex flex-col">
           <div 
             ref="scrollContainer"
@@ -194,7 +194,7 @@
           </div>
           <div class="px-6 pb-7 pt-2 shrink-0 z-20">
             <button 
-              @click="showPhotoTipsModal = false"
+              @click="modalStore.closeTips()"
               class="w-full bg-white/[0.08] hover:bg-white/[0.12] active:scale-[0.98] transition-all text-white font-bold rounded-xl py-3.5 text-[15px]"
             >
               {{ $t('workspace.got_it') }}
@@ -212,7 +212,7 @@
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div v-if="showOutputModal" class="fixed inset-0 flex items-center justify-center z-[120] bg-black/60 backdrop-blur-xl p-4" @click="showOutputModal = false">
+      <div v-if="modalStore.isOutputOpen" class="fixed inset-0 flex items-center justify-center z-[120] bg-black/60 backdrop-blur-xl p-4" @click="modalStore.closeOutput()">
         <div class="relative w-full h-full flex items-center justify-center pointer-events-none">
              <img :src="outputImageUrl" class="max-w-full max-h-full object-contain pointer-events-auto shadow-2xl rounded-2xl" />
         </div>
@@ -222,14 +222,13 @@
 </template>
 
 <script setup>
-import { ref, watch, onUnmounted, computed, nextTick } from 'vue';
+import { ref, watch, computed, nextTick } from 'vue';
 import api from '@/services/api';
 import { useModalStore } from '@/stores/modal';
 import { useI18n } from 'vue-i18n';
+
 const { t } = useI18n();
 const modalStore = useModalStore();
-const showOutputModal = ref(false);
-const showPhotoTipsModal = ref(false);
 const scrollContainer = ref(null);
 const canScrollUp = ref(false);
 const canScrollDown = ref(false);
@@ -241,7 +240,7 @@ function checkScroll() {
   canScrollDown.value = el.scrollTop + el.clientHeight < el.scrollHeight - 10;
 }
 
-watch(showPhotoTipsModal, (newVal) => {
+watch(() => modalStore.isTipsOpen, (newVal) => {
   if (newVal) {
     nextTick(checkScroll);
   }
@@ -623,9 +622,21 @@ async function downloadOutputImage() {
 </script>
 
 <style scoped>
-@keyframes shimmerText {
+@keyframes shimmer-text {
   0% { background-position: 200% center; }
   100% { background-position: -200% center; }
+}
+
+@keyframes shimmer-slide {
+  0% { transform: translateX(-150%) skewX(-20deg); }
+  100% { transform: translateX(150%) skewX(-20deg); }
+}
+
+@keyframes wave-pulse {
+  0%, 100% { transform: rotate(35deg); opacity: 0.4; }
+  25% { transform: rotate(50deg); }
+  50% { opacity: 0.6; }
+  75% { transform: rotate(40deg); }
 }
 
 .text-shimmer {
@@ -641,38 +652,7 @@ async function downloadOutputImage() {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: shimmerText 4s linear infinite;
-}
-
-@keyframes wave {
-  0%, 100% { transform: rotate(35deg)}
-  25% { transform: rotate(50deg)}
-  75% { transform: rotate(40deg)}
-  50% { opacity: 0.45; }
-}
-
-.wave-animation {
-  animation: wave 2.5s ease-in-out infinite;
-}
-
-@media (max-width: 380px) { 
-  .modal-text {
-    font-size: 1rem;
-    line-height: 1.4;
-    word-break: break-word;
-  }
-}
-
-.blur-mask-dock {
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  mask-image: linear-gradient(to top, black 25%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to top, black 25%, transparent 100%);
-}
-
-@keyframes shimmer {
-  0% { transform: translateX(-150%) skewX(-20deg); }
-  100% { transform: translateX(150%) skewX(-20deg); }
+  animation: shimmer-text 4s linear infinite;
 }
 
 .shimmer-effect {
@@ -684,24 +664,12 @@ async function downloadOutputImage() {
     rgba(255, 255, 255, 0) 70%,
     transparent 100%
   );
-  animation: shimmer 3s infinite;
+  animation: shimmer-slide 3s infinite;
   filter: blur(5px);
 }
 
-.info-breath {
-  animation: infoBreath 3s infinite ease-in-out;
-  will-change: transform, opacity;
-}
-
-@keyframes infoBreath {
-  0%, 100% {
-    opacity: 0.4;
-    transform: scale(0.85);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.1);
-  }
+.wave-animation {
+  animation: wave-pulse 2.5s ease-in-out infinite;
 }
 
 .mask-fade-vertical {

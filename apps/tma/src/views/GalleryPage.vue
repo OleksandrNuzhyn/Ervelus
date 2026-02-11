@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue'
+import HeaderComponent from '@/components/OtherComponents/HeaderComponent.vue'
 import GalleryComponent from '@/components/GalleryComponents/GalleryComponent.vue'
 </script>
 

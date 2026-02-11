@@ -46,12 +46,13 @@ const tg = window.Telegram?.WebApp;
 let resolveNavigation = null;
 
 function handleModalBack() {
-  if (modalStore.isOpen) {
-    modalStore.closeModal();
-  }
-  else if (modalStore.isStoreOpen) {
-    modalStore.closeStore();
-  }
+  if (modalStore.isOpen) modalStore.closeModal();
+  else if (modalStore.isStoreOpen) modalStore.closeStore();
+  else if (modalStore.isStylePanelOpen) modalStore.closeStylePanel();
+  else if (modalStore.isGalleryOpen) modalStore.closeGallery();
+  else if (modalStore.isOutputOpen) modalStore.closeOutput();
+  else if (modalStore.isTipsOpen) modalStore.closeTips();
+  else if (modalStore.isMenuOpen) modalStore.closeMenu();
 }
 
 function handleRouterBack() {
@@ -64,7 +65,9 @@ function updateBackButton() {
   tg.BackButton.offClick(handleModalBack);
   tg.BackButton.offClick(handleRouterBack);
 
-  if (modalStore.isOpen || modalStore.isStoreOpen) {
+  const isAnyModalOpen = modalStore.isOpen || modalStore.isStoreOpen || modalStore.isStylePanelOpen || modalStore.isGalleryOpen || modalStore.isOutputOpen || modalStore.isTipsOpen || modalStore.isMenuOpen;
+
+  if (isAnyModalOpen) {
     tg.BackButton.show();
     tg.BackButton.onClick(handleModalBack);
   }
@@ -86,6 +89,11 @@ onMounted(() => {
 watch(() => route.path, updateBackButton);
 watch(() => modalStore.isOpen, updateBackButton);
 watch(() => modalStore.isStoreOpen, updateBackButton);
+watch(() => modalStore.isStylePanelOpen, updateBackButton);
+watch(() => modalStore.isGalleryOpen, updateBackButton);
+watch(() => modalStore.isOutputOpen, updateBackButton);
+watch(() => modalStore.isTipsOpen, updateBackButton);
+watch(() => modalStore.isMenuOpen, updateBackButton);
 
 function onLoaderFadedIn() {
   if (resolveNavigation) {

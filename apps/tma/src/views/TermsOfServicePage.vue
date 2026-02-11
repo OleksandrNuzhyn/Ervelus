@@ -27,7 +27,7 @@
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import api from '@/services/api.js';
-import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue';
+import HeaderComponent from '@/components/OtherComponents/HeaderComponent.vue';
 
 const { t } = useI18n();
 const document = ref({

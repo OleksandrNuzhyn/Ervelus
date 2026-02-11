@@ -1,7 +1,7 @@
 <template>
   <header 
     class="fixed inset-x-0 top-0 z-[70] transition-all duration-300"
-    :class="isBurgerOpen ? 'bg-black/60 backdrop-blur-md shadow-2xl' : 'bg-black/30 backdrop-blur-sm'"
+    :class="modalStore.isMenuOpen ? 'bg-black/60 backdrop-blur-md shadow-2xl' : 'bg-black/30 backdrop-blur-sm'"
   >
     <div class="max-w-screen mx-auto px-4 sm:px-6 lg:px-12">
       <div class="flex items-center justify-between h-[70px]">
@@ -22,8 +22,8 @@
               </div>
             </div>
           </button>
-          <button @click="isBurgerOpen = !isBurgerOpen" class="text-gray-200 hover:text-gray-50 focus:outline-none translate-y-[2px]">
-            <svg v-if="!isBurgerOpen" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <button @click="modalStore.isMenuOpen ? modalStore.closeMenu() : modalStore.openMenu()" class="text-gray-200 hover:text-gray-50 focus:outline-none translate-y-[2px]">
+            <svg v-if="!modalStore.isMenuOpen" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
             </svg>
             <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -41,7 +41,7 @@
       leave-active-class="transition ease-in duration-150"
       leave-from-class="transform opacity-100 translate-y-0"
       leave-to-class="transform opacity-0 -translate-y-4">
-      <div v-if="isBurgerOpen" class="text-gray-200">
+      <div v-if="modalStore.isMenuOpen" class="text-gray-200">
         <div class="px-4 py-4 flex flex-col gap-6">
           <div class="flex items-center gap-2 text-gray-100">
             <div class="w-10 flex justify-center">
@@ -87,8 +87,8 @@
     leave-to-class="opacity-0"
   >
     <div
-      v-if="isBurgerOpen"
-      @click="isBurgerOpen = false"
+      v-if="modalStore.isMenuOpen"
+      @click="modalStore.closeMenu()"
       class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[65]">
     </div>
   </transition>
@@ -100,7 +100,6 @@ import api from '@/services/api';
 import { useModalStore } from '@/stores/modal';
 
 const modalStore = useModalStore();
-const isBurgerOpen = ref(false);
 const credits = ref(0);
 
 async function fetchCredits() {
@@ -113,7 +112,7 @@ async function fetchCredits() {
   }
 }
 
-watch(isBurgerOpen, (newValue) => {
+watch(() => modalStore.isMenuOpen, (newValue) => {
   if (newValue) {
     fetchCredits();
   }
