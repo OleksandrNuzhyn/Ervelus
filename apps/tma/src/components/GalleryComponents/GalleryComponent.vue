@@ -48,7 +48,7 @@
       
       <transition name="gallery-fade">
         <div v-if="!isLoading && !galleryItems.length" class="w-11/12 max-w-2xl mx-auto pt-3">
-          <div class="glass-card p-10 flex flex-col items-center justify-center gap-6 text-center">
+          <div class="glass-card backdrop-blur-[25px] p-10 flex flex-col items-center justify-center gap-6 text-center">
             <div class="space-y-2">
               <h3 class="text-xl font-bold text-gray-200 tracking-wide">{{ $t('gallery.no_images') }}</h3>
               <p class="text-[15px] text-white/50 leading-relaxed font-medium mx-auto">{{ $t('gallery.no_images_desc') }}</p>

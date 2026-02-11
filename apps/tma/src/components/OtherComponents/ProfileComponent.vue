@@ -15,7 +15,7 @@
 
               <div class="mb-6 flex justify-center">
                 <a href="https://t.me/ervelus_bot" target="_blank"
-                  class="glass-card !py-4 !px-8 min-h-[175px] w-full max-w-2xl flex flex-col items-center justify-center gap-4 transition-all duration-300 group border border-[#28A8EA]/20 hover:!border-[#28A8EA]/50 hover:bg-[#28A8EA]/5 no-underline">
+                  class="glass-card backdrop-blur-[25px] !py-4 !px-8 min-h-[175px] w-full max-w-2xl flex flex-col items-center justify-center gap-4 transition-all duration-300 group border border-[#28A8EA]/20 hover:!border-[#28A8EA]/50 hover:bg-[#28A8EA]/5 no-underline">
                   <svg class="w-10 h-10 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="16" cy="16" r="14" fill="url(#paint0_linear_87_7225)"></circle> <path d="M22.9866 10.2088C23.1112 9.40332 22.3454 8.76755 21.6292 9.082L7.36482 15.3448C6.85123 15.5703 6.8888 16.3483 7.42147 16.5179L10.3631 17.4547C10.9246 17.6335 11.5325 17.541 12.0228 17.2023L18.655 12.6203C18.855 12.4821 19.073 12.7665 18.9021 12.9426L14.1281 17.8646C13.665 18.3421 13.7569 19.1512 14.314 19.5005L19.659 22.8523C20.2585 23.2282 21.0297 22.8506 21.1418 22.1261L22.9866 10.2088Z" fill="white"></path> <defs> <linearGradient id="paint0_linear_87_7225" x1="16" y1="2" x2="16" y2="30" gradientUnits="userSpaceOnUse"> <stop stop-color="#37BBFE"></stop> <stop offset="1" stop-color="#007DBB"></stop> </linearGradient> </defs> </g></svg>
                   <div class="text-center w-full overflow-hidden">
                     <h3 class="text-xl font-bold text-gray-200 group-hover:text-white transition-colors leading-tight">{{ $t('profile.support_title') }}</h3>
@@ -25,7 +25,7 @@
               </div>
 
               <div class="mb-6 flex justify-center w-full">
-                <div class="glass-card !py-6 !px-8 min-h-[245px] w-full max-w-2xl flex flex-col items-center justify-center gap-6">
+                <div class="glass-card backdrop-blur-[25px] !py-6 !px-8 min-h-[245px] w-full max-w-2xl flex flex-col items-center justify-center gap-6">
                   <h3 class="text-xl font-bold text-gray-200 tracking-wide">{{ $t('profile.promo_title') }}</h3>
                   
                   <div class="flex flex-col sm:flex-row items-stretch justify-center gap-3 w-full max-w-md">
@@ -51,7 +51,7 @@
           </div>
 
           <div class="w-11/12 max-w-2xl flex flex-col items-center">
-            <div class="w-full glass-card !p-0 overflow-hidden min-h-[180px] flex flex-col">
+            <div class="w-full glass-card backdrop-blur-[25px] !p-0 overflow-hidden min-h-[180px] flex flex-col">
               <div class="flex-grow flex flex-col justify-center w-full">
                 <router-link to="/terms-of-service" class="settings-item flex items-center justify-between px-8 py-4 border-b border-white/[0.02] active:bg-white/5 transition-colors group">
                   <span class="text-white/80 font-medium text-[15px] group-hover:text-white transition-colors">{{ $t('navigation.terms') }}</span>

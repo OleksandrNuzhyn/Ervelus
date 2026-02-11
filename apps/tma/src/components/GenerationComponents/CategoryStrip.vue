@@ -7,7 +7,7 @@
     </div>
     
     <div class="relative flex-grow overflow-hidden transition-all duration-300" 
-         :class="isStylePanelOpen ? 'solid-panel' : 'glass-card'">
+         :class="isStylePanelOpen ? 'solid-panel' : 'glass-card backdrop-blur-[25px]'">
       <div ref="scrollContainer" 
         class="py-2 px-4 md:py-3 overflow-x-auto no-scrollbar min-h-[52px] md:min-h-[60px] flex items-center scroll-smooth mask-fade"
         :style="{

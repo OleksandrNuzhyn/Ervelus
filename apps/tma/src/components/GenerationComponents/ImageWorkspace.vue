@@ -4,7 +4,7 @@
     <div :class="['flex-grow flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-6 pb-0 overflow-visible min-h-0 lg:h-full', !hasStartedTransform ? 'h-full' : '']">
       <div :class="['flex flex-col lg:shrink overflow-visible gap-3 min-h-0', !hasStartedTransform ? 'flex-1 justify-between' : '']">
         
-        <button @click="showPhotoTipsModal = true" class="glass-card !flex-row py-2 px-4 items-center justify-center gap-2 group hover:bg-white/[0.05] transition-all cursor-pointer">
+        <button @click="showPhotoTipsModal = true" class="glass-card backdrop-blur-[25px] !flex-row py-2 px-4 items-center justify-center gap-2 group hover:bg-white/[0.05] transition-all cursor-pointer">
            <svg class="w-4 h-4 text-white/40 group-hover:text-white/80 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
              <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
            </svg>
@@ -14,7 +14,7 @@
         </button>
 
         <div :class="['relative w-full flex flex-col lg:flex-grow overflow-visible min-h-0 lg:flex-1', !hasStartedTransform ? 'flex-1' : '']">
-          <div :class="[!hasStartedTransform ? 'flex-1' : 'h-[38vh] md:h-[600px]', 'glass-card p-4 items-center justify-center w-full lg:h-full lg:flex-grow min-h-0 overflow-hidden']">
+          <div :class="[!hasStartedTransform ? 'flex-1' : 'h-[38vh] md:h-[600px]', 'glass-card backdrop-blur-[25px] p-4 items-center justify-center w-full lg:h-full lg:flex-grow min-h-0 overflow-hidden']">
             <div v-if="!inputImageUrl" @click="triggerFileInput"
                  class="cursor-pointer w-full h-full flex flex-col items-center justify-center relative group/btn">
               
@@ -33,7 +33,7 @@
           </div>
         </div>
 
-        <button @click="onOpenStylePanel" class="glass-card !flex-row min-h-[56px] lg:min-h-[80px] py-3.5 lg:py-6 mt-0 items-center justify-center relative cursor-pointer hover:bg-white/[0.05] active:scale-[0.98] transition-all duration-300 px-4 group overflow-visible">
+        <button @click="onOpenStylePanel" class="glass-card backdrop-blur-[25px] !flex-row min-h-[56px] lg:min-h-[80px] py-3.5 lg:py-6 mt-0 items-center justify-center relative cursor-pointer hover:bg-white/[0.05] active:scale-[0.98] transition-all duration-300 px-4 group overflow-visible">
           <div class="flex items-center gap-2 md:gap-4 px-10 w-full justify-center min-w-0">
             <span class="text-white/70 font-medium lg:font-bold text-base lg:text-2xl shrink-0">{{ $t('workspace.style') }}</span>
             <div class="w-[1px] h-5 md:h-8 bg-white/20 shrink-0 relative top-[1px]"></div>
@@ -46,7 +46,7 @@
       </div>
 
       <div ref="outputSection" :class="['flex-col w-full h-full lg:shrink gap-3 overflow-hidden', hasStartedTransform ? 'flex' : 'hidden lg:flex']">
-        <div :class="['relative glass-card p-4 items-center justify-center h-[38vh] md:h-[600px] lg:h-full lg:flex-grow lg:min-h-0 transform-gpu backface-hidden',
+        <div :class="['relative glass-card backdrop-blur-[25px] p-4 items-center justify-center h-[38vh] md:h-[600px] lg:h-full lg:flex-grow lg:min-h-0 transform-gpu backface-hidden',
           !hasStartedTransform ? 'max-lg:hidden' : '']">
           
           <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center z-30 rounded-2xl">

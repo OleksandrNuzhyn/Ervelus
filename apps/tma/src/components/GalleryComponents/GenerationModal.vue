@@ -12,7 +12,7 @@
               <div
                 v-else
                 :class="[
-                  'glass-card w-11/12 max-w-[1400px] md:h-[90vh] text-left align-middle transition-all overflow-hidden',
+                  'glass-card backdrop-blur-[25px] w-11/12 max-w-[1400px] md:h-[90vh] text-left align-middle transition-all overflow-hidden',
                 ]"
               >
                 <Transition name="fade-content">
