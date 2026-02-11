@@ -120,6 +120,7 @@ function confirmDeleteAccount() {
   modalStore.openModal({
     title: t('profile.delete_account'),
     message: t('profile.delete_account_confirm'),
+    type: 'info',
     confirmText: t('gallery.confirm'),
     cancelText: t('profile.modal_cancel'),
     onConfirm: deleteAccount

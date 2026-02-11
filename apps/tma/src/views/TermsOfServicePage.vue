@@ -172,52 +172,55 @@ onMounted(getDocument);
   line-height: 1.6;
 }
 
-.document-content h1, .document-content h2, .document-content h3 {
+.document-content :deep(h1), 
+.document-content :deep(h2), 
+.document-content :deep(h3) {
   color: white;
   margin-bottom: 1rem;
 }
 
-.document-content h1 {
+.document-content :deep(h1) {
   font-size: 2.25rem;
   font-weight: bold;
   margin-top: 1.5rem;
 }
 
-.document-content h1:first-child {
+.document-content :deep(h1:first-child) {
   margin-top: 0;
 }
 
-.document-content h2 {
+.document-content :deep(h2) {
   font-size: 1.875rem;
   font-weight: bold;
   margin-top: 1.5rem;
 }
 
-.document-content h3 {
+.document-content :deep(h3) {
   font-size: 1.5rem;
   font-weight: bold;
   margin-top: 1.5rem;
 }
 
-.document-content p {
+.document-content :deep(p) {
   margin-bottom: 1rem;
 }
 
-.document-content ul, .document-content ol {
+.document-content :deep(ul), 
+.document-content :deep(ol) {
   margin-bottom: 1rem;
   padding-left: 2rem;
 }
 
-.document-content li {
+.document-content :deep(li) {
   margin-bottom: 0.5rem;
 }
 
-.document-content a {
+.document-content :deep(a) {
   color: #93c5fd;
   text-decoration: underline;
 }
 
-.document-content a:hover {
+.document-content :deep(a:hover) {
   color: #60a5fa;
 }
 </style>

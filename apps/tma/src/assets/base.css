@@ -49,6 +49,7 @@ textarea {
   position: relative;
   display: flex;
   flex-direction: column;
+  transform: translateZ(0);
 }
 
 .modal-fade-enter-active,
@@ -66,6 +67,17 @@ textarea {
 .modal-fade-leave-from {
   opacity: 1;
   transform: scale(1) translateZ(0);
+}
+
+.solid-panel {
+  background: #1c1c1c;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transform: translateZ(0);
 }
 
 .no-scrollbar {

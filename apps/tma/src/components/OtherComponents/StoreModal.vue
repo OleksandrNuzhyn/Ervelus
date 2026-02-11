@@ -2,14 +2,17 @@
   <Teleport to="body">
     <transition name="modal-fade">
       <div v-if="isOpen" class="fixed inset-0 z-[100] flex items-center justify-center modal-backdrop" @click.self="modalStore.closeStore()">
-        <div class="glass-card p-10 w-full max-w-lg md:max-w-xl h-auto max-h-[85vh] m-4 overflow-hidden z-10 pointer-events-auto">
-          <div class="px-6 py-5 flex items-center justify-center shrink-0">
-            <h2 class="text-xl font-bold text-white tracking-tight w-full text-center">{{ $t('store.title') }}</h2>
+        <div class="solid-panel w-full max-w-lg md:max-w-xl relative overflow-hidden h-auto m-4 pointer-events-auto shadow-2xl">
+          <div class="pointer-events-none absolute -left-10 -top-10 h-48 w-48 rounded-full bg-white/5 blur-[100px]"></div>
+          <div class="pointer-events-none absolute -bottom-10 -right-10 h-48 w-48 rounded-full bg-white/5 blur-[100px]"></div>
+
+          <div class="pt-8 pb-4 relative z-10">
+            <h2 class="text-xl font-bold text-white tracking-tight inter w-full text-center">{{ $t('store.title') }}</h2>
           </div>
 
-          <div class="flex-1 overflow-y-auto px-6 pb-6 space-y-6 no-scrollbar">
+          <div class="px-6 pb-6 space-y-6 relative z-10">
             <section>
-              <h3 class="text-sm font-medium text-white/60 mb-4 text-center">{{ $t('store.free_bonuses') }}</h3>
+              <h3 class="text-sm font-medium text-white/60 mb-4 text-center inter">{{ $t('store.free_bonuses') }}</h3>
               <div class="flex gap-3">
                 
                 <button class="relative flex-1 min-w-0 aspect-square rounded-2xl p-4 flex flex-col justify-between items-start bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.02] transition-all group text-left active:scale-95 shadow-lg overflow-hidden">
@@ -21,8 +24,8 @@
                     </svg>
                   </div>
                   <div class="relative z-10">
-                    <span class="block text-3xl font-bold text-white mb-1 tracking-tighter">+2</span>
-                    <span class="text-[11px] font-semibold text-white/60 tracking-tight whitespace-nowrap block">{{ $t('store.invite_friend') }}</span>
+                    <span class="block text-3xl font-bold text-white mb-1 tracking-tighter inter">+2</span>
+                    <span class="text-[11px] font-semibold text-white/60 tracking-tight whitespace-nowrap block inter">{{ $t('store.invite_friend') }}</span>
                   </div>
                 </button>
     
@@ -34,15 +37,15 @@
                       <path d="M22.9866 10.2088C23.1112 9.40332 22.3454 8.76755 21.6292 9.082L7.36482 15.3448C6.85123 15.5703 6.8888 16.3483 7.42147 16.5179L10.3631 17.4547C10.9246 17.6335 11.5325 17.541 12.0228 17.2023L18.655 12.6203C18.855 12.4821 19.073 12.7665 18.9021 12.9426L14.1281 17.8646C13.665 18.3421 13.7569 19.1512 14.314 19.5005L19.659 22.8523C20.2585 23.2282 21.0297 22.8506 21.1418 22.1261L22.9866 10.2088Z" fill="#121214"></path>
                     </svg>
                   <div class="relative z-10">
-                    <span class="block text-3xl font-bold text-white mb-1 tracking-tighter">+1</span>
-                    <span class="text-[11px] font-semibold text-white/60 tracking-tight whitespace-nowrap block">{{ $t('store.join_channel') }}</span>
+                    <span class="block text-3xl font-bold text-white mb-1 tracking-tighter inter">+1</span>
+                    <span class="text-[11px] font-semibold text-white/60 tracking-tight whitespace-nowrap block inter">{{ $t('store.join_channel') }}</span>
                   </div>
                 </button>
               </div>
             </section>
     
             <section v-if="loading || starPackages.length > 0">
-               <h3 class="text-sm font-medium text-white/60 mb-4 text-center">{{ $t('store.star_packages') }}</h3>
+               <h3 class="text-sm font-medium text-white/60 mb-4 text-center inter">{{ $t('store.star_packages') }}</h3>
                <div class="flex flex-col gap-3">
                   <template v-if="loading && starPackages.length === 0">
                     <div v-for="i in 2" :key="'skeleton-'+i" class="bg-white/[0.03] border border-white/[0.02] rounded-2xl min-h-[96px] box-border animate-pulse"></div>
@@ -53,24 +56,24 @@
                          :class="index === 1 ? 'bg-gradient-to-br from-amber-500/[0.1] via-amber-500/[0.03] to-transparent border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.03)]' : 'bg-gradient-to-br from-[#8774e1]/[0.1] via-[#8774e1]/[0.03] to-transparent border border-[#8774e1]/20 shadow-[0_0_20px_rgba(135,116,225,0.03)] hover:from-[#8774e1]/[0.15]'">
                        
                        <div class="flex-1 min-w-0 flex flex-col items-start gap-1">
-                          <h4 class="text-[15px] font-bold tracking-tight leading-tight mb-0.5" :class="index === 1 ? 'text-amber-100' : 'text-[#eae5ff]'">{{ pkg.name }}</h4>
+                          <h4 class="text-[14px] font-bold tracking-tight inter leading-tight mb-0.5" :class="index === 1 ? 'text-amber-100' : 'text-[#eae5ff]'">{{ pkg.name }}</h4>
                           
                           <div class="flex items-start gap-1.5 min-w-0 w-full">
                              <svg class="w-3.5 h-3.5 shrink-0 mt-0.5" :class="index === 1 ? 'text-amber-500/70' : 'text-[#8774e1]/70'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                              </svg>
-                             <p class="text-[12px] font-medium leading-tight tracking-tight" :class="index === 1 ? 'text-amber-100/70' : 'text-[#eae5ff]/70'">{{ pkg.generations_count }} {{ $t('store.generations') }}</p>
+                             <p class="text-[12px] font-medium inter leading-tight tracking-tight" :class="index === 1 ? 'text-amber-100/70' : 'text-[#eae5ff]/70'">{{ pkg.generations_count }} {{ $t('store.generations') }}</p>
                           </div>
 
                           <div class="flex items-start gap-1.5 min-w-0 w-full">
                              <svg class="w-3.5 h-3.5 shrink-0 mt-0.5" :class="index === 1 ? 'text-amber-500/70' : 'text-[#8774e1]/70'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                              </svg>
-                             <p class="text-[12px] font-medium leading-tight tracking-tight" :class="index === 1 ? 'text-amber-100/70' : 'text-[#eae5ff]/70'">{{ $t('store.premium_styles') }}</p>
+                             <p class="text-[12px] font-medium inter leading-tight tracking-tight" :class="index === 1 ? 'text-amber-100/70' : 'text-[#eae5ff]/70'">{{ $t('store.premium_styles') }}</p>
                           </div>
                        </div>
 
-                       <button class="shrink-0 h-9 w-[90px] flex items-center justify-center font-bold tracking-wide rounded-full transition-all active:scale-95 ml-auto gap-1 text-black"
+                       <button class="shrink-0 h-9 w-[80px] flex items-center justify-center font-bold tracking-wide rounded-full transition-all active:scale-95 ml-auto gap-1 text-black"
                                :class="index === 1 ? 'bg-amber-100 hover:bg-amber-50' : 'bg-[#eae5ff] hover:bg-[#dcd6ff]'"
                                @click="createStarInvoice(pkg)">
                           {{ pkg.stars_count }}
@@ -83,8 +86,8 @@
                </div>
             </section>
           </div>
-          <div class="p-6 pt-0 mt-auto shrink-0 z-20">
-            <button @click="modalStore.closeStore" class="w-full bg-white/[0.08] hover:bg-white/[0.12] active:scale-[0.98] transition-all text-white font-bold rounded-xl py-3.5 text-[15px]">
+          <div class="px-6 pb-7 pt-2 z-20">
+            <button @click="modalStore.closeStore" class="w-full bg-white/[0.08] hover:bg-white/[0.12] active:scale-[0.98] transition-all text-white font-bold rounded-xl py-3.5 text-[15px] inter">
               {{ $t('navigation.close') }}
             </button>
           </div>

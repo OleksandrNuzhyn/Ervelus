@@ -115,6 +115,7 @@
 import api from '@/services/api'
 import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { useModalStore } from '@/stores/modal';
+import { useI18n } from 'vue-i18n';
 const { t, locale } = useI18n();
 
 const props = defineProps({
@@ -219,58 +220,31 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* No entrance animation */
 .modal-enter-active {
-  transition: all 300ms ease-out;
-}
-
-.modal-enter-active .modal-overlay {
-  transition: opacity 300ms ease-out;
-}
-
-.modal-enter-active .transform {
-  transition: all 300ms ease-out;
-}
-
-.modal-enter-from .modal-overlay {
-  opacity: 0;
-}
-
-.modal-enter-from .transform {
-  opacity: 0;
-  transform: translateY(4px) scale(0.95);
-}
-
-@media (min-width: 640px) {
-  .modal-enter-from .transform {
-    transform: translateY(0) scale(0.95);
-  }
+  transition: opacity 10ms;
 }
 
 .modal-leave-active {
-  transition: all 200ms ease-in;
+  transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.modal-leave-active .modal-overlay {
-  transition: opacity 200ms ease-in;
+.modal-leave-active .modal-backdrop {
+  transition: opacity 300ms ease-in;
 }
 
-.modal-leave-active .transform {
-  transition: all 200ms ease-in;
+.modal-leave-active .glass-card {
+  transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.modal-leave-to .modal-overlay {
+.modal-enter-from,
+.modal-leave-to .modal-backdrop {
   opacity: 0;
 }
 
-.modal-leave-to .transform {
+.modal-leave-to .glass-card {
   opacity: 0;
-  transform: translateY(4px) scale(0.95);
-}
-
-@media (min-width: 640px) {
-  .modal-leave-to .transform {
-    transform: translateY(0) scale(0.95);
-  }
+  transform: scale(0.96) translateZ(0);
 }
 
 .fade-content-enter-active {

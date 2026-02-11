@@ -162,6 +162,7 @@ function confirmDeleteRequest(request) {
   modalStore.openModal({
     title: t('gallery.delete_title'),
     message: t('gallery.delete_confirm'),
+    type: 'info',
     confirmText: t('gallery.confirm'),
     cancelText: t('profile.modal_cancel'),
     onConfirm: () => deleteRequestItem(request)

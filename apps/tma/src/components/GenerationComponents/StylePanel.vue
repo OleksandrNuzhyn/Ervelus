@@ -1,5 +1,5 @@
 <template>
-  <div class="glass-card h-[calc(100vh-9.8rem)] relative" @click="handleBackgroundClick">
+  <div class="solid-panel h-[calc(100vh-9.8rem)]" @click="handleBackgroundClick">
     <div class="relative w-full h-full flex flex-col min-h-0">
 
       <div class="md:hidden absolute left-2 top-1/2 -translate-y-1/2 z-20 flex items-center">

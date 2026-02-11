@@ -113,7 +113,7 @@
       leave-to-class="opacity-0"
     >
       <div v-if="showPhotoTipsModal" class="fixed inset-0 flex items-center justify-center z-[100] bg-black/60 backdrop-blur-xl" @click.self="showPhotoTipsModal = false">
-        <div class="bg-[#1c1c1c] border border-white/[0.02] rounded-2xl w-11/12 max-w-lg shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] relative overflow-hidden h-auto max-h-[94vh] flex flex-col">
+        <div class="solid-panel w-11/12 max-w-lg relative overflow-hidden h-auto max-h-[94vh] flex flex-col">
           <div 
             ref="scrollContainer"
             @scroll="checkScroll"
@@ -191,7 +191,6 @@
                 </div>
               </div>
             </div>
-
           </div>
           <div class="px-6 pb-7 pt-2 shrink-0 z-20">
             <button 
@@ -204,7 +203,7 @@
         </div>
       </div>
     </transition>
-  </div>
+
     <transition 
       enter-active-class="transition duration-500 ease-out" 
       enter-from-class="opacity-0" 
@@ -219,6 +218,7 @@
         </div>
       </div>
     </transition>
+  </div>
 </template>
 
 <script setup>
@@ -648,9 +648,7 @@ async function downloadOutputImage() {
   0%, 100% { transform: rotate(35deg)}
   25% { transform: rotate(50deg)}
   75% { transform: rotate(40deg)}
-  50% {
-    opacity: 0.45;
-  }
+  50% { opacity: 0.45; }
 }
 
 .wave-animation {
@@ -663,19 +661,6 @@ async function downloadOutputImage() {
     line-height: 1.4;
     word-break: break-word;
   }
-}
-
-.generations-primary-button {
-  background: #8b5cf6 !important; 
-  color: white !important;
-  border: none !important;
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
-}
-
-.generations-primary-button:hover {
-  background: #7c3aed !important;
-  box-shadow: 0 6px 25px rgba(139, 92, 246, 0.4);
-  color: white !important;
 }
 
 .blur-mask-dock {
@@ -719,25 +704,6 @@ async function downloadOutputImage() {
   }
 }
 
-.promo-dropdown-style {
-  background: radial-gradient(circle at 20% 0%, rgba(139, 92, 246, 0.08), transparent 40%),
-              radial-gradient(circle at 80% 100%, rgba(88, 101, 242, 0.05), transparent 40%),
-              #0a0a0c;
-  border-radius: 24px;
-  box-shadow: 
-    0 50px 100px rgba(0, 0, 0, 0.9),
-    0 0 120px rgba(139, 92, 246, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.dropdown-glow-effect {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.05), transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-
 .mask-fade-vertical {
   mask-image: linear-gradient(
     to bottom,
@@ -758,44 +724,5 @@ async function downloadOutputImage() {
     transparent 100%
   );
   transition: mask-image 0.3s ease-in-out, -webkit-mask-image 0.3s ease-in-out;
-}
-
-@keyframes shimmer {
-  0% { transform: translateX(-150%) skewX(-20deg); }
-  100% { transform: translateX(150%) skewX(-20deg); }
-}
-
-.shimmer-effect {
-  background: linear-gradient(
-    to right,
-    transparent 0%,
-    rgba(255, 255, 255, 0) 30%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(255, 255, 255, 0) 70%,
-    transparent 100%
-  );
-  animation: shimmer 3s infinite;
-  filter: blur(5px);
-}
-
-@keyframes shimmerText {
-  0% { background-position: 200% center; }
-  100% { background-position: -200% center; }
-}
-
-.text-shimmer {
-  background: linear-gradient(
-    90deg, 
-    rgba(255,255,255,1) 0%, 
-    rgba(255,255,255,0.3) 25%, 
-    rgba(255,255,255,1) 50%, 
-    rgba(255,255,255,0.3) 75%, 
-    rgba(255,255,255,1) 100%
-  );
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmerText 4s linear infinite;
 }
 </style>

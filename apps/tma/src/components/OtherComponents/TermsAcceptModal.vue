@@ -1,7 +1,7 @@
 <template>
   <transition name="modal-fade">
     <div v-if="showTermsModal && !isPolicyPage && !isNavigating" class="fixed inset-0 flex items-center justify-center z-50 modal-backdrop">
-      <div class="glass-card p-10 w-11/12 max-w-xl shadow-2xl flex flex-col gap-8 text-gray-200 relative font-sans">
+      <div class="solid-panel p-10 w-11/12 max-w-xl shadow-2xl flex flex-col gap-8 text-gray-200 relative">
         <div class="text-center w-full">
           <h3 class="text-xl font-semibold text-gray-200 tracking-wide mb-2">{{ t('terms.update_title') }}</h3>
           <p class="text-[15px] text-white/50 leading-relaxed font-medium">
@@ -121,6 +121,7 @@ function confirmDeleteAccount() {
   modalStore.openModal({
     title: t('profile.delete_account'),
     message: t('profile.delete_account_confirm'),
+    type: 'info',
     confirmText: t('gallery.confirm'),
     cancelText: t('profile.modal_cancel'),
     onConfirm: deleteAccount
