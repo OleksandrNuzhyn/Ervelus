@@ -222,7 +222,7 @@
 </template>
 
 <script setup>
-import { ref, watch, computed, nextTick } from 'vue';
+import { ref, watch, computed, nextTick, onUnmounted } from 'vue';
 import api from '@/services/api';
 import { useModalStore } from '@/stores/modal';
 import { useI18n } from 'vue-i18n';

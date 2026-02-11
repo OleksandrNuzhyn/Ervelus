@@ -117,6 +117,7 @@ router.beforeEach(async (to, from) => {
 
 router.afterEach(() => {
   isLoading.value = false;
+  modalStore.closeMenu();
 });
 </script>
 

@@ -196,16 +196,16 @@ async function downloadOutput(request) {
   }
 };
 
-watch(() => modalStore.isGalleryOpen, (newVal) => {
-  if (newVal && props.selectedRequest) {
-    getCurrentRequest(props.selectedRequest);
+watch([() => modalStore.isGalleryOpen, () => props.selectedRequest], ([isOpen, request]) => {
+  if (isOpen && request) {
+    getCurrentRequest(request);
   }
-  else {
+  else if (!isOpen) {
     currentRequest.value = null;
     currentStyleName.value = '';
     currentFormattedDate.value = '';
   }
-});
+}, { immediate: true });
 
 onMounted(() => {
   handleResize();

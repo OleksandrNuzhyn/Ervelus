@@ -77,7 +77,7 @@
     </div>
     
     <GenerationModal
-      :is-open="isOpen"
+      :is-open="modalStore.isGalleryOpen"
       :selected-request="selectedRequest"
       @close-modal="closeModal"
       @delete-request="confirmDeleteRequest"
@@ -99,7 +99,6 @@ const page = ref(1)
 const pageCount = ref(1)
 const count = ref(0)
 const customPageSize = 12
-const isOpen = ref(false)
 const selectedRequest = ref(null)
 const modalStore = useModalStore();
 const { t } = useI18n();
@@ -212,12 +211,12 @@ async function changePage(p) {
 
 function openModal(request) {
   selectedRequest.value = request
-  isOpen.value = true
+  modalStore.openGallery()
 }
 
 function closeModal() {
   selectedRequest.value = null
-  isOpen.value = false
+  modalStore.closeGallery()
 }
 
 onMounted(() => {

@@ -1,7 +1,7 @@
 <template>
   <div class="relative">
     <div class="relative mb-1">
-      <CategoryStrip :categories="genres" :selected-category-id="selectedGenreId" :is-style-panel-open="isStylePanelOpen" @category-selected="handleGenreSelect"/>
+      <CategoryStrip :categories="genres" :selected-category-id="selectedGenreId" :is-style-panel-open="modalStore.isStylePanelOpen" @category-selected="handleGenreSelect"/>
       <transition name="slide-fade">
         <StylePanel
           v-if="modalStore.isStylePanelOpen"
@@ -43,6 +43,7 @@ import { useModalStore } from '@/stores/modal';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const customPreloadImages = [
   spriteFantasy,
   spriteTimeTravel,
