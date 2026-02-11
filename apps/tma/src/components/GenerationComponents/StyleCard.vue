@@ -1,4 +1,4 @@
-  <template>
+<template>
     <div @click.stop="selectStyle" class="relative cursor-default transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-103 w-fit mx-auto">
       <div 
         class="w-45 h-45 rounded-2xl mx-auto transition-all duration-200 flex items-center justify-center relative cursor-pointer overflow-hidden transform-gpu bg-[#2a2a2a]"
@@ -38,6 +38,9 @@
   </template>
   
 <script setup>
+import { useModalStore } from '@/stores/modal';
+const modalStore = useModalStore();
+
 const props = defineProps({
   styleData: {
     type: Object,
@@ -49,11 +52,11 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['select-style', 'open-store']);
+const emit = defineEmits(['select-style']);
 
 function selectStyle() {
   if (props.styleData.is_available === false) {
-    emit('open-store');
+    modalStore.openStore();
   }
   else {
     emit('select-style', props.styleData.id);

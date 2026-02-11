@@ -6,7 +6,7 @@
       </button>
     </div>
     
-    <div class="relative flex-grow border border-white/[0.02] shadow-xl rounded-2xl overflow-hidden" :class="isStylePanelOpen ? 'bg-[#1c1c1c]' : 'bg-white/[0.03] backdrop-blur-[20px]'">
+    <div class="relative flex-grow glass-card overflow-hidden" :class="isStylePanelOpen ? '!bg-[#1c1c1c] !backdrop-blur-none' : ''">
       <div ref="scrollContainer" 
         class="py-2 px-4 md:py-3 overflow-x-auto no-scrollbar min-h-[52px] md:min-h-[60px] flex items-center scroll-smooth mask-fade"
         :style="{

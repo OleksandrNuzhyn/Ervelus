@@ -14,7 +14,7 @@
         <div v-html="document.content" class="document-content"></div>
       </div>
       <div v-else-if="errorMessage" class="flex justify-center w-full">
-        <div class="w-11/12 max-w-2xl profile-card flex flex-col items-center justify-center text-center py-12 px-8">
+        <div class="w-11/12 max-w-2xl glass-card flex flex-col items-center justify-center text-center py-12 px-8">
           <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ document.title }}</h3>
           <p class="text-[12px] text-gray-400 mt-1 leading-relaxed font-medium">{{ errorMessage }}</p>
         </div>
@@ -136,21 +136,6 @@ onMounted(getDocument);
   display: block;
 }
 
-.profile-card {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.02);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  border-radius: 16px;
-  padding: 2.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-</style>
-
-<style>
 .document-container {
   max-width: 800px;
   margin: 0 auto;

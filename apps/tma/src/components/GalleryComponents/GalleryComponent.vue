@@ -48,7 +48,7 @@
       
       <transition name="gallery-fade">
         <div v-if="!isLoading && !galleryItems.length" class="w-11/12 max-w-2xl mx-auto pt-3">
-          <div class="profile-card flex flex-col items-center justify-center gap-6 text-center">
+          <div class="glass-card p-10 flex flex-col items-center justify-center gap-6 text-center">
             <div class="space-y-2">
               <h3 class="text-xl font-bold text-gray-200 tracking-wide">{{ $t('gallery.no_images') }}</h3>
               <p class="text-[15px] text-white/50 leading-relaxed font-medium mx-auto">{{ $t('gallery.no_images_desc') }}</p>
@@ -80,52 +80,8 @@
       :is-open="isOpen"
       :selected-request="selectedRequest"
       @close-modal="closeModal"
-      @delete-request="deleteRequest"
+      @delete-request="confirmDeleteRequest"
     />
-    
-    <transition name="modal-fade">
-      <div v-if="showDeleteConfirmModal" class="fixed inset-0 flex items-center justify-center z-50 confirm-modal-overlay" @click.self="handleCancelDelete">
-        <div class="profile-card !bg-white/[0.08] !backdrop-blur-[30px] !p-10 w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-center gap-8 text-gray-200 relative">
-          <div class="text-center">
-            <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ $t('gallery.delete_title') }}</h3>
-            <p class="text-[15px] text-white/50 leading-relaxed font-medium">{{ $t('gallery.delete_confirm') }}</p>
-          </div>
-          <div class="flex flex-col sm:flex-row justify-center gap-3 pt-2 w-full">
-            <button 
-              @click="handleConfirmDelete" 
-              class="flex items-center justify-center h-[48px] min-w-[140px] px-6 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/20 border border-white/[0.02] text-white hover:bg-white/30 active:scale-[0.98]"
-            >
-              {{ $t('gallery.confirm') }}
-            </button>
-            <button 
-              @click="handleCancelDelete" 
-              class="flex items-center justify-center h-[48px] min-w-[140px] px-6 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/5 border border-white/[0.02] text-white/40 hover:bg-white/10 active:scale-[0.98]"
-            >
-              {{ $t('profile.modal_cancel') }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </transition>
-
-    <transition name="modal-fade">
-      <div v-if="showErrorModal" class="fixed inset-0 flex items-center justify-center z-[60] confirm-modal-overlay" @click.self="showErrorModal = false">
-        <div class="profile-card !bg-white/[0.08] !backdrop-blur-[30px] !p-10 w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-center gap-8 text-gray-200 relative">
-          <div class="text-center">
-            <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ errorModalTitle }}</h3>
-            <p class="text-[15px] text-white/50 leading-relaxed font-medium">{{ errorModalMessage }}</p>
-          </div>
-          <div class="flex justify-center pt-2 w-full">
-            <button 
-              @click="showErrorModal = false" 
-              class="flex items-center justify-center h-[48px] min-w-[160px] px-8 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/20 border border-white/[0.02] text-white hover:bg-white/30 active:scale-[0.98]"
-            >
-              {{ $t('profile.modal_got_it') }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </transition>
   </section>
 </template>
 
@@ -134,9 +90,9 @@ import { ref, onMounted } from 'vue'
 import api from '@/services/api'
 import PaginationComponent from '@/components/GalleryComponents/PaginationComponent.vue'
 import GenerationModal from '@/components/GalleryComponents/GenerationModal.vue'
+import { useModalStore } from '@/stores/modal';
 import { useI18n } from 'vue-i18n';
 
-const { t } = useI18n();
 const galleryItems = ref([])
 const isLoading = ref(true)
 const page = ref(1)
@@ -145,18 +101,8 @@ const count = ref(0)
 const customPageSize = 12
 const isOpen = ref(false)
 const selectedRequest = ref(null)
-const showDeleteConfirmModal = ref(false);
-let deleteActionResolve = null;
-
-const showErrorModal = ref(false);
-const errorModalTitle = ref('');
-const errorModalMessage = ref('');
-
-function openErrorModal(title, message) {
-  errorModalTitle.value = title;
-  errorModalMessage.value = message;
-  showErrorModal.value = true;
-}
+const modalStore = useModalStore();
+const { t } = useI18n();
 
 async function preloadRequest(urlsToLoad) {
   const promises = urlsToLoad.map(urlToLoad => {
@@ -196,7 +142,7 @@ async function getPage(p) {
     page.value = 1
     pageCount.value = 1
     isLoading.value = false;
-    openErrorModal(t('gallery.delete_title'), t('gallery.error_load'));
+    modalStore.openModal({ title: t('gallery.delete_title'), message: t('gallery.error_load') });
   }
 }
 
@@ -212,65 +158,43 @@ async function animateGalleryItems(items) {
   }
 }
 
-async function deleteRequest(request) {
-  showDeleteConfirmModal.value = true;
-
-  const confirmed = await new Promise(resolve => {
-    deleteActionResolve = resolve;
+function confirmDeleteRequest(request) {
+  modalStore.openModal({
+    title: t('gallery.delete_title'),
+    message: t('gallery.delete_confirm'),
+    confirmText: t('gallery.confirm'),
+    cancelText: t('profile.modal_cancel'),
+    onConfirm: () => deleteRequestItem(request)
   });
-
-  if (confirmed) {
-    try {
-      closeModal();
-
-      const itemIndex = galleryItems.value.findIndex(item => item.id === request.id);
-      if (itemIndex !== -1) {
-        galleryItems.value.splice(itemIndex, 1);
-      }
-
-      await api.delete(`/api/generations/generation-requests/delete/${request.id}/`);
-      openErrorModal(t('gallery.delete_title'), t('gallery.success_delete'));
-        
-      count.value--;
-      pageCount.value = Math.max(1, Math.ceil(count.value / customPageSize));
-        
-      if (galleryItems.value.length === 0 && page.value > 1) {
-        await changePage(page.value - 1);
-      }
-      else if (galleryItems.value.length === 0 && count.value > 0) {
-        await getPage(page.value);
-      }
-    }
-    catch (error) {
-      if (error.response) {
-        if (error.response.status === 404) {
-          openErrorModal(t('gallery.delete_title'), t('gallery.error_not_found'));
-        }
-        else {
-          openErrorModal(t('gallery.delete_title'), t('gallery.error_delete'));
-        }
-      }
-      else {
-        openErrorModal(t('gallery.delete_title'), t('gallery.error_delete'));
-      }
-    }
-    finally {
-      deleteActionResolve = null;
-    }
-  }
 }
 
-function handleConfirmDelete() {
-  if (deleteActionResolve) {
-    deleteActionResolve(true);
-    showDeleteConfirmModal.value = false;
-  }
-}
+async function deleteRequestItem(request) {
+  try {
+    closeModal();
+    const itemIndex = galleryItems.value.findIndex(item => item.id === request.id);
+    if (itemIndex !== -1) {
+      galleryItems.value.splice(itemIndex, 1);
+    }
 
-function handleCancelDelete() {
-  if (deleteActionResolve) {
-    deleteActionResolve(false);
-    showDeleteConfirmModal.value = false;
+    await api.delete(`/api/generations/generation-requests/delete/${request.id}/`);
+    modalStore.openModal({title: t('gallery.delete_title'), message: t('gallery.success_delete'), type: 'success'});
+      
+    count.value--;
+    pageCount.value = Math.max(1, Math.ceil(count.value / customPageSize));
+      
+    if (galleryItems.value.length === 0 && page.value > 1) {
+      await changePage(page.value - 1);
+    }
+    else if (galleryItems.value.length === 0 && count.value > 0) {
+      await getPage(page.value);
+    }
+  }
+  catch (error) {
+    let message = t('gallery.error_delete');
+    if (error.response?.status === 404) {
+      message = t('gallery.error_not_found');
+    }
+    modalStore.openModal({ title: t('gallery.delete_title'), message });
   }
 }
 
@@ -301,8 +225,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
 .gallery-item {
   opacity: 0;
   transform: translateZ(0);
@@ -370,25 +292,6 @@ onMounted(() => {
   opacity: 0;
 }
 
-.font-sans {
-  font-family: 'Inter', sans-serif;
-}
-
-.profile-card {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.02);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  will-change: backdrop-filter, transform;
-  transform: translateZ(0);
-  border-radius: 16px;
-  padding: 2.5rem;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
 .manage-button {
   display: inline-flex;
   align-items: center;
@@ -420,33 +323,5 @@ onMounted(() => {
   min-width: 0;
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
-}
-
-.modal-fade-enter-active, .modal-fade-leave-active {
-  transition: opacity 0.3s ease-in-out;
-}
-
-.modal-fade-enter-from {
-  opacity: 0;
-  transform: translateY(20px) translateZ(0);
-}
-
-.modal-fade-leave-to {
-  opacity: 0;
-  transform: translateZ(0);
-}
-
-.modal-content-card {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 16px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.02);
-  will-change: backdrop-filter, transform;
-  transform: translateZ(0);
-}
-
-.confirm-modal-overlay {
-  background-color: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(22px);
 }
 </style>

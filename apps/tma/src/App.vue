@@ -23,6 +23,8 @@
     </Transition>
     
     <TermsAcceptModal />
+    <StoreModal :is-open="modalStore.isStoreOpen" @close="modalStore.closeStore" />
+    <GlobalModal />
   </div>
 </template>
 
@@ -30,20 +32,45 @@
 import { ref, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import { useModalStore } from '@/stores/modal';
 import TermsAcceptModal from '@/components/OtherComponents/TermsAcceptModal.vue';
+import GlobalModal from '@/components/OtherComponents/GlobalModal.vue';
+import StoreModal from '@/components/OtherComponents/StoreModal.vue';
 
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
+const modalStore = useModalStore();
 const isLoading = ref(false);
 const tg = window.Telegram?.WebApp;
 let resolveNavigation = null;
 
+function handleModalBack() {
+  if (modalStore.isOpen) {
+    modalStore.closeModal();
+  }
+  else if (modalStore.isStoreOpen) {
+    modalStore.closeStore();
+  }
+}
+
+function handleRouterBack() {
+  router.back();
+}
+
 function updateBackButton() {
   if (!tg) return;
 
-  if (window.history.state?.back) {
+  tg.BackButton.offClick(handleModalBack);
+  tg.BackButton.offClick(handleRouterBack);
+
+  if (modalStore.isOpen || modalStore.isStoreOpen) {
     tg.BackButton.show();
+    tg.BackButton.onClick(handleModalBack);
+  }
+  else if (window.history.state?.back) {
+    tg.BackButton.show();
+    tg.BackButton.onClick(handleRouterBack);
   }
   else {
     tg.BackButton.hide();
@@ -52,12 +79,13 @@ function updateBackButton() {
 
 onMounted(() => {
   if (tg) {
-    tg.BackButton.onClick(() => router.back());
     updateBackButton();
   }
 });
 
 watch(() => route.path, updateBackButton);
+watch(() => modalStore.isOpen, updateBackButton);
+watch(() => modalStore.isStoreOpen, updateBackButton);
 
 function onLoaderFadedIn() {
   if (resolveNavigation) {

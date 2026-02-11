@@ -12,8 +12,7 @@
           @style-selected="handleStyleSelect"
           @next-genre="handleNextGenre"
           @prev-genre="handlePrevGenre"
-          @close="handleClosePanel" 
-          @open-store="handleOpenStore" />
+          @close="handleClosePanel" />
       </transition>
     </div>
     <ImageWorkspace 
@@ -24,24 +23,6 @@
       :on-open-style-panel="handleOpenStylePanel"
       :latest-generation-data="latestGenerationData"
     />
-    <transition name="modal-fade">
-      <div v-if="showErrorModal" class="fixed inset-0 flex items-center justify-center z-[150] confirm-modal-overlay" @click.self="showErrorModal = false">
-        <div class="profile-card !bg-white/[0.08] !backdrop-blur-[30px] !p-10 w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-center gap-8 text-gray-200 relative">
-          <div class="text-center">
-            <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ errorModalTitle }}</h3>
-            <p class="text-[15px] text-white/50 leading-relaxed font-medium">{{ errorModalMessage }}</p>
-          </div>
-          <div class="flex justify-center pt-2 w-full">
-            <button 
-              @click="showErrorModal = false" 
-              class="flex items-center justify-center h-[48px] min-w-[160px] px-8 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/20 border border-white/[0.02] text-white hover:bg-white/30 active:scale-[0.98]"
-            >
-              {{ $t('workspace.got_it') }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </transition>
   </div>
 </template>
 
@@ -58,6 +39,7 @@ import spritePunkverse from '@/assets/style_sprites/punkverse.png';
 import spriteEvents from '@/assets/style_sprites/events.png';
 import spriteTrending from '@/assets/style_sprites/trending.png';
 import { useProductsStore } from '@/stores/products';
+import { useModalStore } from '@/stores/modal';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
 
@@ -71,23 +53,13 @@ const customPreloadImages = [
 ];
 
 const productsStore = useProductsStore();
+const modalStore = useModalStore();
 const { styles, genres } = storeToRefs(productsStore);
 const selectedGenreId = ref(null);
 const selectedStyleId = ref(null);
 const isStylePanelOpen = ref(false);
 const latestGenerationData = ref(null);
-const imageWorkspaceRef = ref(null);
-
 const { t } = useI18n();
-const showErrorModal = ref(false);
-const errorModalTitle = ref('');
-const errorModalMessage = ref('');
-
-function openErrorModal(title, message) {
-  errorModalTitle.value = title;
-  errorModalMessage.value = message;
-  showErrorModal.value = true;
-}
 
 watch(isStylePanelOpen, (val) => {
   if (val) {
@@ -102,10 +74,6 @@ watch(isStylePanelOpen, (val) => {
 onUnmounted(() => {
   document.body.style.overflow = '';
 });
-
-function handleOpenStore() {
-  imageWorkspaceRef.value?.openStore();
-}
 
 onMounted(async () => {
   try {
@@ -154,7 +122,7 @@ onMounted(async () => {
     }
   }
   catch (error) {
-    openErrorModal(t('workspace.error_title'), t('workspace.error_load_failed'));
+    modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_load_failed') });
   }
 });
 
@@ -224,39 +192,5 @@ function handlePrevGenre() {
 .slide-fade-enter-from,
 .slide-fade-leave-to {
   opacity: 0;
-}
-
-.confirm-modal-overlay {
-  background-color: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(22px);
-}
-
-.profile-card {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.02);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  will-change: backdrop-filter, transform;
-  transform: translateZ(0);
-  border-radius: 16px;
-  padding: 2.5rem;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-.modal-fade-enter-active, .modal-fade-leave-active {
-  transition: opacity 0.3s ease-in-out;
-}
-
-.modal-fade-enter-from {
-  opacity: 0;
-  transform: translateY(20px) translateZ(0);
-}
-
-.modal-fade-leave-to {
-  opacity: 0;
-  transform: translateZ(0);
 }
 </style>

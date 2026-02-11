@@ -15,7 +15,7 @@
 
               <div class="mb-6 flex justify-center">
                 <a href="https://t.me/ervelus_bot" target="_blank"
-                  class="profile-card !py-4 !px-8 min-h-[175px] w-full max-w-2xl flex flex-col items-center justify-center gap-4 transition-all duration-300 group border border-[#28A8EA]/20 hover:!border-[#28A8EA]/50 hover:bg-[#28A8EA]/5 no-underline">
+                  class="glass-card !py-4 !px-8 min-h-[175px] w-full max-w-2xl flex flex-col items-center justify-center gap-4 transition-all duration-300 group border border-[#28A8EA]/20 hover:!border-[#28A8EA]/50 hover:bg-[#28A8EA]/5 no-underline">
                   <svg class="w-10 h-10 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="16" cy="16" r="14" fill="url(#paint0_linear_87_7225)"></circle> <path d="M22.9866 10.2088C23.1112 9.40332 22.3454 8.76755 21.6292 9.082L7.36482 15.3448C6.85123 15.5703 6.8888 16.3483 7.42147 16.5179L10.3631 17.4547C10.9246 17.6335 11.5325 17.541 12.0228 17.2023L18.655 12.6203C18.855 12.4821 19.073 12.7665 18.9021 12.9426L14.1281 17.8646C13.665 18.3421 13.7569 19.1512 14.314 19.5005L19.659 22.8523C20.2585 23.2282 21.0297 22.8506 21.1418 22.1261L22.9866 10.2088Z" fill="white"></path> <defs> <linearGradient id="paint0_linear_87_7225" x1="16" y1="2" x2="16" y2="30" gradientUnits="userSpaceOnUse"> <stop stop-color="#37BBFE"></stop> <stop offset="1" stop-color="#007DBB"></stop> </linearGradient> </defs> </g></svg>
                   <div class="text-center w-full overflow-hidden">
                     <h3 class="text-xl font-bold text-gray-200 group-hover:text-white transition-colors leading-tight">{{ $t('profile.support_title') }}</h3>
@@ -25,7 +25,7 @@
               </div>
 
               <div class="mb-6 flex justify-center w-full">
-                <div class="profile-card !py-6 !px-8 min-h-[245px] w-full max-w-2xl flex flex-col items-center justify-center gap-6">
+                <div class="glass-card !py-6 !px-8 min-h-[245px] w-full max-w-2xl flex flex-col items-center justify-center gap-6">
                   <h3 class="text-xl font-bold text-gray-200 tracking-wide">{{ $t('profile.promo_title') }}</h3>
                   
                   <div class="flex flex-col sm:flex-row items-stretch justify-center gap-3 w-full max-w-md">
@@ -51,7 +51,7 @@
           </div>
 
           <div class="w-11/12 max-w-2xl flex flex-col items-center">
-            <div class="w-full profile-card !p-0 overflow-hidden min-h-[180px] flex flex-col">
+            <div class="w-full glass-card !p-0 overflow-hidden min-h-[180px] flex flex-col">
               <div class="flex-grow flex flex-col justify-center w-full">
                 <router-link to="/terms-of-service" class="settings-item flex items-center justify-between px-8 py-4 border-b border-white/[0.02] active:bg-white/5 transition-colors group">
                   <span class="text-white/80 font-medium text-[15px] group-hover:text-white transition-colors">{{ $t('navigation.terms') }}</span>
@@ -83,7 +83,7 @@
               </div>
 
               <div class="w-full border-t border-white/[0.05]">
-                <button @click="showDeleteModal = true" class="settings-item flex items-center justify-between w-full px-8 py-4 active:bg-red-500/10 transition-colors group text-left">
+                <button @click="confirmDeleteAccount" class="settings-item flex items-center justify-between w-full px-8 py-4 active:bg-red-500/10 transition-colors group text-left">
                   <span class="text-red-400 font-medium text-[15px] group-hover:text-red-300 transition-colors">{{ $t('profile.delete_account') }}</span>
                   <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="opacity-20 group-hover:opacity-40 transition-opacity">
                     <path d="M1 9L5 5L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -100,74 +100,30 @@
           </div>
       </div>
     </div>
-
-    <transition name="modal-fade">
-      <div v-if="showModal" class="fixed inset-0 flex items-center justify-center z-50 confirm-modal-overlay" @click.self="showModal = false">
-        <div class="profile-card !bg-white/[0.08] !backdrop-blur-[30px] !p-10 w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-center gap-8 text-gray-200 relative">
-          <div class="text-center">
-            <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ modalTitle }}</h3>
-            <p class="text-[15px] text-white/50 leading-relaxed font-medium">{{ modalMessage }}</p>
-          </div>
-          <div class="flex justify-center pt-2 w-full">
-            <button 
-              @click="showModal = false" 
-              class="flex items-center justify-center h-[48px] min-w-[160px] px-8 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/20 border border-white/[0.02] text-white hover:bg-white/30 active:scale-[0.98]"
-            >
-              {{ $t('profile.modal_got_it') }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </transition>
-
-    <transition name="modal-fade">
-      <div v-if="showDeleteModal" class="fixed inset-0 flex items-center justify-center z-50 confirm-modal-overlay" @click.self="showDeleteModal = false">
-        <div class="profile-card !bg-white/[0.08] !backdrop-blur-[30px] !p-10 w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-center gap-8 text-gray-200 relative">
-          <div class="text-center">
-            <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ $t('profile.delete_account') }}</h3>
-            <p class="text-[15px] text-white/50 leading-relaxed font-medium">{{ $t('profile.delete_account_confirm') }}</p>
-          </div>
-          <div class="flex flex-col sm:flex-row justify-center gap-3 pt-2 w-full">
-            <button 
-              @click="confirmDeleteAccount" 
-              :disabled="isDeleting"
-              class="flex items-center justify-center h-[48px] min-w-[140px] px-6 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/20 border border-white/[0.02] text-white hover:bg-white/30 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {{ isDeleting ? '...' : $t('gallery.confirm') }}
-            </button>
-            <button 
-              @click="showDeleteModal = false" 
-              class="flex items-center justify-center h-[48px] min-w-[140px] px-6 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/5 border border-white/[0.02] text-white/40 hover:bg-white/10 active:scale-[0.98]"
-            >
-              {{ $t('profile.modal_cancel') }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </transition>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import api from '@/services/api';
+import { useModalStore } from '@/stores/modal';
 import { useI18n } from 'vue-i18n';
 
+const modalStore = useModalStore();
 const { t } = useI18n();
 const year = new Date().getFullYear();
 const promoCode = ref('');
 const isSubmittingPromo = ref(false);
-
-const showModal = ref(false);
-const showDeleteModal = ref(false);
 const isDeleting = ref(false);
-const modalTitle = ref('');
-const modalMessage = ref('');
 
-function openModal(title, message) {
-  modalTitle.value = title;
-  modalMessage.value = message;
-  showModal.value = true;
+function confirmDeleteAccount() {
+  modalStore.openModal({
+    title: t('profile.delete_account'),
+    message: t('profile.delete_account_confirm'),
+    confirmText: t('gallery.confirm'),
+    cancelText: t('profile.modal_cancel'),
+    onConfirm: deleteAccount
+  });
 }
 
 async function applyPromoCode() {
@@ -176,7 +132,7 @@ async function applyPromoCode() {
   isSubmittingPromo.value = true;
   try {
     const response = await api.post('/api/marketing/promo-codes/', { code: promoCode.value });
-    openModal(t('profile.alert_success'), t('profile.alert_promo_applied', { count: response.data.credits_count }));
+    modalStore.openModal({title: t('profile.alert_success'), message: t('profile.alert_promo_applied', { count: response.data.credits_count }), type: 'success'});
     promoCode.value = '';
   }
   catch (error) {
@@ -196,14 +152,14 @@ async function applyPromoCode() {
       message = t('profile.promo_used');
     }
 
-    openModal(t('profile.alert_promo_error'), message);
+    modalStore.openModal({title: t('profile.alert_promo_error'), message});
   }
   finally {
     isSubmittingPromo.value = false;
   }
 }
 
-async function confirmDeleteAccount() {
+async function deleteAccount() {
   isDeleting.value = true;
   
   try {
@@ -215,8 +171,7 @@ async function confirmDeleteAccount() {
     }
   }
   catch (error) {
-    showDeleteModal.value = false;
-    openModal(t('profile.delete_account'), t('profile.delete_account_error'));
+    modalStore.openModal({title: t('profile.delete_account'), message: t('profile.delete_account_error')});
   }
   finally {
     isDeleting.value = false;
@@ -225,113 +180,17 @@ async function confirmDeleteAccount() {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
-.font-sans {
-  font-family: 'Inter', sans-serif;
-}
 
 .profile-container {
   position: relative;
   overflow: hidden;
 }
 
-.profile-card {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.02);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  will-change: backdrop-filter, transform;
-  transform: translateZ(0);
-  border-radius: 16px;
-  padding: 2.5rem;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-.manage-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-  width: auto;
-  min-width: 270px;
-  text-align: center;
-  font-weight: 500;
-  font-size: 0.875rem;
-  border-radius: 9999px;
-  padding: 0.9rem 2.25rem;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.02);
-  color: #9ca3af;
-  transition: all 0.2s ease-in-out;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.manage-button:not(:disabled):hover {
-  background: rgba(129, 180, 253, 0.1);
-  color: #81b4fd;
-  border-color: rgba(129, 180, 253, 0.4);
-  box-shadow: 0 0 15px rgba(129, 180, 253, 0.15);
-}
-
-.activate-button-hover:hover {
-  background: rgba(129, 180, 253, 0.15) !important;
-  color: #81b4fd !important;
-  border-color: rgba(129, 180, 253, 0.4) !important;
-  box-shadow: 0 0 12px rgba(129, 180, 253, 0.1);
-}
-
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
-
-.modal-fade-enter-active, .modal-fade-leave-active {
-  transition: opacity 0.3s ease-in-out;
-}
-
-.modal-fade-enter-from {
-  opacity: 0;
-  transform: translateY(20px) translateZ(0);
-}
-
-.modal-fade-leave-to {
-  opacity: 0;
-  transform: translateZ(0);
-}
-
-.fade-enter-active {
-  transition: transform 0.7s ease-out;
-  will-change: transform;
-  transform: translateZ(0);
-}
-
-.fade-enter-from {
-  transform: translateY(20px) translateZ(0);
-}
-
-.modal-content-card {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.02);
-  will-change: backdrop-filter, transform;
-  transform: translateZ(0);
-}
-
-.confirm-modal-overlay {
-  background-color: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(15px);
-}
-
-.small-manage-button {
-  min-width: 0;
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-}
 
 .settings-item:active svg {
   opacity: 0.6;

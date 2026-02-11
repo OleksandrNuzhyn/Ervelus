@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
-html, body {
+html,
+body {
   font-family: 'Inter', sans-serif;
 }
 
@@ -18,4 +19,17 @@ html, body {
 .fade-enter-to,
 .fade-leave-from {
   opacity: 1;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border-radius: 16px;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

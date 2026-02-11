@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-[#1c1c1c] border border-white/[0.02] shadow-xl rounded-2xl h-[calc(100vh-9.8rem)] lg:h-[calc(100vh-10.5rem_+_6px)] flex flex-col relative" @click="handleBackgroundClick">
+  <div class="glass-card h-[calc(100vh-9.8rem)] relative" @click="handleBackgroundClick">
     <div class="relative w-full h-full flex flex-col min-h-0">
 
       <div class="md:hidden absolute left-2 top-1/2 -translate-y-1/2 z-20 flex items-center">
@@ -31,8 +31,7 @@
               :key="style.id"
               :style-data="style"
               :is-selected="style.id === selectedStyleId"
-              @select-style="onStyleSelected"
-              @open-store="$emit('open-store')"/>
+              @select-style="onStyleSelected"/>
           </div>
         </div>
       </div>
@@ -61,7 +60,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['style-selected', 'close', 'next-genre', 'prev-genre', 'open-store']);
+const emit = defineEmits(['style-selected', 'close', 'next-genre', 'prev-genre']);
 
 const scrollContainer = ref(null);
 const canScrollUp = ref(true);

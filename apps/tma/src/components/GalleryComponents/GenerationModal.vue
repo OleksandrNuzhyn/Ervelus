@@ -2,7 +2,7 @@
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="isOpen" class="relative z-[100]">
-        <div class="fixed inset-0 modal-overlay transition-opacity" />
+        <div class="modal-backdrop transition-opacity" />
 
         <div class="fixed inset-0 z-[100] overflow-y-auto" @click="emit('close-modal')">
           <div class="flex min-h-full items-center justify-center py-6 text-center">
@@ -12,7 +12,7 @@
               <div
                 v-else
                 :class="[
-                  'relative flex w-11/12 max-w-[1400px] md:h-[90vh] transform flex-col overflow-hidden rounded-2xl border border-white/[0.02] bg-white/[0.03] text-left align-middle shadow-xl backdrop-blur-[25px] transition-all',
+                  'glass-card w-11/12 max-w-[1400px] md:h-[90vh] text-left align-middle transition-all overflow-hidden',
                 ]"
               >
                 <Transition name="fade-content">
@@ -108,31 +108,13 @@
         </div>
       </div>
     </Transition>
-    <Transition name="modal-fade">
-      <div v-if="showErrorModal" class="fixed inset-0 flex items-center justify-center z-[150] confirm-modal-overlay" @click.self="showErrorModal = false">
-        <div class="profile-card !bg-white/[0.08] !backdrop-blur-[30px] !p-10 w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-center gap-8 text-gray-200 relative">
-          <div class="text-center">
-            <h3 class="text-xl font-bold text-gray-200 tracking-wide mb-2">{{ errorModalTitle }}</h3>
-            <p class="text-[15px] text-white/50 leading-relaxed font-medium">{{ errorModalMessage }}</p>
-          </div>
-          <div class="flex justify-center pt-2 w-full">
-            <button
-              @click="showErrorModal = false"
-              class="flex items-center justify-center h-[48px] min-w-[160px] px-8 text-[14px] font-bold rounded-2xl transition-all duration-300 bg-white/20 border border-white/[0.02] text-white hover:bg-white/30 active:scale-[0.98]"
-            >
-              {{ $t('profile.modal_got_it') }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </Transition>
   </Teleport>
 </template>
 
 <script setup>
 import api from '@/services/api'
 import { ref, watch, onMounted, onUnmounted } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { useModalStore } from '@/stores/modal';
 const { t, locale } = useI18n();
 
 const props = defineProps({
@@ -147,16 +129,7 @@ const currentStyleName = ref('');
 const currentFormattedDate = ref('');
 const isLoading = ref(false);
 const isMobile = ref(false);
-
-const showErrorModal = ref(false);
-const errorModalTitle = ref('');
-const errorModalMessage = ref('');
-
-function openErrorModal(title, message) {
-  errorModalTitle.value = title;
-  errorModalMessage.value = message;
-  showErrorModal.value = true;
-}
+const modalStore = useModalStore();
 
 function handleResize() {
   isMobile.value = window.innerWidth < 768;
@@ -198,7 +171,7 @@ async function getCurrentRequest(request) {
     }
   }
   catch (error) {
-    openErrorModal(t('gallery.delete_title'), t('gallery.error_fetch'));
+    modalStore.openModal({ title: t('gallery.delete_title'), message: t('gallery.error_fetch') });
     emit('close-modal');
   }
   finally {
@@ -220,7 +193,7 @@ async function downloadOutput(request) {
     document.body.removeChild(link);
   }
   catch (error) {
-    openErrorModal(t('gallery.delete_title'), t('gallery.error_download_failed'));
+    modalStore.openModal({ title: t('gallery.delete_title'), message: t('gallery.error_download_failed') });
   }
 };
 
@@ -300,11 +273,6 @@ onUnmounted(() => {
   }
 }
 
-.modal-overlay {
-  background-color: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(15px);
-}
-
 .fade-content-enter-active {
   transition: opacity 0.7s ease-in-out;
   transform: translateZ(0);
@@ -347,39 +315,5 @@ onUnmounted(() => {
   to {
     transform: rotate(360deg);
   }
-}
-
-.modal-fade-enter-active, .modal-fade-leave-active {
-  transition: opacity 0.3s ease-in-out;
-}
-
-.modal-fade-enter-from {
-  opacity: 0;
-  transform: translateY(20px) translateZ(0);
-}
-
-.modal-fade-leave-to {
-  opacity: 0;
-  transform: translateZ(0);
-}
-
-.confirm-modal-overlay {
-  background-color: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(22px);
-}
-
-.profile-card {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.02);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  will-change: backdrop-filter, transform;
-  transform: translateZ(0);
-  border-radius: 16px;
-  padding: 2.5rem;
-  position: relative;
-  display: flex;
-  flex-direction: column;
 }
 </style>
