@@ -23,24 +23,37 @@
                       <path d="M5.25 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM2.25 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM18.75 7.5a.75.75 0 0 0-1.5 0v2.25H15a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-2.25H21a.75.75 0 0 0 0-1.5h-2.25V7.5Z" />
                     </svg>
                   </div>
+
                   <div class="relative z-10">
                     <span class="block text-3xl font-bold text-white mb-1 tracking-tighter inter">+2</span>
                     <span class="text-[11px] font-semibold text-white/60 tracking-tight whitespace-nowrap block inter">{{ $t('store.invite_friend') }}</span>
                   </div>
                 </button>
     
-                <button class="relative flex-1 min-w-0 aspect-square rounded-2xl p-4 flex flex-col justify-between items-start bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.02] transition-all group text-left active:scale-95 shadow-lg overflow-hidden">
-                   <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-500/[0.02] rounded-full blur-2xl pointer-events-none group-hover:bg-blue-500/[0.05] transition-colors"></div>
-    
-                    <svg class="w-8 h-8 text-white transition-transform duration-300 group-hover:scale-110" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <circle cx="16" cy="16" r="14" fill="currentColor"></circle>
-                      <path d="M22.9866 10.2088C23.1112 9.40332 22.3454 8.76755 21.6292 9.082L7.36482 15.3448C6.85123 15.5703 6.8888 16.3483 7.42147 16.5179L10.3631 17.4547C10.9246 17.6335 11.5325 17.541 12.0228 17.2023L18.655 12.6203C18.855 12.4821 19.073 12.7665 18.9021 12.9426L14.1281 17.8646C13.665 18.3421 13.7569 19.1512 14.314 19.5005L19.659 22.8523C20.2585 23.2282 21.0297 22.8506 21.1418 22.1261L22.9866 10.2088Z" fill="#121214"></path>
-                    </svg>
+                <a href="https://t.me/ervelus_news" target="_blank" v-if="!authStore.is_subscribed" class="relative flex-1 min-w-0 aspect-square rounded-2xl p-4 flex flex-col justify-between items-start bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.02] transition-all group text-left active:scale-95 shadow-lg overflow-hidden cursor-pointer no-underline">
+                  <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-500/[0.02] rounded-full blur-2xl pointer-events-none group-hover:bg-blue-500/[0.05] transition-colors"></div>
+
+                  <svg class="w-8 h-8 text-white transition-transform duration-300 group-hover:scale-110" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="16" cy="16" r="14" fill="currentColor"></circle>
+                    <path d="M22.9866 10.2088C23.1112 9.40332 22.3454 8.76755 21.6292 9.082L7.36482 15.3448C6.85123 15.5703 6.8888 16.3483 7.42147 16.5179L10.3631 17.4547C10.9246 17.6335 11.5325 17.541 12.0228 17.2023L18.655 12.6203C18.855 12.4821 19.073 12.7665 18.9021 12.9426L14.1281 17.8646C13.665 18.3421 13.7569 19.1512 14.314 19.5005L19.659 22.8523C20.2585 23.2282 21.0297 22.8506 21.1418 22.1261L22.9866 10.2088Z" fill="#121214"></path>
+                  </svg>
                   <div class="relative z-10">
                     <span class="block text-3xl font-bold text-white mb-1 tracking-tighter inter">+1</span>
                     <span class="text-[11px] font-semibold text-white/60 tracking-tight whitespace-nowrap block inter">{{ $t('store.join_channel') }}</span>
                   </div>
-                </button>
+                </a>
+                
+                <div v-else class="relative flex-1 min-w-0 aspect-square rounded-2xl p-4 flex flex-col justify-between items-start bg-emerald-500/[0.1] border border-emerald-500/[0.2] shadow-[0_0_20px_rgba(16,185,129,0.1)] overflow-hidden">
+                  <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/[0.1] rounded-full blur-2xl pointer-events-none"></div>
+
+                    <svg class="w-8 h-8 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  <div class="relative z-10">
+                    <span class="block text-3xl font-bold text-emerald-100 mb-1 tracking-tighter inter">+1</span>
+                    <span class="text-[11px] font-semibold text-emerald-200/80 tracking-tight whitespace-nowrap block inter">Joined</span>
+                  </div>
+                </div>
               </div>
             </section>
     
@@ -102,10 +115,12 @@ import { ref, watch } from 'vue';
 import api from '@/services/api';
 import { useProductsStore } from '@/stores/products';
 import { useModalStore } from '@/stores/modal';
+import { useAuthStore } from '@/stores/auth';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const modalStore = useModalStore();
+const authStore = useAuthStore();
 const productsStore = useProductsStore();
 const starPackages = ref([]);
 const loading = ref(false);
