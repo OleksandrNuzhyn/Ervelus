@@ -17,7 +17,6 @@
     </div>
     <ImageWorkspace 
       ref="imageWorkspaceRef"
-      v-show="!modalStore.isStylePanelOpen" 
       :selected-style-name="selectedStyleName" 
       :selected-style-id="selectedStyleId" 
       :on-open-style-panel="handleOpenStylePanel"

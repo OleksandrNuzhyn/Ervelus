@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <Transition name="modal-fade">
-      <div v-if="modalStore.isGalleryOpen" class="modal-backdrop fixed inset-0 z-[100] overflow-y-auto" @click="modalStore.closeGallery()">
+      <div v-if="modalStore.isGalleryOpen" class="fixed inset-0 z-[100] overflow-y-auto bg-black/60 backdrop-blur-[15px]" @click="modalStore.closeGallery()">
         <div class="flex min-h-full items-center justify-center py-6 text-center">
             <Transition name="fade-content">
               <div v-if="isLoading && isMobile" key="spinner" class="spinner"></div>
