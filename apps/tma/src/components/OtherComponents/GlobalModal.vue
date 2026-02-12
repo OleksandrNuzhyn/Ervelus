@@ -1,7 +1,7 @@
 ```
 <template>
   <Transition name="modal-fade">
-    <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center z-[110] modal-backdrop" @click.self="handleBackdropClick">
+    <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center z-[110] bg-black/60 backdrop-blur-[15px]" @click.self="handleBackdropClick">
       <div 
         v-if="type === 'success'"
         class="solid-panel w-11/12 max-w-md min-h-[220px] flex flex-col items-center justify-between shadow-2xl transition-all overflow-hidden relative"

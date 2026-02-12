@@ -1,22 +1,24 @@
 MESSAGES = {
     'en': {
-        'successful_payment': """<b>Payment Successful!</b> 🌟
+        'successful_payment':
+"""Payment Successful! 🌟
 
-        Thank you for choosing Ervelus. Your account has been credited with <b>{generations_count} generations</b>.
+Thank you for choosing Ervelus. Your account has been credited with {generations_count} generations.
 
-        If you have any questions or encounter any issues, please feel free to write directly in this chat. We are here to help!
+If you have any questions or encounter any issues, please feel free to write directly in this chat. We are here to help!
 
-        Best regards,
-        <b>Ervelus Team</b>""",
+Best regards,
+Ervelus Team""",
     },
     'ua': {
-        'successful_payment': """<b>Оплата пройшла успішно!</b> 🌟
+        'successful_payment':
+"""Оплата пройшла успішно! 🌟
 
-        Дякуємо, що обрали Ervelus. Вам нараховано <b>{generations_count} генерацій</b>.
+Дякуємо, що обрали Ervelus. Вам нараховано {generations_count} генерацій.
 
-        Якщо у вас виникли запитання або потрібна допомога, просто напишіть нам у цей чат. Ми завжди на зв’язку!
+Якщо у вас виникли запитання або потрібна допомога, просто напишіть нам у цей чат. Ми завжди на зв’язку!
 
-        З повагою,
-        <b>Команда Ervelus</b>""",
+З повагою,
+Команда Ervelus""",
     }
 }

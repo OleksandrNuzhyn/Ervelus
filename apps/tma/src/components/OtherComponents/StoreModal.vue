@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <transition name="modal-fade">
-      <div v-if="isOpen" class="fixed inset-0 z-[100] flex items-center justify-center modal-backdrop bg-black/60 backdrop-blur-xl" @click.self="modalStore.closeStore()">
+      <div v-if="isOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-[15px]" @click.self="modalStore.closeStore()">
         <div class="solid-panel w-full max-w-lg md:max-w-xl relative overflow-hidden h-auto m-4 pointer-events-auto shadow-2xl">
           <div class="pointer-events-none absolute -left-10 -top-10 h-48 w-48 rounded-full bg-white/5 blur-[100px]"></div>
           <div class="pointer-events-none absolute -bottom-10 -right-10 h-48 w-48 rounded-full bg-white/5 blur-[100px]"></div>
@@ -106,6 +106,7 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const modalStore = useModalStore();
+const productsStore = useProductsStore();
 const starPackages = ref([]);
 const loading = ref(false);
 
@@ -119,15 +120,12 @@ async function createStarInvoice(pkg) {
       if (window.Telegram?.WebApp) {
         window.Telegram.WebApp.openInvoice(response.data.star_invoice_link, (status) => {
           if (status === 'paid') {
+            modalStore.closeStore();
+            productsStore.getStyles();
             modalStore.openModal({
               title: t('store.success_title'),
               message: t('store.success_desc'),
-              type: 'success',
-              onConfirm: () => {
-                const productsStore = useProductsStore();
-                productsStore.getStyles();
-                modalStore.closeStore();
-              }
+              type: 'success'
             });
           }
         });

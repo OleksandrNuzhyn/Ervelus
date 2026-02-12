@@ -51,8 +51,7 @@ def send_message_to_user(telegram_id, country_code, message_key, **context):
         text = message.format(**context)
         async_to_sync(bot.send_message)(
             chat_id=telegram_id,
-            text=text,
-            parse_mode='HTML'
+            text=text
         )
     except Exception as e:
         logger.error("Failed to send message to user", extra={"telegram_id": telegram_id, "country_code": country_code, "message_key": message_key, "error": str(e)}, exc_info=True)
