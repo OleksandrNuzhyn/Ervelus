@@ -1,3 +1,4 @@
+from telegram_bot.services import send_message_to_user
 from core.models import ApplicationConfig
 from asgiref.sync import async_to_sync
 from users.models import UserProfile
@@ -36,6 +37,13 @@ def handle_user_purchase(user, payload, transaction_id):
         generations_count=generations_count,
         country_code=user.profile.country_code,
         transaction_id=transaction_id
+    )
+
+    send_message_to_user(
+        telegram_id=user.profile.telegram_id,
+        country_code=user.profile.country_code,
+        message_key='successful_payment',
+        generations_count=generations_count
     )
 
 def handle_pre_checkout_query(update):

@@ -1,11 +1,15 @@
+from asgiref.sync import async_to_sync
 from init_data_py import InitData
 from django.conf import settings
+from .messages import MESSAGES
 import geoip2.database
 import geoip2.errors
+import telegram
 import logging
 import os
 
 logger = logging.getLogger(__name__)
+bot = telegram.Bot(token=settings.TELEGRAM_API_KEY)
 
 def validate_telegram_init_data(init_data):
     try:
@@ -33,3 +37,22 @@ def get_country_code_from_ip_address(ip_address):
     except Exception as e:
         logger.error("Failed to get country from IP", extra={"ip_address": ip_address, "error": str(e), "exc_info": True})
     return None
+
+def send_message_to_user(telegram_id, country_code, message_key, **context):
+    country_code_key = country_code if country_code else 'en'
+    country_messages_dict = MESSAGES.get(country_code_key) or {}
+    message = country_messages_dict.get(message_key) or MESSAGES.get('en', {}).get(message_key)
+
+    if not message:
+        logger.error("Message key not found", extra={"message_key": message_key, "country_code_key": country_code_key})
+        return
+
+    try:
+        text = message.format(**context)
+        async_to_sync(bot.send_message)(
+            chat_id=telegram_id,
+            text=text,
+            parse_mode='HTML'
+        )
+    except Exception as e:
+        logger.error("Failed to send message to user", extra={"telegram_id": telegram_id, "country_code": country_code, "message_key": message_key, "error": str(e)}, exc_info=True)
