@@ -1,4 +1,5 @@
 from rest_framework.decorators import api_view, permission_classes
+from telegram_bot.services import send_message_to_user
 from rest_framework.permissions import IsAuthenticated
 from generations.models import GenerationRequest
 from rest_framework.response import Response
@@ -21,6 +22,8 @@ def credit_balance(request):
 @permission_classes([IsAuthenticated])
 def delete_account(request):
     user = request.user
+    telegram_id = user.profile.telegram_id
+    country_code = user.profile.country_code
     requests_in_process = GenerationRequest.objects.filter(user=user, is_visible=False)
 
     if requests_in_process.exists():
@@ -67,5 +70,11 @@ def delete_account(request):
     except Exception as e:
         logger.error("Failed to anonymise user data in delete request", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)
         return Response(status=400)
+
+    send_message_to_user(
+        telegram_id=telegram_id,
+        country_code=country_code,
+        message_key='account_deleted'
+    )
 
     return Response(status=204)

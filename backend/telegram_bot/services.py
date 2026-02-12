@@ -1,7 +1,11 @@
+from core.models import ApplicationConfig
 from asgiref.sync import async_to_sync
+from users.models import UserProfile
 from init_data_py import InitData
+from django.db import transaction
 from django.conf import settings
 from .messages import MESSAGES
+from django.db.models import F
 import geoip2.database
 import geoip2.errors
 import telegram
@@ -55,3 +59,32 @@ def send_message_to_user(telegram_id, country_code, message_key, **context):
         )
     except Exception as e:
         logger.error("Failed to send message to user", extra={"telegram_id": telegram_id, "country_code": country_code, "message_key": message_key, "error": str(e)}, exc_info=True)
+
+@transaction.atomic
+def handle_chat_member(update):
+    chat_member = update.chat_member
+    
+    if chat_member.new_chat_member.status == telegram.ChatMember.MEMBER:
+        telegram_id = chat_member.from_user.id
+        
+        try:
+            user_profile = UserProfile.objects.get(telegram_id=telegram_id)
+            
+            if not user_profile.is_subscribed:
+                user_profile.credits += 1
+                user_profile.is_subscribed = True
+                user_profile.save(update_fields=['credits', 'is_subscribed'])
+                
+                config = ApplicationConfig.get_solo()
+                config.reserved_generations = F('reserved_generations') + 1
+                config.save(update_fields=['reserved_generations'])
+                
+                send_message_to_user(
+                    telegram_id=telegram_id,
+                    country_code=user_profile.country_code,
+                    message_key='subscription_bonus'
+                )
+        except UserProfile.DoesNotExist:
+            pass
+        except Exception as e:
+            logger.error("Error handling chat member webhook", extra={"error": str(e)}, exc_info=True)

@@ -1,18 +1,22 @@
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import update_last_login
 from rest_framework.decorators import api_view, permission_classes
 from agreements.services import accept_user_document_version
+from django.contrib.auth.models import update_last_login
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
+from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from agreements.models import TermsVersion
 from core.models import ApplicationConfig
+from asgiref.sync import async_to_sync
 from users.models import UserProfile
 from django.db import transaction
+from django.conf import settings
 from django.db.models import F
 from . import services
+import telegram
 import logging
 
+bot = telegram.Bot(token=settings.TELEGRAM_API_KEY)
 logger = logging.getLogger(__name__)
 User = get_user_model()
 
@@ -46,7 +50,10 @@ def telegram_auth(request):
     token, _ = Token.objects.get_or_create(user=user)
     update_last_login(None, user)
     
-    return Response({'token': token.key}, status=200)
+    return Response({
+        'token': token.key,
+        'is_subscribed': user.profile.is_subscribed
+    }, status=200)
 
 @transaction.atomic
 def create_telegram_user(telegram_data, request):
@@ -68,6 +75,15 @@ def create_telegram_user(telegram_data, request):
 
     user_profile = UserProfile.objects.create(user=user, telegram_id=telegram_id, country_code=country_code)
     
+    try:
+        chat_member = async_to_sync(bot.get_chat_member)(chat_id="-1003735555915", user_id=telegram_id)
+        if chat_member.status == telegram.ChatMember.MEMBER:
+            user_profile.credits += 1
+            user_profile.is_subscribed = True
+            user_profile.save(update_fields=['credits', 'is_subscribed'])
+    except Exception as e:
+        logger.error("Failed to check channel subscription", extra={"error": str(e)}, exc_info=True)
+
     config = ApplicationConfig.get_solo()
     config.reserved_generations = F('reserved_generations') + user_profile.credits
     config.save(update_fields=['reserved_generations'])

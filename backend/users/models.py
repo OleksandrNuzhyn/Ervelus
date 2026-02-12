@@ -75,6 +75,7 @@ class UserProfile(models.Model):
     country_code = models.CharField(max_length=2, null=True, blank=True)
     credits = models.IntegerField(default=1)
     is_paid = models.BooleanField(default=False)
+    is_subscribed = models.BooleanField(default=False)
 
     def __str__(self):
         return f'Profile of {self.user.email}'
