@@ -115,14 +115,18 @@ const messages = {
       free_bonuses: "Community Rewards",
       star_packages: "Star Packs",
       generations: "generations",
-      premium_styles: "Lifetime access to all styles",
-      invite_friend: "Invite friend",
-      join_channel: "Join channel",
+      premium_styles: "Access to all styles",
+      invite_friend: "Invite Friend",
+      join_channel: "Telegram Channel",
       error_title: "Payment Error",
       error_desc: "Failed to create invoice. Please try again later",
       success_title: "Payment Successful!",
       success_desc: "The generations have been added to your balance",
-      got_it: "Excellent"
+      got_it: "Excellent",
+      invite: "Invite",
+      subscribe: "Subscribe",
+      invite_badge: "+1 for you",
+      invite_desc: "+1 for you, +1 for friend"
     }
   },
   uk: {
@@ -239,14 +243,18 @@ const messages = {
       free_bonuses: "Нагороди спільноти",
       star_packages: "Зіркові Паки",
       generations: "генерацій",
-      premium_styles: "Довічний доступ до всіх стилів",
+      premium_styles: "Доступ до всіх стилів",
       invite_friend: "Запросити друга",
-      join_channel: "Приєднатися до каналу",
+      join_channel: "Telegram канал",
       error_title: "Помилка оплати",
       error_desc: "Не вдалося створити інвойс. Будь ласка, спробуйте пізніше",
       success_title: "Оплата успішна!",
       success_desc: "Генерації зараховані на ваш баланс",
-      got_it: "Чудово"
+      got_it: "Чудово",
+      invite: "Запросити",
+      subscribe: "Підписатись",
+      invite_badge: "+1 тобі",
+      invite_desc: "+1 тобі, +1 другу"
     }
   }
 }
