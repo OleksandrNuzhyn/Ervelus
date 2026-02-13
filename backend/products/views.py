@@ -7,7 +7,7 @@ from .models import Style, StarPackage
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def star_package_list(request):
+def store(request):
     country_code = request.user.profile.country_code
     star_packages_queryset = StarPackage.objects.filter(is_active=True)
     star_packages = []
@@ -22,7 +22,10 @@ def star_package_list(request):
             'generations_count': star_package.generations_count
         })
     
-    return Response({'star_packages': star_packages}, status=200)
+    return Response({
+        'star_packages': star_packages,
+        'is_subscribed': request.user.profile.is_subscribed
+    }, status=200)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

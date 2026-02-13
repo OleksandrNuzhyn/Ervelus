@@ -15,43 +15,78 @@
               <h3 class="text-sm font-medium text-white/60 mb-4 text-center inter">{{ $t('store.free_bonuses') }}</h3>
               <div class="flex gap-3">
                 
-                <button class="relative flex-1 min-w-0 aspect-square rounded-2xl p-4 flex flex-col justify-between items-start bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.02] transition-all group text-left active:scale-95 shadow-lg overflow-hidden">
-                  <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/[0.02] rounded-full blur-2xl pointer-events-none group-hover:bg-white/[0.05] transition-colors"></div>
+                <button class="group relative flex flex-col justify-between p-4 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.05] transition-all active:scale-[0.98] shadow-lg overflow-hidden min-h-[140px] text-left w-full">
+                  <div class="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   
-                  <div class="mb-2 group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M5.25 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM2.25 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM18.75 7.5a.75.75 0 0 0-1.5 0v2.25H15a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-2.25H21a.75.75 0 0 0 0-1.5h-2.25V7.5Z" />
-                    </svg>
+                  <div class="flex justify-between items-start mb-3 relative z-10 w-full">
+                    <div class="p-2 rounded-xl bg-white/[0.05] text-white">
+                      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                      </svg>
+                    </div>
+                    <div class="px-2 py-1 rounded-lg bg-amber-500/20 border border-amber-500/20 backdrop-blur-sm">
+                      <span class="text-[10px] font-bold text-amber-300 tracking-wide">+2 GEN</span>
+                    </div>
                   </div>
 
-                  <div class="relative z-10">
-                    <span class="block text-3xl font-bold text-white mb-1 tracking-tighter inter">+2</span>
-                    <span class="text-[11px] font-semibold text-white/60 tracking-tight whitespace-nowrap block inter">{{ $t('store.invite_friend') }}</span>
+                  <div class="relative z-10 w-full mt-auto">
+                    <h4 class="text-[15px] font-bold text-white leading-tight mb-1 inter">{{ $t('store.invite_friend') }}</h4>
+                    <div class="flex items-center justify-between gap-2 mt-3">
+                      <span class="text-[11px] font-medium text-white/50 inter">Get rewards</span>
+                      <div class="h-7 px-3 flex items-center justify-center rounded-lg bg-white text-black text-[11px] font-bold inter group-hover:bg-[#3b82f6] group-hover:text-white transition-colors shadow-sm">
+                        Invite
+                      </div>
+                    </div>
                   </div>
                 </button>
     
-                <a href="https://t.me/ervelus_news" target="_blank" v-if="!authStore.is_subscribed" class="relative flex-1 min-w-0 aspect-square rounded-2xl p-4 flex flex-col justify-between items-start bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.02] transition-all group text-left active:scale-95 shadow-lg overflow-hidden cursor-pointer no-underline">
-                  <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-500/[0.02] rounded-full blur-2xl pointer-events-none group-hover:bg-blue-500/[0.05] transition-colors"></div>
+                <a href="https://t.me/ervelus_news" target="_blank" v-if="!isSubscribed" class="group relative flex flex-col justify-between p-4 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.05] transition-all active:scale-[0.98] shadow-lg overflow-hidden min-h-[140px] text-left w-full cursor-pointer no-underline">
+                   <div class="absolute inset-0 bg-gradient-to-br from-blue-500/[0.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
-                  <svg class="w-8 h-8 text-white transition-transform duration-300 group-hover:scale-110" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="16" cy="16" r="14" fill="currentColor"></circle>
-                    <path d="M22.9866 10.2088C23.1112 9.40332 22.3454 8.76755 21.6292 9.082L7.36482 15.3448C6.85123 15.5703 6.8888 16.3483 7.42147 16.5179L10.3631 17.4547C10.9246 17.6335 11.5325 17.541 12.0228 17.2023L18.655 12.6203C18.855 12.4821 19.073 12.7665 18.9021 12.9426L14.1281 17.8646C13.665 18.3421 13.7569 19.1512 14.314 19.5005L19.659 22.8523C20.2585 23.2282 21.0297 22.8506 21.1418 22.1261L22.9866 10.2088Z" fill="#121214"></path>
-                  </svg>
-                  <div class="relative z-10">
-                    <span class="block text-3xl font-bold text-white mb-1 tracking-tighter inter">+1</span>
-                    <span class="text-[11px] font-semibold text-white/60 tracking-tight whitespace-nowrap block inter">{{ $t('store.join_channel') }}</span>
+                  <div class="flex justify-between items-start mb-3 relative z-10 w-full">
+                    <div class="p-2 rounded-xl bg-blue-500/20 text-blue-400">
+                      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.48-1.02-2.42-1.66-1.09-.75-.38-1.16.24-1.78.14-.14 2.56-2.35 2.61-2.54.01-.06.01-.12-.05-.18a.38.38 0 00-.28-.1c-.08 0-.66.42-2.73 1.83-1.04.7-1.95.7-2.85.42-.87-.27-1.7-.54-1.7-.54s-.42-.14.28-.42c3.4-1.42 5.66-2.35 6.78-2.8.52-.21 1.02-.3 1.48-.3.3 0 .42.2.42.2z"/>
+                      </svg>
+                    </div>
+                    <div class="px-2 py-1 rounded-lg bg-amber-500/20 border border-amber-500/20 backdrop-blur-sm">
+                      <span class="text-[10px] font-bold text-amber-300 tracking-wide">+1 GEN</span>
+                    </div>
+                  </div>
+
+                  <div class="relative z-10 w-full mt-auto">
+                    <h4 class="text-[15px] font-bold text-white leading-tight mb-1 inter">{{ $t('store.join_channel') }}</h4>
+                    <div class="flex items-center justify-between gap-2 mt-3">
+                      <span class="text-[11px] font-medium text-white/50 inter">Stay updated</span>
+                      <div class="h-7 px-3 flex items-center justify-center rounded-lg bg-[#2AABEE] text-white text-[11px] font-bold inter group-hover:bg-[#229ED9] transition-colors shadow-sm shadow-blue-500/20">
+                        Subscribe
+                      </div>
+                    </div>
                   </div>
                 </a>
-                
-                <div v-else class="relative flex-1 min-w-0 aspect-square rounded-2xl p-4 flex flex-col justify-between items-start bg-emerald-500/[0.1] border border-emerald-500/[0.2] shadow-[0_0_20px_rgba(16,185,129,0.1)] overflow-hidden">
-                  <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/[0.1] rounded-full blur-2xl pointer-events-none"></div>
 
-                    <svg class="w-8 h-8 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                  <div class="relative z-10">
-                    <span class="block text-3xl font-bold text-emerald-100 mb-1 tracking-tighter inter">+1</span>
-                    <span class="text-[11px] font-semibold text-emerald-200/80 tracking-tight whitespace-nowrap block inter">Joined</span>
+                <div v-else class="group relative flex flex-col justify-between p-4 rounded-2xl bg-emerald-500/[0.08] border border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.05)] overflow-hidden min-h-[140px] text-left w-full">
+                   <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.05] to-transparent"></div>
+
+                  <div class="flex justify-between items-start mb-3 relative z-10 w-full">
+                    <div class="p-2 rounded-xl bg-emerald-500/20 text-emerald-400">
+                       <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                       </svg>
+                    </div>
+                    <div class="px-2 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500/20 backdrop-blur-sm">
+                      <span class="text-[10px] font-bold text-emerald-300 tracking-wide">+1 GEN</span>
+                    </div>
+                  </div>
+
+                  <div class="relative z-10 w-full mt-auto">
+                    <h4 class="text-[15px] font-bold text-emerald-100 leading-tight mb-1 inter">Joined</h4>
+                    <div class="flex items-center justify-between gap-2 mt-3">
+                      <span class="text-[11px] font-medium text-emerald-200/60 inter">Task completed</span>
+                      <div class="h-7 px-3 flex items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-300 text-[11px] font-bold inter border border-emerald-500/20">
+                        Done
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -115,14 +150,13 @@ import { ref, watch } from 'vue';
 import api from '@/services/api';
 import { useProductsStore } from '@/stores/products';
 import { useModalStore } from '@/stores/modal';
-import { useAuthStore } from '@/stores/auth';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const modalStore = useModalStore();
-const authStore = useAuthStore();
 const productsStore = useProductsStore();
 const starPackages = ref([]);
+const isSubscribed = ref(false);
 const loading = ref(false);
 
 async function createStarInvoice(pkg) {
@@ -163,10 +197,12 @@ async function getStarPackages() {
   try {
     const { data } = await api.get('/api/products/star-packages/');
     const packages = data.star_packages || [];
+    isSubscribed.value = data.is_subscribed;
     starPackages.value = packages.sort((a, b) => a.generations_count - b.generations_count);
   }
   catch (e) {
     starPackages.value = [];
+    isSubscribed.value = false;
     modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_load_failed') });
   }
   finally {

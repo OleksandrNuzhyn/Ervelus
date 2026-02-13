@@ -4,7 +4,6 @@ import api from '@/services/api';
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
-    is_subscribed: false,
     isMaintenanceMode: false
   }),
   actions: {
@@ -20,12 +19,10 @@ export const useAuthStore = defineStore('auth', {
         if (data.token) {
           localStorage.setItem('user-token', data.token);
           this.user = true;
-          this.is_subscribed = data.is_subscribed;
         }
       }
       catch (error) {
         this.user = null;
-        this.is_subscribed = false;
       }
     }
   }

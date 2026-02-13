@@ -50,10 +50,7 @@ def telegram_auth(request):
     token, _ = Token.objects.get_or_create(user=user)
     update_last_login(None, user)
     
-    return Response({
-        'token': token.key,
-        'is_subscribed': user.profile.is_subscribed
-    }, status=200)
+    return Response({'token': token.key}, status=200)
 
 @transaction.atomic
 def create_telegram_user(telegram_data, request):
