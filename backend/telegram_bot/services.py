@@ -11,6 +11,7 @@ import geoip2.errors
 import telegram
 import logging
 import os
+import re
 
 logger = logging.getLogger(__name__)
 bot = telegram.Bot(token=settings.TELEGRAM_API_KEY)
@@ -42,13 +43,13 @@ def get_country_code_from_ip_address(ip_address):
         logger.error("Failed to get country from IP", extra={"ip_address": ip_address, "error": str(e), "exc_info": True})
     return None
 
-def send_message_to_user(telegram_id, country_code, message_key, **context):
-    country_code_key = country_code if country_code else 'en'
-    country_messages_dict = MESSAGES.get(country_code_key) or {}
+def send_message_to_user(telegram_id, message_key, language_code, **context):
+    language_code_key = language_code[:2] if language_code else 'en'
+    country_messages_dict = MESSAGES.get(language_code_key) or {}
     message = country_messages_dict.get(message_key) or MESSAGES.get('en', {}).get(message_key)
 
     if not message:
-        logger.error("Message key not found", extra={"message_key": message_key, "country_code_key": country_code_key})
+        logger.error("Message key not found", extra={"message_key": message_key, "language_code": language_code})
         return
 
     try:
@@ -58,7 +59,7 @@ def send_message_to_user(telegram_id, country_code, message_key, **context):
             text=text
         )
     except Exception as e:
-        logger.error("Failed to send message to user", extra={"telegram_id": telegram_id, "country_code": country_code, "message_key": message_key, "error": str(e)}, exc_info=True)
+        logger.error("Failed to send message to user", extra={"telegram_id": telegram_id, "message_key": message_key, "language_code": language_code, "error": str(e)}, exc_info=True)
 
 @transaction.atomic
 def handle_chat_member(update):
@@ -66,6 +67,7 @@ def handle_chat_member(update):
     
     if chat_member.new_chat_member.status == telegram.ChatMember.MEMBER:
         telegram_id = chat_member.from_user.id
+        language_code = chat_member.from_user.language_code
         
         try:
             user_profile = UserProfile.objects.get(telegram_id=telegram_id)
@@ -78,13 +80,81 @@ def handle_chat_member(update):
                 config = ApplicationConfig.get_solo()
                 config.reserved_generations = F('reserved_generations') + 1
                 config.save(update_fields=['reserved_generations'])
-                
+
                 send_message_to_user(
                     telegram_id=telegram_id,
-                    country_code=user_profile.country_code,
-                    message_key='subscription_bonus'
+                    message_key='subscription_bonus',
+                    language_code=language_code
                 )
         except UserProfile.DoesNotExist:
             pass
         except Exception as e:
             logger.error("Error handling chat member webhook", extra={"error": str(e)}, exc_info=True)
+
+def handle_message_text_start(update):
+    message = update.message
+    
+    send_message_to_user(
+        telegram_id=message.from_user.id,
+        message_key='start_message',
+        language_code=message.from_user.language_code
+    )
+
+def handle_message(update):
+    message = update.message
+    sender_id = str(message.from_user.id)
+    admin_id = "790079946"
+
+    if sender_id == admin_id:
+        if message.reply_to_message:
+            original_text = message.reply_to_message.text or ''
+            telegram_id = re.search(r"ID: (\d+)", original_text)
+            
+            if telegram_id:
+                telegram_id = telegram_id.group(1)
+
+                try:
+                    async_to_sync(bot.send_message)(
+                        chat_id=telegram_id,
+                        text=message.text
+                    )
+
+                    async_to_sync(bot.send_message)(
+                        chat_id=admin_id,
+                        text="Reply sent",
+                        reply_to_message_id=message.message_id
+                    )
+                except Exception as e:
+                    async_to_sync(bot.send_message)(
+                        chat_id=admin_id,
+                        text=f"Failed to send reply: {e}",
+                        reply_to_message_id=message.message_id
+                    )
+            else:
+                async_to_sync(bot.send_message)(
+                    chat_id=admin_id,
+                    text="ID not found. Please reply to the message containing 'ID:'",
+                    reply_to_message_id=message.message_id
+                )
+        return
+    
+    header_text = (
+        f"New Message from User\n"
+        f"Name: {message.from_user.first_name} {message.from_user.last_name or ''}\n"
+        f"Username: @{message.from_user.username or 'N/A'}\n"
+        f"ID: {sender_id}\n"
+    )
+
+    try:
+        async_to_sync(bot.send_message)(
+            chat_id=admin_id,
+            text=header_text
+        )
+        
+        async_to_sync(bot.forward_message)(
+            chat_id=admin_id,
+            from_chat_id=sender_id,
+            message_id=message.message_id
+        )
+    except Exception as e:
+        logger.error("Failed to forward message to admin", extra={"error": str(e)}, exc_info=True)

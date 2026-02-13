@@ -23,7 +23,6 @@ def credit_balance(request):
 def delete_account(request):
     user = request.user
     telegram_id = user.profile.telegram_id
-    country_code = user.profile.country_code
     requests_in_process = GenerationRequest.objects.filter(user=user, is_visible=False)
 
     if requests_in_process.exists():
@@ -73,8 +72,8 @@ def delete_account(request):
 
     send_message_to_user(
         telegram_id=telegram_id,
-        country_code=country_code,
-        message_key='account_deleted'
+        message_key='account_deleted',
+        language_code=request.data.get('language_code')
     )
 
     return Response(status=204)

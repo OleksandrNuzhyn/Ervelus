@@ -164,7 +164,12 @@ async function deleteAccount() {
   isDeleting.value = true;
   
   try {
-    await api.delete('/api/users/delete-account/');
+    const languageCode = window.Telegram?.WebApp?.initDataUnsafe?.user?.language_code;
+    
+    await api.delete('/api/users/delete-account/', {
+      data: { language_code: languageCode }
+    });
+
     localStorage.removeItem('user-token');
 
     if (window.Telegram?.WebApp) {
@@ -181,8 +186,6 @@ async function deleteAccount() {
 </script>
 
 <style scoped>
-
-
 .profile-container {
   position: relative;
   overflow: hidden;

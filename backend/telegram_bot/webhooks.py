@@ -1,6 +1,6 @@
+from telegram_bot.services import handle_chat_member, handle_message, handle_message_text_start
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
 from payments.services import handle_pre_checkout_query, handle_message_successful_payment
-from telegram_bot.services import handle_chat_member
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.conf import settings
@@ -17,16 +17,21 @@ bot = telegram.Bot(token=settings.TELEGRAM_API_KEY)
 def telegram_handler(request):
     webhook_secret = request.headers.get("X-Telegram-Bot-Api-Secret-Token")
     if webhook_secret != settings.TELEGRAM_WEBHOOK_SECRET:
-        return Response(status=403)
+            return Response(status=403)
 
     try:
         data = json.loads(request.body)
         update = telegram.Update.de_json(data, bot)
-
+        
         if update.pre_checkout_query:
             handle_pre_checkout_query(update)
-        elif update.message and update.message.successful_payment:
-            handle_message_successful_payment(update)
+        elif update.message:
+            if update.message.text == '/start':
+                handle_message_text_start(update)
+            elif update.message.successful_payment:
+                handle_message_successful_payment(update)
+            else:
+                handle_message(update)
         elif update.chat_member:
             handle_chat_member(update)
     except Exception as e:

@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 @transaction.atomic
-def handle_user_purchase(user, payload, transaction_id):
+def handle_user_purchase(user, payload, transaction_id, language_code):
     if UserPurchase.objects.filter(transaction_id=transaction_id).exists():
         logger.error("Duplicate payment webhook received", extra={"transaction_id": transaction_id})
         return
@@ -41,8 +41,8 @@ def handle_user_purchase(user, payload, transaction_id):
 
     send_message_to_user(
         telegram_id=user.profile.telegram_id,
-        country_code=user.profile.country_code,
         message_key='successful_payment',
+        language_code=language_code,
         generations_count=generations_count
     )
 
@@ -57,13 +57,14 @@ def handle_pre_checkout_query(update):
 def handle_message_successful_payment(update):
     payment = update.message.successful_payment
     telegram_id = update.effective_user.id
+    language_code = update.effective_user.language_code
     payload = payment.invoice_payload
     transaction_id = payment.telegram_payment_charge_id
 
     try:
         user_profile = UserProfile.objects.select_related('user').get(telegram_id=telegram_id)
         user = user_profile.user
-        handle_user_purchase(user, payload, transaction_id)
+        handle_user_purchase(user, payload, transaction_id, language_code)
     except UserProfile.DoesNotExist:
         logger.error("Payment received from unknown user", extra={"telegram_id": telegram_id, "transaction_id": transaction_id})
     except Exception:
