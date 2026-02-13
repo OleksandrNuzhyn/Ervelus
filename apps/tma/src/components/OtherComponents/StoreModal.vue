@@ -13,80 +13,45 @@
           <div class="px-6 pb-6 space-y-6 relative z-10">
             <section>
               <h3 class="text-sm font-medium text-white/60 mb-4 text-center inter">{{ $t('store.free_bonuses') }}</h3>
-              <div class="flex gap-3">
-                
-                <button class="group relative flex flex-col justify-between p-4 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.05] transition-all active:scale-[0.98] shadow-lg overflow-hidden min-h-[140px] text-left w-full">
+              <div class="flex flex-col gap-2.5">
+                <button @click="modalStore.closeStore()" class="group relative flex items-center justify-between px-4 py-5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] active:scale-[0.99] transition-all overflow-hidden w-full text-left">
                   <div class="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   
-                  <div class="flex justify-between items-start mb-3 relative z-10 w-full">
-                    <div class="p-2 rounded-xl bg-white/[0.05] text-white">
-                      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                      </svg>
-                    </div>
-                    <div class="px-2 py-1 rounded-lg bg-amber-500/20 border border-amber-500/20 backdrop-blur-sm">
-                      <span class="text-[10px] font-bold text-amber-300 tracking-wide">+2 GEN</span>
-                    </div>
+                  <div class="relative z-10 flex flex-col gap-1 items-start min-w-0 mr-4">
+                    <h4 class="text-[14px] font-bold tracking-tight inter leading-tight mb-0.5 text-white w-full">{{ $t('store.invite_friend') }}</h4>
+                    <span class="text-[12px] font-medium inter leading-tight tracking-tight text-white/70 block">{{ $t('store.invite_desc') }}</span>
                   </div>
 
-                  <div class="relative z-10 w-full mt-auto">
-                    <h4 class="text-[15px] font-bold text-white leading-tight mb-1 inter">{{ $t('store.invite_friend') }}</h4>
-                    <div class="flex items-center justify-between gap-2 mt-3">
-                      <span class="text-[11px] font-medium text-white/50 inter">Get rewards</span>
-                      <div class="h-7 px-3 flex items-center justify-center rounded-lg bg-white text-black text-[11px] font-bold inter group-hover:bg-[#3b82f6] group-hover:text-white transition-colors shadow-sm">
-                        Invite
-                      </div>
-                    </div>
+                  <div class="relative z-10 shrink-0 h-9 w-[110px] flex items-center justify-center rounded-full bg-white/[0.08] hover:bg-white/[0.12] transition-all active:scale-95 group-active:scale-95 text-white text-[13px] font-bold inter">
+                    {{ $t('store.invite') }}
                   </div>
                 </button>
     
-                <a href="https://t.me/ervelus_news" target="_blank" v-if="!isSubscribed" class="group relative flex flex-col justify-between p-4 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.05] transition-all active:scale-[0.98] shadow-lg overflow-hidden min-h-[140px] text-left w-full cursor-pointer no-underline">
+                <a href="https://t.me/ervelus_news" target="_blank" @click="modalStore.closeStore()" v-if="!isSubscribed" class="group relative flex items-center justify-between px-4 py-5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] active:scale-[0.99] transition-all overflow-hidden w-full text-left cursor-pointer no-underline">
                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/[0.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
-                  <div class="flex justify-between items-start mb-3 relative z-10 w-full">
-                    <div class="p-2 rounded-xl bg-blue-500/20 text-blue-400">
-                      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.48-1.02-2.42-1.66-1.09-.75-.38-1.16.24-1.78.14-.14 2.56-2.35 2.61-2.54.01-.06.01-.12-.05-.18a.38.38 0 00-.28-.1c-.08 0-.66.42-2.73 1.83-1.04.7-1.95.7-2.85.42-.87-.27-1.7-.54-1.7-.54s-.42-.14.28-.42c3.4-1.42 5.66-2.35 6.78-2.8.52-.21 1.02-.3 1.48-.3.3 0 .42.2.42.2z"/>
-                      </svg>
-                    </div>
-                    <div class="px-2 py-1 rounded-lg bg-amber-500/20 border border-amber-500/20 backdrop-blur-sm">
-                      <span class="text-[10px] font-bold text-amber-300 tracking-wide">+1 GEN</span>
-                    </div>
+                  <div class="relative z-10 flex flex-col gap-1 items-start min-w-0 mr-4">
+                    <h4 class="text-[14px] font-bold tracking-tight inter leading-tight mb-0.5 text-white w-full">{{ $t('store.join_channel') }}</h4>
+                    <span class="text-[12px] font-medium inter leading-tight tracking-tight text-white/70 block">{{ $t('store.invite_badge') }}</span>
                   </div>
 
-                  <div class="relative z-10 w-full mt-auto">
-                    <h4 class="text-[15px] font-bold text-white leading-tight mb-1 inter">{{ $t('store.join_channel') }}</h4>
-                    <div class="flex items-center justify-between gap-2 mt-3">
-                      <span class="text-[11px] font-medium text-white/50 inter">Stay updated</span>
-                      <div class="h-7 px-3 flex items-center justify-center rounded-lg bg-[#2AABEE] text-white text-[11px] font-bold inter group-hover:bg-[#229ED9] transition-colors shadow-sm shadow-blue-500/20">
-                        Subscribe
-                      </div>
-                    </div>
+                  <div class="relative z-10 shrink-0 h-9 w-[110px] flex items-center justify-center rounded-full bg-white/[0.08] hover:bg-white/[0.12] transition-all active:scale-95 group-active:scale-95 text-white text-[13px] font-bold inter">
+                    {{ $t('store.subscribe') }}
                   </div>
                 </a>
 
-                <div v-else class="group relative flex flex-col justify-between p-4 rounded-2xl bg-emerald-500/[0.08] border border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.05)] overflow-hidden min-h-[140px] text-left w-full">
+                <div v-else class="relative flex items-center justify-between px-4 py-5 rounded-2xl bg-emerald-500/[0.08] overflow-hidden w-full text-left">
                    <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.05] to-transparent"></div>
 
-                  <div class="flex justify-between items-start mb-3 relative z-10 w-full">
-                    <div class="p-2 rounded-xl bg-emerald-500/20 text-emerald-400">
-                       <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-                       </svg>
-                    </div>
-                    <div class="px-2 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500/20 backdrop-blur-sm">
-                      <span class="text-[10px] font-bold text-emerald-300 tracking-wide">+1 GEN</span>
-                    </div>
+                  <div class="relative z-10 flex flex-col gap-1 items-start min-w-0 mr-4">
+                    <h4 class="text-[14px] font-bold tracking-tight inter leading-tight mb-0.5 text-emerald-100 w-full">{{ $t('store.join_channel') }}</h4>
+                    <span class="text-[12px] font-medium inter leading-tight tracking-tight text-emerald-100/70 block">{{ $t('store.invite_badge') }}</span>
                   </div>
-
-                  <div class="relative z-10 w-full mt-auto">
-                    <h4 class="text-[15px] font-bold text-emerald-100 leading-tight mb-1 inter">Joined</h4>
-                    <div class="flex items-center justify-between gap-2 mt-3">
-                      <span class="text-[11px] font-medium text-emerald-200/60 inter">Task completed</span>
-                      <div class="h-7 px-3 flex items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-300 text-[11px] font-bold inter border border-emerald-500/20">
-                        Done
-                      </div>
-                    </div>
+                  
+                  <div class="relative z-10 h-9 w-[110px] flex items-center justify-center rounded-full bg-emerald-500/20 text-emerald-300 shrink-0">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                    </svg>
                   </div>
                 </div>
               </div>
@@ -121,7 +86,7 @@
                           </div>
                        </div>
 
-                       <button class="shrink-0 h-9 w-[80px] flex items-center justify-center font-bold tracking-wide rounded-full transition-all active:scale-95 ml-auto gap-1 text-black"
+                       <button class="shrink-0 h-9 w-[110px] flex items-center justify-center font-bold tracking-wide rounded-full transition-all active:scale-95 ml-auto gap-1 text-black"
                                :class="index === 1 ? 'bg-amber-100 hover:bg-amber-50' : 'bg-[#eae5ff] hover:bg-[#dcd6ff]'"
                                @click="createStarInvoice(pkg)">
                           {{ pkg.stars_count }}
@@ -195,7 +160,7 @@ async function createStarInvoice(pkg) {
 async function getStarPackages() {
   loading.value = true;
   try {
-    const { data } = await api.get('/api/products/star-packages/');
+    const { data } = await api.get('/api/products/store/');
     const packages = data.star_packages || [];
     isSubscribed.value = data.is_subscribed;
     starPackages.value = packages.sort((a, b) => a.generations_count - b.generations_count);
