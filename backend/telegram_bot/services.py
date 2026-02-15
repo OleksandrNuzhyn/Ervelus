@@ -133,7 +133,7 @@ def handle_message(update):
             else:
                 async_to_sync(bot.send_message)(
                     chat_id=admin_id,
-                    text="ID not found. Please reply to the message containing 'ID:'",
+                    text="Please reply to the message containing ID",
                     reply_to_message_id=message.message_id
                 )
         return

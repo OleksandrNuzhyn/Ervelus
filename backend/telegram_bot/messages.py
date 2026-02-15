@@ -17,14 +17,14 @@ Ervelus Team""",
 """Your account, along with all photos and personal data, has been permanently deleted.
 A new login to the app will create a fresh account.""",
         'start_message':
-"""👋 Welcome to Ervelus!
+"""Welcome to Ervelus! 👋
 
 Ervelus is your AI-powered creative studio. Generate stunning images, explore new styles, and unleash your imagination.
 
-📢 Stay Updated:
+Stay Updated:
 Subscribe to our news channel: @ervelus_news
 
-💬 Need Help?
+Need Help?
 If you have any questions or issues, just repl to this chat directly. Our support team is here to assist you!"""
     },
     'uk': {
@@ -45,14 +45,14 @@ If you have any questions or issues, just repl to this chat directly. Our suppor
 """Ваш акаунт разом з усіма фото та особистими даними видалено безповоротно.
 Новий вхід у додаток створить чистий акаунт.""",
         'start_message':
-"""👋 Вітаємо в Ervelus!
+"""Вітаємо в Ervelus! 👋
 
 Ervelus — це ваша творча студія зі штучним інтелектом. Створюйте вражаючі зображення, відкривайте нові стилі та втілюйте свої ідеї.
 
-📢 Будьте в курсі:
+Будьте в курсі:
 Підписуйтесь на наш канал новин: @ervelus_news
 
-💬 Потрібна допомога?
-Якщо у вас є питання або проблеми, просто пишіть прямо в цей чат. Наша підтримка завжди допоможе! 🚀"""
+Потрібна допомога?
+Якщо у вас є питання або проблеми, просто пишіть прямо в цей чат. Наша підтримка завжди допоможе!"""
     }
 }
