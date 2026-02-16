@@ -1,5 +1,5 @@
 <template>
-  <div :class="['flex flex-col pt-2 gap-3 relative overflow-hidden lg:h-[calc(100vh-9.4rem)]', 
+  <div :class="['flex flex-col pt-2 gap-3 relative lg:h-[calc(100vh-9.4rem)]', 
     !hasStartedTransform ? 'h-[calc(100dvh-8.6rem)] pb-3' : 'pb-21 lg:pb-2']">
     <div :class="['flex-grow flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-6 pb-0 overflow-visible min-h-0 lg:h-full', !hasStartedTransform ? 'h-full' : '']">
       <div :class="['flex flex-col lg:shrink overflow-visible gap-3 min-h-0', !hasStartedTransform ? 'flex-1 justify-between' : '']">

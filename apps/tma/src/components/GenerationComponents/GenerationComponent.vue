@@ -2,12 +2,20 @@
   <div class="relative">
     <div class="relative mb-1">
       <CategoryStrip :categories="genres" :selected-category-id="selectedGenreId" :is-style-panel-open="modalStore.isStylePanelOpen" @category-selected="handleGenreSelect"/>
-      <transition name="backdrop-fade">
-        <div v-if="modalStore.isStylePanelOpen" class="fixed inset-0 bg-black/60 backdrop-blur-[15px] z-[58]" @click="handleClosePanel"></div>
-      </transition>
-      <transition name="modal-fade">
+      <transition-group
+        tag="div"
+        class="contents"
+        enter-active-class="transition duration-500 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition duration-300 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div v-if="modalStore.isStylePanelOpen" key="backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-[15px] z-[58]" @click="handleClosePanel"></div>
         <StylePanel
           v-if="modalStore.isStylePanelOpen"
+          key="panel"
           class="!absolute top-full mt-3 w-full left-0 z-[60]"
           :styles="filteredStyles"
           :selected-style-id="selectedStyleId"
@@ -16,7 +24,7 @@
           @next-genre="handleNextGenre"
           @prev-genre="handlePrevGenre"
           @close="handleClosePanel" />
-      </transition>
+      </transition-group>
     </div>
     <ImageWorkspace 
       ref="imageWorkspaceRef"
