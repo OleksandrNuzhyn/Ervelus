@@ -1,0 +1,19 @@
+<h1>REFUND POLICY</h1>
+<p>Last updated February 16, 2026</p>
+
+<p>This Refund Policy for Ervelus describes the conditions under which refunds may be issued when you make purchases through our <strong>Telegram Mini App</strong> (<a href="https://t.me/ervelus_bot/app" target="_blank" rel="noopener noreferrer">https://t.me/ervelus_bot/app</a>).</p>
+
+<h2>1. GENERAL REFUND POLICY</h2>
+<p>We provide free generations to allow you to test the quality of our service before making a purchase. Because you have the opportunity to try before you buy, all purchases are generally final and non-refundable.</p>
+
+<h2>2. EXCEPTIONS</h2>
+<p>We may issue a refund for your <strong>first purchase only</strong> if the quality of the paid generation is significantly worse than the results obtained during your free generations.</p>
+
+<h2>3. REFUND METHOD</h2>
+<p>If approved, the refund will be returned to the original payment method and in the original currency used for the transaction (including Telegram Stars).</p>
+
+<h2>4. UPDATES TO THIS POLICY</h2>
+<p>We reserve the right to update this Refund Policy at any time. Significant changes will be communicated through the App.</p>
+
+<h2>5. CONTACT US</h2>
+<p>If you have any questions or complaints, please contact us at <a href="mailto:support@ervelus.com">support@ervelus.com</a>.</p>

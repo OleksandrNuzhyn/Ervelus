@@ -182,8 +182,8 @@ import posterImg from '@/assets/home_page/poster.webp'
 import parisFlying from '@/assets/home_page/paris-flying.webp'
 import urbanFlying from '@/assets/home_page/urban-flying.webp'
 import elevatorFlying from '@/assets/home_page/elevator-flying.webp'
-import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue'
-import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue'
+import HeaderComponent from '@/components/HeaderComponent.vue'
+import FooterComponent from '@/components/FooterComponent.vue'
 import {
   FireIcon,
   SparklesIcon as SparklesHeroIcon,

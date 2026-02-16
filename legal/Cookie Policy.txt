@@ -1,0 +1,68 @@
+<h1>COOKIE POLICY</h1>
+<p>Last updated February 16, 2026</p>
+<p>This Cookie Policy explains how Ervelus ("we", "us", or "our") uses cookies and similar technologies when you access our services through our <strong>Telegram Mini App</strong> (<a href="https://t.me/ervelus_bot/app" target="_blank" rel="noopener noreferrer">https://t.me/ervelus_bot/app</a>). It explains what these technologies are, why we use them, and your rights to control them.</p>
+
+<h2>1. WHAT ARE COOKIES?</h2>
+<p>Cookies are small data files placed on your device to ensure security and proper functionality.</p>
+
+<h2>2. COOKIES WE USE</h2>
+<p>Below is a list of cookies and storage mechanisms used on our Service:</p>
+<p><strong>Name:</strong> sessionid</p>
+<p><strong>Purpose:</strong> Set by the server to manage and retain the user's active session state.</p>
+<p><strong>Provider:</strong> ervelus.com</p>
+<p><strong>Service:</strong> Ervelus</p>
+<p><strong>Type:</strong> server_cookie</p>
+<p><strong>Expires in:</strong> 2 weeks</p>
+<hr style="border-color: #4b5563; margin-top: 1rem; margin-bottom: 1rem;">
+<p><strong>Name:</strong> csrftoken</p>
+<p><strong>Purpose:</strong> Used for security to prevent Cross-Site Request Forgery (CSRF) attacks.</p>
+<p><strong>Provider:</strong> ervelus.com</p>
+<p><strong>Service:</strong> Ervelus</p>
+<p><strong>Type:</strong> server_cookie</p>
+<p><strong>Expires in:</strong> 1 year</p>
+<hr style="border-color: #4b5563; margin-top: 1rem; margin-bottom: 1rem;">
+<p><strong>Name:</strong> messages</p>
+<p><strong>Purpose:</strong> Used to display one-time notifications and system messages to the user (e.g., success messages, error alerts).</p>
+<p><strong>Provider:</strong> ervelus.com</p>
+<p><strong>Service:</strong> Ervelus</p>
+<p><strong>Type:</strong> server_cookie</p>
+<p><strong>Expires in:</strong> When browser closes</p>
+<hr style="border-color: #4b5563; margin-top: 1rem; margin-bottom: 1rem;">
+<p><strong>Name:</strong> user-token</p>
+<p><strong>Purpose:</strong> Primary authentication mechanism. Stored in Local Storage to keep the user logged in until they explicitly log out or delete their account.</p>
+<p><strong>Provider:</strong> ervelus.com</p>
+<p><strong>Service:</strong> Ervelus</p>
+<p><strong>Type:</strong> html_local_storage</p>
+<p><strong>Expires in:</strong> Until user logs out</p>
+<hr style="border-color: #4b5563; margin-top: 1rem; margin-bottom: 1rem;">
+<p><strong>Name:</strong> GAESA</p>
+<p><strong>Purpose:</strong> Used for internal load balancing and request routing mechanisms.</p>
+<p><strong>Provider:</strong> ervelus.com</p>
+<p><strong>Service:</strong> Ervelus</p>
+<p><strong>Type:</strong> server_cookie</p>
+<p><strong>Expires in:</strong> 1 month</p>
+<hr style="border-color: #4b5563; margin-top: 1rem; margin-bottom: 1rem;">
+<p><strong>Name:</strong> Data Chief Telegram Analytics</p>
+<p><strong>Purpose:</strong> Used to analyze usage trends within the Telegram Mini App.</p>
+<p><strong>Provider:</strong> ervelus.com (Local Storage)</p>
+<p><strong>Service:</strong> Analytics</p>
+<p><strong>Type:</strong> html_local_storage</p>
+<p><strong>Expires in:</strong> Persistent</p>
+
+<h2>3. HOW CAN I CONTROL COOKIES?</h2>
+<p>As the means by which you can refuse cookies through your web browser controls vary from browser to browser, you should visit your browser's help menu for more information. The following is information about how to manage cookies on the most popular browsers:</p>
+<ul>
+  <li><a href="https://support.google.com/chrome/answer/95647#zippy=%2Callow-or-block-cookies" target="_blank" rel="noopener noreferrer">Chrome</a></li>
+  <li><a href="https://support.microsoft.com/en-us/windows/delete-and-manage-cookies-168dab11-0753-043d-7c16-ede5947fc64d" target="_blank" rel="noopener noreferrer">Internet Explorer</a></li>
+  <li><a href="https://support.mozilla.org/en-US/kb/enhanced-tracking-protection-firefox-desktop?redirectslug=enable-and-disable-cookies-website-preferences&redirectlocale=en-US" target="_blank" rel="noopener noreferrer">Firefox</a></li>
+  <li><a href="https://support.apple.com/en-ie/guide/safari/sfri11471/mac" target="_blank" rel="noopener noreferrer">Safari</a></li>
+  <li><a href="https://support.microsoft.com/en-us/windows/microsoft-edge-browsing-data-and-privacy-bb8174ba-9d73-dcf2-9b4a-c582b4e640dd" target="_blank" rel="noopener noreferrer">Edge</a></li>
+  <li><a href="https://help.opera.com/en/latest/web-preferences/" target="_blank" rel="noopener noreferrer">Opera</a></li>
+</ul>
+
+<h2>4. UPDATES TO THIS POLICY</h2>
+<p>We may update this Cookie Policy from time to time in order to reflect, for example, changes to the cookies we use or for other operational, legal, or regulatory reasons. Please therefore revisit this Cookie Policy regularly to stay informed about our use of cookies and related technologies.</p>
+<p>The date at the top of this Cookie Policy indicates when it was last updated.</p>
+
+<h2>5. CONTACT US</h2>
+<p>If you have any questions about our use of cookies or other technologies, please contact us at: <a href="mailto:support@ervelus.com">support@ervelus.com</a>.</p>

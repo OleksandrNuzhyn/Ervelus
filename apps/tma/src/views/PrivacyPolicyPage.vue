@@ -10,7 +10,7 @@
     </div>
     <HeaderComponent />
     <main class="flex-grow pt-[82px] pb-10 flex flex-col relative z-20">
-      <div v-if="document.content" class="document-container !pt-0" @click="handleContentClick">
+      <div v-if="document.content" class="document-container !pt-0">
         <div v-html="document.content" class="document-content"></div>
       </div>
       <div v-else-if="errorMessage" class="flex justify-center w-full">
@@ -35,31 +35,6 @@ const document = ref({
   content: ''
 });
 const errorMessage = ref(null);
-
-function handleContentClick(event) {
-  const anchor = event.target.closest('a');
-  const href = anchor?.getAttribute('href');
-
-  if (anchor && href?.startsWith('#')) {
-    event.preventDefault();
-    const elementId = href.substring(1);
-
-    if (elementId) {
-      const targetElement = window.document.getElementById(elementId);
-      
-      if (targetElement) {
-        const headerOffset = 75;
-        const elementPosition = targetElement.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-      }
-    }
-  }
-}
 
 async function getDocument() {
   try {
@@ -217,7 +192,7 @@ onMounted(getDocument);
 
 .document-content :deep(a) {
   color: #93c5fd;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .document-content :deep(a:hover) {

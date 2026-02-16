@@ -192,7 +192,7 @@ onMounted(getDocument);
 
 .document-content :deep(a) {
   color: #93c5fd;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .document-content :deep(a:hover) {

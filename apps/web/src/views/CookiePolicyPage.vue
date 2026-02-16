@@ -27,8 +27,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import api from '@/services/api.js';
-import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue';
-import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue';
+import HeaderComponent from '@/components/HeaderComponent.vue';
+import FooterComponent from '@/components/FooterComponent.vue';
 
 const document = ref({
   title: 'Cookie Policy',
@@ -196,7 +196,7 @@ onMounted(getDocument);
 
 .document-content :deep(a) {
   color: #93c5fd;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .document-content :deep(a:hover) {

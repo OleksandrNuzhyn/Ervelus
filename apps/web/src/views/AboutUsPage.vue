@@ -54,18 +54,16 @@
               <h2 class="item-title">The Team</h2>
             </div>
             <div class="team-grid">
-
               <div class="team-member">
                 <div class="member-avatar">ON</div>
                 <div class="member-content">
                   <div class="member-header">
                     <h3 class="member-name">Oleksandr Nuzhyn</h3>
-                    <div class="member-role">Founder & Lead Architect</div>
+                    <div class="member-role">Founder</div>
                   </div>
-                  <div class="member-bio">
-                    <p><span class="bio-label">Role:</span> Architected the secure backend and managed the infrastructure.</p>
-                    <p><span class="bio-label">Focus:</span> System Architecture, API Engineering, System Deployment.</p>
-                  </div>
+                  <p class="member-bio-text">
+                    Architected the backend system, developed the API, and manages the cloud infrastructure.
+                  </p>
                 </div>
               </div>
               
@@ -74,15 +72,13 @@
                 <div class="member-content">
                   <div class="member-header">
                     <h3 class="member-name">Nikita Dakhno</h3>
-                    <div class="member-role">Co-Founder & Frontend Engineer</div>
+                    <div class="member-role">Co-Founder</div>
                   </div>
-                  <div class="member-bio">
-                    <p><span class="bio-label">Role:</span> Designed the UI/UX and developed the client-side application.</p>
-                    <p><span class="bio-label">Focus:</span> UI/UX Design, Frontend Engineering, AI Prompt Logic.</p>
-                  </div>
+                  <p class="member-bio-text">
+                    Designed the user interface, developed the frontend application, and crafted AI prompts.
+                  </p>
                 </div>
               </div>
-
             </div>
           </article>
         </section>
@@ -93,8 +89,8 @@
 </template>
 
 <script setup>
-import HeaderComponent from '@/components/HeadFootComponents/HeaderComponent.vue'
-import FooterComponent from '@/components/HeadFootComponents/FooterComponent.vue'
+import HeaderComponent from '@/components/HeaderComponent.vue'
+import FooterComponent from '@/components/FooterComponent.vue'
 import {
   EyeIcon,
   SparklesIcon,
@@ -401,24 +397,11 @@ html, body {
   font-weight: 500;
 }
 
-.member-bio {
+.member-bio-text {
   font-size: 14px;
   line-height: 1.5;
   color: rgba(255, 255, 255, 0.6);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.member-bio p {
   margin: 0;
-}
-
-.bio-label {
-  color: #fff;
-  font-weight: 600;
-  font-size: 13px;
-  margin-right: 4px;
 }
 
 @media (max-width: 900px) {
