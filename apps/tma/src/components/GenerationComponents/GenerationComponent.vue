@@ -2,6 +2,9 @@
   <div class="relative">
     <div class="relative mb-1">
       <CategoryStrip :categories="genres" :selected-category-id="selectedGenreId" :is-style-panel-open="modalStore.isStylePanelOpen" @category-selected="handleGenreSelect"/>
+      <transition name="backdrop-fade">
+        <div v-if="modalStore.isStylePanelOpen" class="fixed inset-0 bg-black/60 backdrop-blur-[15px] z-[58]" @click="handleClosePanel"></div>
+      </transition>
       <transition name="modal-fade">
         <StylePanel
           v-if="modalStore.isStylePanelOpen"

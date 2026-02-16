@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center w-full" :class="{'md:space-x-4': isScrollable}">
+  <div class="flex items-center w-full" :class="{'md:space-x-4': isScrollable, 'relative z-[65]': isStylePanelOpen}">
     <div v-if="isScrollable" class="hidden md:flex w-10 shrink-0 justify-end">
       <button v-show="showLeftArrow" @click="scrollLeft" class="p-2 rounded-full bg-black/20 hover:bg-black/40 text-gray-400 hover:text-white transition-all border border-white/[0.02]">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>

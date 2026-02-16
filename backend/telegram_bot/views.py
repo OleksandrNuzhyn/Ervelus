@@ -27,13 +27,13 @@ def telegram_auth(request):
 
     if not init_data:
         logger.error("Telegram auth failed", extra={"reason": "no init_data provided"})
-        return Response({"detail": "Authentication failed"}, status=400)
+        return Response(status=400)
 
     try:
         telegram_data = services.validate_telegram_init_data(init_data)
     except Exception as e:
         logger.error("Telegram auth failed", extra={"reason": "validation error", "error": str(e)}, exc_info=True)
-        return Response({"detail": "Authentication failed"}, status=400)
+        return Response(status=400)
 
     telegram_id = str(telegram_data.get('id'))
 
@@ -45,7 +45,10 @@ def telegram_auth(request):
             user = create_telegram_user(telegram_data, request)
         except Exception as e:
             logger.error("Telegram auth failed", extra={"reason": "user creation error", "error": str(e)}, exc_info=True)
-            return Response({"detail": "Authentication failed"}, status=400)
+            return Response(status=400)
+
+    if not user.is_active:
+        return Response(status=400)
 
     token, _ = Token.objects.get_or_create(user=user)
     update_last_login(None, user)

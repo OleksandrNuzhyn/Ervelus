@@ -2,14 +2,12 @@
   <section class="relative mx-auto max-w-[1370px] pb-3 min-h-full flex flex-col">
     <div id="gallery-top"></div>
     
-    <div class="flex-grow mb-2"
+    <div class="flex-grow mb-2 min-h-[80vh]"
       :class="{
         'flex items-center justify-center': !isLoading && !galleryItems.length
       }">
-      <transition-group
-        v-if="!isLoading && galleryItems.length"
-        tag="div"
-        name="gallery-list"
+      <div
+        v-if="galleryItems.length"
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-11/12 mx-auto pt-4"
       >
         <article
@@ -44,7 +42,7 @@
             </div>
           </div>
         </article>
-      </transition-group>
+      </div>
       
       <transition name="gallery-fade">
         <div v-if="!isLoading && !galleryItems.length" class="w-11/12 max-w-2xl mx-auto pt-3">
@@ -64,16 +62,14 @@
     </div>
     
     <div class="flex-shrink-0 py-5">
-      <transition name="pagination-fade">
-        <PaginationComponent
-          v-if="pageCount > 1"
-          :page="page"
-          :page-count="pageCount"
-          :is-loading="isLoading"
-          class="select-none"
-          @change="changePage"
-        />
-      </transition>
+      <PaginationComponent
+        v-if="!isLoading && pageCount > 1"
+        :page="page"
+        :page-count="pageCount"
+        :is-loading="isLoading"
+        class="select-none"
+        @change="changePage"
+      />
     </div>
     
     <GenerationModal
@@ -117,7 +113,6 @@ async function preloadRequest(urlsToLoad) {
 
 async function getPage(p) {
   isLoading.value = true
-  galleryItems.value = [];
   
   try {
     const response = await api.get(`/api/generations/generation-requests/gallery/?custom_page_size=${customPageSize}&page=${p}`)
@@ -133,6 +128,9 @@ async function getPage(p) {
       galleryItems.value = tempItems;
       
       animateGalleryItems(galleryItems.value);
+    }
+    else {
+      galleryItems.value = [];
     }
   }
   catch {
@@ -203,10 +201,8 @@ async function changePage(p) {
     return;
   }
   page.value = p;
-
+  galleryItems.value = [];
   await getPage(p);
-
-  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 function openModal(request) {

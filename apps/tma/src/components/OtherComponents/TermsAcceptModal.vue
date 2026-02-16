@@ -1,6 +1,6 @@
 <template>
   <transition name="modal-fade">
-    <div v-if="showTermsModal && !isPolicyPage && !isNavigating" class="fixed inset-0 flex items-center justify-center z-50 bg-black/60 backdrop-blur-[15px]">
+    <div v-if="showTermsModal && !isPolicyPage && !isNavigating" class="fixed inset-0 flex items-center justify-center z-[100] bg-black/60 backdrop-blur-[15px]">
       <div class="solid-panel p-10 w-11/12 max-w-xl shadow-2xl flex flex-col gap-8 text-gray-200 relative">
         <div class="text-center w-full">
           <h3 class="text-xl font-semibold text-gray-200 tracking-wide mb-2">{{ t('terms.update_title') }}</h3>

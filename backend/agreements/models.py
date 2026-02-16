@@ -8,7 +8,6 @@ class TermsVersion(models.Model):
         PRIVACY_POLICY = 'privacy_policy', 'Privacy Policy'
         COOKIE_POLICY = 'cookie_policy', 'Cookie Policy'
         REFUND_POLICY = 'refund_policy', 'Refund Policy'
-        DMCA_POLICY = 'dmca_policy', 'DMCA Policy'
 
     class Meta:
         verbose_name = 'Terms Version'

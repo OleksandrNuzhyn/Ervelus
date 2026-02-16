@@ -29,7 +29,7 @@
 
             <div class="v-spacer"></div>
 
-            <a href="https://t.me/ervelus_bot" target="_blank" class="cta-primary large hero-cta">
+            <a href="https://t.me/ervelus_bot/app" target="_blank" class="cta-primary large hero-cta">
               Launch App
             </a>
           </div>
