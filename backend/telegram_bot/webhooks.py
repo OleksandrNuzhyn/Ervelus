@@ -1,4 +1,4 @@
-from telegram_bot.services import handle_chat_member, handle_message, handle_message_text_start
+from telegram_bot.services import handle_chat_member, handle_message, handle_message_text_start, handle_inline_query
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
 from payments.services import handle_pre_checkout_query, handle_message_successful_payment
 from rest_framework.permissions import AllowAny
@@ -34,6 +34,8 @@ def telegram_handler(request):
                 handle_message(update)
         elif update.chat_member:
             handle_chat_member(update)
+        elif update.inline_query:
+            handle_inline_query(update)
     except Exception as e:
         logger.error("Error while handling Telegram webhook", extra={"error": str(e)}, exc_info=True)
         return Response(status=500)

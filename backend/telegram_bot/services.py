@@ -1,3 +1,4 @@
+from generations.models import GenerationRequest
 from core.models import ApplicationConfig
 from asgiref.sync import async_to_sync
 from users.models import UserProfile
@@ -158,3 +159,50 @@ def handle_message(update):
         )
     except Exception as e:
         logger.error("Failed to forward message to admin", extra={"error": str(e)}, exc_info=True)
+
+def handle_inline_query(update):
+    query = update.inline_query.query
+    telegram_id = update.effective_user.id
+    results = []
+
+    if query == 'invite':
+        results.append(
+            telegram.InlineQueryResultArticle(
+                id=query,
+                title="Invite to Ervelus",
+                description="Share an invite link with your friends",
+                input_message_content=telegram.InputTextMessageContent(
+                    "https://t.me/ervelus_bot/app"
+                )
+            )
+        )
+    elif query.isdigit():
+        try:
+            generation_request = GenerationRequest.objects.get(
+                id=query, 
+                user__userprofile__telegram_id=telegram_id
+            )
+            
+            if generation_request.output_original_url:
+                results.append(
+                    telegram.InlineQueryResultPhoto(
+                        id=query,
+                        photo_url=generation_request.output_original_url,
+                        thumbnail_url=generation_request.output_thumb_url or generation_request.output_original_url,
+                        caption=f"Try it out!\n\nhttps://t.me/ervelus_bot/app"
+                    )
+                )
+        except GenerationRequest.DoesNotExist:
+            pass
+        except Exception as e:
+            logger.error("Error while handling generation inline query", extra={"error": str(e)}, exc_info=True)
+
+    try:
+        if results:
+            async_to_sync(bot.answer_inline_query)(
+                inline_query_id=update.inline_query.id,
+                results=results,
+                cache_time=0
+            )
+    except Exception as e:
+        logger.error("Error while answering the inline query", extra={"error": str(e)}, exc_info=True)
