@@ -64,15 +64,23 @@
                         <div class="flex items-center gap-x-6">
                           <button
                             type="button"
+                            @click.prevent.stop="shareImage(currentRequest)"
+                            class="h-min w-min inline-flex justify-center text-zinc-400 hover:text-[#2AABEE] transition-colors"
+                            :title="$t('gallery.share')"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="5 5 22 22" fill="currentColor" class="w-7 h-7 mt-[2px]">
+                              <path d="M22.9866 10.2088C23.1112 9.40332 22.3454 8.76755 21.6292 9.082L7.36482 15.3448C6.85123 15.5703 6.8888 16.3483 7.42147 16.5179L10.3631 17.4547C10.9246 17.6335 11.5325 17.541 12.0228 17.2023L18.655 12.6203C18.855 12.4821 19.073 12.7665 18.9021 12.9426L14.1281 17.8646C13.665 18.3421 13.7569 19.1512 14.314 19.5005L19.659 22.8523C20.2585 23.2282 21.0297 22.8506 21.1418 22.1261L22.9866 10.2088Z"/>
+                            </svg>
+                          </button>
+                          <button
+                            type="button"
                             @click.prevent.stop="downloadOutput(currentRequest)"
                             :disabled="!currentRequest.output_large_signed_url"
                             class="h-min w-min inline-flex justify-center text-zinc-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             :title="$t('gallery.download')"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download w-6 h-6">
-                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                              <polyline points="7 10 12 15 17 10"></polyline>
-                              <line x1="12" y1="15" x2="12" y2="3"></line>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                             </svg>
                           </button>
                           <button
@@ -198,10 +206,10 @@ async function shareImage(request) {
   if (!request || !request.id) return;
 
   if (window.Telegram?.WebApp) {
-    window.Telegram.WebApp.switchInlineQuery(`share_${request.id}`, ['users', 'groups', 'channels']);
+    window.Telegram.WebApp.switchInlineQuery(`${request.id}`, ['users', 'groups', 'channels']);
   } 
   else {
-      modalStore.openModal({ title: t('gallery.share'), message: t('workspace.share_not_supported') || 'Sharing is not supported on this device.' });
+    modalStore.openModal({ title: t('gallery.share'), message: t('workspace.share_not_supported') });
   }
 }
 

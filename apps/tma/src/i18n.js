@@ -47,7 +47,8 @@ const messages = {
       tip_5_title: "Background:",
       tip_5_desc: "The background should be multi-layered and detailed, but not overloaded",
       download: "Save",
-      share: "Share"
+      share: "Share",
+      share_not_supported: "Sharing is not supported on this device"
     },
     gallery: {
       no_images: "No photos yet",
@@ -178,7 +179,8 @@ const messages = {
       tip_5_title: "Фон:",
       tip_5_desc: "Фон повинен бути багатошаровим і з деталями, але не перевантаженим",
       download: "Зберегти",
-      share: "Поділитись"
+      share: "Поділитись",
+      share_not_supported: "Поділитися не можливо на цьому пристрої"
     },
     gallery: {
       no_images: "Фото ще немає",

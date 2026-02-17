@@ -14,7 +14,7 @@
             <section>
               <h3 class="text-sm font-medium text-white/60 mb-4 text-center inter">{{ $t('store.free_bonuses') }}</h3>
               <div class="flex flex-col gap-2.5">
-                <button @click="modalStore.closeStore()" class="group relative flex items-center justify-between px-4 py-5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] active:scale-[0.99] transition-all overflow-hidden w-full text-left">
+                <button @click="modalStore.closeStore(); handleInviteFriend()" class="group relative flex items-center justify-between px-4 py-5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] active:scale-[0.99] transition-all overflow-hidden w-full text-left">
                   <div class="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   
                   <div class="relative z-10 flex flex-col gap-1 items-start min-w-0 mr-4">
@@ -154,6 +154,15 @@ async function createStarInvoice(pkg) {
   }
   catch (e) {
     modalStore.openModal({ title: t('store.error_title'), message: t('store.error_desc') });
+  }
+}
+
+async function handleInviteFriend() {
+  if (window.Telegram?.WebApp) {
+    window.Telegram.WebApp.switchInlineQuery('invite', ['users', 'groups', 'channels']);
+  }
+  else {
+    modalStore.openModal({ title: t('store.invite_friend'), message: t('workspace.share_not_supported') });
   }
 }
 

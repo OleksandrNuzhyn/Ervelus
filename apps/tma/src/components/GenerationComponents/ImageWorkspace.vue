@@ -105,8 +105,8 @@
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div v-if="modalStore.isTipsOpen" class="fixed inset-0 flex items-center justify-center z-[100] bg-black/60 backdrop-blur-xl" @click.self="modalStore.closeTips()">
-        <div class="solid-panel w-11/12 max-w-lg relative overflow-hidden h-auto max-h-[94vh] flex flex-col">
+      <div v-if="modalStore.isTipsOpen" class="fixed inset-0 flex items-center justify-center z-[90] bg-black/60 backdrop-blur-xl pt-16" @click.self="modalStore.closeTips()">
+        <div class="solid-panel w-11/12 max-w-lg relative overflow-hidden h-auto max-h-[85vh] flex flex-col">
           <div 
             ref="scrollContainer"
             @scroll="checkScroll"
@@ -188,7 +188,7 @@
           <div class="px-6 pb-7 pt-2 shrink-0 z-20">
             <button 
               @click="modalStore.closeTips()"
-              class="w-full bg-white/[0.08] hover:bg-white/[0.12] active:scale-[0.98] transition-all text-white font-bold rounded-xl py-3.5 text-[15px]"
+              class="w-full bg-white/[0.08] hover:bg-white/[0.12] active:scale-[0.98] transition-all text-white font-bold rounded-xl h-[52px] text-[15px] flex items-center justify-center"
             >
               {{ $t('workspace.got_it') }}
             </button>
@@ -197,38 +197,42 @@
       </div>
     </transition>
 
-    <transition 
-      enter-active-class="transition duration-500 ease-out" 
-      enter-from-class="opacity-0" 
-      enter-to-class="opacity-100"
-      leave-active-class="transition duration-300 ease-in"
-      leave-from-class="opacity-100"
-      leave-to-class="opacity-0"
-    >
-      <div v-if="modalStore.isOutputOpen" class="fixed inset-0 flex items-center justify-center z-[120] bg-black/60 backdrop-blur-xl p-4" @click="modalStore.closeOutput()">
-        <div class="relative w-full h-full max-w-lg flex flex-col items-center justify-center gap-6 pointer-events-none">
-             <div class="relative flex-1 min-h-0 w-full flex items-center justify-center">
-               <img :src="outputImageUrl" class="max-w-full max-h-full object-contain pointer-events-auto shadow-2xl rounded-2xl" />
-             </div>
-             
-             <div class="shrink-0 flex items-center gap-4 pointer-events-auto w-full px-4">
-               <button @click.stop="downloadOutputImage" class="flex-1 glass-card !flex-row !shadow-none !p-0 h-12 items-center justify-center gap-2 hover:bg-white/10 active:scale-[0.98] transition-all rounded-xl">
-                 <svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                 </svg>
-                 <span class="text-white font-medium">{{ $t('workspace.download') || 'Save' }}</span>
-               </button>
+    <Teleport to="body">
+      <transition
+        enter-active-class="transition duration-300 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition duration-200 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div v-if="modalStore.isOutputOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-xl animate-fade-in p-4" @click="modalStore.closeOutput()">
+          <div class="relative flex flex-col items-center pointer-events-none">
+               <div class="relative pointer-events-auto">
+                 <div v-if="!outputImageLoaded" class="absolute inset-0 flex items-center justify-center">
+                     <div class="stars-loader"></div>
+                 </div>
+                 
+                 <img :src="outputImageUrl" class="block max-h-[70vh] w-auto h-auto object-contain shadow-2xl rounded-2xl bg-black/50" />
 
-               <button @click.stop="shareImage" class="flex-1 glass-card !flex-row !shadow-none !p-0 h-12 items-center justify-center gap-2 hover:bg-white/10 active:scale-[0.98] transition-all rounded-xl">
-                 <svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                   <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
-                 </svg>
-                 <span class="text-white font-medium">{{ $t('workspace.share') || 'Share' }}</span>
-               </button>
-             </div>
+                 <div class="absolute top-full left-0 w-full pt-3 flex flex-col gap-3 pointer-events-auto">
+                   <button @click.stop="downloadOutputImage" class="w-full bg-white/[0.08] hover:bg-white/[0.12] active:scale-[0.98] transition-all text-white font-bold rounded-xl h-[52px] text-[15px] flex items-center justify-center gap-2">
+                     <span class="text-white font-bold">{{ $t('workspace.download') || 'Save' }}</span>
+                     <svg class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                       <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                     </svg>
+                   </button>
+
+                   <button @click.stop="shareImage" class="w-full bg-white/[0.08] hover:bg-white/[0.12] active:scale-[0.98] transition-all text-white font-bold rounded-xl h-[52px] text-[15px] flex items-center justify-center gap-2">
+                     <span class="text-white font-bold">{{ $t('workspace.share') || 'Share' }}</span>
+                     <svg class="w-6 h-6 flex-shrink-0" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g><circle cx="16" cy="16" r="14" fill="url(#paint0_linear_share)"></circle><path d="M22.9866 10.2088C23.1112 9.40332 22.3454 8.76755 21.6292 9.082L7.36482 15.3448C6.85123 15.5703 6.8888 16.3483 7.42147 16.5179L10.3631 17.4547C10.9246 17.6335 11.5325 17.541 12.0228 17.2023L18.655 12.6203C18.855 12.4821 19.073 12.7665 18.9021 12.9426L14.1281 17.8646C13.665 18.3421 13.7569 19.1512 14.314 19.5005L19.659 22.8523C20.2585 23.2282 21.0297 22.8506 21.1418 22.1261L22.9866 10.2088Z" fill="white"></path><defs><linearGradient id="paint0_linear_share" x1="16" y1="2" x2="16" y2="30" gradientUnits="userSpaceOnUse"><stop stop-color="#37BBFE"></stop><stop offset="1" stop-color="#007DBB"></stop></linearGradient></defs></g></svg>
+                   </button>
+                 </div>
+               </div>
+          </div>
         </div>
-      </div>
-    </transition>
+      </transition>
+    </Teleport>
   </div>
 </template>
 
@@ -421,20 +425,19 @@ async function pollForResult() {
     }
 
     if (latest?.status === 'completed' && latest.output_large_signed_url) {
-      try {
-        const res = await fetch(latest.output_large_signed_url);
-        if (res.ok) {
-          const blob = await res.blob();
-          outputImageUrl.value = URL.createObjectURL(blob);
-        }
-        else {
-      outputImageUrl.value = latest.output_large_signed_url;
-        }
+      let finalUrl = latest.output_large_signed_url;
+
+      const res = await fetch(latest.output_large_signed_url);
+      if (res.ok) {
+        const blob = await res.blob();
+        finalUrl = URL.createObjectURL(blob);
       }
-      catch (e) {
-        outputImageUrl.value = latest.output_large_signed_url;
-      }
+
+      const img = new Image();
+      img.src = finalUrl;
+      await img.decode();
       
+      outputImageUrl.value = finalUrl;
       completedGenerationId.value = latest.id;
       isLoading.value = false;
       stopPolling();
@@ -495,6 +498,9 @@ onUnmounted(() => {
   stopPolling();
   if (deletionTimeoutId) {
     clearTimeout(deletionTimeoutId);
+  }
+  if (outputImageUrl.value && outputImageUrl.value.startsWith('blob:')) {
+    URL.revokeObjectURL(outputImageUrl.value);
   }
 });
 
@@ -638,7 +644,7 @@ async function shareImage() {
   if (!completedGenerationId.value) return;
 
   if (window.Telegram?.WebApp) {
-    window.Telegram.WebApp.switchInlineQuery(`share_${completedGenerationId.value}`, ['users', 'groups', 'channels']);
+    window.Telegram.WebApp.switchInlineQuery(`${completedGenerationId.value}`, ['users', 'groups', 'channels']);
   } 
   else {
     modalStore.openModal({ title: t('workspace.share'), message: t('workspace.share_not_supported') });
