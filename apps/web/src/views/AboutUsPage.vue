@@ -75,7 +75,7 @@
                     <div class="member-role">Co-Founder</div>
                   </div>
                   <p class="member-bio-text">
-                    Designed the user interface, developed the frontend application, and crafted AI prompts.
+                    Designed the user interface, developed the frontend application, and creates AI prompts.
                   </p>
                 </div>
               </div>
@@ -211,7 +211,7 @@ html, body {
   z-index: 1;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 135px 24px 120px;
+  padding: 135px 24px 200px;
 }
 
 .hero-section {

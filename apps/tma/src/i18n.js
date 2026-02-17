@@ -45,7 +45,9 @@ const messages = {
       tip_4_title: "Lighting:",
       tip_4_desc: "Bright, even lighting without harsh shadows ensures a magical transformation",
       tip_5_title: "Background:",
-      tip_5_desc: "The background should be multi-layered and detailed, but not overloaded"
+      tip_5_desc: "The background should be multi-layered and detailed, but not overloaded",
+      download: "Save",
+      share: "Share"
     },
     gallery: {
       no_images: "No photos yet",
@@ -63,7 +65,8 @@ const messages = {
       failed_input: "Failed to load input photo",
       failed_output: "Failed to load output photo",
       deleted_style: "Deleted Style",
-      download: "Download",
+      download: "Save",
+      share: "Share",
       delete: "Delete",
       error_fetch: "An error occurred while fetching the photos",
       modal_error_not_found: "Request not found",
@@ -173,7 +176,9 @@ const messages = {
       tip_4_title: "Освітлення:",
       tip_4_desc: "Рівномірне світло без різких тіней гарантує найбільш якісну стилізацію",
       tip_5_title: "Фон:",
-      tip_5_desc: "Фон повинен бути багатошаровим і з деталями, але не перевантаженим"
+      tip_5_desc: "Фон повинен бути багатошаровим і з деталями, але не перевантаженим",
+      download: "Зберегти",
+      share: "Поділитись"
     },
     gallery: {
       no_images: "Фото ще немає",
@@ -191,7 +196,8 @@ const messages = {
       failed_input: "Не вдалося завантажити вхідне фото",
       failed_output: "Не вдалося завантажити результат",
       deleted_style: "Видалений стиль",
-      download: "Завантажити",
+      download: "Зберегти",
+      share: "Поділитись",
       delete: "Видалити",
       error_fetch: "Сталася помилка під час отримання фото",
       modal_error_not_found: "Запит не знайдено",

@@ -55,13 +55,6 @@
 
           <div v-else-if="outputImageUrl" @click="modalStore.openOutput()" class="relative w-full h-full flex items-center justify-center cursor-pointer group/output" title="Click to view full screen">
             <img :src="outputImageUrl" alt="Output" class="max-w-full max-h-full rounded-2xl transition-opacity duration-500" :style="{ opacity: outputImageLoaded ? 1 : 0 }" @load="onOutputImageLoad" />
-            <button @click.stop="downloadOutputImage" 
-              class="absolute right-2 top-2 p-2 text-white hover:text-white/80 transition-all duration-300 z-20"
-              :style="{ filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.6)) drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }">
-              <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-              </svg>
-            </button>
           </div>
 
           <div v-else class="flex flex-col items-center justify-center space-y-4">
@@ -213,8 +206,26 @@
       leave-to-class="opacity-0"
     >
       <div v-if="modalStore.isOutputOpen" class="fixed inset-0 flex items-center justify-center z-[120] bg-black/60 backdrop-blur-xl p-4" @click="modalStore.closeOutput()">
-        <div class="relative w-full h-full flex items-center justify-center pointer-events-none">
-             <img :src="outputImageUrl" class="max-w-full max-h-full object-contain pointer-events-auto shadow-2xl rounded-2xl" />
+        <div class="relative w-full h-full max-w-lg flex flex-col items-center justify-center gap-6 pointer-events-none">
+             <div class="relative flex-1 min-h-0 w-full flex items-center justify-center">
+               <img :src="outputImageUrl" class="max-w-full max-h-full object-contain pointer-events-auto shadow-2xl rounded-2xl" />
+             </div>
+             
+             <div class="shrink-0 flex items-center gap-4 pointer-events-auto w-full px-4">
+               <button @click.stop="downloadOutputImage" class="flex-1 glass-card !flex-row !shadow-none !p-0 h-12 items-center justify-center gap-2 hover:bg-white/10 active:scale-[0.98] transition-all rounded-xl">
+                 <svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                 </svg>
+                 <span class="text-white font-medium">{{ $t('workspace.download') || 'Save' }}</span>
+               </button>
+
+               <button @click.stop="shareImage" class="flex-1 glass-card !flex-row !shadow-none !p-0 h-12 items-center justify-center gap-2 hover:bg-white/10 active:scale-[0.98] transition-all rounded-xl">
+                 <svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                   <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+                 </svg>
+                 <span class="text-white font-medium">{{ $t('workspace.share') || 'Share' }}</span>
+               </button>
+             </div>
         </div>
       </div>
     </transition>
@@ -343,8 +354,10 @@ watch(inputImageUrl, (newVal) => {
   }
 });
 
-watch(outputImageUrl, (newVal) => {
-  
+watch(outputImageUrl, (newVal, oldVal) => {
+  if (oldVal && oldVal.startsWith('blob:')) {
+    URL.revokeObjectURL(oldVal);
+  }
   if (newVal) {
     outputImageLoaded.value = false;
   }
@@ -426,6 +439,7 @@ async function pollForResult() {
       isLoading.value = false;
       stopPolling();
       currentGenerationId.value = null;
+      modalStore.openOutput();
     }
     else if (latest?.status === 'failed') {
       modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_failed_spell') });
@@ -617,6 +631,17 @@ async function downloadOutputImage() {
   }
   catch (err) {
     modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_download') });
+  }
+}
+
+async function shareImage() {
+  if (!completedGenerationId.value) return;
+
+  if (window.Telegram?.WebApp) {
+    window.Telegram.WebApp.switchInlineQuery(`share_${completedGenerationId.value}`, ['users', 'groups', 'channels']);
+  } 
+  else {
+    modalStore.openModal({ title: t('workspace.share'), message: t('workspace.share_not_supported') });
   }
 }
 </script>

@@ -194,6 +194,17 @@ async function downloadOutput(request) {
   }
 };
 
+async function shareImage(request) {
+  if (!request || !request.id) return;
+
+  if (window.Telegram?.WebApp) {
+    window.Telegram.WebApp.switchInlineQuery(`share_${request.id}`, ['users', 'groups', 'channels']);
+  } 
+  else {
+      modalStore.openModal({ title: t('gallery.share'), message: t('workspace.share_not_supported') || 'Sharing is not supported on this device.' });
+  }
+}
+
 watch([() => modalStore.isGalleryOpen, () => props.selectedRequest], ([isOpen, request]) => {
   if (isOpen && request) {
     getCurrentRequest(request);
