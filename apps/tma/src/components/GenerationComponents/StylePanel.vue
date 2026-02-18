@@ -3,12 +3,12 @@
     <div class="relative w-full h-full flex flex-col min-h-0">
 
       <div class="md:hidden absolute left-5 top-1/2 -translate-y-1/2 z-20 flex items-center">
-        <button @click.stop="$emit('prev-genre')" class="text-white/60 hover:text-white bg-transparent p-2 transition-colors active:scale-95">
+        <button @click.stop="$emit('prev-genre')" class="text-white/60 hover:text-white bg-transparent p-2 transition-colors active:scale-95 relative before:absolute before:-inset-3 before:content-['']">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
         </button>
       </div>
       <div class="md:hidden absolute right-5 top-1/2 -translate-y-1/2 z-20 flex items-center">
-        <button @click.stop="$emit('next-genre')" class="text-white/60 hover:text-white bg-transparent p-2 transition-colors active:scale-95">
+        <button @click.stop="$emit('next-genre')" class="text-white/60 hover:text-white bg-transparent p-2 transition-colors active:scale-95 relative before:absolute before:-inset-3 before:content-['']">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
         </button>
       </div>

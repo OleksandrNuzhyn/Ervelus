@@ -129,8 +129,7 @@ const messages = {
       got_it: "Excellent",
       invite: "Invite",
       subscribe: "Subscribe",
-      invite_badge: "+1 for you",
-      invite_desc: "+1 for you, +1 for friend"
+      invite_badge: "+1 generation"
     }
   },
   uk: {
@@ -261,8 +260,7 @@ const messages = {
       got_it: "Чудово",
       invite: "Запросити",
       subscribe: "Підписатись",
-      invite_badge: "+1 тобі",
-      invite_desc: "+1 тобі, +1 другу"
+      invite_badge: "+1 генерація"
     }
   }
 }

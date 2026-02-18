@@ -19,7 +19,7 @@
                   
                   <div class="relative z-10 flex flex-col gap-1 items-start min-w-0 mr-4">
                     <h4 class="text-[14px] font-bold tracking-tight inter leading-tight mb-0.5 text-white w-full">{{ $t('store.invite_friend') }}</h4>
-                    <span class="text-[12px] font-medium inter leading-tight tracking-tight text-white/70 block">{{ $t('store.invite_desc') }}</span>
+                    <span class="text-[12px] font-medium inter leading-tight tracking-tight text-white/70 block">{{ $t('store.invite_badge') }}</span>
                   </div>
 
                   <div class="relative z-10 shrink-0 h-9 w-[110px] flex items-center justify-center rounded-full bg-white/[0.08] hover:bg-white/[0.12] transition-all active:scale-95 group-active:scale-95 text-white text-[13px] font-bold inter">

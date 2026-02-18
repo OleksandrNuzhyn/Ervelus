@@ -180,7 +180,7 @@ def handle_inline_query(update):
         try:
             generation_request = GenerationRequest.objects.get(
                 id=query, 
-                user__userprofile__telegram_id=telegram_id
+                user__profile__telegram_id=telegram_id
             )
             
             if generation_request.output_original_url:
