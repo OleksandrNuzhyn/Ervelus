@@ -185,13 +185,15 @@ def handle_inline_query(update):
             
             if generation_request.output_original_url:
                 results.append(
-                    telegram.InlineQueryResultPhoto(
+                    telegram.InlineQueryResultArticle(
                         id=query,
-                        photo_url=generation_request.output_original_url,
+                        title="Share Generation",
+                        description="Tap to send image",
                         thumbnail_url=generation_request.output_thumb_url or generation_request.output_original_url,
-                        title="Generation",
-                        description="Tap to send",
-                        caption=f"Try it out!\n\nhttps://t.me/ervelus_bot/app"
+                        input_message_content=telegram.InputTextMessageContent(
+                            f"<a href='{generation_request.output_original_url}'>&#8205;</a>Check out my generation!\n\n<a href='https://t.me/ervelus_bot/app'>Try Ervelus</a>",
+                            parse_mode='HTML'
+                        )
                     )
                 )
         except GenerationRequest.DoesNotExist:
