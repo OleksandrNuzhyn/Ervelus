@@ -180,7 +180,7 @@ def handle_inline_query(update):
         try:
             generation_request = GenerationRequest.objects.get(
                 id=query, 
-                user__profile__telegram_id=telegram_id
+                user__profile__telegram_id=str(telegram_id)
             )
             
             if generation_request.output_original_url:
@@ -189,6 +189,8 @@ def handle_inline_query(update):
                         id=query,
                         photo_url=generation_request.output_original_url,
                         thumbnail_url=generation_request.output_thumb_url or generation_request.output_original_url,
+                        title="Generation",
+                        description="Tap to send",
                         caption=f"Try it out!\n\nhttps://t.me/ervelus_bot/app"
                     )
                 )

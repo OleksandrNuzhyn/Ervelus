@@ -3,20 +3,20 @@
     <div class="relative mb-1">
       <CategoryStrip :categories="genres" :selected-category-id="selectedGenreId" :is-style-panel-open="modalStore.isStylePanelOpen" @category-selected="handleGenreSelect"/>
       <transition
-        enter-active-class="transition duration-500 ease-out"
+        enter-active-class="transition duration-500 ease-out will-change-transform transform-gpu"
         enter-from-class="opacity-0"
         enter-to-class="opacity-100"
-        leave-active-class="transition duration-250 ease-in"
+        leave-active-class="transition duration-250 ease-in will-change-transform transform-gpu"
         leave-from-class="opacity-100"
         leave-to-class="opacity-0"
       >
         <div v-if="modalStore.isStylePanelOpen" class="fixed inset-0 bg-black/60 backdrop-blur-xl z-[58]" @click="handleClosePanel"></div>
       </transition>
       <transition
-        enter-active-class="transition duration-500 ease-out"
+        enter-active-class="transition duration-500 ease-out will-change-transform transform-gpu"
         enter-from-class="opacity-0"
         enter-to-class="opacity-100"
-        leave-active-class="transition duration-250 ease-in"
+        leave-active-class="transition duration-250 ease-in will-change-transform transform-gpu"
         leave-from-class="opacity-100"
         leave-to-class="opacity-0"
       >
