@@ -1,3 +1,4 @@
+from generations.services import generate_signed_gcs_url
 from generations.models import GenerationRequest
 from core.models import ApplicationConfig
 from asgiref.sync import async_to_sync
@@ -162,7 +163,7 @@ def handle_message(update):
 
 def handle_inline_query(update):
     query = update.inline_query.query
-    telegram_id = update.effective_user.id
+    telegram_id = str(update.effective_user.id)
     results = []
 
     if query == 'invite':
@@ -178,22 +179,26 @@ def handle_inline_query(update):
         )
     elif query.isdigit():
         try:
-            generation_request = GenerationRequest.objects.get(
-                id=query, 
-                user__profile__telegram_id=str(telegram_id)
-            )
+            generation_request = GenerationRequest.objects.get(id=query, user__profile__telegram_id=telegram_id)
             
-            if generation_request.output_original_url:
+            if generation_request.output_original_url and generation_request.output_thumb_url:
+                try:
+                    signed_original_url = generate_signed_gcs_url(generation_request.output_original_url, 300)
+                    signed_thumb_url = generate_signed_gcs_url(generation_request.output_thumb_url, 300)
+                except Exception as e:
+                    logger.error("Failed to sign URLs for inline query", extra={'error': str(e)}, exc_info=True)
+                    return
+
                 results.append(
-                    telegram.InlineQueryResultArticle(
+                    telegram.InlineQueryResultPhoto(
                         id=query,
+                        photo_url=signed_original_url,
+                        thumbnail_url=signed_thumb_url,
                         title="Share Generation",
                         description="Tap to send image",
-                        thumbnail_url=generation_request.output_thumb_url or generation_request.output_original_url,
-                        input_message_content=telegram.InputTextMessageContent(
-                            f"<a href='{generation_request.output_original_url}'>&#8205;</a>Check out my generation!\n\n<a href='https://t.me/ervelus_bot/app'>Try Ervelus</a>",
-                            parse_mode='HTML'
-                        )
+                        reply_markup=telegram.InlineKeyboardMarkup([[
+                            telegram.InlineKeyboardButton("Try it yourself 🎨", url="https://t.me/ervelus_bot/app")
+                        ]])
                     )
                 )
         except GenerationRequest.DoesNotExist:
