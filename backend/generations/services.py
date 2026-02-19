@@ -1,31 +1,28 @@
 import os
 import json
+import base64
 import logging
 from io import BytesIO
-from google import genai
 from datetime import timedelta
-from google.genai import types
-from google.genai import errors
 from PIL import Image, ImageOps
 from django.conf import settings
 from urllib.parse import urlparse
+from openrouter import OpenRouter
 from django.utils import timezone
 from django.db import connections
 from users.models import UserProfile
 from django.utils.text import slugify
 from .models import GenerationRequest
 from asgiref.sync import sync_to_async
+from openrouter.errors import ChatError
 from google.protobuf import duration_pb2
 from generations.views import tasks_client
 from google.cloud.tasks_v2.types import HttpMethod
 from google.cloud import storage as gcs_sync_storage
 from gcloud.aio.storage import Storage as GCSAsyncStorage
-from google.genai.types import HarmCategory, HarmBlockThreshold
-from tenacity import retry, wait_random_exponential, retry_if_exception, stop_after_delay
 
 GCS_KEY_PATH = os.path.join(settings.BASE_DIR, 'core', 'gcs_key.json')
 logger = logging.getLogger(__name__)
-genai_client = None
 gcs_sync_storage_client = gcs_sync_storage.Client.from_service_account_json(GCS_KEY_PATH)
 
 def generate_signed_gcs_url(gcs_img_url, expires_in_seconds, response_disposition=None):
@@ -109,78 +106,34 @@ async def upload_output_image_to_gcs(image_bytes, user_id, style_name):
 
     return f"https://storage.googleapis.com/{bucket_name}/{blob_name}"
 
-
-
-class ContentBlockedError(Exception):
-    pass
-
-def is_retryable_error(error):
-    if isinstance(error, errors.ServerError):
-        return True
-        
-    if isinstance(error, errors.ClientError) and hasattr(error, 'code') and error.code == 429:
-        return True
-    return False
-
-
-
-def get_genai_client():
-    global genai_client
-    
-    if genai_client is None:
-        genai_client = genai.Client(vertexai=True, project=settings.GCP_PROJECT_ID, location='us-west1')
-
-    return genai_client
-
-@retry(wait=wait_random_exponential(min=3, max=30), stop=stop_after_delay(45), retry=retry_if_exception(is_retryable_error))
-async def generate_output_image_client(genai_client, model, contents, config):
-    return await genai_client.aio.models.generate_content(
-        model=model,
-        contents=contents,
-        config=config
-    )
-
 async def generate_output_image(prompt, input_image_bytes):
-    image = Image.open(BytesIO(input_image_bytes))
-    genai_client = get_genai_client()
-
-    response = await generate_output_image_client(
-        genai_client=genai_client,
-        model="gemini-2.5-flash-image",
-        contents = [prompt, image],
-        config=types.GenerateContentConfig(
-            safety_settings=[
+    base64_input_image = base64.b64encode(input_image_bytes).decode('utf-8')
+    
+    async with OpenRouter(api_key=settings.OPENROUTER_API_KEY) as client:
+        response = await client.chat.send_async(
+            model="google/gemini-2.5-flash-image",
+            messages=[
                 {
-                    "category": HarmCategory.HARM_CATEGORY_HARASSMENT,
-                    "threshold": HarmBlockThreshold.BLOCK_NONE
-                },
-                {
-                    "category": HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-                    "threshold": HarmBlockThreshold.BLOCK_NONE
-                },
-                {
-                    "category": HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-                    "threshold": HarmBlockThreshold.BLOCK_NONE
-                },
-                {
-                    "category": HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-                    "threshold": HarmBlockThreshold.BLOCK_NONE
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text", 
+                            "text": prompt
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{base64_input_image}"
+                            }
+                        }
+                    ]
                 }
             ]
         )
-    )
-
-    if not response.candidates or not response.candidates[0].content or not response.candidates[0].content.parts:
-        raise ContentBlockedError()
-
-    output_image_bytes = None
-    
-    for part in response.candidates[0].content.parts:
-        if part.inline_data:
-            output_image_bytes = part.inline_data.data
-            break
-
-    return output_image_bytes
+        
+        content = response.choices[0].message.content
+        content = content.replace("```base64", "").replace("```", "").strip()
+        return base64.b64decode(content)
 
 async def handle_update_after_resize(generation_request_id, update_data):
     try:
@@ -194,10 +147,18 @@ async def handle_update_after_resize(generation_request_id, update_data):
         if update_fields:
             update_fields.append('updated_at')
             await generation_request.asave(update_fields=update_fields)
+            
+            user_profile = await UserProfile.objects.aget(user_id=generation_request.user_id)
+            
+            if user_profile.credits > 0:
+                user_profile.credits -= 1
+                await user_profile.asave(update_fields=['credits'])
+            else:
+                logger.error("Credit not debited, no credits available", extra={'generation_request_id': generation_request_id})
     except GenerationRequest.DoesNotExist:
         logger.error("Generation request was deleted. Update after resize aborted", extra={'generation_request_id': generation_request_id, 'update_data': update_data})
     except Exception as e:
-        logger.error("An error occurred while updating generation request after resize", extra={'generation_request_id': generation_request_id, 'update_data': update_data, 'error': str(e)}, exc_info=True)
+        logger.error("An error occurred while updating generation request after resize and credits balance", extra={'generation_request_id': generation_request_id, 'update_data': update_data, 'error': str(e)}, exc_info=True)
 
 @sync_to_async
 def schedule_image_resizing(generation_request_id, user_id, input_image_url, output_image_url):
@@ -257,9 +218,6 @@ async def handle_generation_process(generation_request_id, input_image_url):
     
         await sync_to_async(connections.close_all)()
         output_image_bytes = await generate_output_image(prompt, input_image_bytes)
-
-        if not output_image_bytes:
-            raise Exception("Generated image data is empty")
         
         output_image_url = await upload_output_image_to_gcs(
             image_bytes=output_image_bytes,
@@ -267,21 +225,16 @@ async def handle_generation_process(generation_request_id, input_image_url):
             style_name=style_name
         )
 
-        user_profile = await UserProfile.objects.aget(user_id=user_id)
-
-        if user_profile.credits > 0:
-            user_profile.credits -= 1
-            await user_profile.asave(update_fields=['credits'])
-        else:
-            logger.error("Credit not debited, no credits available", extra={'generation_request_id': generation_request_id})
-
         generation_request_status = GenerationRequest.GenerationStatus.COMPLETED
     except GenerationRequest.DoesNotExist:
         logger.error("Generation request was deleted. Generation process aborted", extra={'generation_request_id': generation_request_id})
         return
-    except ContentBlockedError:
-        generation_request_status = GenerationRequest.GenerationStatus.REJECTED_BY_SAFETY
-        error_message = "Rejected by the safety system"
+    except ChatError as e:
+        if e.status_code == 400:
+            generation_request_status = GenerationRequest.GenerationStatus.REJECTED_BY_SAFETY
+            error_message = "Rejected by the safety system (OpenRouter)"
+        else:
+            raise e
     except Exception as e:
         logger.error("Error during image generation process", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
         generation_request_status = GenerationRequest.GenerationStatus.FAILED
