@@ -128,12 +128,33 @@ async def generate_output_image(prompt, input_image_bytes):
                         }
                     ]
                 }
-            ]
+            ],
+            retries=None,
+            timeout_ms=45000
         )
         
+        if not response or not response.choices:
+            logger.error(f"OpenRouter returned empty or invalid response. Full response: {response}")
+            raise Exception("OpenRouter returned invalid or empty response")
+            
         content = response.choices[0].message.content
-        content = content.replace("```base64", "").replace("```", "").strip()
-        return base64.b64decode(content)
+        if not content:
+            logger.error(f"OpenRouter returned empty content. Full response choices: {response.choices}")
+            raise Exception("Model returned empty content string")
+            
+        content_cleaned = content.replace("```base64", "").replace("```", "").strip()
+        
+        try:
+            output_image_bytes = base64.b64decode(content_cleaned)
+        except Exception as e:
+            logger.error(f"Failed to decode base64 model output. Error: {str(e)}. Content preview: {content_cleaned[:200]}")
+            raise Exception("Failed to decode model output as base64")
+            
+        if not output_image_bytes:
+            logger.error(f"Base64 logic resulted in empty bytes. Content preview: {content_cleaned[:100]}")
+            raise Exception("Generated image data is empty")
+            
+        return output_image_bytes
 
 async def handle_update_after_resize(generation_request_id, update_data):
     try:
@@ -218,7 +239,7 @@ async def handle_generation_process(generation_request_id, input_image_url):
     
         await sync_to_async(connections.close_all)()
         output_image_bytes = await generate_output_image(prompt, input_image_bytes)
-        
+
         output_image_url = await upload_output_image_to_gcs(
             image_bytes=output_image_bytes,
             user_id=user_id,

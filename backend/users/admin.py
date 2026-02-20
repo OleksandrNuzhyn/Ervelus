@@ -1,6 +1,7 @@
-from django.contrib import admin
 from .models import UserProfile
+from django.contrib import admin
 from django.utils import timezone
+from django.contrib import messages
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 from django_otp.plugins.otp_totp.models import TOTPDevice
@@ -8,6 +9,7 @@ from django_otp.plugins.otp_totp.admin import TOTPDeviceAdmin
 from rest_framework.authtoken.models import TokenProxy
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from core.admin_mixins import NoLogAdminMixin
+from .services import delete_user_account
 
 User = get_user_model()
 
@@ -32,6 +34,7 @@ class UserAdmin(NoLogAdminMixin, BaseUserAdmin):
         (("Permissions"), {"fields": ("is_active", "is_staff", "is_superuser")}),
         (("Important dates"), {"fields": ("last_login", "date_joined")})
     )
+    actions = ['delete_user_account_action']
 
     @admin.display(ordering='last_login', description='last login')
     def last_login_formatted(self, obj):
@@ -42,6 +45,24 @@ class UserAdmin(NoLogAdminMixin, BaseUserAdmin):
     @admin.display(ordering='date_joined', description='date joined')
     def date_joined_formatted(self, obj):
         return timezone.localtime(obj.date_joined).strftime('%d.%m.%Y %H:%M:%S')
+    
+    @admin.action(description='Delete selected user accounts')
+    def delete_user_account_action(self, request, queryset):
+        success_count = 0
+        failed_count = 0
+
+        for user in queryset:
+            success = delete_user_account(user)
+
+            if success:
+                success_count += 1
+            else:
+                failed_count += 1
+                
+        if success_count > 0:
+            self.message_user(request, f"Successfully deleted {success_count} user accounts", messages.SUCCESS)
+        if failed_count > 0:
+            self.message_user(request, f"Failed to delete {failed_count} user accounts", messages.ERROR)
 
     def has_add_permission(self, request):
         return False
