@@ -2,6 +2,7 @@ import os
 import json
 import base64
 import logging
+import urllib.request
 from io import BytesIO
 from datetime import timedelta
 from PIL import Image, ImageOps
@@ -14,7 +15,7 @@ from users.models import UserProfile
 from django.utils.text import slugify
 from .models import GenerationRequest
 from asgiref.sync import sync_to_async
-from openrouter.errors import ChatError
+from openrouter.errors import OpenRouterError
 from google.protobuf import duration_pb2
 from generations.views import tasks_client
 from google.cloud.tasks_v2.types import HttpMethod
@@ -106,7 +107,7 @@ async def upload_output_image_to_gcs(image_bytes, user_id, style_name):
 
     return f"https://storage.googleapis.com/{bucket_name}/{blob_name}"
 
-async def generate_output_image(prompt, input_image_bytes):
+async def generate_output_image(prompt, input_image_bytes, input_image_mime_type):
     base64_input_image = base64.b64encode(input_image_bytes).decode('utf-8')
     
     async with OpenRouter(api_key=settings.OPENROUTER_API_KEY) as client:
@@ -123,7 +124,7 @@ async def generate_output_image(prompt, input_image_bytes):
                         {
                             "type": "image_url",
                             "image_url": {
-                                "url": f"data:image/jpeg;base64,{base64_input_image}"
+                                "url": f"data:{input_image_mime_type};base64,{base64_input_image}"
                             }
                         }
                     ]
@@ -134,25 +135,22 @@ async def generate_output_image(prompt, input_image_bytes):
         )
         
         if not response or not response.choices:
-            logger.error(f"OpenRouter returned empty or invalid response. Full response: {response}")
             raise Exception("OpenRouter returned invalid or empty response")
             
-        content = response.choices[0].message.content
-        if not content:
-            logger.error(f"OpenRouter returned empty content. Full response choices: {response.choices}")
-            raise Exception("Model returned empty content string")
-            
-        content_cleaned = content.replace("```base64", "").replace("```", "").strip()
+        message = response.choices[0].message
+        
+        # Check if the model explicitly refused or blocked the request
+        if getattr(message, 'refusal', None) or not getattr(message, 'images', None):
+            logger.warning(f"Model refused the prompt or returned no images. Refusal: {getattr(message, 'refusal', 'None')}")
+            raise Exception("SAFETY_BLOCK")
         
         try:
-            output_image_bytes = base64.b64decode(content_cleaned)
+            raw_url = message.images[0].image_url.url
+            with urllib.request.urlopen(raw_url) as img_response:
+                output_image_bytes = img_response.read()
         except Exception as e:
-            logger.error(f"Failed to decode base64 model output. Error: {str(e)}. Content preview: {content_cleaned[:200]}")
-            raise Exception("Failed to decode model output as base64")
-            
-        if not output_image_bytes:
-            logger.error(f"Base64 logic resulted in empty bytes. Content preview: {content_cleaned[:100]}")
-            raise Exception("Generated image data is empty")
+            logger.error(f"Failed to extract image from response. Error: {e}, Response preview: {str(response)[:500]}")
+            raise Exception("SAFETY_BLOCK")
             
         return output_image_bytes
 
@@ -236,9 +234,17 @@ async def handle_generation_process(generation_request_id, input_image_url):
 
         async with GCSAsyncStorage() as gcs_async_storage_client:
             input_image_bytes = await gcs_async_storage_client.download(bucket_name, blob_name)
+        
+        input_file_extension = os.path.splitext(blob_name)[1].lower().lstrip('.')
+        mime_type_map = {
+            'png': 'image/png',
+            'webp': 'image/webp',
+            'jpg': 'image/jpeg'
+        }
+        input_image_mime_type = mime_type_map[input_file_extension]
     
         await sync_to_async(connections.close_all)()
-        output_image_bytes = await generate_output_image(prompt, input_image_bytes)
+        output_image_bytes = await generate_output_image(prompt, input_image_bytes, input_image_mime_type)
 
         output_image_url = await upload_output_image_to_gcs(
             image_bytes=output_image_bytes,
@@ -250,16 +256,22 @@ async def handle_generation_process(generation_request_id, input_image_url):
     except GenerationRequest.DoesNotExist:
         logger.error("Generation request was deleted. Generation process aborted", extra={'generation_request_id': generation_request_id})
         return
-    except ChatError as e:
-        if e.status_code == 400:
+    except OpenRouterError as e:
+        if getattr(e, 'status_code', None) == 400:
             generation_request_status = GenerationRequest.GenerationStatus.REJECTED_BY_SAFETY
-            error_message = "Rejected by the safety system (OpenRouter)"
+            error_message = "Rejected by the safety system (OpenRouter HTTP 400)"
         else:
-            raise e
+            logger.error("OpenRouter API error", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
+            generation_request_status = GenerationRequest.GenerationStatus.FAILED
+            error_message = f"OpenRouter API error: {e}"
     except Exception as e:
-        logger.error("Error during image generation process", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
-        generation_request_status = GenerationRequest.GenerationStatus.FAILED
-        error_message = str(e)
+        if str(e) == "SAFETY_BLOCK":
+            generation_request_status = GenerationRequest.GenerationStatus.REJECTED_BY_SAFETY
+            error_message = "Rejected by the AI model safety filter"
+        else:
+            logger.error("Error during image generation process", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
+            generation_request_status = GenerationRequest.GenerationStatus.FAILED
+            error_message = str(e)
     
     try:
         if generation_request_status:

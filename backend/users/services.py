@@ -1,12 +1,11 @@
+from generations.services import gcs_sync_storage_client, schedule_image_deletion
 from django.core.serializers.json import DjangoJSONEncoder
-from generations.services import gcs_sync_storage_client
 from generations.models import GenerationRequest
 from django.contrib.auth import get_user_model
 from agreements.models import UserAgreement
 from core.models import ApplicationConfig
 from payments.models import UserPurchase
 from django.db import transaction
-from generations import services
 from django.utils import timezone
 from django.conf import settings
 from django.db.models import F
@@ -53,7 +52,7 @@ def schedule_user_images_deletion(user):
         for blob in blobs_to_delete
     ]
 
-    services.schedule_image_deletion(image_urls)
+    schedule_image_deletion(image_urls)
 
 def delete_user_account(user):
     requests_in_process = GenerationRequest.objects.filter(user=user, is_visible=False)
@@ -62,19 +61,19 @@ def delete_user_account(user):
         logger.error("User deletion with unfinished generations", extra={'user_id': user.id, 'requests_in_process_ids': list(requests_in_process.values_list('id', flat=True))})
 
     try:
-        user_data_for_retention = services.get_user_data_for_retention(user)
+        user_data_for_retention = get_user_data_for_retention(user)
     except Exception as e:
         logger.error("Failed to get user data for retention in delete request", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)
         return False
 
     try:
-        services.upload_user_data_for_retention_to_gcs(user, user_data_for_retention)
+        upload_user_data_for_retention_to_gcs(user, user_data_for_retention)
     except Exception as e:
         logger.error("Failed to upload user data for retention to GCS in delete request", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)
         return False
 
     try:
-        services.schedule_user_images_deletion(user)
+        schedule_user_images_deletion(user)
     except Exception as e:
         logger.error("Failed to schedule user images deletion in delete request", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)
         return False
