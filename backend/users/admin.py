@@ -73,11 +73,11 @@ class UserAdmin(NoLogAdminMixin, BaseUserAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(NoLogAdminMixin, admin.ModelAdmin):
-    list_display = ('id', 'telegram_id', 'country_code', 'credits', 'is_paid', 'is_subscribed')
+    list_display = ('id', 'telegram_id', 'country_code', 'invited_count', 'credits', 'is_paid', 'is_subscribed')
     list_filter = ('is_paid', 'is_subscribed')
     search_fields = ('user__email', 'telegram_id', 'country_code')
     readonly_fields = ('user',)
-    ordering = ('-credits',)
+    ordering = ('-id',)
     
     def has_add_permission(self, request):
         return False

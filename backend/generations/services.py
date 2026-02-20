@@ -61,7 +61,7 @@ def schedule_image_deletion(image_urls):
             'headers': {'Content-Type': 'application/json'},
             'body': json.dumps(event_data).encode('utf-8'),
         },
-        'dispatch_deadline': duration_pb2.Duration(seconds=60)
+        'dispatch_deadline': duration_pb2.Duration(seconds=10)
     }
 
     tasks_client.create_task(request={'parent': queue_path, 'task': task})
@@ -107,10 +107,10 @@ async def upload_output_image_to_gcs(image_bytes, user_id, style_name):
 
     return f"https://storage.googleapis.com/{bucket_name}/{blob_name}"
 
-async def generate_output_image(prompt, input_image_bytes, input_image_mime_type):
+async def generate_output_image(prompt, input_image_bytes, input_image_mime_type, api_key):
     base64_input_image = base64.b64encode(input_image_bytes).decode('utf-8')
     
-    async with OpenRouter(api_key=settings.OPENROUTER_API_KEY) as client:
+    async with OpenRouter(api_key=api_key) as client:
         response = await client.chat.send_async(
             model="google/gemini-2.5-flash-image",
             messages=[
@@ -130,8 +130,12 @@ async def generate_output_image(prompt, input_image_bytes, input_image_mime_type
                     ]
                 }
             ],
+            extra_headers={
+                "HTTP-Referer": "https://t.me/ervelus_bot/app",
+                "X-Title": "Ervelus"
+            },
             retries=None,
-            timeout_ms=45000
+            timeout_ms=35000
         )
         
         if not response or not response.choices:
@@ -166,14 +170,17 @@ async def handle_update_after_resize(generation_request_id, update_data):
         if update_fields:
             update_fields.append('updated_at')
             await generation_request.asave(update_fields=update_fields)
-            
-            user_profile = await UserProfile.objects.aget(user_id=generation_request.user_id)
-            
-            if user_profile.credits > 0:
-                user_profile.credits -= 1
-                await user_profile.asave(update_fields=['credits'])
-            else:
-                logger.error("Credit not debited, no credits available", extra={'generation_request_id': generation_request_id})
+
+            try:
+                user_profile = await UserProfile.objects.aget(user_id=generation_request.user_id)
+                
+                if user_profile.credits > 0:
+                    user_profile.credits -= 1
+                    await user_profile.asave(update_fields=['credits'])
+                else:
+                    logger.error("Credit not debited, no credits available", extra={'generation_request_id': generation_request_id})
+            except UserProfile.DoesNotExist:
+                logger.error("User profile not found. Credit not debited", extra={'generation_request_id': generation_request_id})
     except GenerationRequest.DoesNotExist:
         logger.error("Generation request was deleted. Update after resize aborted", extra={'generation_request_id': generation_request_id, 'update_data': update_data})
     except Exception as e:
@@ -203,15 +210,13 @@ def schedule_image_resizing(generation_request_id, user_id, input_image_url, out
             'headers': {'Content-Type': 'application/json'},
             'body': json.dumps(event_data).encode('utf-8'),
         },
-        'dispatch_deadline': duration_pb2.Duration(seconds=60)
+        'dispatch_deadline': duration_pb2.Duration(seconds=10)
     }
 
     tasks_client.create_task(request={'parent': queue_path, 'task': task})
 
 async def handle_generation_process(generation_request_id, input_image_url):
-    output_image_url = None
     generation_request_status = None
-    error_message = None
 
     try:
         generation_request = await GenerationRequest.objects.select_related('user', 'chosen_style').aget(id=generation_request_id)
@@ -243,8 +248,11 @@ async def handle_generation_process(generation_request_id, input_image_url):
         }
         input_image_mime_type = mime_type_map[input_file_extension]
     
+        user_profile = await UserProfile.objects.aget(user_id=user_id)
+        api_key = settings.OPENROUTER_PAID_API_KEY if user_profile.is_paid else settings.OPENROUTER_FREE_API_KEY
+    
         await sync_to_async(connections.close_all)()
-        output_image_bytes = await generate_output_image(prompt, input_image_bytes, input_image_mime_type)
+        output_image_bytes = await generate_output_image(prompt, input_image_bytes, input_image_mime_type, api_key)
 
         output_image_url = await upload_output_image_to_gcs(
             image_bytes=output_image_bytes,
@@ -259,56 +267,36 @@ async def handle_generation_process(generation_request_id, input_image_url):
     except OpenRouterError as e:
         if getattr(e, 'status_code', None) == 400:
             generation_request_status = GenerationRequest.GenerationStatus.REJECTED_BY_SAFETY
-            error_message = "Rejected by the safety system (OpenRouter HTTP 400)"
         else:
             logger.error("OpenRouter API error", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
             generation_request_status = GenerationRequest.GenerationStatus.FAILED
-            error_message = f"OpenRouter API error: {e}"
     except Exception as e:
         if str(e) == "SAFETY_BLOCK":
             generation_request_status = GenerationRequest.GenerationStatus.REJECTED_BY_SAFETY
-            error_message = "Rejected by the AI model safety filter"
         else:
             logger.error("Error during image generation process", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
             generation_request_status = GenerationRequest.GenerationStatus.FAILED
-            error_message = str(e)
     
     try:
-        if generation_request_status:
-            update_fields = {
-                'status': generation_request_status,
-                'error_message': error_message,
-                'updated_at': timezone.now()
-            }
+        if generation_request_status in [GenerationRequest.GenerationStatus.REJECTED_BY_SAFETY, GenerationRequest.GenerationStatus.FAILED]:
+            try:
+                await sync_to_async(schedule_image_deletion)([input_image_url])
+            except Exception as e:
+                logger.error("Failed to schedule image deletion", extra={'generation_request_id': generation_request_id, 'input_image_url': input_image_url, 'error': str(e)}, exc_info=True)
 
-            if generation_request_status == GenerationRequest.GenerationStatus.REJECTED_BY_SAFETY:
-                update_fields['is_visible'] = True
-                try:
-                    await sync_to_async(schedule_image_deletion)([input_image_url])
-                except Exception as e:
-                    logger.error("Failed to schedule image deletion", extra={'generation_request_id': generation_request_id, 'input_image_url': input_image_url, 'error': str(e)}, exc_info=True)
-
-            rows_affected = await GenerationRequest.objects.filter(id=generation_request_id).aupdate(**update_fields)
-
-            if rows_affected == 0:
-                logger.error("Generation request was deleted before status update", extra={'generation_request_id': generation_request_id})
-                
-                try:
-                    await sync_to_async(schedule_image_deletion)([input_image_url, output_image_url])
-                except Exception as e:
-                    logger.error("Failed to schedule image deletion", extra={'generation_request_id': generation_request_id, 'output_image_url': output_image_url, 'error': str(e)}, exc_info=True)
-                return
+            generation_request.status = generation_request_status
+            await generation_request.asave(update_fields=['status', 'updated_at'])
+            return
     except Exception as e:
         logger.error("Failed to update generation request status", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
         return
 
-    if generation_request_status in [GenerationRequest.GenerationStatus.COMPLETED, GenerationRequest.GenerationStatus.FAILED]:
-        try:
-            await schedule_image_resizing(
-                generation_request_id=generation_request_id,
-                user_id=user_id,
-                input_image_url=input_image_url,
-                output_image_url=output_image_url
-            )
-        except Exception as e:
-            logger.error("Failed to create resizing task", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
+    try:
+        await schedule_image_resizing(
+            generation_request_id=generation_request_id,
+            user_id=user_id,
+            input_image_url=input_image_url,
+            output_image_url=output_image_url
+        )
+    except Exception as e:
+        logger.error("Failed to create resizing task", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)

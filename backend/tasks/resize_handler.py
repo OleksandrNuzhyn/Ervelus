@@ -86,7 +86,7 @@ def process_image_resize(image_blob, user_id):
     if folder_type == 'inputs':
         thumb_path = f"users/{user_id}/inputs/thumb/{base_name}.webp"
         large_path = f"users/{user_id}/inputs/large/{base_name}.webp"
-        resized_images.append(prepare_resized_image(image, (200, 200), 'WEBP', 85, thumb_path))
+        resized_images.append(prepare_resized_image(image, (200, 200), 'WEBP', 95, thumb_path))
         resized_images.append(prepare_resized_image(image, (1000, 1000), 'WEBP', 85, large_path, allow_upscale=True))
         final_urls['input_thumb_url'] = f"https://storage.googleapis.com/{GCP_STORAGE_BUCKET_NAME}/{thumb_path}"
         final_urls['input_large_url'] = f"https://storage.googleapis.com/{GCP_STORAGE_BUCKET_NAME}/{large_path}"
@@ -95,7 +95,7 @@ def process_image_resize(image_blob, user_id):
         thumb_path = f"users/{user_id}/outputs/thumb/{base_name}.webp"
         large_path = f"users/{user_id}/outputs/large/{base_name}.webp"
         resized_images.append(prepare_resized_image(image, None, 'JPEG', 100, original_path))
-        resized_images.append(prepare_resized_image(image, (200, 200), 'WEBP', 85, thumb_path))
+        resized_images.append(prepare_resized_image(image, (200, 200), 'WEBP', 95, thumb_path))
         resized_images.append(prepare_resized_image(image, (1000, 1000), 'WEBP', 85, large_path, allow_upscale=True))
         final_urls['output_original_url'] = f"https://storage.googleapis.com/{GCP_STORAGE_BUCKET_NAME}/{original_path}"
         final_urls['output_thumb_url'] = f"https://storage.googleapis.com/{GCP_STORAGE_BUCKET_NAME}/{thumb_path}"
@@ -133,7 +133,7 @@ def create_update_task(generation_request_id, update_data):
                 'headers': {'Content-Type': 'application/json'},
                 'body': json.dumps(event_data).encode('utf-8')
             },
-            'dispatch_deadline': duration_pb2.Duration(seconds=60)
+            'dispatch_deadline': duration_pb2.Duration(seconds=5)
         }
 
         tasks_client.create_task(request={'parent': queue_path, 'task': task})
@@ -141,8 +141,8 @@ def create_update_task(generation_request_id, update_data):
         logging.error("Failed to create task", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
 
 def image_resize(data):
-    generation_request_id = data.get("generation_request_id")
     user_id = data.get("user_id")
+    generation_request_id = data.get("generation_request_id")
     input_image_url = data.get("input_image_url")
     output_image_url = data.get("output_image_url")
 
@@ -175,14 +175,14 @@ def image_resize(data):
                 blobs_to_delete.append(output_blob)
 
         if update_data:
-            update_data['is_visible'] = True
+            update_data['status'] = 'completed'
             create_update_task(generation_request_id, update_data)
-    except Exception as e:
-        logging.error("Failed to process image resize", extra={'data': data, 'error': str(e)}, exc_info=True)
-    finally:
+            
         if blobs_to_delete:
             for blob in blobs_to_delete:
                 try:
                     blob.delete()
                 except Exception as e:
                     logging.error("Failed to delete temporary blob", extra={'generation_request_id': generation_request_id, 'blob_name': blob.name, 'error': str(e)}, exc_info=True)
+    except Exception as e:
+        logging.error("Failed to process image resize", extra={'data': data, 'error': str(e)}, exc_info=True)

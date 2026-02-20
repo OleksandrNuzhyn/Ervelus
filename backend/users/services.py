@@ -55,7 +55,7 @@ def schedule_user_images_deletion(user):
     schedule_image_deletion(image_urls)
 
 def delete_user_account(user):
-    requests_in_process = GenerationRequest.objects.filter(user=user, is_visible=False)
+    requests_in_process = GenerationRequest.objects.filter(user=user, status=GenerationRequest.GenerationStatus.PROCESSING)
 
     if requests_in_process.exists():
         logger.error("User deletion with unfinished generations", extra={'user_id': user.id, 'requests_in_process_ids': list(requests_in_process.values_list('id', flat=True))})
@@ -80,7 +80,8 @@ def delete_user_account(user):
     
     try:
         with transaction.atomic():
-            user.auth_token.delete()
+            if hasattr(user, 'auth_token'):
+                user.auth_token.delete()
 
             for generation_request in user.generation_requests.all():
                 generation_request.anonymise()

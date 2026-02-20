@@ -1,19 +1,18 @@
-import os
-import json
-import logging
-from . import services
-from rest_framework import viewsets
+from agreements.permissions import HasAcceptedLatestAgreements
+from google.cloud.tasks_v2.types import HttpMethod
+from .pagination import CustomPaginationClass
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from agreements.permissions import HasAcceptedLatestAgreements
-from .models import GenerationRequest
-from .serializers import GenerationRequestCreateSerializer, GenerationRequestListSerializer, GenerationRequestSerializer
-from .pagination import CustomPaginationClass
-from google.cloud import tasks_v2
-from google.cloud.tasks_v2.types import HttpMethod
 from google.protobuf import duration_pb2
-from django.conf import settings
+from .models import GenerationRequest
+from rest_framework import viewsets
 from urllib.parse import urlparse
+from google.cloud import tasks_v2
+from django.conf import settings
+from . import serializers
+from . import services
+import logging
+import os
 
 tasks_client = tasks_v2.CloudTasksClient()
 logger = logging.getLogger(__name__)
@@ -24,10 +23,10 @@ class GenerationRequestViewSet(viewsets.ViewSet):
 
     def create(self, request, *args, **kwargs):
         latest_request = GenerationRequest.objects.filter(user=request.user).order_by('-created_at').first()
-        if latest_request and not latest_request.is_visible:
-            return Response({"detail": "You already have a generation in progress. Please wait for it to complete"}, status=400)
+        if latest_request and latest_request.status == GenerationRequest.GenerationStatus.PROCESSING:
+            return Response({"detail": "You already have a generation in progress"}, status=400)
 
-        serializer = GenerationRequestCreateSerializer(data=request.data, context={'request': request})
+        serializer = serializers.GenerationRequestCreateSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
 
         input_image_file = serializer.validated_data['input_image']
@@ -74,7 +73,7 @@ class GenerationRequestViewSet(viewsets.ViewSet):
                     'headers': {'Content-Type': 'application/json'},
                     'body': json.dumps(event_data).encode('utf-8')
                 },
-                'dispatch_deadline': duration_pb2.Duration(seconds=300)
+                'dispatch_deadline': duration_pb2.Duration(seconds=40)
             }
 
             tasks_client.create_task(request={'parent': queue_path, 'task': task})
@@ -82,17 +81,15 @@ class GenerationRequestViewSet(viewsets.ViewSet):
             logger.error(f"Failed to create task", extra={'generation_request_id': generation_request.id, 'error': str(e)}, exc_info=True)
             return Response(status=400)
 
-        serializer = GenerationRequestSerializer(generation_request)
+        serializer = serializers.GenerationRequestSerializer(generation_request)
         return Response(serializer.data, status=202)
 
     def list(self, request, *args, **kwargs):
         queryset = (
             GenerationRequest.objects.filter(
                 user=request.user,
-                is_visible=True,
-                is_hidden=False
+                status=GenerationRequest.GenerationStatus.COMPLETED
             )
-            .exclude(status=GenerationRequest.GenerationStatus.REJECTED_BY_SAFETY)
             .order_by('-created_at')
         )
         
@@ -100,23 +97,23 @@ class GenerationRequestViewSet(viewsets.ViewSet):
         page = paginator.paginate_queryset(queryset, request, view=self)
 
         if page is not None:
-            serializer = GenerationRequestListSerializer(page, many=True)
+            serializer = serializers.GenerationRequestListSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
 
-        serializer = GenerationRequestListSerializer(queryset, many=True)
+        serializer = serializers.GenerationRequestListSerializer(queryset, many=True)
         return Response(serializer.data, status=200)
 
     def retrieve(self, request, pk=None, *args, **kwargs):
         try:
             generation_request = GenerationRequest.objects.select_related('chosen_style').get(
-                pk=pk,
+                pk=pk, 
                 user=request.user,
-                is_hidden=False
+                status=GenerationRequest.GenerationStatus.COMPLETED
             )
         except GenerationRequest.DoesNotExist:
             return Response({"detail": "Generation not found or is unavailable"}, status=404)
 
-        serializer = GenerationRequestSerializer(generation_request)
+        serializer = serializers.GenerationRequestSerializer(generation_request)
         return Response(serializer.data, status=200)
 
     def update(self, request, *args, **kwargs):
@@ -150,12 +147,12 @@ class GenerationRequestViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['GET'])
     def latest(self, request, *args, **kwargs):
-        latest_user_generation_request = GenerationRequest.objects.select_related('chosen_style').filter(user=request.user, is_hidden=False).order_by('-created_at').first()
+        latest_user_generation_request = GenerationRequest.objects.select_related('chosen_style').filter(user=request.user).order_by('-created_at').first()
 
         if not latest_user_generation_request:
             return Response(status=204)
         
-        serializer = GenerationRequestSerializer(latest_user_generation_request, context={'view': self})
+        serializer = serializers.GenerationRequestSerializer(latest_user_generation_request, context={'view': self})
         return Response(serializer.data, status=200)
     
     @action(detail=True, methods=['GET'])
@@ -164,8 +161,7 @@ class GenerationRequestViewSet(viewsets.ViewSet):
             generation_request = GenerationRequest.objects.get(
                 pk=pk,
                 user=request.user,
-                is_hidden=False,
-                is_visible=True
+                status=GenerationRequest.GenerationStatus.COMPLETED
             )
         except GenerationRequest.DoesNotExist:
             return Response({"detail": "Generation not found or is unavailable"}, status=404)

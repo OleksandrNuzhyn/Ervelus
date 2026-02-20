@@ -93,6 +93,5 @@ class GenerationRequestSerializer(serializers.ModelSerializer):
             'input_large_signed_url',
             'output_large_signed_url',
             'status',
-            'created_at',
-            'is_visible'
+            'created_at'
         )

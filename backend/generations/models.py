@@ -13,10 +13,8 @@ class GenerationRequest(models.Model):
         verbose_name = 'Generation Request'
         verbose_name_plural = 'Generation Requests'
         indexes = [
-            models.Index(fields=['user', 'is_visible', 'is_hidden', '-created_at'], name='user_visible_hidden_idx'),
-            models.Index(fields=['user', 'is_hidden', '-created_at'], name='user_hidden_created_idx'),
-            models.Index(fields=['user', '-created_at'], name='user_latest_req_idx'),
-            models.Index(fields=['-created_at'], name='gen_req_created_at_desc_idx')
+            models.Index(fields=['user', 'status', '-created_at'], name='user_status_created_at_idx'),
+            models.Index(fields=['user', '-created_at'], name='user_created_at_idx')
         ]
 
     class PrivacyMeta:
@@ -41,24 +39,18 @@ class GenerationRequest(models.Model):
                 'output_large_url': instance.output_large_url,
                 'output_original_url': instance.output_original_url,
                 'status': instance.status,
-                'error_message': instance.error_message,
-                'is_hidden': instance.is_hidden,
-                'is_visible': instance.is_visible,
                 'created_at': instance.created_at,
                 'updated_at': instance.updated_at
             }
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='generation_requests')
     chosen_style = models.ForeignKey('products.Style', on_delete=models.SET_NULL, null=True, blank=True, related_name='generation_requests')
+    status = models.CharField(max_length=20, choices=GenerationStatus.choices, default=GenerationStatus.PROCESSING)
     input_thumb_url = models.URLField(max_length=1024, null=True, blank=True)
     input_large_url = models.URLField(max_length=1024, null=True, blank=True)
     output_thumb_url = models.URLField(max_length=1024, null=True, blank=True)
     output_large_url = models.URLField(max_length=1024, null=True, blank=True)
     output_original_url = models.URLField(max_length=1024, null=True, blank=True)
-    status = models.CharField(max_length=20, choices=GenerationStatus.choices, default=GenerationStatus.PROCESSING, db_index=True)
-    error_message = models.TextField(null=True, blank=True)
-    is_hidden = models.BooleanField(default=False)
-    is_visible = models.BooleanField(default=False, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

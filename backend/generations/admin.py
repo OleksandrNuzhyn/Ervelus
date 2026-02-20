@@ -8,9 +8,9 @@ from core.admin_mixins import NoLogAdminMixin
 class GenerationRequestAdmin(NoLogAdminMixin, admin.ModelAdmin):
     list_display = ('id', 'style_name', 'status', 'created_at_formatted', 'updated_at_formatted')
     list_select_related = ('chosen_style',)
-    list_filter = ('status', 'created_at', 'is_visible', 'is_hidden', 'chosen_style')
+    list_filter = ('status', 'created_at', 'chosen_style')
     search_fields = ('user__email', 'input_large_url', 'output_large_url')
-    ordering = ('-created_at',)
+    ordering = ('-id',)
     raw_id_fields = ('user', 'chosen_style')
 
     @admin.display(description='style')
