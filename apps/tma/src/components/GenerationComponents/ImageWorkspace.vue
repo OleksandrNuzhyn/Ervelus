@@ -268,7 +268,7 @@ async function urlToFile(url, filename) {
     }
     const blob = await response.blob();
     return new File([blob], filename, { type: blob.type || 'image/jpeg' });
-}
+  }
 
 const props = defineProps({
   selectedStyleName: {
@@ -301,46 +301,17 @@ const currentGenerationId = ref(null);
 const inputImageLoaded = ref(false);
 const outputImageLoaded = ref(false);
 const completedGenerationId = ref(null);
-
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE_BYTES = 7 * 1024 * 1024;
-const POLL_INTERVALS_MS = [
-  5000, 5000, 5000, 5000, 5000, 5000,
-  5000, 5000, 5000
-];
-
-let pollingTimeoutId = null;
-let cancellationTimeoutId = null;
-let deletionTimeoutId = null;
 let pollAttempt = 0;
 
 watch(() => props.latestGenerationData, (latest) => {
-  if (deletionTimeoutId) {
-    clearTimeout(deletionTimeoutId);
-    deletionTimeoutId = null;
-  }
-
   if (latest && latest.status === 'processing') {
     isLoading.value = true;
     currentGenerationId.value = latest.id;
     inputImageUrl.value = null;
     outputImageUrl.value = null;
-    startPolling(latest.created_at);
-  }
-  if (latest && !latest.is_visible) {
-    const createdAt = new Date(latest.created_at).getTime();
-    const age = Date.now() - createdAt;
-    const fiveMinutes = 5 * 60 * 1000;
-
-    if (age > fiveMinutes) {
-      deleteLongRunningRequest(latest.id);
-    } 
-    else {
-      const remainingTime = fiveMinutes - age;
-      deletionTimeoutId = setTimeout(() => {
-        deleteLongRunningRequest(latest.id);
-      }, remainingTime);
-    }
+    startPolling();
   }
 }, { immediate: true });
 
@@ -367,138 +338,79 @@ watch(outputImageUrl, (newVal, oldVal) => {
   }
 });
 
-function stopPolling() {
-  if (pollingTimeoutId) {
-    clearTimeout(pollingTimeoutId);
-    pollingTimeoutId = null;
-  }
-  if (cancellationTimeoutId) {
-    clearTimeout(cancellationTimeoutId);
-    cancellationTimeoutId = null;
-  }
-  if (deletionTimeoutId) {
-    clearTimeout(deletionTimeoutId);
-    deletionTimeoutId = null;
-  }
-}
-
 async function deleteLongRunningRequest(id) {
   try {
-    const finalCheckResponse = await api.get('/api/generations/generation-requests/latest/');
-    const finalCheckLatest = finalCheckResponse.data;
-
-    if (finalCheckLatest && finalCheckLatest.id === id) {
-      if (!finalCheckLatest.is_visible) {
-        await api.delete(`/api/generations/generation-requests/delete/${id}/`);
-        modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_timeout') });
-      } 
-      else if (finalCheckLatest.status === 'completed' && finalCheckLatest.output_large_signed_url) {
-        outputImageUrl.value = finalCheckLatest.output_large_signed_url;
-        completedGenerationId.value = finalCheckLatest.id;
-      }
-    }
+    await api.delete(`/api/generations/generation-requests/delete/${id}/`);
+    modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_timeout') });
   }
   catch (err) {
     modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_cancel_failed') });
   }
   finally {
     isLoading.value = false;
-    stopPolling();
     currentGenerationId.value = null;
   }
 }
 
-async function pollForResult() {
-  if (pollAttempt >= POLL_INTERVALS_MS.length) {
-    return;
-  }
-
-  try {
-    const response = await api.get('/api/generations/generation-requests/latest/');
-    const latest = response.data;
-
-    if (latest && !latest.is_visible) {
-      const nextInterval = POLL_INTERVALS_MS[pollAttempt];
-      pollAttempt++;
-      pollingTimeoutId = setTimeout(pollForResult, nextInterval);
-      return;
-    }
-
-    if (latest?.status === 'completed' && latest.output_large_signed_url) {
-      let finalUrl = latest.output_large_signed_url;
-
-      const res = await fetch(latest.output_large_signed_url);
-      if (res.ok) {
-        const blob = await res.blob();
-        finalUrl = URL.createObjectURL(blob);
-      }
-
-      const img = new Image();
-      img.src = finalUrl;
-      await img.decode();
-      
-      outputImageUrl.value = finalUrl;
-      completedGenerationId.value = latest.id;
-      isLoading.value = false;
-      stopPolling();
-      currentGenerationId.value = null;
-      modalStore.openOutput();
-    }
-    else if (latest?.status === 'failed') {
-      modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_failed_spell') });
-      isLoading.value = false;
-      stopPolling();
-      currentGenerationId.value = null;
-    }
-    else if (latest?.status === 'rejected_by_safety') {
-        modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_safety_rejected') });
-        inputImageUrl.value = null;
-        outputImageUrl.value = null;
-        isLoading.value = false;
-        hasStartedTransform.value = false;
-        stopPolling();
-        currentGenerationId.value = null;
-    }
-    else {
-      const nextInterval = POLL_INTERVALS_MS[pollAttempt];
-      pollAttempt++;
-      pollingTimeoutId = setTimeout(pollForResult, nextInterval);
-    }
-  }
-  catch (err) {
-    modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_status_check') });
-    isLoading.value = false;
-    stopPolling();
-    currentGenerationId.value = null;
-  }
-}
-
-function startPolling(createdAt = null) {
-  stopPolling();
+async function startPolling() {
   pollAttempt = 0;
-  pollForResult();
+  
+  while (isLoading.value && pollAttempt < 12) {
+    try {
+      const response = await api.get('/api/generations/generation-requests/latest/');
+      const latest = response.data;
 
-  const fiveMinutesInMs = 5 * 60 * 1000;
-  let timeoutDuration = fiveMinutesInMs;
+      if (latest && latest.is_visible) {
+        if (latest.status === 'completed' && latest.output_large_signed_url) {
+          let finalUrl = latest.output_large_signed_url;
 
-  if (createdAt) {
-    const startTime = new Date(createdAt).getTime();
-    const elapsedTime = Date.now() - startTime;
-    timeoutDuration = Math.max(0, fiveMinutesInMs - elapsedTime);
+          let img = new Image();
+          await new Promise((resolve) => {
+            img.onload = () => { img.onload = null; img.onerror = null; img = null; resolve(); };
+            img.onerror = () => { img.onload = null; img.onerror = null; img = null; resolve(); };
+            img.src = finalUrl;
+          });
+          
+          outputImageUrl.value = finalUrl;
+          completedGenerationId.value = latest.id;
+          isLoading.value = false;
+          currentGenerationId.value = null;
+          modalStore.openOutput();
+        }
+        else if (latest.status === 'failed') {
+          modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_failed_spell') });
+          isLoading.value = false;
+          currentGenerationId.value = null;
+        }
+        else if (latest.status === 'rejected_by_safety') {
+          modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_safety_rejected') });
+          inputImageUrl.value = null;
+          outputImageUrl.value = null;
+          isLoading.value = false;
+          hasStartedTransform.value = false;
+          currentGenerationId.value = null;
+        }
+      }
+    }
+    catch (err) {
+      modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_status_check') });
+      isLoading.value = false;
+      currentGenerationId.value = null;
+    }
+
+    if (isLoading.value) {
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      pollAttempt++;
+    }
   }
 
-  cancellationTimeoutId = setTimeout(() => {
-    if (isLoading.value && currentGenerationId.value) {
-      deleteLongRunningRequest(currentGenerationId.value);
-    }
-  }, timeoutDuration);
+  if (isLoading.value && pollAttempt >= 12 && currentGenerationId.value) {
+    deleteLongRunningRequest(currentGenerationId.value);
+  }
 }
 
 onUnmounted(() => {
-  stopPolling();
-  if (deletionTimeoutId) {
-    clearTimeout(deletionTimeoutId);
-  }
+  isLoading.value = false;
   if (outputImageUrl.value && outputImageUrl.value.startsWith('blob:')) {
     URL.revokeObjectURL(outputImageUrl.value);
   }
