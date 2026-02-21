@@ -130,7 +130,7 @@ async def generate_output_image(prompt, input_image_bytes, input_image_mime_type
                     ]
                 }
             ],
-            extra_headers={
+            http_headers={
                 "HTTP-Referer": "https://t.me/ervelus_bot/app",
                 "X-Title": "Ervelus"
             },
