@@ -1,9 +1,9 @@
 <template>
-    <div @click.stop="selectStyle" class="relative cursor-default transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-103 w-fit mx-auto">
+    <div @click.stop="selectStyle" class="relative cursor-default transition-transform duration-200 ease-in-out transform-gpu w-fit mx-auto">
       <div 
-        class="w-45 h-45 rounded-2xl mx-auto transition-all duration-200 flex items-center justify-center relative cursor-pointer overflow-hidden transform-gpu bg-[#2a2a2a]"
+        class="w-45 h-45 rounded-2xl mx-auto flex items-center justify-center relative cursor-pointer overflow-hidden border-2 transition-colors duration-200"
         :class="[
-          isSelected ? 'ring-2 ring-gray-400' : 'hover:ring-2 hover:ring-gray-800 hover:ring-opacity-30'
+          isSelected ? 'border-gray-400' : 'border-transparent hover:border-white/10'
         ]"
       >
         <div class="absolute inset-0 w-full h-full" :class="getSpriteClass()"></div>

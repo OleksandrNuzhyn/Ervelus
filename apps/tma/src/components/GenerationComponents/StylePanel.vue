@@ -13,13 +13,15 @@
         </button>
       </div>
       <div class="relative flex-grow min-h-0 group" @click="handleBackgroundClick">
+        <div class="absolute top-0 left-0 w-full h-8 bg-gradient-to-b from-[#1a1a1a] to-transparent z-10 pointer-events-none rounded-t-3xl"></div>
+        
         <div 
           ref="scrollContainer"
           @click="handleBackgroundClick"
-          class="w-full h-full overflow-y-auto no-scrollbar" 
+          class="w-full h-full overflow-y-auto no-scrollbar pb-6" 
           id="masked-scroll-container"
         >
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 py-6 px-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pt-6 pb-2 px-4">
             <StyleCard
               class="style-card-item"
               v-for="style in styles"
@@ -29,6 +31,8 @@
               @select-style="onStyleSelected"/>
           </div>
         </div>
+
+        <div class="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-[#1a1a1a] to-transparent z-10 pointer-events-none rounded-b-3xl"></div>
       </div>
     </div>
   </div>
