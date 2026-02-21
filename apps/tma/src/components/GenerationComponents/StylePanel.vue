@@ -15,14 +15,9 @@
       <div class="relative flex-grow min-h-0 group" @click="handleBackgroundClick">
         <div 
           ref="scrollContainer"
-          @scroll="checkScroll"
           @click="handleBackgroundClick"
-          class="w-full h-full overflow-y-auto no-scrollbar mask-fade-vertical" 
+          class="w-full h-full overflow-y-auto no-scrollbar" 
           id="masked-scroll-container"
-          :style="{
-            '--mask-top': canScrollUp ? '30px' : '0px',
-            '--mask-bottom': canScrollDown ? '30px' : '0px'
-          }"
         >
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 py-6 px-4">
             <StyleCard
@@ -40,7 +35,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, watch } from 'vue';
+import { ref, watch } from 'vue';
 import StyleCard from './StyleCard.vue';
 
 const props = defineProps({
@@ -63,16 +58,6 @@ const props = defineProps({
 const emit = defineEmits(['style-selected', 'close', 'next-genre', 'prev-genre']);
 
 const scrollContainer = ref(null);
-const canScrollUp = ref(true);
-const canScrollDown = ref(true);
-
-function checkScroll() {
-  const el = scrollContainer.value;
-  if (!el) return;
-  
-  canScrollUp.value = el.scrollTop > 10;
-  canScrollDown.value = el.scrollTop + el.clientHeight < el.scrollHeight - 10;
-}
 
 function onStyleSelected(styleId) {
   emit('style-selected', styleId);
@@ -85,13 +70,6 @@ function handleClose() {
 function handleBackgroundClick(event) {
   handleClose();
 }
-
-onMounted(() => {
-  nextTick(() => {
-    checkScroll();
-    setTimeout(checkScroll, 500);
-  });
-});
 
 watch(() => props.currentGenreName, () => {
   if (scrollContainer.value) {
@@ -108,27 +86,5 @@ watch(() => props.currentGenreName, () => {
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
-}
-
-.mask-fade-vertical {
-  mask-image: linear-gradient(
-    to bottom,
-    rgba(0,0,0,0.2) 0%,
-    rgba(0,0,0,0.6) calc(var(--mask-top, 0px) / 2),
-    black var(--mask-top, 0px),
-    black calc(100% - var(--mask-bottom, 0px)),
-    rgba(0,0,0,0.6) calc(100% - (var(--mask-bottom, 0px) / 2)),
-    rgba(0,0,0,0.2) 100%
-  );
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    rgba(0,0,0,0.2) 0%,
-    rgba(0,0,0,0.6) calc(var(--mask-top, 0px) / 2),
-    black var(--mask-top, 0px),
-    black calc(100% - var(--mask-bottom, 0px)),
-    rgba(0,0,0,0.6) calc(100% - (var(--mask-bottom, 0px) / 2)),
-    rgba(0,0,0,0.2) 100%
-  );
-  transition: mask-image 0.5s ease-in-out, -webkit-mask-image 0.5s ease-in-out;
 }
 </style>

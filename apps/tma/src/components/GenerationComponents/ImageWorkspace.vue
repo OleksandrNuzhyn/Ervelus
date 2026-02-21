@@ -207,28 +207,28 @@
         leave-to-class="opacity-0"
       >
         <div v-if="modalStore.isOutputOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-xl animate-fade-in p-4" @click="modalStore.closeOutput()">
-          <div class="relative flex flex-col items-center pointer-events-none">
-               <div class="relative pointer-events-auto">
-                 <div v-if="!outputImageLoaded" class="absolute inset-0 flex items-center justify-center">
-                     <div class="stars-loader"></div>
-                 </div>
-                 
-                 <img :src="outputImageUrl" class="block max-h-[70vh] w-auto h-auto object-contain shadow-2xl rounded-2xl bg-black/50" />
-
-                 <div class="absolute top-full left-0 w-full pt-3 flex flex-col gap-3 pointer-events-auto">
-                   <button @click.stop="downloadOutputImage" class="w-full bg-white/[0.08] hover:bg-white/[0.12] active:scale-[0.98] transition-all text-white font-bold rounded-xl h-[52px] text-[15px] flex items-center justify-center gap-2">
-                     <span class="text-white font-bold">{{ $t('workspace.download') || 'Save' }}</span>
-                     <svg class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                       <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                     </svg>
-                   </button>
-
-                   <button @click.stop="shareImage" class="w-full bg-white/[0.08] hover:bg-white/[0.12] active:scale-[0.98] transition-all text-white font-bold rounded-xl h-[52px] text-[15px] flex items-center justify-center gap-2">
-                     <span class="text-white font-bold">{{ $t('workspace.share') || 'Share' }}</span>
-                     <svg class="w-6 h-6 flex-shrink-0" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g><circle cx="16" cy="16" r="14" fill="url(#paint0_linear_share)"></circle><path d="M22.9866 10.2088C23.1112 9.40332 22.3454 8.76755 21.6292 9.082L7.36482 15.3448C6.85123 15.5703 6.8888 16.3483 7.42147 16.5179L10.3631 17.4547C10.9246 17.6335 11.5325 17.541 12.0228 17.2023L18.655 12.6203C18.855 12.4821 19.073 12.7665 18.9021 12.9426L14.1281 17.8646C13.665 18.3421 13.7569 19.1512 14.314 19.5005L19.659 22.8523C20.2585 23.2282 21.0297 22.8506 21.1418 22.1261L22.9866 10.2088Z" fill="white"></path><defs><linearGradient id="paint0_linear_share" x1="16" y1="2" x2="16" y2="30" gradientUnits="userSpaceOnUse"><stop stop-color="#37BBFE"></stop><stop offset="1" stop-color="#007DBB"></stop></linearGradient></defs></g></svg>
-                   </button>
-                 </div>
+          <div class="relative w-full max-w-sm flex flex-col pointer-events-none gap-4">
+             <div class="relative w-full flex items-center justify-center pointer-events-auto">
+               <div v-if="!outputImageLoaded" class="absolute inset-0 flex items-center justify-center">
+                   <div class="stars-loader"></div>
                </div>
+               
+               <img :src="outputImageUrl" class="block max-h-[calc(100dvh-200px)] w-auto h-auto object-contain shadow-2xl rounded-2xl bg-black/50" />
+             </div>
+
+             <div class="w-full flex-shrink-0 flex flex-col gap-3 pointer-events-auto px-4">
+               <button @click.stop="downloadOutputImage" class="w-full bg-white/[0.08] hover:bg-white/[0.12] active:scale-[0.98] transition-all text-white font-bold rounded-xl h-[52px] text-[15px] flex items-center justify-center gap-2">
+                 <span class="text-white font-bold">{{ $t('workspace.download') || 'Save' }}</span>
+                 <svg class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                 </svg>
+               </button>
+
+               <button @click.stop="shareImage" class="w-full bg-white/[0.08] hover:bg-white/[0.12] active:scale-[0.98] transition-all text-white font-bold rounded-xl h-[52px] text-[15px] flex items-center justify-center gap-2">
+                 <span class="text-white font-bold">{{ $t('workspace.share') || 'Share' }}</span>
+                 <svg class="w-6 h-6 flex-shrink-0" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g><circle cx="16" cy="16" r="14" fill="url(#paint0_linear_share)"></circle><path d="M22.9866 10.2088C23.1112 9.40332 22.3454 8.76755 21.6292 9.082L7.36482 15.3448C6.85123 15.5703 6.8888 16.3483 7.42147 16.5179L10.3631 17.4547C10.9246 17.6335 11.5325 17.541 12.0228 17.2023L18.655 12.6203C18.855 12.4821 19.073 12.7665 18.9021 12.9426L14.1281 17.8646C13.665 18.3421 13.7569 19.1512 14.314 19.5005L19.659 22.8523C20.2585 23.2282 21.0297 22.8506 21.1418 22.1261L22.9866 10.2088Z" fill="white"></path><defs><linearGradient id="paint0_linear_share" x1="16" y1="2" x2="16" y2="30" gradientUnits="userSpaceOnUse"><stop stop-color="#37BBFE"></stop><stop offset="1" stop-color="#007DBB"></stop></linearGradient></defs></g></svg>
+               </button>
+             </div>
           </div>
         </div>
       </transition>
@@ -315,7 +315,10 @@ watch(() => props.latestGenerationData, (latest) => {
   }
 }, { immediate: true });
 
-watch(inputImageUrl, (newVal) => {
+watch(inputImageUrl, (newVal, oldVal) => {
+  if (oldVal && oldVal.startsWith('blob:')) {
+    URL.revokeObjectURL(oldVal);
+  }
   
   if (!newVal) {
     inputImageFile.value = null;
@@ -357,21 +360,17 @@ async function startPolling() {
   
   while (isLoading.value && pollAttempt < 12) {
     try {
-      const response = await api.get('/api/generations/generation-requests/latest/');
-      const latest = response.data;
+      const { data: latest } = await api.get('/api/generations/generation-requests/latest/');
 
-      if (latest && latest.is_visible) {
-        if (latest.status === 'completed' && latest.output_large_signed_url) {
+      if (latest) {
+        if (latest.status === 'completed') {
           let finalUrl = latest.output_large_signed_url;
 
-          let img = new Image();
-          await new Promise((resolve) => {
-            img.onload = () => { img.onload = null; img.onerror = null; img = null; resolve(); };
-            img.onerror = () => { img.onload = null; img.onerror = null; img = null; resolve(); };
-            img.src = finalUrl;
-          });
+          const imageResponse = await fetch(finalUrl);
+          if (!imageResponse.ok) throw new Error('Failed to fetch image');
+          const blob = await imageResponse.blob();
           
-          outputImageUrl.value = finalUrl;
+          outputImageUrl.value = URL.createObjectURL(blob);
           completedGenerationId.value = latest.id;
           isLoading.value = false;
           currentGenerationId.value = null;
@@ -408,13 +407,6 @@ async function startPolling() {
     deleteLongRunningRequest(currentGenerationId.value);
   }
 }
-
-onUnmounted(() => {
-  isLoading.value = false;
-  if (outputImageUrl.value && outputImageUrl.value.startsWith('blob:')) {
-    URL.revokeObjectURL(outputImageUrl.value);
-  }
-});
 
 const buttonText = computed(() => {
   if (isLoading.value) return t('workspace.transforming') || 'Transforming...';
@@ -517,11 +509,7 @@ function handleFile(file) {
   }
 
   inputImageFile.value = file;
-  const reader = new FileReader();
-  reader.onload = (event) => {
-    inputImageUrl.value = event.target?.result;
-  };
-  reader.readAsDataURL(file);
+  inputImageUrl.value = URL.createObjectURL(file);
 }
 
 function onInputImageLoad() {
@@ -562,6 +550,16 @@ async function shareImage() {
     modalStore.openModal({ title: t('workspace.share'), message: t('workspace.share_not_supported') });
   }
 }
+
+onUnmounted(() => {
+  isLoading.value = false;
+  if (inputImageUrl.value && inputImageUrl.value.startsWith('blob:')) {
+    URL.revokeObjectURL(inputImageUrl.value);
+  }
+  if (outputImageUrl.value && outputImageUrl.value.startsWith('blob:')) {
+    URL.revokeObjectURL(outputImageUrl.value);
+  }
+});
 </script>
 
 <style scoped>

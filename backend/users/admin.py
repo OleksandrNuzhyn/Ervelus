@@ -36,14 +36,6 @@ class UserAdmin(NoLogAdminMixin, BaseUserAdmin):
     )
     actions = ['delete_user_account_action']
 
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-
-        if 'is_active__exact' not in request.GET and not request.GET.get('q'):
-            return queryset.filter(is_active=True)
-            
-        return queryset
-
     @admin.display(ordering='last_login', description='last login')
     def last_login_formatted(self, obj):
         if obj.last_login:
