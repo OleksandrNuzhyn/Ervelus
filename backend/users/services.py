@@ -92,12 +92,14 @@ def delete_user_account(user):
             for promo_code_usage in user.promo_code_usages.all():
                 promo_code_usage.anonymise()
 
-            if user.profile.credits > 0:
-                config = ApplicationConfig.get_solo()
-                config.reserved_generations = F('reserved_generations') - user.profile.credits
-                config.save(update_fields=['reserved_generations'])
+            if hasattr(user, 'profile'):
+                if user.profile.credits > 0:
+                    config = ApplicationConfig.get_solo()
+                    config.reserved_generations = F('reserved_generations') - user.profile.credits
+                    config.save(update_fields=['reserved_generations'])
                 
-            user.profile.delete()
+                user.profile.delete()
+                
             user.anonymise()
     except Exception as e:
         logger.error("Failed to anonymise user data in delete request", extra={'user_id': user.id, 'error': str(e)}, exc_info=True)

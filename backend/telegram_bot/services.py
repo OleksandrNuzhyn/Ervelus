@@ -3,7 +3,7 @@ from generations.models import GenerationRequest
 from core.models import ApplicationConfig
 from asgiref.sync import async_to_sync
 from users.models import UserProfile
-from init_data_py import InitData
+from urllib.parse import parse_qsl
 from django.db import transaction
 from django.conf import settings
 from .messages import MESSAGES
@@ -12,6 +12,9 @@ import geoip2.database
 import geoip2.errors
 import telegram
 import logging
+import hashlib
+import hmac
+import json
 import os
 import re
 
@@ -20,15 +23,36 @@ bot = telegram.Bot(token=settings.TELEGRAM_API_KEY)
 
 def validate_telegram_init_data(init_data):
     try:
-        parsed_data = InitData.parse(init_data)
-        
-        if not parsed_data.validate(bot_token=settings.TELEGRAM_API_KEY, raise_error=False):
-            raise Exception("Invalid init_data")
-        
-        if not parsed_data.user:
-            raise Exception("User data missing")
+        parsed_data = dict(parse_qsl(init_data))
+        received_hash = parsed_data.pop("hash", None)
 
-        return parsed_data.user.to_dict()
+        if not received_hash:
+            raise Exception("Hash is missing")
+        
+        data_check_string = "\n".join(
+            f"{k}={v}" for k, v in sorted(parsed_data.items())
+        )
+        
+        secret_key = hmac.new(
+            b"WebAppData", 
+            settings.TELEGRAM_API_KEY.encode("utf-8"), 
+            hashlib.sha256
+        ).digest()
+        
+        calculated_hash = hmac.new(
+            secret_key, 
+            data_check_string.encode("utf-8"), 
+            hashlib.sha256
+        ).hexdigest()
+        
+        if not hmac.compare_digest(calculated_hash, received_hash):
+            raise Exception("Invalid init_data")
+            
+        parsed_user_data = parsed_data.get("user")
+        if not parsed_user_data:
+            raise Exception("User data missing")
+            
+        return json.loads(parsed_user_data)
     except Exception as e:
         raise Exception(str(e))
     
