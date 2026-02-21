@@ -61,7 +61,7 @@ def schedule_image_deletion(image_urls):
             'headers': {'Content-Type': 'application/json'},
             'body': json.dumps(event_data).encode('utf-8'),
         },
-        'dispatch_deadline': duration_pb2.Duration(seconds=10)
+        'dispatch_deadline': duration_pb2.Duration(seconds=15)
     }
 
     tasks_client.create_task(request={'parent': queue_path, 'task': task})
@@ -135,7 +135,7 @@ async def generate_output_image(prompt, input_image_bytes, input_image_mime_type
                 "X-Title": "Ervelus"
             },
             retries=None,
-            timeout_ms=35000
+            timeout_ms=40000
         )
         
         if not response or not response.choices:
@@ -210,7 +210,7 @@ def schedule_image_resizing(generation_request_id, user_id, input_image_url, out
             'headers': {'Content-Type': 'application/json'},
             'body': json.dumps(event_data).encode('utf-8'),
         },
-        'dispatch_deadline': duration_pb2.Duration(seconds=10)
+        'dispatch_deadline': duration_pb2.Duration(seconds=15)
     }
 
     tasks_client.create_task(request={'parent': queue_path, 'task': task})

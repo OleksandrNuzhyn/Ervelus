@@ -133,7 +133,7 @@ def create_update_task(generation_request_id, update_data):
                 'headers': {'Content-Type': 'application/json'},
                 'body': json.dumps(event_data).encode('utf-8')
             },
-            'dispatch_deadline': duration_pb2.Duration(seconds=5)
+            'dispatch_deadline': duration_pb2.Duration(seconds=15)
         }
 
         tasks_client.create_task(request={'parent': queue_path, 'task': task})
