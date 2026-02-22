@@ -107,10 +107,10 @@ async def upload_output_image_to_gcs(image_bytes, user_id, style_name):
 
     return f"https://storage.googleapis.com/{bucket_name}/{blob_name}"
 
-async def generate_output_image(prompt, input_image_bytes, input_image_mime_type, api_key):
+async def generate_output_image(prompt, input_image_bytes, input_image_mime_type):
     base64_input_image = base64.b64encode(input_image_bytes).decode('utf-8')
     
-    async with OpenRouter(api_key=api_key) as client:
+    async with OpenRouter(api_key=settings.OPENROUTER_API_KEY) as client:
         response = await client.chat.send_async(
             model="google/gemini-2.5-flash-image",
             messages=[
@@ -131,7 +131,7 @@ async def generate_output_image(prompt, input_image_bytes, input_image_mime_type
                 }
             ],
             http_headers={
-                "HTTP-Referer": "https://t.me/ervelus_bot/app",
+                "HTTP-Referer": "https://ervelus.com",
                 "X-Title": "Ervelus"
             },
             retries=None,
@@ -247,12 +247,9 @@ async def handle_generation_process(generation_request_id, input_image_url):
             'jpg': 'image/jpeg'
         }
         input_image_mime_type = mime_type_map[input_file_extension]
-    
-        user_profile = await UserProfile.objects.aget(user_id=user_id)
-        api_key = settings.OPENROUTER_PAID_API_KEY if user_profile.is_paid else settings.OPENROUTER_FREE_API_KEY
-    
+
         await sync_to_async(connections.close_all)()
-        output_image_bytes = await generate_output_image(prompt, input_image_bytes, input_image_mime_type, api_key)
+        output_image_bytes = await generate_output_image(prompt, input_image_bytes, input_image_mime_type)
 
         output_image_url = await upload_output_image_to_gcs(
             image_bytes=output_image_bytes,

@@ -10,8 +10,9 @@
         leave-from-class="opacity-100"
         leave-to-class="opacity-0"
       >
-        <div v-show="modalStore.isStylePanelOpen" class="fixed inset-0 bg-black/60 backdrop-blur-xl z-[58]" @click="handleClosePanel"></div>
+        <div v-if="modalStore.isStylePanelOpen" class="fixed inset-0 bg-black/60 backdrop-blur-xl z-[58]" @click="handleClosePanel"></div>
       </transition>
+      
       <transition
         enter-active-class="transition-opacity duration-300 ease-out"
         enter-from-class="opacity-0"
@@ -21,7 +22,7 @@
         leave-to-class="opacity-0"
       >
         <StylePanel
-          v-show="modalStore.isStylePanelOpen"
+          v-if="modalStore.isStylePanelOpen"
           class="!absolute top-full mt-3 w-full left-0 z-[60]"
           :styles="filteredStyles"
           :selected-style-id="selectedStyleId"

@@ -12,16 +12,14 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
         </button>
       </div>
-      <div class="relative flex-grow min-h-0 group" @click="handleBackgroundClick">
-        <div class="absolute top-0 left-0 w-full h-8 bg-gradient-to-b from-[#1a1a1a] to-transparent z-10 pointer-events-none rounded-t-3xl"></div>
-        
+      <div class="relative flex-grow min-h-0 group overflow-hidden rounded-2xl transform-gpu mask-vertical-fade" @click="handleBackgroundClick" style="transform: translateZ(0); will-change: transform;">
         <div 
           ref="scrollContainer"
           @click="handleBackgroundClick"
-          class="w-full h-full overflow-y-auto no-scrollbar pb-6" 
+          class="w-full h-full overflow-y-auto no-scrollbar" 
           id="masked-scroll-container"
         >
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pt-6 pb-2 px-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pt-8 pb-6 px-4">
             <StyleCard
               class="style-card-item"
               v-for="style in styles"
@@ -31,8 +29,6 @@
               @select-style="onStyleSelected"/>
           </div>
         </div>
-
-        <div class="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-[#1a1a1a] to-transparent z-10 pointer-events-none rounded-b-3xl"></div>
       </div>
     </div>
   </div>
@@ -90,5 +86,10 @@ watch(() => props.currentGenreName, () => {
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+.mask-vertical-fade {
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5), black 12px, black calc(100% - 14px), rgba(0,0,0,0.4));
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5), black 12px, black calc(100% - 14px), rgba(0,0,0,0.4));
 }
 </style>

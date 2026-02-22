@@ -6,10 +6,20 @@
       </button>
     </div>
     
-    <div class="relative flex-grow overflow-hidden transition-all duration-500 ease-in-out rounded-2xl border border-white/[0.02] flex flex-col transform-gpu" 
-         :class="isStylePanelOpen ? 'bg-[#1c1c1c] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] backdrop-blur-none' : 'bg-white/[0.03] shadow-[0_8px_32px_0_rgba(0,0,0,0.25)] backdrop-blur-[25px]'">
+    <div class="relative flex-grow overflow-hidden rounded-2xl border border-white/[0.02] flex flex-col transform-gpu bg-transparent">
+
+      <div 
+        class="absolute inset-0 bg-white/[0.03] shadow-[0_8px_32px_0_rgba(0,0,0,0.25)] backdrop-blur-[25px] transition-opacity duration-500 ease-in-out pointer-events-none"
+        :class="isStylePanelOpen ? 'opacity-0' : 'opacity-100'"
+      ></div>
+
+      <div 
+        class="absolute inset-0 bg-[#1c1c1c] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] transition-opacity duration-500 ease-in-out pointer-events-none"
+        :class="isStylePanelOpen ? 'opacity-100' : 'opacity-0'"
+      ></div>
+
       <div ref="scrollContainer" 
-        class="py-2 px-4 md:py-3 overflow-x-auto no-scrollbar min-h-[52px] md:min-h-[60px] flex items-center scroll-smooth mask-fade"
+        class="relative z-10 py-2 px-4 md:py-3 overflow-x-auto no-scrollbar min-h-[52px] md:min-h-[60px] flex items-center mask-fade"
         :style="{
           '--mask-left': showLeftArrow ? '64px' : '0px',
           '--mask-right': showArrow ? '64px' : '0px'
@@ -30,7 +40,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch, nextTick, onBeforeUnmount } from 'vue';
+import { onMounted, ref, watch, nextTick } from 'vue';
 
 const props = defineProps({
   categories: { type: Array, required: true },
@@ -78,8 +88,10 @@ function scrollRight() {
   }
 }
 
+let scrollTimeout = null;
 function scrollToSelected() {
-  nextTick(() => {
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(() => {
     const el = scrollContainer.value;
     if (!el) return;
     
@@ -87,17 +99,19 @@ function scrollToSelected() {
     if (selectedBtn) {
       const elCenter = el.clientWidth / 2;
       const btnCenter = selectedBtn.offsetLeft + (selectedBtn.clientWidth / 2);
-      const targetPos = btnCenter - elCenter;
+      let targetPos = btnCenter - elCenter;
+      
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      if (targetPos < 0) targetPos = 0;
+      if (targetPos > maxScroll) targetPos = maxScroll;
       
       el.scrollTo({
         left: targetPos,
         behavior: 'smooth'
       });
     }
-  });
+  }, 100);
 }
-
-let resizeObserver = null;
 
 onMounted(() => {
   const el = scrollContainer.value;
@@ -108,14 +122,11 @@ onMounted(() => {
       e.preventDefault();
     }
   }, { passive: false });
+  
   el.addEventListener('scroll', () => {
     window.requestAnimationFrame(checkScroll);
   });
-  resizeObserver = new ResizeObserver(() => {
-    checkScroll();
-    scrollToSelected();
-  });
-  resizeObserver.observe(el);
+  
   watch(() => props.categories, () => {
     nextTick(() => {
       checkScroll();
@@ -133,9 +144,6 @@ onMounted(() => {
   });
 });
 
-onBeforeUnmount(() => {
-  if (resizeObserver) resizeObserver.disconnect();
-});
 </script>
 
 <style scoped>
