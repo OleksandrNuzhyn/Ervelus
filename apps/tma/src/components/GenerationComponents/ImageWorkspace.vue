@@ -365,12 +365,14 @@ async function startPolling() {
       if (latest) {
         if (latest.status === 'completed') {
           let finalUrl = latest.output_large_signed_url;
-
-          const imageResponse = await fetch(finalUrl);
-          if (!imageResponse.ok) throw new Error('Failed to fetch image');
-          const blob = await imageResponse.blob();
+          let img = new Image();
+          await new Promise((resolve) => {
+            img.onload = () => { img.onload = null; img.onerror = null; img = null; resolve(); };
+            img.onerror = () => { img.onload = null; img.onerror = null; img = null; resolve(); };
+            img.src = finalUrl;
+          });
           
-          outputImageUrl.value = URL.createObjectURL(blob);
+          outputImageUrl.value = finalUrl;
           completedGenerationId.value = latest.id;
           isLoading.value = false;
           currentGenerationId.value = null;
