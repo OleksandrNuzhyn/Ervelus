@@ -6,27 +6,26 @@
       </button>
     </div>
     
-    <div class="relative flex-grow overflow-hidden rounded-2xl border border-white/[0.02] flex flex-col transform-gpu bg-transparent">
+    <div class="relative flex-grow overflow-hidden rounded-2xl flex flex-col transition-shadow duration-300 ease-out"
+         :class="isStylePanelOpen ? 'shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]' : 'shadow-[0_8px_32px_0_rgba(0,0,0,0.25)]'">
 
-      <div 
-        class="absolute inset-0 bg-white/[0.03] shadow-[0_8px_32px_0_rgba(0,0,0,0.25)] backdrop-blur-[25px] transition-opacity duration-500 ease-in-out pointer-events-none"
-        :class="isStylePanelOpen ? 'opacity-0' : 'opacity-100'"
-      ></div>
+      <div class="absolute inset-0 rounded-2xl bg-white/[0.03] backdrop-blur-[25px] border border-white/[0.02] pointer-events-none transition-opacity duration-300 ease-out"
+           :class="isStylePanelOpen ? 'opacity-0' : 'opacity-100'"></div>
 
-      <div 
-        class="absolute inset-0 bg-[#1c1c1c] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] transition-opacity duration-500 ease-in-out pointer-events-none"
-        :class="isStylePanelOpen ? 'opacity-100' : 'opacity-0'"
-      ></div>
+      <div class="absolute inset-0 rounded-2xl bg-[#1c1c1c] pointer-events-none transition-opacity duration-300 ease-out"
+           :class="isStylePanelOpen ? 'opacity-100' : 'opacity-0'"></div>
 
-      <div ref="scrollContainer" 
-        class="relative z-10 py-2 px-4 md:py-3 overflow-x-auto no-scrollbar min-h-[52px] md:min-h-[60px] flex items-center mask-fade"
-        :style="{
-          '--mask-left': showLeftArrow ? '64px' : '0px',
-          '--mask-right': showArrow ? '64px' : '0px'
-        }"
-      >
-        <div class="flex items-center space-x-2 md:space-x-12" :class="isScrollable ? 'justify-start' : 'justify-center w-full'">
-          <button v-for="category in categories" :key="category.id" @click="selectCategory(category.id)" :class="['px-5 py-1.5 md:py-2.5 rounded-full text-[13px] font-semibold transition-all duration-300 flex-shrink-0 whitespace-nowrap inter', selectedCategoryId === category.id ? 'bg-white/20 text-white shadow-sm' : 'bg-transparent text-white/50 hover:text-white/80 hover:bg-white/5']">{{ category.name }}</button>
+      <div class="relative z-10 mask-fade flex-grow flex"
+           :style="{
+             '--mask-left': showLeftArrow ? '64px' : '0px',
+             '--mask-right': showArrow ? '64px' : '0px'
+           }">
+        <div ref="scrollContainer" 
+          class="relative w-full py-2 px-4 md:py-3 overflow-x-auto no-scrollbar min-h-[52px] md:min-h-[60px] flex items-center"
+        >
+          <div class="flex items-center space-x-2 md:space-x-12" :class="isScrollable ? 'justify-start' : 'justify-center w-full'">
+            <button v-for="category in categories" :key="category.id" @click="selectCategory(category.id)" :class="['px-5 py-1.5 md:py-2.5 rounded-full text-[13px] font-semibold transition-all duration-300 flex-shrink-0 whitespace-nowrap inter', selectedCategoryId === category.id ? 'bg-white/20 text-white shadow-sm' : 'bg-transparent text-white/50 hover:text-white/80 hover:bg-white/5']">{{ category.name }}</button>
+          </div>
         </div>
       </div>
     </div>
@@ -67,8 +66,11 @@ function checkScroll() {
     showArrow.value = scrollPossible && (el.scrollLeft + el.clientWidth < el.scrollWidth - 2);
     showLeftArrow.value = scrollPossible && el.scrollLeft > 2;
 
-    el.style.setProperty('--mask-left', showLeftArrow.value ? '60px' : '0px');
-    el.style.setProperty('--mask-right', showArrow.value ? '60px' : '0px');
+    const wrapper = el.parentElement;
+    if (wrapper) {
+      wrapper.style.setProperty('--mask-left', showLeftArrow.value ? '60px' : '0px');
+      wrapper.style.setProperty('--mask-right', showArrow.value ? '60px' : '0px');
+    }
   }
 }
 

@@ -3,7 +3,7 @@
       <div 
         class="w-45 h-45 rounded-2xl mx-auto transition-all duration-200 flex items-center justify-center relative cursor-pointer overflow-hidden transform-gpu bg-[#2a2a2a]"
         :class="[
-          isSelected ? 'ring-2 ring-gray-400' : 'hover:ring-2 hover:ring-gray-800 hover:ring-opacity-30'
+          isSelected ? 'ring-1 ring-white/20 shadow-[0_0_15px_rgba(255,255,255,0.1)]' : 'hover:ring-2 hover:ring-white/20 hover:ring-opacity-50'
         ]"
       >
         <div class="absolute inset-0 w-full h-full" :class="getSpriteClass()"></div>

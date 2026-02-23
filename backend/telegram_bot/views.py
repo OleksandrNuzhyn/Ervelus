@@ -81,6 +81,12 @@ def create_telegram_user(telegram_data, request):
             user_profile.credits += 1
             user_profile.is_subscribed = True
             user_profile.save(update_fields=['credits', 'is_subscribed'])
+            
+            services.send_message_to_user(
+                telegram_id=telegram_id,
+                message_key='subscription_bonus',
+                language_code=telegram_data.get('language_code')
+            )
     except Exception as e:
         logger.error("Failed to check channel subscription", extra={"error": str(e)}, exc_info=True)
 

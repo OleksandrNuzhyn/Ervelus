@@ -10,7 +10,7 @@
         leave-from-class="opacity-100"
         leave-to-class="opacity-0"
       >
-        <div v-if="modalStore.isStylePanelOpen" class="fixed inset-0 bg-black/60 backdrop-blur-xl z-[58]" @click="handleClosePanel"></div>
+        <div v-if="modalStore.isStylePanelOpen" class="fixed inset-0 bg-[#0c0d14]/80 z-[58]" @click="handleClosePanel"></div>
       </transition>
       
       <transition
