@@ -12,7 +12,8 @@ logger = logging.getLogger(__name__)
 @permission_classes([IsAuthenticated])
 def credit_balance(request):
     user_profile = UserProfile.objects.get(user=request.user)
-    return Response({'credits': user_profile.credits}, status=200)
+    total_credits = user_profile.free_credits + user_profile.paid_credits
+    return Response({'credits': total_credits}, status=200)
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])

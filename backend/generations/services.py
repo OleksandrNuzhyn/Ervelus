@@ -170,21 +170,32 @@ async def handle_update_after_resize(generation_request_id, update_data):
         if update_fields:
             update_fields.append('updated_at')
             await generation_request.asave(update_fields=update_fields)
-
-            try:
-                user_profile = await UserProfile.objects.aget(user_id=generation_request.user_id)
-                
-                if user_profile.credits > 0:
-                    user_profile.credits -= 1
-                    await user_profile.asave(update_fields=['credits'])
-                else:
-                    logger.error("Credit not debited, no credits available", extra={'generation_request_id': generation_request_id})
-            except UserProfile.DoesNotExist:
-                logger.error("User profile not found. Credit not debited", extra={'generation_request_id': generation_request_id})
     except GenerationRequest.DoesNotExist:
-        logger.error("Generation request was deleted. Update after resize aborted", extra={'generation_request_id': generation_request_id, 'update_data': update_data})
+        logger.error("Generation request disappeared. Update after resize aborted", extra={'generation_request_id': generation_request_id})
+        return
     except Exception as e:
-        logger.error("An error occurred while updating generation request after resize and credits balance", extra={'generation_request_id': generation_request_id, 'update_data': update_data, 'error': str(e)}, exc_info=True)
+        logger.error("Failed to update generation request after resize", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
+        return
+
+    try:
+        user_profile = await UserProfile.objects.aget(user_id=generation_request.user_id)
+        
+        if generation_request.type == GenerationRequest.CreditType.FREE:
+            if user_profile.free_credits > 0:
+                user_profile.free_credits -= 1
+                await user_profile.asave(update_fields=['free_credits'])
+            else:
+                logger.error("No free credits available for debit", extra={'generation_request_id': generation_request_id})
+        elif generation_request.type == GenerationRequest.CreditType.PAID:
+            if user_profile.paid_credits > 0:
+                user_profile.paid_credits -= 1
+                await user_profile.asave(update_fields=['paid_credits'])
+            else:
+                logger.error("No paid credits available for debit", extra={'generation_request_id': generation_request_id})
+    except UserProfile.DoesNotExist:
+        logger.error("User profile not found for credit debit", extra={'generation_request_id': generation_request_id})
+    except Exception as e:
+        logger.error("Error during credit debit process", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
 
 @sync_to_async
 def schedule_image_resizing(generation_request_id, user_id, input_image_url, output_image_url):

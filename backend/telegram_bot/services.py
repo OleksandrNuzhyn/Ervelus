@@ -1,13 +1,11 @@
 from generations.services import generate_signed_gcs_url
 from generations.models import GenerationRequest
-from core.models import ApplicationConfig
 from asgiref.sync import async_to_sync
 from users.models import UserProfile
 from urllib.parse import parse_qsl
 from django.db import transaction
 from django.conf import settings
 from .messages import MESSAGES
-from django.db.models import F
 import geoip2.database
 import geoip2.errors
 import telegram
@@ -99,13 +97,9 @@ def handle_chat_member(update):
             user_profile = UserProfile.objects.get(telegram_id=telegram_id)
             
             if not user_profile.is_subscribed:
-                user_profile.credits += 1
+                user_profile.free_credits += 1
                 user_profile.is_subscribed = True
-                user_profile.save(update_fields=['credits', 'is_subscribed'])
-                
-                config = ApplicationConfig.get_solo()
-                config.reserved_generations = F('reserved_generations') + 1
-                config.save(update_fields=['reserved_generations'])
+                user_profile.save(update_fields=['free_credits', 'is_subscribed'])
 
                 send_message_to_user(
                     telegram_id=telegram_id,
@@ -165,7 +159,6 @@ def handle_message(update):
         return
     
     header_text = (
-        f"New Message from User\n"
         f"Name: {message.from_user.first_name} {message.from_user.last_name or ''}\n"
         f"Username: @{message.from_user.username or 'N/A'}\n"
         f"ID: {sender_id}\n"

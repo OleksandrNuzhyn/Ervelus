@@ -1,19 +1,16 @@
 <template>
-  <div class="flex items-center w-full relative transition-[z-index]" :class="{'md:space-x-4': isScrollable, 'z-[65] delay-0': isStylePanelOpen, 'z-[20] delay-500': !isStylePanelOpen}">
+  <div class="flex items-center w-full relative" :class="{'md:space-x-4': isScrollable, 'z-[65]': isStylePanelOpen, 'z-[20]': !isStylePanelOpen}">
     <div v-if="isScrollable" class="hidden md:flex w-10 shrink-0 justify-end">
       <button v-show="showLeftArrow" @click="scrollLeft" class="p-2 rounded-full bg-black/20 hover:bg-black/40 text-gray-400 hover:text-white transition-all border border-white/[0.02]">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
       </button>
     </div>
     
-    <div class="relative flex-grow overflow-hidden rounded-2xl flex flex-col transition-shadow duration-300 ease-out"
+    <div class="relative flex-grow overflow-hidden rounded-2xl flex flex-col"
          :class="isStylePanelOpen ? 'shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]' : 'shadow-[0_8px_32px_0_rgba(0,0,0,0.25)]'">
 
-      <div class="absolute inset-0 rounded-2xl bg-white/[0.03] backdrop-blur-[25px] border border-white/[0.02] pointer-events-none transition-opacity duration-300 ease-out"
-           :class="isStylePanelOpen ? 'opacity-0' : 'opacity-100'"></div>
-
-      <div class="absolute inset-0 rounded-2xl bg-[#1c1c1c] pointer-events-none transition-opacity duration-300 ease-out"
-           :class="isStylePanelOpen ? 'opacity-100' : 'opacity-0'"></div>
+      <div class="absolute inset-0 rounded-2xl pointer-events-none border border-white/[0.02] transition-[background-color] duration-300 ease-out"
+           :class="isStylePanelOpen ? 'bg-[#1c1c1c]' : 'bg-white/[0.03] backdrop-blur-[25px]'"></div>
 
       <div class="relative z-10 mask-fade flex-grow flex"
            :style="{
@@ -24,7 +21,7 @@
           class="relative w-full py-2 px-4 md:py-3 overflow-x-auto no-scrollbar min-h-[52px] md:min-h-[60px] flex items-center"
         >
           <div class="flex items-center space-x-2 md:space-x-12" :class="isScrollable ? 'justify-start' : 'justify-center w-full'">
-            <button v-for="category in categories" :key="category.id" @click="selectCategory(category.id)" :class="['px-5 py-1.5 md:py-2.5 rounded-full text-[13px] font-semibold transition-all duration-300 flex-shrink-0 whitespace-nowrap inter', selectedCategoryId === category.id ? 'bg-white/20 text-white shadow-sm' : 'bg-transparent text-white/50 hover:text-white/80 hover:bg-white/5']">{{ category.name }}</button>
+            <button v-for="category in categories" :key="category.id" :data-category-id="category.id" @click="selectCategory(category.id)" :class="['category-btn px-5 py-1.5 md:py-2.5 rounded-full text-[13px] font-semibold flex-shrink-0 whitespace-nowrap inter', selectedCategoryId === category.id ? 'is-active bg-white/20 text-white shadow-sm' : 'bg-transparent text-white/50']">{{ category.name }}</button>
           </div>
         </div>
       </div>
@@ -90,29 +87,31 @@ function scrollRight() {
   }
 }
 
-let scrollTimeout = null;
+let scrollRAF = null;
 function scrollToSelected() {
-  clearTimeout(scrollTimeout);
-  scrollTimeout = setTimeout(() => {
-    const el = scrollContainer.value;
-    if (!el) return;
-    
-    const selectedBtn = el.querySelector('button.bg-white\\/20');
-    if (selectedBtn) {
-      const elCenter = el.clientWidth / 2;
-      const btnCenter = selectedBtn.offsetLeft + (selectedBtn.clientWidth / 2);
-      let targetPos = btnCenter - elCenter;
+  if (scrollRAF) cancelAnimationFrame(scrollRAF);
+  nextTick(() => {
+    scrollRAF = requestAnimationFrame(() => {
+      const el = scrollContainer.value;
+      if (!el || !props.selectedCategoryId) return;
       
-      const maxScroll = el.scrollWidth - el.clientWidth;
-      if (targetPos < 0) targetPos = 0;
-      if (targetPos > maxScroll) targetPos = maxScroll;
-      
-      el.scrollTo({
-        left: targetPos,
-        behavior: 'smooth'
-      });
-    }
-  }, 100);
+      const selectedBtn = el.querySelector(`button[data-category-id="${props.selectedCategoryId}"]`);
+      if (selectedBtn) {
+        const elCenter = el.clientWidth / 2;
+        const btnCenter = selectedBtn.offsetLeft + (selectedBtn.clientWidth / 2);
+        let targetPos = btnCenter - elCenter;
+        
+        const maxScroll = el.scrollWidth - el.clientWidth;
+        if (targetPos < 0) targetPos = 0;
+        if (targetPos > maxScroll) targetPos = maxScroll;
+        
+        el.scrollTo({
+          left: targetPos,
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
 }
 
 onMounted(() => {
@@ -174,5 +173,12 @@ onMounted(() => {
     transparent 100%
   );
   transition: none;
+}
+
+@media (hover: hover) {
+  .category-btn:not(.is-active):hover {
+    color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.05);
+  }
 }
 </style>

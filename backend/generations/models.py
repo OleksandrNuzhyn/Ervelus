@@ -8,7 +8,11 @@ class GenerationRequest(models.Model):
         PROCESSING = 'processing'
         COMPLETED = 'completed'
         FAILED = 'failed'
-    
+
+    class CreditType(models.TextChoices):
+        FREE = 'free'
+        PAID = 'paid'
+
     class Meta:
         verbose_name = 'Generation Request'
         verbose_name_plural = 'Generation Requests'
@@ -39,6 +43,7 @@ class GenerationRequest(models.Model):
                 'output_large_url': instance.output_large_url,
                 'output_original_url': instance.output_original_url,
                 'status': instance.status,
+                'type': instance.type,
                 'created_at': instance.created_at,
                 'updated_at': instance.updated_at
             }
@@ -46,6 +51,7 @@ class GenerationRequest(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='generation_requests')
     chosen_style = models.ForeignKey('products.Style', on_delete=models.SET_NULL, null=True, blank=True, related_name='generation_requests')
     status = models.CharField(max_length=20, choices=GenerationStatus.choices, default=GenerationStatus.PROCESSING)
+    type = models.CharField(max_length=20, choices=CreditType.choices, null=True, blank=True)
     input_thumb_url = models.URLField(max_length=1024, null=True, blank=True)
     input_large_url = models.URLField(max_length=1024, null=True, blank=True)
     output_thumb_url = models.URLField(max_length=1024, null=True, blank=True)

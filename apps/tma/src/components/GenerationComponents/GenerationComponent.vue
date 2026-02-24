@@ -160,7 +160,9 @@ const selectedStyleName = computed(() => {
 
 function handleGenreSelect(genreId) {
   selectedGenreId.value = genreId;
-  modalStore.openStylePanel();
+  if (!modalStore.isStylePanelOpen) {
+    modalStore.openStylePanel();
+  }
 }
 
 function handleStyleSelect(styleId) {

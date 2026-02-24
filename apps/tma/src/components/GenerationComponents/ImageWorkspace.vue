@@ -206,29 +206,30 @@
         leave-from-class="opacity-100"
         leave-to-class="opacity-0"
       >
-        <div v-if="modalStore.isOutputOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-xl animate-fade-in px-[17px]" @click="modalStore.closeOutput()">
-          <div class="relative w-full max-w-md flex flex-col pointer-events-none gap-4">
-             <div class="relative w-full flex items-center justify-center pointer-events-auto">
-               <div v-if="!outputImageLoaded" class="absolute inset-0 flex items-center justify-center">
-                   <div class="stars-loader"></div>
-               </div>
-               
-               <img :src="outputImageUrl" class="block max-h-[calc(100dvh-180px)] w-auto h-auto object-contain shadow-2xl rounded-2xl bg-black/50" />
-             </div>
+        <div v-if="modalStore.isOutputOpen" class="fixed inset-0 z-[100] flex flex-col bg-black/60 backdrop-blur-xl animate-fade-in px-[17px] pb-[13px] pt-[13px]" @click="modalStore.closeOutput()">
+          <div class="flex-1 min-h-0 flex items-center justify-center w-full max-w-md mx-auto pointer-events-auto overflow-hidden">
+            <div class="relative flex items-center justify-center w-full h-full overflow-hidden">
+              <div v-if="!outputImageLoaded" class="absolute inset-0 flex items-center justify-center">
+                  <div class="stars-loader"></div>
+              </div>
+              <img :src="outputImageUrl" class="block max-w-full max-h-full w-auto h-auto object-contain shadow-2xl rounded-2xl bg-black/50" />
+            </div>
+          </div>
 
-             <div class="w-full flex-shrink-0 flex flex-col gap-3 pointer-events-auto">
-               <button @click.stop="downloadOutputImage" class="w-full bg-white/[0.08] hover:bg-white/[0.12] active:scale-[0.98] transition-all text-white font-bold rounded-2xl h-[58px] text-base flex items-center justify-center gap-2">
-                 <span class="text-white font-bold">{{ $t('workspace.download') || 'Save' }}</span>
-                 <svg class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                 </svg>
-               </button>
+          <div class="w-full max-w-md mx-auto shrink-0 flex flex-col gap-3 pt-3 pointer-events-auto">
+            <button @click.stop="shareImage" class="w-full bg-white/[0.08] hover:bg-white/[0.12] active:scale-[0.98] transition-all text-white font-bold rounded-2xl h-[58px] text-base flex items-center justify-center gap-2 min-w-0">
+              <span class="text-white font-bold truncate">{{ $t('workspace.share') || 'Share' }}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="5 5 22 22" fill="currentColor" class="w-5 h-5 shrink-0 relative top-[1px]">
+                <path d="M22.9866 10.2088C23.1112 9.40332 22.3454 8.76755 21.6292 9.082L7.36482 15.3448C6.85123 15.5703 6.8888 16.3483 7.42147 16.5179L10.3631 17.4547C10.9246 17.6335 11.5325 17.541 12.0228 17.2023L18.655 12.6203C18.855 12.4821 19.073 12.7665 18.9021 12.9426L14.1281 17.8646C13.665 18.3421 13.7569 19.1512 14.314 19.5005L19.659 22.8523C20.2585 23.2282 21.0297 22.8506 21.1418 22.1261L22.9866 10.2088Z"/>
+              </svg>
+            </button>
 
-               <button @click.stop="shareImage" class="w-full bg-white/[0.08] hover:bg-white/[0.12] active:scale-[0.98] transition-all text-white font-bold rounded-2xl h-[58px] text-base flex items-center justify-center gap-2">
-                 <span class="text-white font-bold">{{ $t('workspace.share') || 'Share' }}</span>
-                 <svg class="w-6 h-6 flex-shrink-0" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g><circle cx="16" cy="16" r="14" fill="url(#paint0_linear_share)"></circle><path d="M22.9866 10.2088C23.1112 9.40332 22.3454 8.76755 21.6292 9.082L7.36482 15.3448C6.85123 15.5703 6.8888 16.3483 7.42147 16.5179L10.3631 17.4547C10.9246 17.6335 11.5325 17.541 12.0228 17.2023L18.655 12.6203C18.855 12.4821 19.073 12.7665 18.9021 12.9426L14.1281 17.8646C13.665 18.3421 13.7569 19.1512 14.314 19.5005L19.659 22.8523C20.2585 23.2282 21.0297 22.8506 21.1418 22.1261L22.9866 10.2088Z" fill="white"></path><defs><linearGradient id="paint0_linear_share" x1="16" y1="2" x2="16" y2="30" gradientUnits="userSpaceOnUse"><stop stop-color="#37BBFE"></stop><stop offset="1" stop-color="#007DBB"></stop></linearGradient></defs></g></svg>
-               </button>
-             </div>
+            <button @click.stop="downloadOutputImage" class="w-full bg-white/[0.08] hover:bg-white/[0.12] active:scale-[0.98] transition-all text-white font-bold rounded-2xl h-[58px] text-base flex items-center justify-center gap-2 min-w-0">
+              <span class="text-white font-bold truncate">{{ $t('workspace.download') || 'Save' }}</span>
+              <svg class="w-5 h-5 text-white shrink-0 relative top-[0.5px]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+            </button>
           </div>
         </div>
       </transition>
@@ -473,7 +474,10 @@ async function handleGenerate() {
   catch (err) {
     isLoading.value = false;
     const detail = err.response?.data?.detail || '';
-    if (detail.includes('generations')) {
+    if (detail.includes('disabled')) {
+      modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_free_disabled') });
+    }
+    else if (detail.includes('generations')) {
       modalStore.openStore();
     }
     else {
@@ -530,12 +534,10 @@ async function downloadOutputImage() {
 
   try {
     const response = await api.get(`api/generations/generation-requests/download/${completedGenerationId.value}/`);
-    const link = document.createElement('a');
-    link.href = response.data.download_url;
-    link.setAttribute('download', `ervelus-image-${completedGenerationId.value}.png`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const downloadUrl = response.data.download_url;
+    if (window.Telegram?.WebApp?.downloadFile) {
+      window.Telegram.WebApp.downloadFile({ url: downloadUrl, file_name: 'image' });
+    }
   }
   catch (err) {
     modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_download') });

@@ -1,10 +1,8 @@
 from telegram_bot.services import send_message_to_user
-from core.models import ApplicationConfig
 from asgiref.sync import async_to_sync
 from users.models import UserProfile
-from .models import UserPurchase
-from django.db.models import F
 from django.db import transaction
+from .models import UserPurchase
 import logging
 
 logger = logging.getLogger(__name__)
@@ -22,14 +20,10 @@ def handle_user_purchase(user, payload, transaction_id, language_code):
     except Exception as e:
         logger.error("Invalid payload format", extra={"payload": payload, "error": str(e)}, exc_info=True)
         return
-
-    config = ApplicationConfig.get_solo()
-    config.reserved_generations = F('reserved_generations') + generations_count
-    config.save(update_fields=['reserved_generations'])
-
-    user.profile.credits += generations_count
+    
+    user.profile.paid_credits += generations_count
     user.profile.is_paid = True
-    user.profile.save(update_fields=['credits', 'is_paid'])
+    user.profile.save(update_fields=['paid_credits', 'is_paid'])
 
     UserPurchase.objects.create(
         user=user,

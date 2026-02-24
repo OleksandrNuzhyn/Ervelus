@@ -67,7 +67,8 @@ class UserProfile(models.Model):
             'telegram_id',
             'country_code',
             'invited_count',
-            'credits',
+            'free_credits',
+            'paid_credits',
             'is_paid',
             'is_subscribed'
         ]
@@ -76,7 +77,8 @@ class UserProfile(models.Model):
     telegram_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     country_code = models.CharField(max_length=2, null=True, blank=True)
     invited_count = models.PositiveIntegerField(default=0)
-    credits = models.IntegerField(default=1)
+    free_credits = models.IntegerField(default=1)
+    paid_credits = models.IntegerField(default=0)
     is_paid = models.BooleanField(default=False)
     is_subscribed = models.BooleanField(default=False)
 

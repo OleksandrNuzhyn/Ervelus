@@ -1,3 +1,4 @@
+from core.models import ApplicationAnalytics
 from rest_framework import serializers
 from .models import GenerationRequest
 from . import services
@@ -23,9 +24,19 @@ class GenerationRequestCreateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         user = self.context['request'].user
+        profile = user.profile
         
-        if user.profile.credits > 0:
+        if profile.free_credits > 0:
+            if profile.is_paid or ApplicationAnalytics.get_solo().is_free_generations_enabled:
+                data['type'] = GenerationRequest.CreditType.FREE
+                return data
+            
+        if profile.paid_credits > 0:
+            data['type'] = GenerationRequest.CreditType.PAID
             return data
+            
+        if profile.free_credits > 0:
+            raise serializers.ValidationError("Free usage is currently disabled")
             
         raise serializers.ValidationError("You don't have enough generations")
 

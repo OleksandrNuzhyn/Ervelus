@@ -1,14 +1,14 @@
-from django.contrib import admin, messages
-from solo.admin import SingletonModelAdmin
-from .models import ApplicationConfig
+from django.contrib.contenttypes.models import ContentType
 from gdpr_assist.admin import PersonalData, PersonalDataAdmin
 from gdpr_assist.admin.tool import PersonalDataSearchForm
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
-from gdpr_assist.registry import registry
-from django.contrib.contenttypes.models import ContentType
-from collections import defaultdict
 from django.shortcuts import redirect, render
+from gdpr_assist.registry import registry
+from django.contrib import admin, messages
+from solo.admin import SingletonModelAdmin
+from .models import ApplicationAnalytics
+from collections import defaultdict
 from django import forms
 
 admin.site.unregister(PersonalData)
@@ -93,6 +93,6 @@ class CustomPersonalDataAdmin(PersonalDataAdmin):
         )
 
 
-@admin.register(ApplicationConfig)
-class ApplicationConfigAdmin(SingletonModelAdmin):
-    readonly_fields = ('unused_generations', 'reserved_generations')
+@admin.register(ApplicationAnalytics)
+class ApplicationAnalyticsAdmin(SingletonModelAdmin):
+    readonly_fields = ('users_overview', 'invites_overview')

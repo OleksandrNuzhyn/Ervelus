@@ -44,7 +44,8 @@ class GenerationRequestViewSet(viewsets.ViewSet):
         try:
             generation_request = GenerationRequest.objects.create(
                 user=request.user,
-                chosen_style=serializer.validated_data['chosen_style']
+                chosen_style=serializer.validated_data['chosen_style'],
+                type=serializer.validated_data['type']
             )
         except Exception as e:
             logger.error(f"Failed to create generation request", extra={'user_id': request.user.id, 'error': str(e)}, exc_info=True)

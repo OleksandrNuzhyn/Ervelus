@@ -1,3 +1,8 @@
+### Create new migrations
+```bash
+python manage.py makemigrations
+```
+
 ### Apply migrations
 ```bash
 python manage.py migrate
@@ -6,11 +11,6 @@ python manage.py migrate
 ### Create a superuser
 ```bash
 python manage.py createsuperuser
-```
-    
-### Create new migrations
-```bash
-python manage.py makemigrations
 ```
 
 ### Running the Application

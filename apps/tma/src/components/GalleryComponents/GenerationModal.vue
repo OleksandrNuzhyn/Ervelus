@@ -189,13 +189,10 @@ async function getCurrentRequest(request) {
 async function downloadOutput(request) {
   try {
     const response = await api.get(`/api/generations/generation-requests/download/${request.id}/`);
-    const url = response.data?.download_url || '';
-    
-    const link = document.createElement('a');
-    link.href = url;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const downloadUrl = response.data?.download_url || '';
+    if (window.Telegram?.WebApp?.downloadFile) {
+      window.Telegram.WebApp.downloadFile({ url: downloadUrl, file_name: 'image' });
+    }
   }
   catch (error) {
     modalStore.openModal({ title: t('gallery.delete_title'), message: t('gallery.error_download_failed') });

@@ -1,0 +1,26 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block content_title %}
+<h1>{{ title }}</h1>
+<div style="background:#ebebeb; padding:10px; border-radius:4px; margin-bottom:15px; font-size:13px;">
+    <form method="get" style="display:inline-block; margin-right:20px;">
+        <b>Time Range:</b>
+        <input type="datetime-local" name="from_time" value="{{ request.GET.from_time }}" style="font-size:11px;">
+        <input type="datetime-local" name="to_time" value="{{ request.GET.to_time }}" style="font-size:11px;">
+        <input type="submit" value="Filter"
+            style="background:#417690; color:#fff; border:none; padding:2px 10px; cursor:pointer;">
+        <a href="?" style="margin-left:5px; color:#666; font-size:11px;">Reset</a>
+        {% for k,v in request.GET.items %}{% if k != 'from_time' and k != 'to_time' %}<input type="hidden" name="{{k}}"
+            value="{{v}}">{% endif %}{% endfor %}
+    </form>
+
+    <span style="border-left:1px solid #ccc; padding-left:15px;">
+        <b>Total:</b> {{ summary.total }} |
+        <b style="color:#28a745;">Paid OK:</b> {{ summary.paid }} |
+        <b style="color:#17a2b8;">Free OK:</b> {{ summary.free }} |
+        <b style="color:#ffc107;">Safety:</b> {{ summary.safe }} |
+        <b style="color:#dc3545;">Failed:</b> {{ summary.fail }}
+    </span>
+</div>
+{% endblock %}

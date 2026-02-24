@@ -3,12 +3,10 @@ from django.core.serializers.json import DjangoJSONEncoder
 from generations.models import GenerationRequest
 from django.contrib.auth import get_user_model
 from agreements.models import UserAgreement
-from core.models import ApplicationConfig
 from payments.models import UserPurchase
 from django.db import transaction
 from django.utils import timezone
 from django.conf import settings
-from django.db.models import F
 import logging
 import json
 
@@ -22,7 +20,8 @@ def get_user_data_for_retention(user):
         },
         "profile": {
             "telegram_id": str(user.profile.telegram_id),
-            "credits": str(user.profile.credits)
+            "free_credits": str(user.profile.free_credits),
+            "paid_credits": str(user.profile.paid_credits)
         },
         "agreements": list(UserAgreement.objects.filter(user=user).values()),
         "purchases": list(UserPurchase.objects.filter(user=user).values())
@@ -93,11 +92,6 @@ def delete_user_account(user):
                 promo_code_usage.anonymise()
 
             if hasattr(user, 'profile'):
-                if user.profile.credits > 0:
-                    config = ApplicationConfig.get_solo()
-                    config.reserved_generations = F('reserved_generations') - user.profile.credits
-                    config.save(update_fields=['reserved_generations'])
-                
                 user.profile.delete()
                 
             user.anonymise()
