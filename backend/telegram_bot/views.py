@@ -1,4 +1,4 @@
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from agreements.services import accept_user_document_version
 from django.contrib.auth.models import update_last_login
 from rest_framework.authtoken.models import Token
@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 
 @api_view(['POST'])
+@authentication_classes([])
 @permission_classes([AllowAny])
 def telegram_auth(request):
     init_data = request.data.get('initData')
