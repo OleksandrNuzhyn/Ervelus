@@ -1,6 +1,6 @@
+from django.db.models import Sum, Count
 from solo.models import SingletonModel
 from users.models import UserProfile
-from django.db.models import Sum
 from django.db import models
 
 
@@ -21,7 +21,7 @@ class ApplicationAnalytics(SingletonModel):
     def invites_overview(self):
         totals_data = UserProfile.objects.aggregate(
             total_invites=Sum('invited_count'),
-            total_users=models.Count('id')
+            total_users=Count('id')
         )
         total_users = totals_data['total_users'] or 0
         total_invites = totals_data['total_invites'] or 0
