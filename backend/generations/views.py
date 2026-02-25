@@ -177,11 +177,10 @@ class GenerationRequestViewSet(viewsets.ViewSet):
             
             download_url = services.generate_signed_gcs_url(
                 generation_request.output_original_url,
-                expires_in_seconds=30,
-                response_disposition=f"attachment; filename={filename}"
+                expires_in_seconds=30
             )
             
-            return Response({"download_url": download_url}, status=200)
+            return Response({"download_url": download_url, "filename": filename}, status=200)
         except Exception as e:
             logger.error(f"Failed to generate download URL for output image", extra={'generation_request_id': generation_request.id, 'error': str(e)}, exc_info=True)
             return Response({"detail": "Failed to retrieve download URL"}, status=400)

@@ -26,7 +26,7 @@ GCS_KEY_PATH = os.path.join(settings.BASE_DIR, 'core', 'gcs_key.json')
 logger = logging.getLogger(__name__)
 gcs_sync_storage_client = gcs_sync_storage.Client.from_service_account_json(GCS_KEY_PATH)
 
-def generate_signed_gcs_url(gcs_img_url, expires_in_seconds, response_disposition=None):
+def generate_signed_gcs_url(gcs_img_url, expires_in_seconds):
     parsed_url = urlparse(gcs_img_url)
     path = parsed_url.path.lstrip('/')
     bucket_name, blob_name = path.split('/', 1)
@@ -37,8 +37,7 @@ def generate_signed_gcs_url(gcs_img_url, expires_in_seconds, response_dispositio
     return blob.generate_signed_url(
         expiration=timedelta(seconds=expires_in_seconds),
         version='v4',
-        method='GET',
-        response_disposition=response_disposition
+        method='GET'
     )
 
 def schedule_image_deletion(image_urls):

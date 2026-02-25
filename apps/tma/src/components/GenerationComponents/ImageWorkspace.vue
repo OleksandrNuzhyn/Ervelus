@@ -534,9 +534,9 @@ async function downloadOutputImage() {
 
   try {
     const response = await api.get(`api/generations/generation-requests/download/${completedGenerationId.value}/`);
-    const downloadUrl = response.data.download_url;
+    const { download_url, filename } = response.data;
     if (window.Telegram?.WebApp?.downloadFile) {
-      window.Telegram.WebApp.downloadFile({ url: downloadUrl, file_name: 'image' });
+      window.Telegram.WebApp.downloadFile({ url: download_url, file_name: filename });
     }
   }
   catch (err) {

@@ -3,27 +3,27 @@
     <div class="relative mb-1">
       <CategoryStrip :categories="genres" :selected-category-id="selectedGenreId" :is-style-panel-open="modalStore.isStylePanelOpen" @category-selected="handleGenreSelect"/>
       <transition
-        enter-active-class="transition-opacity duration-300 ease-out"
+        enter-active-class="transition-opacity duration-400 ease-out"
         enter-from-class="opacity-0"
         enter-to-class="opacity-100"
-        leave-active-class="transition-opacity duration-300 ease-out"
+        leave-active-class="transition-opacity duration-400 ease-in"
         leave-from-class="opacity-100"
         leave-to-class="opacity-0"
       >
-        <div v-if="modalStore.isStylePanelOpen" class="fixed inset-0 bg-[#0c0d14]/80 z-[58]" @click="handleClosePanel"></div>
+        <div v-if="modalStore.isStylePanelOpen" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[58]" @click="handleClosePanel"></div>
       </transition>
       
       <transition
-        enter-active-class="transition-opacity duration-300 ease-out"
-        enter-from-class="opacity-0"
-        enter-to-class="opacity-100"
-        leave-active-class="transition-opacity duration-300 ease-out"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
+        enter-active-class="transition-all duration-400 ease-out"
+        enter-from-class="opacity-0 translate-y-4"
+        enter-to-class="opacity-100 translate-y-0"
+        leave-active-class="transition-all duration-300 ease-in"
+        leave-from-class="opacity-100 translate-y-0"
+        leave-to-class="opacity-0 translate-y-2"
       >
         <StylePanel
           v-if="modalStore.isStylePanelOpen"
-          class="!absolute top-full mt-3 w-full left-0 z-[60]"
+          class="!absolute top-full mt-2 w-full left-0 z-[60] transform-gpu"
           :styles="filteredStyles"
           :selected-style-id="selectedStyleId"
           :current-genre-name="selectedGenreId"
