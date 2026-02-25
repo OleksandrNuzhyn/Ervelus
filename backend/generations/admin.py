@@ -3,16 +3,23 @@ from django.utils import timezone
 from django.db.models import Count, Q
 from .models import GenerationRequest
 from core.admin_mixins import NoLogAdminMixin
+from rangefilter.filters import DateTimeRangeFilter
 
 
 @admin.register(GenerationRequest)
 class GenerationRequestAdmin(NoLogAdminMixin, admin.ModelAdmin):
     list_display = ('id', 'style_name', 'status', 'type', 'created_at_formatted', 'updated_at_formatted')
     list_select_related = ('chosen_style',)
-    list_filter = ('status', 'type', 'created_at', 'chosen_style')
+    list_filter = (
+        ('created_at', DateTimeRangeFilter),
+        'status',
+        'type',
+        ('chosen_style', admin.RelatedOnlyFieldListFilter)
+    )
     search_fields = ('user__email', 'input_large_url', 'output_large_url')
     ordering = ('-id',)
     raw_id_fields = ('user', 'chosen_style')
+    readonly_fields = ('created_at_formatted', 'updated_at_formatted')
 
     @admin.display(description='style')
     def style_name(self, obj):
@@ -26,47 +33,20 @@ class GenerationRequestAdmin(NoLogAdminMixin, admin.ModelAdmin):
     def updated_at_formatted(self, obj):
         return timezone.localtime(obj.updated_at).strftime('%d.%m.%Y %H:%M:%S')
 
-    def get_readonly_fields(self, request, obj=None):
-        if obj:
-            return ('created_at_formatted', 'updated_at_formatted')
-        else:
-            return ()
-        
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        from_time = request.GET.get('from_time')
-        to_time = request.GET.get('to_time')
-        
-        if from_time:
-            try:
-                dt = timezone.datetime.fromisoformat(from_time)
-                if timezone.is_naive(dt):
-                    dt = timezone.make_aware(dt)
-                qs = qs.filter(created_at__gte=dt)
-            except (ValueError, TypeError):
-                pass
-        
-        if to_time:
-            try:
-                dt = timezone.datetime.fromisoformat(to_time)
-                if timezone.is_naive(dt):
-                    dt = timezone.make_aware(dt)
-                qs = qs.filter(created_at__lte=dt)
-            except (ValueError, TypeError):
-                pass
-        
-        return qs
+    def has_add_permission(self, request):
+        return False
 
     def changelist_view(self, request, extra_context=None):
-        response = super().changelist_view(request, extra_context)
-        if hasattr(response, 'context_data'):
-            qs = response.context_data['cl'].queryset
-            summary = qs.aggregate(
-                total=Count('id'),
-                completed_paid=Count('id', filter=Q(status=GenerationRequest.GenerationStatus.COMPLETED, type=GenerationRequest.CreditType.PAID)),
-                completed_free=Count('id', filter=Q(status=GenerationRequest.GenerationStatus.COMPLETED, type=GenerationRequest.CreditType.FREE)),
-                rejected=Count('id', filter=Q(status=GenerationRequest.GenerationStatus.REJECTED_BY_SAFETY)),
-                failed=Count('id', filter=Q(status=GenerationRequest.GenerationStatus.FAILED)),
-            )
-            response.context_data['summary'] = summary
-        return response
+        statistics = self.model.objects.aggregate(
+            total=Count('id'),
+            free=Count('id', filter=Q(status='completed', type='free')),
+            paid=Count('id', filter=Q(status='completed', type='paid')),
+            completed=Count('id', filter=Q(status='completed')),
+            rejected=Count('id', filter=Q(status='rejected_by_safety')),
+            failed=Count('id', filter=Q(status='failed'))
+        )
+        
+        extra_context = extra_context or {}
+        extra_context['statistics'] = statistics
+        
+        return super().changelist_view(request, extra_context)

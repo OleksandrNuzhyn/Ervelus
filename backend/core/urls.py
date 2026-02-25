@@ -8,7 +8,7 @@ urlpatterns = []
 
 if settings.DEBUG:
     urlpatterns += [
-        path('sanekit/', admin.site.urls),
+        path('admin/', admin.site.urls),
         path('webhooks/telegram/', include('telegram_bot.urls_webhooks')),
         path('webhooks/generations/', include('generations.urls_webhooks')),
         path('api/users/', include('users.urls')),
@@ -24,7 +24,7 @@ else:
     
     if settings.SERVICE_NAME == 'ervelus-web-service':
         urlpatterns += [
-            path('sanekit/', admin.site.urls),
+            path('admin/', admin.site.urls),
             path('webhooks/telegram/', include('telegram_bot.urls_webhooks')),
             path('api/users/', include('users.urls')),
             path('api/payments/', include('payments.urls')),

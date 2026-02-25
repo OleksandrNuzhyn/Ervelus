@@ -6,10 +6,10 @@
       </button>
     </div>
     
-    <div class="relative flex-grow overflow-hidden rounded-2xl flex flex-col"
+    <div class="relative flex-grow overflow-hidden rounded-2xl flex flex-col transition-all duration-300 ease-out"
          :class="isStylePanelOpen ? 'shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]' : 'shadow-[0_8px_32px_0_rgba(0,0,0,0.25)]'">
 
-      <div class="absolute inset-0 rounded-2xl pointer-events-none border border-white/[0.02] transition-[background-color] duration-300 ease-out"
+      <div class="absolute inset-0 rounded-2xl pointer-events-none border border-white/[0.02] transition-all duration-300 ease-out"
            :class="isStylePanelOpen ? 'bg-[#1c1c1c]' : 'bg-white/[0.03] backdrop-blur-[25px]'"></div>
 
       <div class="relative z-10 mask-fade flex-grow flex"

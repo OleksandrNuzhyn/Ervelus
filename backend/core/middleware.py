@@ -10,7 +10,7 @@ class MaintenanceModeMiddleware:
         if not settings.MAINTENANCE_MODE:
             return self.get_response(request)
 
-        excluded_paths = ['/sanekit/']
+        excluded_paths = ['/admin/']
 
         if any(request.path.startswith(path) for path in excluded_paths):
             return self.get_response(request)

@@ -18,7 +18,9 @@ class GenerationRequest(models.Model):
         verbose_name_plural = 'Generation Requests'
         indexes = [
             models.Index(fields=['user', 'status', '-created_at'], name='user_status_created_at_idx'),
-            models.Index(fields=['user', '-created_at'], name='user_created_at_idx')
+            models.Index(fields=['user', '-created_at'], name='user_created_at_idx'),
+            models.Index(fields=['status', 'type'], name='status_type_idx'),
+            models.Index(fields=['-created_at'], name='created_at_idx')
         ]
 
     class PrivacyMeta:

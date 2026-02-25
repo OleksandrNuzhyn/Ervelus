@@ -7,8 +7,8 @@ from django.shortcuts import redirect, render
 from gdpr_assist.registry import registry
 from django.contrib import admin, messages
 from solo.admin import SingletonModelAdmin
-from .models import ApplicationAnalytics
 from collections import defaultdict
+from .models import Application
 from django import forms
 
 admin.site.unregister(PersonalData)
@@ -93,6 +93,27 @@ class CustomPersonalDataAdmin(PersonalDataAdmin):
         )
 
 
-@admin.register(ApplicationAnalytics)
-class ApplicationAnalyticsAdmin(SingletonModelAdmin):
-    readonly_fields = ('users_overview', 'invites_overview')
+@admin.register(Application)
+class ApplicationAdmin(SingletonModelAdmin):
+    readonly_fields = (
+        'users_count', 
+        'users_invites',
+        'users_organic_growth',
+        'users_geo_count', 
+        'paid_users_count',
+        'sales_conversion_rate',
+        'sales_geo_count',
+        'sales_geo_stars'
+    )
+    
+    fieldsets = (
+        ('Users', {
+            'fields': ('users_count', 'users_invites', 'users_organic_growth', 'users_geo_count')
+        }),
+        ('Sales', {
+            'fields': ('paid_users_count', 'sales_conversion_rate', 'sales_geo_count', 'sales_geo_stars')
+        }),
+        ('Application Control', {
+            'fields': ('is_free_generations_enabled',)
+        })
+    )

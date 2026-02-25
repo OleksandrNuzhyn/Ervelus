@@ -20,6 +20,7 @@ cryptography==45.0.4
 defusedxml==0.7.1
 distro==1.9.0
 Django==5.2.3
+django-admin-rangefilter==0.13.5
 django-cors-headers==4.9.0
 django-gdpr-assist==1.4.2
 django-otp==1.6.1

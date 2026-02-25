@@ -34,6 +34,7 @@ INSTALLED_APPS = [
 
     'corsheaders',
     'gdpr_assist',
+    'rangefilter',
     'django_otp',
     'django_otp.plugins.otp_totp',
     'solo',

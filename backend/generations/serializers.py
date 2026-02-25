@@ -1,6 +1,6 @@
-from core.models import ApplicationAnalytics
 from rest_framework import serializers
 from .models import GenerationRequest
+from core.models import Application
 from . import services
 
 
@@ -27,7 +27,7 @@ class GenerationRequestCreateSerializer(serializers.ModelSerializer):
         profile = user.profile
         
         if profile.free_credits > 0:
-            if profile.is_paid or ApplicationAnalytics.get_solo().is_free_generations_enabled:
+            if profile.is_paid or Application.get_solo().is_free_generations_enabled:
                 data['type'] = GenerationRequest.CreditType.FREE
                 return data
             
