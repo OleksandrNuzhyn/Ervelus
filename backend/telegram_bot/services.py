@@ -248,7 +248,10 @@ def save_prepared_message_photo(user_id, generation_request):
 
     return async_to_sync(bot.save_prepared_inline_message)(
         user_id=user_id,
-        result=inline_result
+        result=inline_result,
+        allow_user_chats=True,
+        allow_group_chats=True,
+        allow_channel_chats=True
     )
 
 def save_prepared_message_invite(user_id):
@@ -266,5 +269,8 @@ def save_prepared_message_invite(user_id):
 
     return async_to_sync(bot.save_prepared_inline_message)(
         user_id=user_id,
-        result=inline_result
+        result=inline_result,
+        allow_user_chats=True,
+        allow_group_chats=True,
+        allow_channel_chats=True
     )
