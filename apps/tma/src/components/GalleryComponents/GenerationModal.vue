@@ -209,7 +209,7 @@ async function shareImage(request) {
       const { prepared_id } = response.data;
       window.Telegram.WebApp.shareMessage(prepared_id);
     }
-    catch (err) {
+    catch (err) { 
       modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_create_request') });
     }
   } 
