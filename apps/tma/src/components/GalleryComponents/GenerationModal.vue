@@ -190,6 +190,7 @@ async function downloadOutput(request) {
   try {
     const response = await api.get(`/api/generations/generation-requests/download/${request.id}/`);
     const { download_url, filename } = response.data;
+    
     if (window.Telegram?.WebApp?.downloadFile) {
       window.Telegram.WebApp.downloadFile({ url: download_url, file_name: filename });
     }
@@ -202,9 +203,19 @@ async function downloadOutput(request) {
 async function shareImage(request) {
   if (!request || !request.id) return;
 
-  if (window.Telegram?.WebApp) {
-    window.Telegram.WebApp.switchInlineQuery(`${request.id}`, ['users', 'groups', 'channels']);
+  if (window.Telegram?.WebApp?.shareMessage) {
+    try {
+      const response = await api.post(`/api/telegram/prepare-share/${request.id}/`);
+      const { prepared_id } = response.data;
+      window.Telegram.WebApp.shareMessage(prepared_id);
+    }
+    catch (err) {
+      modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_create_request') });
+    }
   } 
+  else if (window.Telegram?.WebApp?.switchInlineQuery) {
+    window.Telegram.WebApp.switchInlineQuery(`${request.id}`, ['users', 'groups', 'channels']);
+  }
   else {
     modalStore.openModal({ title: t('gallery.share'), message: t('workspace.share_not_supported') });
   }

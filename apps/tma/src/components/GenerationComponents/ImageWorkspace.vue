@@ -535,6 +535,7 @@ async function downloadOutputImage() {
   try {
     const response = await api.get(`api/generations/generation-requests/download/${completedGenerationId.value}/`);
     const { download_url, filename } = response.data;
+
     if (window.Telegram?.WebApp?.downloadFile) {
       window.Telegram.WebApp.downloadFile({ url: download_url, file_name: filename });
     }
@@ -547,9 +548,19 @@ async function downloadOutputImage() {
 async function shareImage() {
   if (!completedGenerationId.value) return;
 
-  if (window.Telegram?.WebApp) {
-    window.Telegram.WebApp.switchInlineQuery(`${completedGenerationId.value}`, ['users', 'groups', 'channels']);
+  if (window.Telegram?.WebApp?.shareMessage) {
+    try {
+      const response = await api.post(`/api/telegram/prepare-share/${completedGenerationId.value}/`);
+      const { prepared_id } = response.data;
+      window.Telegram.WebApp.shareMessage(prepared_id);
+    }
+    catch (err) {
+      modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_create_request') });
+    }
   } 
+  else if (window.Telegram?.WebApp?.switchInlineQuery) {
+    window.Telegram.WebApp.switchInlineQuery(`${completedGenerationId.value}`, ['users', 'groups', 'channels']);
+  }
   else {
     modalStore.openModal({ title: t('workspace.share'), message: t('workspace.share_not_supported') });
   }

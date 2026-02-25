@@ -200,8 +200,8 @@ def handle_inline_query(update):
             
             if generation_request.output_original_url and generation_request.output_thumb_url:
                 try:
-                    signed_original_url = generate_signed_gcs_url(generation_request.output_original_url, 300)
-                    signed_thumb_url = generate_signed_gcs_url(generation_request.output_thumb_url, 300)
+                    signed_original_url = generate_signed_gcs_url(generation_request.output_original_url, 86400)
+                    signed_thumb_url = generate_signed_gcs_url(generation_request.output_thumb_url, 86400)
                 except Exception as e:
                     logger.error("Failed to sign URLs for inline query", extra={'error': str(e)}, exc_info=True)
                     return
@@ -232,3 +232,39 @@ def handle_inline_query(update):
             )
     except Exception as e:
         logger.error("Error while answering the inline query", extra={"error": str(e)}, exc_info=True)
+
+def save_prepared_message_photo(user_id, generation_request):
+    photo_url = generate_signed_gcs_url(generation_request.output_original_url, 86400)
+    thumb_url = generate_signed_gcs_url(generation_request.output_thumb_url, 86400)
+
+    inline_result = telegram.InlineQueryResultPhoto(
+        id=f"photo_{generation_request.id}",
+        photo_url=photo_url,
+        thumbnail_url=thumb_url,
+        reply_markup=telegram.InlineKeyboardMarkup([[
+            telegram.InlineKeyboardButton("Try it yourself 🎨", url="https://t.me/ervelus_bot/app")
+        ]])
+    )
+
+    return async_to_sync(bot.save_prepared_inline_message)(
+        user_id=user_id,
+        result=inline_result
+    )
+
+def save_prepared_message_invite(user_id):
+    inline_result = telegram.InlineQueryResultArticle(
+        id="invite",
+        title="Join Ervelus",
+        description="Create your own IA avatars and photos!",
+        input_message_content=telegram.InputTextMessageContent(
+            "Hey! Check out this AI bot for creating cool avatars 🎨"
+        ),
+        reply_markup=telegram.InlineKeyboardMarkup([[
+            telegram.InlineKeyboardButton("Open App 🚀", url="https://t.me/ervelus_bot/app")
+        ]])
+    )
+
+    return async_to_sync(bot.save_prepared_inline_message)(
+        user_id=user_id,
+        result=inline_result
+    )

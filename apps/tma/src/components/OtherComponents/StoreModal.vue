@@ -157,7 +157,17 @@ async function createStarInvoice(pkg) {
 }
 
 async function handleInviteFriend() {
-  if (window.Telegram?.WebApp) {
+  if (window.Telegram?.WebApp?.shareMessage) {
+    try {
+      const response = await api.post('/api/telegram/prepare-invite/');
+      const { prepared_id } = response.data;
+      window.Telegram.WebApp.shareMessage(prepared_id);
+    } 
+    catch (err) {
+      modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_create_request') });
+    }
+  }
+  else if (window.Telegram?.WebApp?.switchInlineQuery) {
     window.Telegram.WebApp.switchInlineQuery('invite', ['users', 'groups', 'channels']);
   }
   else {

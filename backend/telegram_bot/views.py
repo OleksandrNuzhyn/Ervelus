@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from agreements.services import accept_user_document_version
 from django.contrib.auth.models import update_last_login
 from rest_framework.authtoken.models import Token
+from generations.models import GenerationRequest
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
@@ -115,3 +116,35 @@ def create_telegram_user(telegram_data, request):
         )
     
     return user
+
+@api_view(['POST'])
+def prepare_invite(request):
+    try:
+        prepared_msg = services.save_prepared_message_invite(
+            user_id=request.user.profile.telegram_id
+        )
+        return Response({"prepared_id": prepared_msg.id}, status=200)
+    except Exception as e:
+        logger.error("Failed to prepare invite message", extra={"error": str(e)}, exc_info=True)
+        return Response({"detail": "Failed to prepare invite"}, status=400)
+
+@api_view(['POST'])
+def prepare_share(request, pk):
+    try:
+        generation_request = GenerationRequest.objects.get(
+            pk=pk,
+            user=request.user,
+            status=GenerationRequest.GenerationStatus.COMPLETED
+        )
+    except GenerationRequest.DoesNotExist:
+        return Response({"detail": "Generation not found"}, status=404)
+
+    try:
+        prepared_msg = services.save_prepared_message_photo(
+            user_id=request.user.profile.telegram_id,
+            generation_request=generation_request
+        )
+        return Response({"prepared_id": prepared_msg.id}, status=200)
+    except Exception as e:
+        logger.error("Failed to prepare share message", extra={"error": str(e)}, exc_info=True)
+        return Response({"detail": "Failed to prepare share"}, status=400)

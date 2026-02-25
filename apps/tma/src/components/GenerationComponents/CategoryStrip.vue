@@ -1,16 +1,14 @@
 <template>
-  <div class="flex items-center w-full relative transition-all duration-300" :class="{'md:space-x-4': isScrollable, 'z-[65]': isStylePanelOpen, 'z-[20] delay-300': !isStylePanelOpen}">
+  <div class="flex items-center w-full relative z-[65]" :class="{'md:space-x-4': isScrollable}">
     <div v-if="isScrollable" class="hidden md:flex w-10 shrink-0 justify-end">
       <button v-show="showLeftArrow" @click="scrollLeft" class="p-2 rounded-full bg-black/20 hover:bg-black/40 text-gray-400 hover:text-white transition-all border border-white/[0.02]">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
       </button>
     </div>
     
-    <div class="relative flex-grow overflow-hidden rounded-2xl flex flex-col transition-all duration-300 ease-in-out"
-         :class="isStylePanelOpen ? 'shadow-[0_20px_40px_rgba(0,0,0,0.4)]' : 'shadow-none'">
-
-      <div class="absolute inset-0 rounded-2xl pointer-events-none border border-white/[0.02] transition-colors duration-300"
-           :class="isStylePanelOpen ? 'bg-[#1c1c1c]' : 'bg-white/[0.03] backdrop-blur-[25px]'"></div>
+    <div class="relative flex-grow overflow-hidden rounded-2xl flex flex-col shadow-[0_8px_32px_0_rgba(0,0,0,0.25)]">
+      <div class="absolute inset-0 rounded-2xl pointer-events-none border border-white/[0.02] bg-white/[0.03] backdrop-blur-[20px] transition-colors duration-300"
+           :class="{'!bg-[#1c1c1c]': isStylePanelOpen}"></div>
 
       <div class="relative z-10 mask-fade flex-grow flex"
            :style="{
@@ -21,7 +19,7 @@
           class="relative w-full py-2 px-4 md:py-3 overflow-x-auto no-scrollbar min-h-[52px] md:min-h-[60px] flex items-center"
         >
           <div class="flex items-center space-x-2 md:space-x-12" :class="isScrollable ? 'justify-start' : 'justify-center w-full'">
-            <button v-for="category in categories" :key="category.id" :data-category-id="category.id" @click="selectCategory(category.id)" :class="['category-btn px-5 py-1.5 md:py-2.5 rounded-full text-[13px] font-semibold flex-shrink-0 whitespace-nowrap inter', selectedCategoryId === category.id ? 'is-active bg-white/20 text-white shadow-sm' : 'bg-transparent text-white/50']">{{ category.name }}</button>
+            <button v-for="category in categories" :key="category.id" :data-category-id="category.id" @click="selectCategory(category.id)" :class="['category-btn px-5 py-1.5 md:py-2.5 rounded-full text-[13px] font-semibold flex-shrink-0 whitespace-nowrap inter transition-all duration-200', selectedCategoryId === category.id ? 'is-active bg-white/20 text-white shadow-sm' : 'bg-transparent text-white/50']">{{ category.name }}</button>
           </div>
         </div>
       </div>

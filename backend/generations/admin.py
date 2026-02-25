@@ -37,7 +37,9 @@ class GenerationRequestAdmin(NoLogAdminMixin, admin.ModelAdmin):
         return False
 
     def changelist_view(self, request, extra_context=None):
-        statistics = self.model.objects.aggregate(
+        queryset = self.get_changelist_instance(request).get_queryset(request)
+        
+        statistics = queryset.aggregate(
             total=Count('id'),
             free=Count('id', filter=Q(status='completed', type='free')),
             paid=Count('id', filter=Q(status='completed', type='paid')),
@@ -48,5 +50,5 @@ class GenerationRequestAdmin(NoLogAdminMixin, admin.ModelAdmin):
         
         extra_context = extra_context or {}
         extra_context['statistics'] = statistics
-        
-        return super().changelist_view(request, extra_context)
+
+        return super().changelist_view(request, extra_context=extra_context)

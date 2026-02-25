@@ -113,7 +113,7 @@ class ApplicationAdmin(SingletonModelAdmin):
         ('Sales', {
             'fields': ('paid_users_count', 'sales_conversion_rate', 'sales_geo_count', 'sales_geo_stars')
         }),
-        ('Application Control', {
+        ('Control', {
             'fields': ('is_free_generations_enabled',)
         })
     )
