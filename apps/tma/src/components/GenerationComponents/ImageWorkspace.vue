@@ -212,7 +212,7 @@
               <div v-if="!outputImageLoaded" class="absolute inset-0 flex items-center justify-center">
                   <div class="stars-loader"></div>
               </div>
-              <img :src="outputImageUrl" class="block max-w-full max-h-full w-auto h-auto object-contain shadow-2xl rounded-2xl bg-black/50" />
+              <img :src="outputImageUrl" class="block max-w-full max-h-full w-auto h-auto object-contain shadow-[0_0_30px_rgba(0,0,0,0.4)] rounded-2xl bg-black/50" />
             </div>
           </div>
 
@@ -312,6 +312,7 @@ watch(() => props.latestGenerationData, (latest) => {
     currentGenerationId.value = latest.id;
     inputImageUrl.value = null;
     outputImageUrl.value = null;
+    hasStartedTransform.value = true;
     startPolling();
   }
 }, { immediate: true });
