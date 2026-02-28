@@ -159,16 +159,13 @@ async function createStarInvoice(pkg) {
 async function handleInviteFriend() {
   if (window.Telegram?.WebApp?.shareMessage) {
     try {
-      const response = await api.post('/api/telegram/prepare-invite/');
-      const { prepared_id } = response.data;
-      window.Telegram.WebApp.shareMessage(prepared_id);
+      const response = await api.get('/api/telegram/share-invite/');
+      const { message_id } = response.data;
+      window.Telegram.WebApp.shareMessage(message_id);
     } 
-    catch (err) {
-      modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_create_request') });
+    catch {
+      modalStore.openModal({ title: t('store.invite_friend'), message: t('workspace.share_not_supported') });
     }
-  }
-  else if (window.Telegram?.WebApp?.switchInlineQuery) {
-    window.Telegram.WebApp.switchInlineQuery('invite', ['users', 'groups', 'channels']);
   }
   else {
     modalStore.openModal({ title: t('store.invite_friend'), message: t('workspace.share_not_supported') });

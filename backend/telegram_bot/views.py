@@ -1,4 +1,5 @@
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from agreements.permissions import HasAcceptedLatestAgreements
 from agreements.services import accept_user_document_version
 from django.contrib.auth.models import update_last_login
 from rest_framework.authtoken.models import Token
@@ -117,34 +118,38 @@ def create_telegram_user(telegram_data, request):
     
     return user
 
-@api_view(['POST'])
-def prepare_invite(request):
+@api_view(['GET'])
+@permission_classes([HasAcceptedLatestAgreements])
+def share_invite(request):
     try:
-        prepared_msg = services.save_prepared_message_invite(
-            user_id=request.user.profile.telegram_id
-        )
-        return Response({"prepared_id": prepared_msg.id}, status=200)
+        message = services.get_share_invite_message(telegram_id=request.user.profile.telegram_id)
+        return Response({"message_id": message.id}, status=200)
     except Exception as e:
-        logger.error("Failed to prepare invite message", extra={"error": str(e)}, exc_info=True)
-        return Response({"detail": "Failed to prepare invite"}, status=400)
+        logger.error("Failed to share invite", extra={"error": str(e)}, exc_info=True)
+        return Response(status=400)
 
 @api_view(['POST'])
-def prepare_share(request, pk):
+@permission_classes([HasAcceptedLatestAgreements])
+def share_generation(request):
+    generation_id = request.data.get('generation_id')
+    if not generation_id:
+        return Response(status=400)
+
     try:
         generation_request = GenerationRequest.objects.get(
-            pk=pk,
+            pk=generation_id,
             user=request.user,
             status=GenerationRequest.GenerationStatus.COMPLETED
         )
     except GenerationRequest.DoesNotExist:
-        return Response({"detail": "Generation not found"}, status=404)
+        return Response(status=404)
 
     try:
-        prepared_msg = services.save_prepared_message_photo(
-            user_id=request.user.profile.telegram_id,
+        message = services.get_share_generation_message(
+            telegram_id=request.user.profile.telegram_id,
             generation_request=generation_request
         )
-        return Response({"prepared_id": prepared_msg.id}, status=200)
+        return Response({"message_id": message.id}, status=200)
     except Exception as e:
-        logger.error("Failed to prepare share message", extra={"error": str(e)}, exc_info=True)
-        return Response({"detail": "Failed to prepare share"}, status=400)
+        logger.error("Failed to share generation", extra={"error": str(e)}, exc_info=True)
+        return Response(status=400)

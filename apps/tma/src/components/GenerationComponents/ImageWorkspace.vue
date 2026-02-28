@@ -212,7 +212,7 @@
               <div v-if="!outputImageLoaded" class="absolute inset-0 flex items-center justify-center">
                   <div class="stars-loader"></div>
               </div>
-              <img :src="outputImageUrl" class="block max-w-full max-h-full rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.3)]" />
+              <img :src="outputImageUrl" class="block max-w-full max-h-full rounded-2xl" />
             </div>
           </div>
 
@@ -551,17 +551,14 @@ async function shareImage() {
 
   if (window.Telegram?.WebApp?.shareMessage) {
     try {
-      const response = await api.post(`/api/telegram/prepare-share/${completedGenerationId.value}/`);
-      const { prepared_id } = response.data;
-      window.Telegram.WebApp.shareMessage(prepared_id);
+      const response = await api.post('/api/telegram/share-generation/', { generation_id: completedGenerationId.value });
+      const { message_id } = response.data;
+      window.Telegram.WebApp.shareMessage(message_id);
     }
-    catch (err) {
-      modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_create_request') });
+    catch {
+      modalStore.openModal({ title: t('workspace.share'), message: t('workspace.share_not_supported') });
     }
   } 
-  else if (window.Telegram?.WebApp?.switchInlineQuery) {
-    window.Telegram.WebApp.switchInlineQuery(`${completedGenerationId.value}`, ['users', 'groups', 'channels']);
-  }
   else {
     modalStore.openModal({ title: t('workspace.share'), message: t('workspace.share_not_supported') });
   }

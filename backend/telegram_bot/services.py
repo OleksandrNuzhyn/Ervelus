@@ -1,5 +1,4 @@
 from generations.services import generate_signed_gcs_url
-from generations.models import GenerationRequest
 from asgiref.sync import async_to_sync
 from users.models import UserProfile
 from urllib.parse import parse_qsl
@@ -178,83 +177,7 @@ def handle_message(update):
     except Exception as e:
         logger.error("Failed to forward message to admin", extra={"error": str(e)}, exc_info=True)
 
-def handle_inline_query(update):
-    query = update.inline_query.query
-    telegram_id = str(update.effective_user.id)
-    results = []
-
-    if query == 'invite':
-        results.append(
-            telegram.InlineQueryResultArticle(
-                id=query,
-                title="Invite to Ervelus",
-                description="Share an invite link with your friends",
-                input_message_content=telegram.InputTextMessageContent(
-                    "https://t.me/ervelus_bot/app"
-                )
-            )
-        )
-    elif query.isdigit():
-        try:
-            generation_request = GenerationRequest.objects.get(id=query, user__profile__telegram_id=telegram_id)
-            
-            if generation_request.output_original_url and generation_request.output_thumb_url:
-                try:
-                    signed_original_url = generate_signed_gcs_url(generation_request.output_original_url, 86400)
-                    signed_thumb_url = generate_signed_gcs_url(generation_request.output_thumb_url, 86400)
-                except Exception as e:
-                    logger.error("Failed to sign URLs for inline query", extra={'error': str(e)}, exc_info=True)
-                    return
-
-                results.append(
-                    telegram.InlineQueryResultPhoto(
-                        id=query,
-                        photo_url=signed_original_url,
-                        thumbnail_url=signed_thumb_url,
-                        title="Share Generation",
-                        description="Tap to send image",
-                        reply_markup=telegram.InlineKeyboardMarkup([[
-                            telegram.InlineKeyboardButton("Try it yourself 🎨", url="https://t.me/ervelus_bot/app")
-                        ]])
-                    )
-                )
-        except GenerationRequest.DoesNotExist:
-            pass
-        except Exception as e:
-            logger.error("Error while handling generation inline query", extra={"error": str(e)}, exc_info=True)
-
-    try:
-        if results:
-            async_to_sync(bot.answer_inline_query)(
-                inline_query_id=update.inline_query.id,
-                results=results,
-                cache_time=0
-            )
-    except Exception as e:
-        logger.error("Error while answering the inline query", extra={"error": str(e)}, exc_info=True)
-
-def save_prepared_message_photo(user_id, generation_request):
-    photo_url = generate_signed_gcs_url(generation_request.output_original_url, 86400)
-    thumb_url = generate_signed_gcs_url(generation_request.output_thumb_url, 86400)
-
-    inline_result = telegram.InlineQueryResultPhoto(
-        id=f"photo_{generation_request.id}",
-        photo_url=photo_url,
-        thumbnail_url=thumb_url,
-        reply_markup=telegram.InlineKeyboardMarkup([[
-            telegram.InlineKeyboardButton("Try it yourself 🎨", url="https://t.me/ervelus_bot/app")
-        ]])
-    )
-
-    return async_to_sync(bot.save_prepared_inline_message)(
-        user_id=user_id,
-        result=inline_result,
-        allow_user_chats=True,
-        allow_group_chats=True,
-        allow_channel_chats=True
-    )
-
-def save_prepared_message_invite(user_id):
+def get_share_invite_message(telegram_id):
     inline_result = telegram.InlineQueryResultArticle(
         id="invite",
         title="Join Ervelus",
@@ -268,7 +191,28 @@ def save_prepared_message_invite(user_id):
     )
 
     return async_to_sync(bot.save_prepared_inline_message)(
-        user_id=user_id,
+        user_id=telegram_id,
+        result=inline_result,
+        allow_user_chats=True,
+        allow_group_chats=True,
+        allow_channel_chats=True
+    )
+
+def get_share_generation_message(telegram_id, generation_request):
+    photo_url = generate_signed_gcs_url(generation_request.output_original_url, 86400)
+    thumb_url = generate_signed_gcs_url(generation_request.output_thumb_url, 86400)
+
+    inline_result = telegram.InlineQueryResultPhoto(
+        id=f"photo_{generation_request.id}",
+        photo_url=photo_url,
+        thumbnail_url=thumb_url,
+        reply_markup=telegram.InlineKeyboardMarkup([[
+            telegram.InlineKeyboardButton("Try it yourself 🎨", url="https://t.me/ervelus_bot/app")
+        ]])
+    )
+
+    return async_to_sync(bot.save_prepared_inline_message)(
+        user_id=telegram_id,
         result=inline_result,
         allow_user_chats=True,
         allow_group_chats=True,
