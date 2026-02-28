@@ -212,7 +212,7 @@
               <div v-if="!outputImageLoaded" class="absolute inset-0 flex items-center justify-center">
                   <div class="stars-loader"></div>
               </div>
-              <img :src="outputImageUrl" class="block max-w-full max-h-full shadow-2xl rounded-2xl" />
+              <img :src="outputImageUrl" class="block max-w-full max-h-full rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.3)]" />
             </div>
           </div>
 
