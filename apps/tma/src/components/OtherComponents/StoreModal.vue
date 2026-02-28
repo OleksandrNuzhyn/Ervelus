@@ -27,7 +27,7 @@
                   </div>
                 </button>
     
-                <a href="https://t.me/ervelus_news" target="_blank" @click="modalStore.closeStore()" v-if="!isSubscribed" class="group relative flex items-center justify-between px-4 py-5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] active:scale-[0.99] transition-all overflow-hidden w-full text-left cursor-pointer no-underline">
+                <a href="https://t.me/ervelus_hub" target="_blank" @click="modalStore.closeStore()" v-if="!isSubscribed" class="group relative flex items-center justify-between px-4 py-5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] active:scale-[0.99] transition-all overflow-hidden w-full text-left cursor-pointer no-underline">
                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/[0.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
                   <div class="relative z-10 flex flex-col gap-1 items-start min-w-0 mr-4">

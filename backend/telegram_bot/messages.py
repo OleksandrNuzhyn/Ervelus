@@ -22,7 +22,7 @@ A new login to the app will create a fresh account.""",
 Ervelus is your AI-powered creative studio. Generate stunning images, explore new styles, and unleash your imagination.
 
 Stay Updated:
-Subscribe to our news channel: @ervelus_news
+Subscribe to our news channel: @ervelus_hub
 
 Need Help?
 If you have any questions or issues, just repl to this chat directly. Our support team is here to assist you!"""
@@ -50,7 +50,7 @@ If you have any questions or issues, just repl to this chat directly. Our suppor
 Ervelus — це ваша творча студія зі штучним інтелектом. Створюйте вражаючі зображення, відкривайте нові стилі та втілюйте свої ідеї.
 
 Будьте в курсі:
-Підписуйтесь на наш канал новин: @ervelus_news
+Підписуйтесь на наш канал новин: @ervelus_hub
 
 Потрібна допомога?
 Якщо у вас є питання або проблеми, просто пишіть прямо в цей чат. Наша підтримка завжди допоможе!"""
