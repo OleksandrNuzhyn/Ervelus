@@ -91,6 +91,33 @@ def create_telegram_user(telegram_data, request):
     except Exception as e:
         logger.error("Failed to check channel subscription", extra={"error": str(e)}, exc_info=True)
 
+    start_param = telegram_data.get('start_param')
+
+    if start_param and start_param.startswith('ref_'):
+        start_param_parts = start_param.split('_')
+
+        if len(start_param_parts) == 2:
+            inviter_telegram_id = start_param_parts[1]
+
+            try:
+                inviter_profile = UserProfile.objects.select_for_update().get(telegram_id=inviter_telegram_id)
+                
+                if inviter_profile.invited_count == 0:
+                    inviter_profile.free_credits += 1
+                    
+                    services.send_message_to_user(
+                        telegram_id=inviter_telegram_id,
+                        message_key='referral_bonus',
+                        language_code=telegram_data.get('language_code')
+                    )
+
+                inviter_profile.invited_count += 1
+                inviter_profile.save(update_fields=['invited_count', 'free_credits'])
+            except UserProfile.DoesNotExist:
+                logger.error("Inviter not found while processing referral", extra={"telegram_id": inviter_telegram_id})
+            except Exception as e:
+                logger.error("Failed to process referral", extra={"error": str(e)}, exc_info=True)
+
     required_document_types = [
         TermsVersion.DocumentType.TERMS_OF_SERVICE,
         TermsVersion.DocumentType.PRIVACY_POLICY

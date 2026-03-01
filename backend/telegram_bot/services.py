@@ -45,11 +45,14 @@ def validate_telegram_init_data(init_data):
         if not hmac.compare_digest(calculated_hash, received_hash):
             raise Exception("Invalid init_data")
             
-        parsed_user_data = parsed_data.get("user")
-        if not parsed_user_data:
+        user_data = parsed_data.get("user")
+        if not user_data:
             raise Exception("User data missing")
             
-        return json.loads(parsed_user_data)
+        user_data = json.loads(user_data)
+        user_data['start_param'] = parsed_data.get('start_param')
+
+        return user_data
     except Exception as e:
         raise Exception(str(e))
     
@@ -186,7 +189,7 @@ def get_share_invite_message(telegram_id):
             "Hey! Check out this AI bot for creating cool avatars 🎨"
         ),
         reply_markup=telegram.InlineKeyboardMarkup([[
-            telegram.InlineKeyboardButton("Open App 🚀", url="https://t.me/ervelus_bot/app")
+            telegram.InlineKeyboardButton("Open App", url=f"https://t.me/ervelus_bot/app?startapp=ref_{telegram_id}")
         ]])
     )
 
@@ -207,7 +210,7 @@ def get_share_generation_message(telegram_id, generation_request):
         photo_url=photo_url,
         thumbnail_url=thumb_url,
         reply_markup=telegram.InlineKeyboardMarkup([[
-            telegram.InlineKeyboardButton("Try it yourself 🎨", url="https://t.me/ervelus_bot/app")
+            telegram.InlineKeyboardButton("Try it yourself", url=f"https://t.me/ervelus_bot/app?startapp=ref_{telegram_id}")
         ]])
     )
 

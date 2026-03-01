@@ -296,7 +296,7 @@ html, body {
   background: rgba(255, 255, 255, 0.05);
   padding: 10px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.02);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -381,7 +381,7 @@ html, body {
   justify-content: center;
   font-weight: 700;
   font-size: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.02);
 }
 
 .member-name {

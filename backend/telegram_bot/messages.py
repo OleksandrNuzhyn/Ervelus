@@ -25,7 +25,11 @@ Stay Updated:
 Subscribe to our news channel: @ervelus_hub
 
 Need Help?
-If you have any questions or issues, just repl to this chat directly. Our support team is here to assist you!"""
+If you have any questions or issues, just repl to this chat directly. Our support team is here to assist you!""",
+        'referral_bonus':
+"""Awesome! A friend joined using your link ✨
+
++1 generation has been added to your account!"""
     },
     'uk': {
         'successful_payment':
@@ -53,6 +57,10 @@ Ervelus — це ваша творча студія зі штучним інте
 Підписуйтесь на наш канал новин: @ervelus_hub
 
 Потрібна допомога?
-Якщо у вас є питання або проблеми, просто пишіть прямо в цей чат. Наша підтримка завжди допоможе!"""
+Якщо у вас є питання або проблеми, просто пишіть прямо в цей чат. Наша підтримка завжди допоможе!""",
+        'referral_bonus':
+"""Круто! Друг приєднався за вашим посиланням ✨
+
+Вам нараховано +1 генерацію!"""
     }
 }
