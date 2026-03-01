@@ -2,6 +2,7 @@ import os
 import logging.config
 from pathlib import Path
 from dotenv import load_dotenv
+from corsheaders.defaults import default_headers
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -136,6 +137,9 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5173'
 ]
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'x-telegram-language',
+]
 
 
 
