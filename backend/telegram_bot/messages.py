@@ -21,15 +21,16 @@ A new login to the app will create a fresh account.""",
 
 Ervelus is your AI-powered creative studio. Generate stunning images, explore new styles, and unleash your imagination.
 
-Stay Updated:
-Subscribe to our news channel: @ervelus_hub
-
 Need Help?
 If you have any questions or issues, just repl to this chat directly. Our support team is here to assist you!""",
         'referral_bonus':
 """Awesome! A friend joined using your link ✨
 
-+1 generation has been added to your account!"""
++1 generation has been added to your account!""",
+        'share_invite_content': "Hey! Check out this AI bot for creating cool avatars 🎨",
+        'share_invite_button': "Open App",
+        'share_generation_button': "Try it yourself",
+        'subscribe_button': "Join Ervelus Hub"
     },
     'uk': {
         'successful_payment':
@@ -53,14 +54,15 @@ If you have any questions or issues, just repl to this chat directly. Our suppor
 
 Ervelus — це ваша творча студія зі штучним інтелектом. Створюйте вражаючі зображення, відкривайте нові стилі та втілюйте свої ідеї.
 
-Будьте в курсі:
-Підписуйтесь на наш канал новин: @ervelus_hub
-
 Потрібна допомога?
 Якщо у вас є питання або проблеми, просто пишіть прямо в цей чат. Наша підтримка завжди допоможе!""",
         'referral_bonus':
 """Круто! Друг приєднався за вашим посиланням ✨
 
-Вам нараховано +1 генерацію!"""
+Вам нараховано +1 генерацію!""",
+        'subscribe_button': "Приєднатися до Ervelus Hub",
+        'share_invite_content': "Привіт! Заціни цього AI бота для створення крутих аватарок 🎨",
+        'share_invite_button': "Відкрити додаток",
+        'share_generation_button': "Спробувати самому"
     }
 }

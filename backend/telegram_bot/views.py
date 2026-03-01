@@ -149,7 +149,8 @@ def create_telegram_user(telegram_data, request):
 @permission_classes([HasAcceptedLatestAgreements])
 def share_invite(request):
     try:
-        message = services.get_share_invite_message(telegram_id=request.user.profile.telegram_id)
+        language_code = request.META.get('HTTP_X_TELEGRAM_LANGUAGE', 'en')[:2]
+        message = services.get_share_invite_message(telegram_id=request.user.profile.telegram_id, language_code=language_code)
         return Response({"message_id": message.id}, status=200)
     except Exception as e:
         logger.error("Failed to share invite", extra={"error": str(e)}, exc_info=True)
@@ -172,9 +173,11 @@ def share_generation(request):
         return Response(status=404)
 
     try:
+        language_code = request.META.get('HTTP_X_TELEGRAM_LANGUAGE', 'en')[:2]
         message = services.get_share_generation_message(
             telegram_id=request.user.profile.telegram_id,
-            generation_request=generation_request
+            generation_request=generation_request,
+            language_code=language_code
         )
         return Response({"message_id": message.id}, status=200)
     except Exception as e:

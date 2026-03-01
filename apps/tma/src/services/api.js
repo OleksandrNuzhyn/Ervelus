@@ -15,6 +15,10 @@ api.interceptors.request.use(
       config.headers['Authorization'] = `Token ${token}`;
     }
 
+    if (window.Telegram?.WebApp?.initDataUnsafe?.user?.language_code) {
+      config.headers['X-Telegram-Language'] = window.Telegram.WebApp.initDataUnsafe.user.language_code;
+    }
+
     return config;
   },
   (error) => {

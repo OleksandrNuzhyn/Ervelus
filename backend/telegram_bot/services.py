@@ -69,20 +69,31 @@ def get_country_code_from_ip_address(ip_address):
         logger.error("Failed to get country from IP", extra={"ip_address": ip_address, "error": str(e), "exc_info": True})
     return None
 
-def send_message_to_user(telegram_id, message_key, language_code, **context):
+def get_localized_message(language_code, message_key):
     language_code_key = language_code[:2] if language_code else 'en'
     country_messages_dict = MESSAGES.get(language_code_key) or {}
-    message = country_messages_dict.get(message_key) or MESSAGES.get('en', {}).get(message_key)
+    return country_messages_dict.get(message_key) or MESSAGES.get('en', {}).get(message_key)
+
+def send_message_to_user(telegram_id, message_key, language_code, **context):
+    message = get_localized_message(language_code, message_key)
+    reply_markup = None
 
     if not message:
         logger.error("Message key not found", extra={"message_key": message_key, "language_code": language_code})
         return
 
+    if message_key == 'start_message':
+        button_text = get_localized_message(language_code, 'subscribe_button') or " "
+        reply_markup = telegram.InlineKeyboardMarkup([[
+            telegram.InlineKeyboardButton(button_text, url="https://t.me/ervelus_hub")
+        ]])
+
     try:
         text = message.format(**context)
         async_to_sync(bot.send_message)(
             chat_id=telegram_id,
-            text=text
+            text=text,
+            reply_markup=reply_markup
         )
     except Exception as e:
         logger.error("Failed to send message to user", extra={"telegram_id": telegram_id, "message_key": message_key, "language_code": language_code, "error": str(e)}, exc_info=True)
@@ -180,16 +191,16 @@ def handle_message(update):
     except Exception as e:
         logger.error("Failed to forward message to admin", extra={"error": str(e)}, exc_info=True)
 
-def get_share_invite_message(telegram_id):
+def get_share_invite_message(telegram_id, language_code):
+    message_content = get_localized_message(language_code, 'share_invite_content') or " "
+    button_text = get_localized_message(language_code, 'share_invite_button') or " "
+
     inline_result = telegram.InlineQueryResultArticle(
         id="invite",
-        title="Join Ervelus",
-        description="Create your own IA avatars and photos!",
-        input_message_content=telegram.InputTextMessageContent(
-            "Hey! Check out this AI bot for creating cool avatars 🎨"
-        ),
+        title="invite",
+        input_message_content=telegram.InputTextMessageContent(message_content),
         reply_markup=telegram.InlineKeyboardMarkup([[
-            telegram.InlineKeyboardButton("Open App", url=f"https://t.me/ervelus_bot/app?startapp=ref_{telegram_id}")
+            telegram.InlineKeyboardButton(button_text, url=f"https://t.me/ervelus_bot/app?startapp=ref_{telegram_id}")
         ]])
     )
 
@@ -201,16 +212,16 @@ def get_share_invite_message(telegram_id):
         allow_channel_chats=True
     )
 
-def get_share_generation_message(telegram_id, generation_request):
+def get_share_generation_message(telegram_id, generation_request, language_code):
     photo_url = generate_signed_gcs_url(generation_request.output_original_url, 86400)
-    thumb_url = generate_signed_gcs_url(generation_request.output_thumb_url, 86400)
+    button_text = get_localized_message(language_code, 'share_generation_button') or " "
 
     inline_result = telegram.InlineQueryResultPhoto(
-        id=f"photo_{generation_request.id}",
+        id="photo",
         photo_url=photo_url,
-        thumbnail_url=thumb_url,
+        thumbnail_url=photo_url,
         reply_markup=telegram.InlineKeyboardMarkup([[
-            telegram.InlineKeyboardButton("Try it yourself", url=f"https://t.me/ervelus_bot/app?startapp=ref_{telegram_id}")
+            telegram.InlineKeyboardButton(button_text, url=f"https://t.me/ervelus_bot/app?startapp=ref_{telegram_id}")
         ]])
     )
 

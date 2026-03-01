@@ -20,8 +20,8 @@ def credit_balance(request):
 def delete_account(request):
     user = request.user
     telegram_id = user.profile.telegram_id
-    language_code = request.data.get('language_code')
     success = services.delete_user_account(user)
+    language_code = request.META.get('HTTP_X_TELEGRAM_LANGUAGE', 'en')[:2]
     
     if success:
         try:
