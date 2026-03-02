@@ -17,7 +17,8 @@ Enjoy your creations""",
 """Your account and all personal data have been deleted
 We hope to see you again soon""",
         'start_message':
-"""Welcome to Ervelus! Enjoy creating
+"""Welcome to Ervelus!
+Enjoy creating
 
 For any questions just write in this chat""",
         'referral_bonus':
@@ -50,7 +51,8 @@ Happy creating""",
 """Ваш акаунт та всі особисті дані видалено
 Будемо раді бачити вас знову""",
         'start_message':
-"""Вітаємо в Ervelus! Творіть із задоволенням
+"""Вітаємо в Ervelus!
+Творіть із задоволенням
 
 З будь-яких питань просто пишіть у цей чат""",
         'referral_bonus':
