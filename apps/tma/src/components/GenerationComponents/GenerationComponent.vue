@@ -38,6 +38,7 @@
       :selected-style-name="selectedStyleName" 
       :selected-style-id="selectedStyleId" 
       :on-open-style-panel="handleOpenStylePanel"
+      :on-random-style="handleRandomStyle"
       :latest-generation-data="latestGenerationData"
     />
   </div>
@@ -119,7 +120,7 @@ onMounted(async () => {
       }
     }
     else if (styles.value.length > 0) {
-      const defaultStyle = styles.value.find(s => s.name.toLowerCase() === 'hong kong urban');
+      const defaultStyle = styles.value.find(s => s.name.toLowerCase() === 'diplomatic elevator');
       
       if (defaultStyle) {
         selectedStyleId.value = defaultStyle.id;
@@ -184,6 +185,17 @@ function handleClosePanel() {
 
 function handleOpenStylePanel() {
   modalStore.openStylePanel();
+}
+
+function handleRandomStyle() {
+  const availableStyles = styles.value.filter(s => s.is_available !== false);
+  if (availableStyles.length === 0) return;
+  const randomIndex = Math.floor(Math.random() * availableStyles.length);
+  const randomStyle = availableStyles[randomIndex];
+  selectedStyleId.value = randomStyle.id;
+  if (randomStyle.genre && randomStyle.genre.name) {
+    selectedGenreId.value = randomStyle.genre.name;
+  }
 }
 
 function handleNextGenre() {

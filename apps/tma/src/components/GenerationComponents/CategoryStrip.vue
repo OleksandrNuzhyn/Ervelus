@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center w-full relative z-[65]" :class="{'md:space-x-4': isScrollable}">
     <div v-if="isScrollable" class="hidden md:flex w-10 shrink-0 justify-end">
-      <button v-show="showLeftArrow" @click="scrollLeft" class="p-2 rounded-full bg-black/20 hover:bg-black/40 text-gray-400 hover:text-white transition-all border border-white/[0.02]">
+      <button v-show="showLeftArrow" @click="scrollLeft" class="p-2 rounded-full bg-black/20 hover:bg-black/40 text-gray-400 hover:text-white transition-all duration-300 border border-white/[0.02] active:scale-[0.96] focus:outline-none select-none">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
       </button>
     </div>
@@ -19,14 +19,14 @@
           class="relative w-full py-2 px-4 md:py-3 overflow-x-auto no-scrollbar min-h-[52px] md:min-h-[60px] flex items-center"
         >
           <div class="flex items-center space-x-2 md:space-x-12" :class="isScrollable ? 'justify-start' : 'justify-center w-full'">
-            <button v-for="category in categories" :key="category.id" :data-category-id="category.id" @click="selectCategory(category.id)" :class="['category-btn px-5 py-1.5 md:py-2.5 rounded-full text-[13px] font-semibold flex-shrink-0 whitespace-nowrap inter transition-all duration-200', selectedCategoryId === category.id ? 'is-active bg-white/20 text-white shadow-sm' : 'bg-transparent text-white/50']">{{ category.name }}</button>
+            <button v-for="category in categories" :key="category.id" :data-category-id="category.id" @click="selectCategory(category.id)" :class="['category-btn px-5 py-1.5 md:py-2.5 rounded-full text-[13px] font-semibold flex-shrink-0 whitespace-nowrap inter transition-all duration-300 active:scale-[0.96] focus:outline-none select-none', selectedCategoryId === category.id ? 'is-active bg-white/20 text-white shadow-sm' : 'bg-transparent text-white/50']">{{ category.name }}</button>
           </div>
         </div>
       </div>
     </div>
 
     <div v-if="isScrollable" class="hidden md:flex w-10 shrink-0 justify-start">
-      <button v-show="showArrow" @click="scrollRight" class="p-2 rounded-full bg-black/20 hover:bg-black/40 text-gray-400 hover:text-white transition-all border border-white/[0.02]">
+      <button v-show="showArrow" @click="scrollRight" class="p-2 rounded-full bg-black/20 hover:bg-black/40 text-gray-400 hover:text-white transition-all duration-300 border border-white/[0.02] active:scale-[0.96] focus:outline-none select-none">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
       </button>
     </div>

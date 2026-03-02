@@ -84,9 +84,16 @@ def send_message_to_user(telegram_id, message_key, language_code, **context):
 
     if message_key == 'start_message':
         button_text = get_localized_message(language_code, 'subscribe_button') or " "
-        reply_markup = telegram.InlineKeyboardMarkup([[
-            telegram.InlineKeyboardButton(button_text, url="https://t.me/ervelus_hub")
-        ]])
+        tos_text = get_localized_message(language_code, 'tos_button') or " "
+        pp_text = get_localized_message(language_code, 'pp_button') or " "
+        
+        reply_markup = telegram.InlineKeyboardMarkup([
+            [telegram.InlineKeyboardButton(button_text, url="https://t.me/ervelus_hub")],
+            [
+                telegram.InlineKeyboardButton(tos_text, url="https://ervelus.com/terms-of-service"),
+                telegram.InlineKeyboardButton(pp_text, url="https://ervelus.com/privacy-policy")
+            ]
+        ])
 
     try:
         text = message.format(**context)

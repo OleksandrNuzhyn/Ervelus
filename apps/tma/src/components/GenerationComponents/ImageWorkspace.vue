@@ -33,16 +33,24 @@
           </div>
         </div>
 
-        <button @click="onOpenStylePanel" class="glass-card backdrop-blur-[25px] !flex-row min-h-[56px] lg:min-h-[80px] py-3.5 lg:py-6 mt-0 items-center justify-center relative cursor-pointer hover:bg-white/[0.05] active:scale-[0.98] transition-all duration-300 px-4 group overflow-visible">
-          <div class="flex items-center gap-2 md:gap-4 px-10 w-full justify-center min-w-0">
-            <span class="text-white/70 font-medium lg:font-bold text-base lg:text-2xl shrink-0">{{ $t('workspace.style') }}</span>
-            <div class="w-[1px] h-5 md:h-8 bg-white/20 shrink-0 relative top-[1px]"></div>
-            <span class="font-medium lg:font-bold text-white text-base lg:text-2xl tracking-wide truncate">{{ props.selectedStyleName }}</span>
-          </div>
-          <svg class="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50 group-hover:text-white/80 transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-          </svg>
-        </button>
+        <div class="flex flex-row items-center gap-2 w-full">
+          <button @click="onOpenStylePanel" class="glass-card flex-1 backdrop-blur-[25px] !flex-row min-h-[56px] lg:min-h-[80px] py-3.5 lg:py-6 mt-0 items-center justify-center relative cursor-pointer hover:bg-white/[0.05] active:scale-[0.96] focus:outline-none select-none transition-all duration-300 px-3 lg:px-4 group overflow-hidden min-w-0">
+            <div class="flex items-center gap-2 md:gap-4 px-4 lg:px-10 w-full justify-center min-w-0 pr-6 lg:pr-10">
+              <span class="text-white/70 font-medium lg:font-bold text-base lg:text-2xl shrink-0">{{ $t('workspace.style') }}</span>
+              <div class="w-[1px] h-5 md:h-8 bg-white/20 shrink-0 relative top-[1px]"></div>
+              <span class="font-medium lg:font-bold text-white text-base lg:text-2xl tracking-wide truncate">{{ props.selectedStyleName }}</span>
+            </div>
+            <svg class="absolute right-3 lg:right-5 top-1/2 -translate-y-1/2 w-4 h-4 lg:w-5 lg:h-5 text-white/50 group-hover:text-white/80 transition-colors duration-300 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+            </svg>
+          </button>
+          
+          <button @click="props.onRandomStyle" class="glass-card backdrop-blur-[25px] shrink-0 w-[56px] h-[56px] lg:w-[80px] lg:h-[80px] mt-0 items-center justify-center cursor-pointer hover:bg-white/[0.05] active:scale-[0.96] focus:outline-none select-none transition-all duration-300 group">
+            <svg class="w-6 h-6 lg:w-8 lg:h-8 text-white/50 group-hover:text-white/80 transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.25" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <div ref="outputSection" :class="['flex-col w-full h-full lg:shrink gap-3 overflow-hidden', hasStartedTransform ? 'flex' : 'hidden lg:flex']">
@@ -70,8 +78,8 @@
             @click="handleButtonClick"
             :disabled="isButtonDisabled"
             :class="[
-              'w-full bg-[#3a3a3a] border border-white/[0.02] rounded-2xl min-h-[80px] py-6 text-center text-2xl font-bold text-white cursor-pointer transition-all duration-300 relative overflow-hidden shadow-xl',
-              isButtonDisabled ? 'cursor-not-allowed' : 'hover:bg-[#454545]'
+              'w-full bg-[#3a3a3a] border border-white/[0.02] rounded-2xl min-h-[80px] py-6 text-center text-2xl font-bold text-white cursor-pointer transition-all duration-300 relative overflow-hidden shadow-xl focus:outline-none select-none',
+              isButtonDisabled ? 'cursor-not-allowed' : 'hover:bg-[#454545] active:scale-[0.96]'
             ]"
           >
             <div v-if="!isLoading" class="absolute inset-0 w-full h-full shimmer-effect pointer-events-none"></div>
@@ -88,8 +96,8 @@
         @click="handleButtonClick"
         :disabled="isButtonDisabled"
         :class="[
-          'w-full bg-[#3a3a3a] border border-white/[0.02] rounded-2xl min-h-[58px] py-4 text-center text-base font-bold text-white cursor-pointer transition-all duration-300 relative overflow-hidden shadow-xl',
-          isButtonDisabled ? 'cursor-not-allowed' : 'hover:bg-[#454545]'
+          'w-full bg-[#3a3a3a] border border-white/[0.02] rounded-2xl min-h-[58px] py-4 text-center text-base font-bold text-white cursor-pointer transition-all duration-300 relative overflow-hidden shadow-xl focus:outline-none select-none',
+          isButtonDisabled ? 'cursor-not-allowed' : 'hover:bg-[#454545] active:scale-[0.96]'
         ]"
       >
         <div v-if="!isLoading" class="absolute inset-0 w-full h-full shimmer-effect pointer-events-none"></div>
@@ -283,6 +291,10 @@ const props = defineProps({
     default: null,
   },
   onOpenStylePanel: {
+    type: Function,
+    required: true,
+  },
+  onRandomStyle: {
     type: Function,
     required: true,
   },

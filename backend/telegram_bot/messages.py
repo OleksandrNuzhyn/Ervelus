@@ -1,68 +1,68 @@
 MESSAGES = {
     'en': {
         'successful_payment':
-"""Payment Successful! 🌟
+"""Payment successful
+Thank you for your purchase
 
-Thank you for choosing Ervelus. Your account has been credited with {generations_count} generations.
+{generations_count} generations added to your account
+Enjoy creating your art
 
-If you have any questions or encounter any issues, please feel free to write directly in this chat. We are here to help!
-
-Best regards,
-Ervelus Team""",
+For any questions just write in this chat""",
         'subscription_bonus':
-"""Thanks for subscribing! ✨
+"""Welcome to the community
++1 generation added to your account as a bonus
 
-+1 generation has been added to your account. Enjoy!""",
+Enjoy your creations""",
         'account_deleted':
-"""Your account, along with all photos and personal data, has been permanently deleted.
-A new login to the app will create a fresh account.""",
+"""Your account and all personal data have been deleted
+We hope to see you again soon""",
         'start_message':
-"""Welcome to Ervelus! 👋
+"""Welcome to Ervelus! Enjoy creating
 
-Ervelus is your AI-powered creative studio. Generate stunning images, explore new styles, and unleash your imagination.
-
-Need Help?
-If you have any questions or issues, just repl to this chat directly. Our support team is here to assist you!""",
+For any questions just write in this chat""",
         'referral_bonus':
-"""Awesome! A friend joined using your link ✨
+"""A friend joined using your link
++1 generation added to your account as a bonus
 
-+1 generation has been added to your account!""",
-        'share_invite_content': "Hey! Check out this AI bot for creating cool avatars 🎨",
-        'share_invite_button': "Open App",
+Happy creating""",
+        'share_invite_content': "Turn your selfies into AI art in seconds",
+        'share_invite_button': "Launch App",
         'share_generation_button': "Try it yourself",
-        'subscribe_button': "Join Ervelus Hub"
+        'subscribe_button': "Join Ervelus Hub",
+        'tos_button': "Terms",
+        'pp_button': "Privacy"
     },
     'uk': {
         'successful_payment':
-"""Оплата пройшла успішно! 🌟
+"""Оплата успішна
+Дякуємо за покупку
 
-Дякуємо, що обрали Ervelus. Вам нараховано {generations_count} генерацій.
+Вам нараховано {generations_count} генерацій
+Творіть із задоволенням
 
-Якщо у вас виникли запитання або потрібна допомога, просто напишіть нам у цей чат. Ми завжди на зв’язку!
-
-З повагою,
-Команда Ervelus""",
+З будь-яких питань просто пишіть у цей чат""",
         'subscription_bonus':
-"""Дякуємо за підписку! ✨
+"""Вітаємо у спільноті
+Вам нараховано +1 бонусну генерацію
 
-Вам нараховано +1 генерацію. Користуйтеся із задоволенням!""",
+Користуйтеся із задоволенням""",
         'account_deleted':
-"""Ваш акаунт разом з усіма фото та особистими даними видалено безповоротно.
-Новий вхід у додаток створить чистий акаунт.""",
+"""Ваш акаунт та всі особисті дані видалено
+Будемо раді бачити вас знову""",
         'start_message':
-"""Вітаємо в Ervelus! 👋
+"""Вітаємо в Ervelus! Творіть із задоволенням
 
-Ervelus — це ваша творча студія зі штучним інтелектом. Створюйте вражаючі зображення, відкривайте нові стилі та втілюйте свої ідеї.
-
-Потрібна допомога?
-Якщо у вас є питання або проблеми, просто пишіть прямо в цей чат. Наша підтримка завжди допоможе!""",
+З будь-яких питань просто пишіть у цей чат""",
         'referral_bonus':
-"""Круто! Друг приєднався за вашим посиланням ✨
+"""Друг приєднався за вашим посиланням
+Вам нараховано +1 бонусну генерацію
 
-Вам нараховано +1 генерацію!""",
-        'subscribe_button': "Приєднатися до Ervelus Hub",
-        'share_invite_content': "Привіт! Заціни цього AI бота для створення крутих аватарок 🎨",
+Натхнення у творчості""",
+        'share_invite_content': "Перетворюйте свої селфі на AI-арт за секунди",
         'share_invite_button': "Відкрити додаток",
-        'share_generation_button': "Спробувати самому"
+        'share_generation_button': "Спробувати самому",
+        'subscribe_button': "Приєднатись до Ervelus Hub",
+        'tos_button': "Умови використання",
+        'pp_button': "Конфіденційність"
     }
 }
