@@ -19,6 +19,7 @@ from google.protobuf import duration_pb2
 from generations.views import tasks_client
 from google.cloud.tasks_v2.types import HttpMethod
 from google.cloud import storage as gcs_sync_storage
+from openrouter.errors import ResponseValidationError
 from gcloud.aio.storage import Storage as GCSAsyncStorage
 
 GCS_KEY_PATH = os.path.join(settings.BASE_DIR, 'core', 'gcs_key.json')
@@ -281,6 +282,9 @@ async def handle_generation_process(generation_request_id, input_image_url):
         return
     except SafetyException as e:
         logger.info("Image generation rejected by safety filters", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
+        generation_request_status = GenerationRequest.GenerationStatus.REJECTED_BY_SAFETY
+    except ResponseValidationError as e:
+        logger.info("Provider rejected input image, returning invalid JSON structure", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
         generation_request_status = GenerationRequest.GenerationStatus.REJECTED_BY_SAFETY
     except Exception as e:
         logger.error("Error during image generation process", extra={'generation_request_id': generation_request_id, 'error': str(e)}, exc_info=True)
