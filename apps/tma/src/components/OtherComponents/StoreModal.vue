@@ -14,7 +14,7 @@
             <section>
               <h3 class="text-sm font-medium text-white/60 mb-4 text-center inter">{{ $t('store.free_bonuses') }}</h3>
               <div class="flex flex-col gap-2.5">
-                <button @click="modalStore.closeStore(); handleInviteFriend()" class="group relative flex items-center justify-between px-4 py-5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] active:scale-[0.96] focus:outline-none select-none transition-all duration-300 overflow-hidden w-full text-left">
+                <button v-if="invitedCount === 0" @click="modalStore.closeStore(); handleInviteFriend()" class="group relative flex items-center justify-between px-4 py-5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] active:scale-[0.96] focus:outline-none select-none transition-all duration-300 overflow-hidden w-full text-left">
                   <div class="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   
                   <div class="relative z-10 flex flex-col gap-1 items-start min-w-0 mr-4">
@@ -26,6 +26,19 @@
                     {{ $t('store.invite') }}
                   </div>
                 </button>
+
+                <div v-else class="group relative flex items-center justify-between px-4 py-5 rounded-2xl bg-white/[0.02] overflow-hidden w-full text-left opacity-80">
+                  <div class="relative z-10 flex flex-col gap-1 items-start min-w-0 mr-4">
+                    <h4 class="text-[14px] font-bold tracking-tight inter leading-tight mb-0.5 text-white/90 w-full">{{ $t('store.invite_friend') }}</h4>
+                    <span class="text-[12px] font-medium inter leading-tight tracking-tight text-white/50 block">{{ $t('store.invite_badge') }}</span>
+                  </div>
+                  
+                  <div class="relative z-10 h-9 w-[110px] flex items-center justify-center rounded-full bg-[#10b981]/10 text-[#34d399] shrink-0">
+                    <svg class="w-5 h-5 drop-shadow-[0_0_8px_rgba(52,211,153,0.4)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                </div>
     
                 <a href="https://t.me/ervelus_hub" target="_blank" @click="modalStore.closeStore()" v-if="!isSubscribed" class="group relative flex items-center justify-between px-4 py-5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] active:scale-[0.96] focus:outline-none select-none transition-all duration-300 overflow-hidden w-full text-left cursor-pointer no-underline">
                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/[0.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -40,16 +53,14 @@
                   </div>
                 </a>
 
-                <div v-else class="relative flex items-center justify-between px-4 py-5 rounded-2xl bg-emerald-500/[0.08] overflow-hidden w-full text-left">
-                   <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.05] to-transparent"></div>
-
+                <div v-else class="group relative flex items-center justify-between px-4 py-5 rounded-2xl bg-white/[0.02] overflow-hidden w-full text-left opacity-80">
                   <div class="relative z-10 flex flex-col gap-1 items-start min-w-0 mr-4">
-                    <h4 class="text-[14px] font-bold tracking-tight inter leading-tight mb-0.5 text-emerald-100 w-full">{{ $t('store.join_channel') }}</h4>
-                    <span class="text-[12px] font-medium inter leading-tight tracking-tight text-emerald-100/70 block">{{ $t('store.invite_badge') }}</span>
+                    <h4 class="text-[14px] font-bold tracking-tight inter leading-tight mb-0.5 text-white/90 w-full">{{ $t('store.join_channel') }}</h4>
+                    <span class="text-[12px] font-medium inter leading-tight tracking-tight text-white/50 block">{{ $t('store.invite_badge') }}</span>
                   </div>
                   
-                  <div class="relative z-10 h-9 w-[110px] flex items-center justify-center rounded-full bg-emerald-500/20 text-emerald-300 shrink-0">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div class="relative z-10 h-9 w-[110px] flex items-center justify-center rounded-full bg-[#10b981]/10 text-[#34d399] shrink-0">
+                    <svg class="w-5 h-5 drop-shadow-[0_0_8px_rgba(52,211,153,0.4)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
@@ -121,6 +132,7 @@ const modalStore = useModalStore();
 const productsStore = useProductsStore();
 const starPackages = ref([]);
 const isSubscribed = ref(false);
+const invitedCount = ref(0);
 const loading = ref(false);
 
 async function createStarInvoice(pkg) {
@@ -134,7 +146,14 @@ async function createStarInvoice(pkg) {
         window.Telegram.WebApp.openInvoice(response.data.star_invoice_link, (status) => {
           if (status === 'paid') {
             modalStore.closeStore();
-            productsStore.getStyles();
+            
+            if (productsStore.styles) {
+              productsStore.styles = productsStore.styles.map(style => ({
+                ...style,
+                is_available: true
+              }));
+            }
+
             modalStore.openModal({
               title: t('store.success_title'),
               message: t('store.success_desc'),
@@ -178,11 +197,13 @@ async function getStarPackages() {
     const { data } = await api.get('/api/products/store/');
     const packages = data.star_packages || [];
     isSubscribed.value = data.is_subscribed;
+    invitedCount.value = data.invited_count;
     starPackages.value = packages.sort((a, b) => a.generations_count - b.generations_count);
   }
   catch (e) {
     starPackages.value = [];
     isSubscribed.value = false;
+    invitedCount.value = 0;
     modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_load_failed') });
   }
   finally {

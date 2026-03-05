@@ -24,7 +24,8 @@ def store(request):
     
     return Response({
         'star_packages': star_packages,
-        'is_subscribed': request.user.profile.is_subscribed
+        'is_subscribed': request.user.profile.is_subscribed,
+        'invited_count': request.user.profile.invited_count
     }, status=200)
 
 @api_view(['GET'])
