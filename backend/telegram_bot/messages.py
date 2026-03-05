@@ -15,12 +15,17 @@ For any questions just write in this chat""",
 Enjoy your creations""",
         'account_deleted':
 """Your account and all personal data have been deleted
+
 We hope to see you again soon""",
         'start_message':
 """Welcome to Ervelus!
 Enjoy creating
 
 For any questions just write in this chat""",
+        'paysupport_message':
+"""Please write about your payment issue directly in this chat
+
+Our support team will help you shortly""",
         'referral_bonus':
 """A friend joined using your link
 +1 generation added to your account as a bonus
@@ -49,12 +54,17 @@ Happy creating""",
 Користуйтеся із задоволенням""",
         'account_deleted':
 """Ваш акаунт та всі особисті дані видалено
+
 Будемо раді бачити вас знову""",
         'start_message':
 """Вітаємо в Ervelus!
 Творіть із задоволенням
 
 З будь-яких питань просто пишіть у цей чат""",
+        'paysupport_message':
+"""Будь ласка, напишіть про вашу проблему з оплатою прямо в цей чат
+
+Наша команда підтримки допоможе вам найближчим часом""",
         'referral_bonus':
 """Друг приєднався за вашим посиланням
 Вам нараховано +1 бонусну генерацію

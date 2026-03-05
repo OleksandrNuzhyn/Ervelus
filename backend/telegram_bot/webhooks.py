@@ -1,4 +1,4 @@
-from telegram_bot.services import handle_chat_member, handle_message, handle_message_text_start
+from telegram_bot.services import handle_chat_member, handle_message, handle_message_text_start, handle_message_text_paysupport
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
 from payments.services import handle_pre_checkout_query, handle_message_successful_payment
 from rest_framework.permissions import AllowAny
@@ -28,6 +28,8 @@ def telegram_handler(request):
         elif update.message:
             if update.message.text == '/start':
                 handle_message_text_start(update)
+            elif update.message.text == '/paysupport':
+                handle_message_text_paysupport(update)
             elif update.message.successful_payment:
                 handle_message_successful_payment(update)
             else:

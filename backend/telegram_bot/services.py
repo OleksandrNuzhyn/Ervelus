@@ -140,6 +140,15 @@ def handle_message_text_start(update):
         language_code=message.from_user.language_code
     )
 
+def handle_message_text_paysupport(update):
+    message = update.message
+    
+    send_message_to_user(
+        telegram_id=message.from_user.id,
+        message_key='paysupport_message',
+        language_code=message.from_user.language_code
+    )
+
 def handle_message(update):
     message = update.message
     sender_id = str(message.from_user.id)
