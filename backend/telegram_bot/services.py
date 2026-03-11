@@ -187,6 +187,9 @@ def handle_message(update):
                 )
         return
     
+    if getattr(message, 'write_access_allowed', None):
+        return
+        
     header_text = (
         f"Name: {message.from_user.first_name} {message.from_user.last_name or ''}\n"
         f"Username: @{message.from_user.username or 'N/A'}\n"
@@ -207,9 +210,7 @@ def handle_message(update):
     except Exception as e:
         message_dump = str(message.to_dict() if hasattr(message, "to_dict") else message)
         fallback_text = (
-            f"Не вдалося переслати повідомлення\n"
-            f"Помилка: {e}\n\n"
-            f"Що надіслав користувач:\n"
+            f"Не вдалося переслати повідомлення:\n"
             f"{message_dump}"
         )
 
