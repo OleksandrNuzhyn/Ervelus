@@ -205,7 +205,23 @@ def handle_message(update):
             message_id=message.message_id
         )
     except Exception as e:
-        logger.error("Failed to forward message to admin", extra={"error": str(e)}, exc_info=True)
+        message_dump = str(message.to_dict() if hasattr(message, "to_dict") else message)
+        fallback_text = (
+            f"Не вдалося переслати повідомлення\n"
+            f"Помилка: {e}\n\n"
+            f"Що надіслав користувач:\n"
+            f"{message_dump}"
+        )
+
+        try:
+            async_to_sync(bot.send_message)(
+                chat_id=admin_id,
+                text=fallback_text
+            )
+        except Exception as inner_e:
+            logger.error("Failed to send fallback message", extra={"error": str(inner_e)}, exc_info=True)
+        
+        logger.error("Failed to forward message to admin", extra={"error": str(e), "message_data": message_dump}, exc_info=True)
 
 def get_share_invite_message(telegram_id, language_code):
     message_content = get_localized_message(language_code, 'share_invite_content') or " "
