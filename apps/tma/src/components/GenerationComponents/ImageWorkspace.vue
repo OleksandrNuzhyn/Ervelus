@@ -486,11 +486,13 @@ async function handleGenerate() {
   }
   catch (err) {
     isLoading.value = false;
-    const detail = err.response?.data?.detail || '';
-    if (detail.includes('disabled')) {
+    const data = err.response?.data || {};
+    const nonFieldErrors = (data.non_field_errors || []).join(' ');
+
+    if (nonFieldErrors.includes('disabled')) {
       modalStore.openModal({ title: t('workspace.error_title'), message: t('workspace.error_free_disabled') });
     }
-    else if (detail.includes('generations')) {
+    else if (data.non_field_errors?.length) {
       modalStore.openStore();
     }
     else {
