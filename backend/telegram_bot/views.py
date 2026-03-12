@@ -77,7 +77,7 @@ def create_telegram_user(telegram_data, request):
     user_profile = UserProfile.objects.create(user=user, telegram_id=telegram_id, country_code=country_code)
     
     try:
-        chat_member = async_to_sync(bot.get_chat_member)(chat_id="-1003735555915", user_id=telegram_id)
+        chat_member = async_to_sync(bot.get_chat_member)(chat_id="-1003735555915", user_id=int(telegram_id))
         if chat_member.status == telegram.ChatMember.MEMBER:
             user_profile.free_credits += 1
             user_profile.is_subscribed = True
