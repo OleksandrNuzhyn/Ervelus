@@ -8,7 +8,6 @@ from rest_framework.permissions import AllowAny
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from agreements.models import TermsVersion
-from asgiref.sync import async_to_sync
 from users.models import UserProfile
 from django.db import transaction
 from django.conf import settings
@@ -74,23 +73,7 @@ def create_telegram_user(telegram_data, request):
     ip_address = request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0].strip()
     country_code = services.get_country_code_from_ip_address(ip_address)
 
-    user_profile = UserProfile.objects.create(user=user, telegram_id=telegram_id, country_code=country_code)
-    
-    try:
-        chat_member = async_to_sync(bot.get_chat_member)(chat_id="-1003735555915", user_id=int(telegram_id))
-        if chat_member.status == telegram.ChatMember.MEMBER:
-            user_profile.free_credits += 1
-            user_profile.is_subscribed = True
-            user_profile.save(update_fields=['free_credits', 'is_subscribed'])
-            
-            services.send_message_to_user(
-                telegram_id=telegram_id,
-                message_key='subscription_bonus',
-                language_code=telegram_data.get('language_code')
-            )
-    except Exception as e:
-        logger.error("Failed to check channel subscription", extra={"error": str(e)}, exc_info=True)
-
+    UserProfile.objects.create(user=user, telegram_id=telegram_id, country_code=country_code)
     start_param = telegram_data.get('start_param')
 
     if start_param and start_param.startswith('ref_'):
