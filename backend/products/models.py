@@ -30,16 +30,5 @@ class StarPackage(models.Model):
     generations_count = models.IntegerField()
     is_active = models.BooleanField(default=True)
 
-    def get_stars_count_for_country(self, country_code):
-        if not country_code:
-            return self.stars_count_t2
-            
-        countries_t1_list = (self.countries_t1 or "").lower().split()
-        
-        if country_code in countries_t1_list:
-            return self.stars_count_t1
-            
-        return self.stars_count_t2
-
     def __str__(self):
         return f"{self.name} (T1 - {self.stars_count_t1}, T2 - {self.stars_count_t2})"

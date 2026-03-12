@@ -23,12 +23,7 @@ def create_star_invoice_link(request):
     except StarPackage.DoesNotExist:
         return Response(status=404)
     
-    try:
-        country_code = request.user.profile.country_code
-    except Exception:
-        country_code = None
-
-    amount = star_package.get_stars_count_for_country(country_code)
+    amount = star_package.stars_count_t1
     payload = f"{star_package.generations_count}|{amount}"
 
     async def async_create_star_invoice_link():

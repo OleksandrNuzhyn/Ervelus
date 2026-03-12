@@ -8,17 +8,14 @@ from .models import Style, StarPackage
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def store(request):
-    country_code = request.user.profile.country_code
     star_packages_queryset = StarPackage.objects.filter(is_active=True)
     star_packages = []
 
     for star_package in star_packages_queryset:
-        stars_count = star_package.get_stars_count_for_country(country_code)
-
         star_packages.append({
             'id': star_package.id,
             'name': star_package.name,
-            'stars_count': stars_count,
+            'stars_count': star_package.stars_count_t1,
             'generations_count': star_package.generations_count
         })
     
